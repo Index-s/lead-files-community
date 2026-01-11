@@ -5,6 +5,7 @@
 /**/*.idb
 /**/*.pdb
 /libgame/**/*.lib
+/libthecore/**/*.lib
 /libpoly/**/*.lib
 /liblua/**/*.lib
 /libpoly/**/*.lib
