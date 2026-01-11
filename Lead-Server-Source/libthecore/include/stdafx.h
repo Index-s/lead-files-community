@@ -35,12 +35,6 @@
 #define S_ISDIR(m)	(m & _S_IFDIR)
 #define snprintf _snprintf
 
-struct timespec
-{
-    time_t  tv_sec;         /* seconds */
-    long    tv_nsec;        /* and nanoseconds */
-};
-
 #define __USE_SELECT__
 
 #define PATH_MAX _MAX_PATH
@@ -49,7 +43,6 @@ struct timespec
 #define strlcat(dst, src, size) strcat_s(dst, size, src)
 #define strlcpy(dst, src, size) strncpy_s(dst, size, src, _TRUNCATE)
 #define strtoull(str, endptr, base) _strtoui64(str, endptr, base)
-#define strtof(str, endptr) (float)strtod(str, endptr)
 #define strcasecmp(s1, s2) stricmp(s1, s2)
 #define strncasecmp(s1, s2, n) strnicmp(s1, s2, n)
 #define atoll(str) _atoi64(str)
@@ -84,6 +77,13 @@ inline double rint(double x)
 #define _POSIX_SOURCE 1
 #endif
 #endif
+
+struct timespec
+{
+	time_t  tv_sec;         /* seconds */
+	long    tv_nsec;        /* and nanoseconds */
+};
+#define strtof(str, endptr) (float)strtod(str, endptr)
 
 #include <stdio.h>
 #include <string.h>
