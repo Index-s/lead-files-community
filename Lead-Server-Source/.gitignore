@@ -4,3 +4,6 @@
 /**/Release/
 /**/*.idb
 /**/*.pdb
+/db/db_d.exe
+/game/game_d.exe
+/game/src/quest/qc.exe
