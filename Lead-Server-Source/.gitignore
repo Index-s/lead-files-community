@@ -1,5 +1,6 @@
 # Generated build files
 .vs
+UpgradeLog.htm
 /**/Debug/
 /**/Release/
 /**/*.idb
@@ -11,6 +12,16 @@
 /libpoly/**/*.lib
 /libserverkey/**/*.lib
 /libsql/**/*.lib
-/db/db_d.exe
-/game/game_d.exe
+/db/db_d.*
+/game/game_d.*
 /game/src/quest/qc.exe
+
+# Generated log files
+/**/packet_info.txt
+/**/p2p_packet_info.txt
+/**/ProfileLog
+/**/PTS.txt
+/**/syserr.txt
+/**/syslog.txt
+/**/syserr
+/**/syslog
