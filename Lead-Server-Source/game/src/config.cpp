@@ -560,7 +560,7 @@ void config_init(const string& st_localeServiceName)
 		char szQuery[512];
 		snprintf(szQuery, sizeof(szQuery), "SELECT mKey, mValue FROM locale");
 
-		std::auto_ptr<SQLMsg> pMsg(AccountDB::instance().DirectQuery(szQuery));
+		std::unique_ptr<SQLMsg> pMsg(AccountDB::instance().DirectQuery(szQuery));
 
 		if (pMsg->Get()->uiNumRows == 0)
 		{
@@ -625,7 +625,7 @@ void config_init(const string& st_localeServiceName)
 	{
 		char szQuery[256];
 		snprintf(szQuery, sizeof(szQuery), "SELECT mValue FROM locale WHERE mKey='SKILL_POWER_BY_LEVEL'");
-		std::auto_ptr<SQLMsg> pMsg(AccountDB::instance().DirectQuery(szQuery));
+		std::unique_ptr<SQLMsg> pMsg(AccountDB::instance().DirectQuery(szQuery));
 
 		if (pMsg->Get()->uiNumRows == 0)
 		{
@@ -666,7 +666,7 @@ void config_init(const string& st_localeServiceName)
 		for (int job = 0; job < JOB_MAX_NUM * 2; ++job)
 		{
 			snprintf(szQuery, sizeof(szQuery), "SELECT mValue from locale where mKey='SKILL_POWER_BY_LEVEL_TYPE%d' ORDER BY CAST(mValue AS unsigned)", job);
-			std::auto_ptr<SQLMsg> pMsg(AccountDB::instance().DirectQuery(szQuery));
+			std::unique_ptr<SQLMsg> pMsg(AccountDB::instance().DirectQuery(szQuery));
 
 			// 세팅이 안되어있으면 기본테이블을 사용한다.
 			if (pMsg->Get()->uiNumRows == 0)

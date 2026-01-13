@@ -1,4 +1,7 @@
 #include "stdafx.h"
+
+#include <random>
+
 #include "utils.h"
 #include "config.h"
 #include "desc.h"
@@ -1052,7 +1055,9 @@ void CHARACTER::ItemDropPenalty(LPCHARACTER pkKiller)
 
 		if (!vec_bSlots.empty())
 		{
-			random_shuffle(vec_bSlots.begin(), vec_bSlots.end());
+			std::random_device rd;
+			std::mt19937 g(rd());
+			std::shuffle(vec_bSlots.begin(), vec_bSlots.end(), g);
 
 			int iQty = MIN(vec_bSlots.size(), r.iInventoryQty);
 
@@ -1084,7 +1089,10 @@ void CHARACTER::ItemDropPenalty(LPCHARACTER pkKiller)
 
 		if (!vec_bSlots.empty())
 		{
-			random_shuffle(vec_bSlots.begin(), vec_bSlots.end());
+			std::random_device rd;
+			std::mt19937 g(rd());
+			std::shuffle(vec_bSlots.begin(), vec_bSlots.end(), g);
+
 			int iQty;
 
 			if (isDropAllEquipments)

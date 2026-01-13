@@ -33,27 +33,6 @@ typedef _boost_func_of_SQLMsg::any any_function;
 
 typedef _boost_func_of_void::any any_void_function;
 
-template <class F>
-class void_binder
-{
-	protected:
-		F f;
-		typename F::argument_type value;
-	public:
-		void_binder(const F& f, const typename F::argument_type x)
-			: f(f), value(x) {}
-		void operator()() const {
-			return f(value);
-		}
-};
-
-	template <class F, class Arg> 
-inline void_binder<F> void_bind(const F& f, const Arg& arg)
-{
-	typedef typename F::argument_type arg_type;
-	return void_binder<F>(f, arg_type(arg));
-}
-
 // Copyright Kevlin Henney, 2000, 2001, 2002. All rights reserved.
 //
 // Permission to use, copy, modify, and distribute this software for any

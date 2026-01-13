@@ -2,7 +2,6 @@
 #define __INC_LOG_MANAGER_H__
 
 #include "../../libsql/AsyncSQL.h"
-#include "any_function.h"
 
 enum GOLDBAR_HOW
 {

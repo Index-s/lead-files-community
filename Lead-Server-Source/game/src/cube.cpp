@@ -733,7 +733,10 @@ void Cube_MakeCubeInformationText()
 				{
 					for (TCubeValueVector::iterator targetIter = materialInfo.material.begin(); materialInfo.material.end() != targetIter; ++targetIter)
 					{
-						if (*targetIter == *iter)
+						CUBE_VALUE lhs = *targetIter;
+						CUBE_VALUE rhs = *iter;
+
+						if (lhs == rhs)
 						{
 							targetIter = materialInfo.material.erase(targetIter);
 						}

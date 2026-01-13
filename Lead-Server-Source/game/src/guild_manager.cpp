@@ -81,7 +81,7 @@ DWORD CGuildManager::CreateGuild(TGuildCreateParameter& gcp)
 		return 0;
 	}
 
-	std::auto_ptr<SQLMsg> pmsg(DBManager::instance().DirectQuery("SELECT COUNT(*) FROM guild%s WHERE name = '%s'",
+	std::unique_ptr<SQLMsg> pmsg(DBManager::instance().DirectQuery("SELECT COUNT(*) FROM guild%s WHERE name = '%s'",
 				get_table_postfix(), gcp.name));
 
 	if (pmsg->Get()->uiNumRows > 0)
@@ -205,7 +205,7 @@ void CGuildManager::Initialize()
 		return;
 	}
 
-	std::auto_ptr<SQLMsg> pmsg(DBManager::instance().DirectQuery("SELECT id FROM guild%s", get_table_postfix()));
+	std::unique_ptr<SQLMsg> pmsg(DBManager::instance().DirectQuery("SELECT id FROM guild%s", get_table_postfix()));
 
 	std::vector<DWORD> vecGuildID;
 	vecGuildID.reserve(pmsg->Get()->uiNumRows);
@@ -284,8 +284,12 @@ int CGuildManager::GetRank(CGuild* g)
 	return rank;
 }
 
-struct FGuildCompare : public std::binary_function<CGuild*, CGuild*, bool>
+struct FGuildCompare
 {
+	typedef CGuild *first_argument_type;
+	typedef CGuild *second_argument_type;
+	typedef bool result_type;
+
 	bool operator () (CGuild* g1, CGuild* g2) const
 	{
 		if (g1->GetLadderPoint() < g2->GetLadderPoint())
@@ -953,7 +957,7 @@ void CGuildManager::ChangeMaster(DWORD dwGID)
 	}
 
 	// 업데이트된 정보 보내주기
-	DBManager::instance().FuncQuery(std::bind1st(std::mem_fun(&CGuild::SendGuildDataUpdateToAllMember), iter->second), 
+	DBManager::instance().FuncQuery(std::bind(&CGuild::SendGuildDataUpdateToAllMember, iter->second, std::placeholders::_1),
 			"SELECT 1");
 
 }

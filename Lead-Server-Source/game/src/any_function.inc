@@ -5,7 +5,7 @@ namespace boost
     public: // structors
 
         any()
-          : content(0)
+          : content(nullptr)
         {
         }
 
@@ -16,7 +16,7 @@ namespace boost
         }
 
         any(const any & other)
-          : content(other.content ? other.content->clone() : 0)
+          : content(other.content ? other.content->clone() : nullptr)
         {
         }
 
@@ -46,10 +46,10 @@ namespace boost
             return *this;
         }
 
-	void operator ()(func_arg_type func_arg)
-	{
-	    (*content)(func_arg);
-	}
+        void operator ()(func_arg_type func_arg)
+        {
+            (*content)(func_arg);
+        }
 
     public: // queries
 
@@ -63,7 +63,7 @@ namespace boost
         class placeholder
         {
         public: // structors
-    
+
             virtual ~placeholder()
             {
             }
@@ -72,8 +72,8 @@ namespace boost
 
             virtual placeholder * clone() const = 0;
 
-	    virtual void operator()(func_arg_type func_arg) = 0;
-    
+            virtual void operator()(func_arg_type func_arg) = 0;
+
         };
 
         template<typename ValueType>
@@ -87,16 +87,9 @@ namespace boost
             }
 
         public: // queries
+            placeholder* clone() const override { return new holder(held); }
 
-            virtual placeholder * clone() const
-            {
-                return new holder(held);
-            }
-
-	    virtual void operator ()(func_arg_type func_arg)
-	    {
-		held(func_arg);
-	    }
+            void operator()(func_arg_type func_arg) override { held(func_arg); }
 
         public: // representation
 

@@ -1,6 +1,6 @@
 @echo off
 
-for %%x in (db, auth, channel1/game1, channel1/game2, game99) do (
+for %%x in (db, auth, channel1/game1, channel1/game2, channel99) do (
 
 	@rmdir /q "C:/Lead-Git/Lead-Serverfiles/%%x/data" >nul 2>&1
 	@del /Q "C:/Lead-Git/Lead-Serverfiles/%%x\data" >nul 2>&1

@@ -43,7 +43,7 @@ void MessengerManager::Login(MessengerManager::keyA account)
 	if (m_set_loginAccount.find(account) != m_set_loginAccount.end())
 		return;
 
-	DBManager::instance().FuncQuery(std::bind1st(std::mem_fun(&MessengerManager::LoadList), this),
+	DBManager::instance().FuncQuery(std::bind(&MessengerManager::LoadList, this, std::placeholders::_1),
 			"SELECT account, companion FROM messenger_list%s WHERE account='%s'", get_table_postfix(), account.c_str());
 
 	m_set_loginAccount.insert(account);

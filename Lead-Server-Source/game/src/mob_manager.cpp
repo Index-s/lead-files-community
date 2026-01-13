@@ -109,7 +109,7 @@ bool CMobManager::Initialize(TMobTable * pTable, int iSize)
 	// END_OF_LOCALE_SERVICE
 
 	//exit(1);
-	CHARACTER_MANAGER::instance().for_each_pc(std::bind1st(std::mem_fun(&CMobManager::RebindMobProto),this));
+	CHARACTER_MANAGER::instance().for_each_pc(std::bind(&CMobManager::RebindMobProto, this, std::placeholders::_1));
 	return true;
 }
 

@@ -654,7 +654,8 @@ int start(int argc, char **argv)
 #if defined(__FreeBSD__) && defined(DEBUG_ALLOC)
 	_malloc_message = WriteMallocMessage;
 #endif
-	while ((ch = getopt(argc, argv, "npverltI")) != -1)
+
+	while ((ch = getopt(argc, argv, const_cast<char*>("npverltI"))) != -1)
 	{
 		char* ep = NULL;
 

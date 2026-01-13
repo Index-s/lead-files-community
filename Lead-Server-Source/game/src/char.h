@@ -455,7 +455,7 @@ struct TSkillUseInfo
 	DWORD   dwVID;
 	bool    isGrandMaster;
 
-	boost::unordered_map<VID, size_t> TargetVIDMap;
+	boost::unordered_map<DWORD, size_t> TargetVIDMap;
 
 	TSkillUseInfo()
 		: iHitCount(0), iMaxHitCount(0), iSplashCount(0), dwNextSkillUsableTime(0), iRange(0), bUsed(false),
