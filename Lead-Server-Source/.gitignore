@@ -25,3 +25,7 @@ UpgradeLog.htm
 /**/syslog.txt
 /**/syserr
 /**/syslog
+
+# Symlinks of cores
+/(auth|channel[1-4])/.*/data/?$
+/(auth|channel[1-4])/.*/locale/?$
