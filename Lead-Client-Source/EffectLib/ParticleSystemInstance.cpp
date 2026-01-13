@@ -172,7 +172,8 @@ void CParticleSystemInstance::CreateParticles(float fElapsedTime)
 
 		if (CEmitterProperty::EMITTER_ADVANCED_TYPE_INNER == m_pEmitterProperty->GetEmitterAdvancedType())
 		{
-			D3DXVec3Normalize(&pInstance->m_v3Velocity, &(pInstance->m_v3Position-v3TimePosition));
+			const D3DXVECTOR3 dir = pInstance->m_v3Position - v3TimePosition;
+			D3DXVec3Normalize(&pInstance->m_v3Velocity, &dir);
 			pInstance->m_v3Velocity *= -100.0f;
 		}
 		else if (CEmitterProperty::EMITTER_ADVANCED_TYPE_OUTER == m_pEmitterProperty->GetEmitterAdvancedType())
@@ -185,7 +186,8 @@ void CParticleSystemInstance::CreateParticles(float fElapsedTime)
 			}
 			else
 			{
-				D3DXVec3Normalize(&pInstance->m_v3Velocity, &(pInstance->m_v3Position-v3TimePosition));
+				const D3DXVECTOR3 dir = pInstance->m_v3Position - v3TimePosition;
+				D3DXVec3Normalize(&pInstance->m_v3Velocity, &dir);
 				pInstance->m_v3Velocity *= 100.0f;
 			}
 		}
