@@ -147,7 +147,8 @@ class CMapManager : public CScreen, public IPhysicsWorld
 		struct FFindMapName
 		{
 			std::string strNametoFind;
-			FFindMapName::FFindMapName(const std::string & c_rMapName)
+
+			FFindMapName(const std::string & c_rMapName)
 			{
 				strNametoFind = c_rMapName;
 				stl_lowers(strNametoFind);
