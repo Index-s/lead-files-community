@@ -18,8 +18,6 @@ enum
 	QID_AUTH_LOGIN,
 	QID_AUTH_LOGIN_OPENID,
 	QID_LOTTO,
-	QID_HIGHSCORE_REGISTER,
-	QID_HIGHSCORE_SHOW,
 	QID_BILLING_GET_TIME,
 	QID_BILLING_CHECK,
 
@@ -177,14 +175,6 @@ template <class Functor> void DBManager::FuncAfterQuery(Functor f, const char* c
 }
 
 ////////////////////////////////////////////////////////////////
-typedef struct SHighscoreRegisterQueryInfo
-{
-	char    szBoard[20+1]; 
-	DWORD   dwPID;
-	int     iValue;
-	bool    bOrder;
-} THighscoreRegisterQueryInfo;
-
 extern void SendBillingExpire(const char * c_pszLogin, BYTE bBillType, int iSecs, CLoginData * pkLD);
 extern void VCardUse(LPCHARACTER CardOwner, LPCHARACTER CardTaker, LPITEM item);
 
