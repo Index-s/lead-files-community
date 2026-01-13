@@ -316,7 +316,6 @@
     <ClInclude Include="locale_service.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="login_data.h" />
-    <ClInclude Include="login_sim.h" />
     <ClInclude Include="lua_incl.h" />
     <ClInclude Include="lzo_manager.h" />
     <ClInclude Include="malloc_allocator.h" />
