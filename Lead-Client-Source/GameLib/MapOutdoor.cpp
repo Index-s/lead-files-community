@@ -713,7 +713,7 @@ bool CMapOutdoor::GetTerrainNumFromCoord(WORD wCoordX, WORD wCoordY, BYTE * pbyT
 	return true;
 }
 
-void CMapOutdoor::BuildViewFrustum(D3DXMATRIX & mat)
+void CMapOutdoor::BuildViewFrustum(const D3DXMATRIX & mat)
 {
 	//m_plane[0] = D3DXPLANE(mat._14 + mat._13, mat._24 + mat._23, mat._34 + mat._33, mat._44 + mat._43);
 	m_plane[0] = D3DXPLANE(          mat._13,           mat._23,           mat._33,           mat._43);		// Near
