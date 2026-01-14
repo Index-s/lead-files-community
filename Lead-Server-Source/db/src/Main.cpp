@@ -9,7 +9,6 @@
 #include "MoneyLog.h"
 #include "Marriage.h"
 #include "Monarch.h"
-#include "BlockCountry.h"
 #include "ItemIDRangeManager.h"
 #ifdef __AUCTION__
 #include "AuctionManager.h"
@@ -76,7 +75,6 @@ int main()
 	ItemAwardManager ItemAwardManager;
 	marriage::CManager MarriageManager;
 	CMonarch Monarch;
-	CBlockCountry	BlockCountry;
 	CItemIDRangeManager ItemIDRangeManager;
 #ifdef __AUCTION__
 	AuctionManager auctionManager;
@@ -86,7 +84,6 @@ int main()
 
 	GuildManager.Initialize();
 	MarriageManager.Initialize();
-	BlockCountry.Load();
 	ItemIDRangeManager.Build();
 #ifdef __AUCTION__
 	AuctionManager::instance().Initialize();
