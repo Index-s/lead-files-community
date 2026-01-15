@@ -1,3 +1,23 @@
 # Generated build files
 /db/db_d.*
-/channel1/game1/game_d.*
+auth/auth.exe
+auth/packet_info
+auth/PTS
+auth/syserr
+auth/syslog
+auth/data
+auth/locale
+channel[1-4]/core[12]/game_d.*
+channel[1-4]/core[12]/packet_info
+channel[1-4]/core[12]/PTS
+channel[1-4]/core[12]/syserr
+channel[1-4]/core[12]/syslog
+channel[1-4]/core/[12]/data
+channel[1-4]/core/[12]/locale
+channel99/game_d.*
+channel99/packet_info
+channel99/PTS
+channel99 syserr
+channel99/syslog
+channel99/data
+channel99/locale
