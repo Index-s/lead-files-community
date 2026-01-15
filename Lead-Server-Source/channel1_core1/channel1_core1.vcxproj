@@ -71,10 +71,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)..\Lead-Serverfiles\channel1\game1\</OutDir>
+    <OutDir>$(SolutionDir)..\Lead-Serverfiles\channel1\core1\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)..\Lead-Serverfiles\channel1\game1\</OutDir>
+    <OutDir>$(SolutionDir)..\Lead-Serverfiles\channel1\core1\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

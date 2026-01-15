@@ -35,7 +35,7 @@
     <_ProjectFileVersion>18.0.11312.151</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)..\Lead-Serverfiles\channel1\game1\</OutDir>
+    <OutDir>$(SolutionDir)..\Lead-Serverfiles\channel1\core1\</OutDir>
     <IntDir>$(ProjectDir)OBJDIR/$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <TargetName>game_d</TargetName>
@@ -72,8 +72,23 @@
       <IgnoreSpecificDefaultLibraries>libcpmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command />
+      <Command>set EXE="$(TargetPath)"
+copy /Y "%EXE%" "$(SolutionDir)..\Lead-Serverfiles\auth\auth.exe"
+copy /Y "%EXE%" "$(SolutionDir)..\Lead-Serverfiles\channel1\core2\"
+copy /Y "%EXE%" "$(SolutionDir)..\Lead-Serverfiles\channel2\core1\"
+copy /Y "%EXE%" "$(SolutionDir)..\Lead-Serverfiles\channel2\core2\"
+copy /Y "%EXE%" "$(SolutionDir)..\Lead-Serverfiles\channel3\core1\"
+copy /Y "%EXE%" "$(SolutionDir)..\Lead-Serverfiles\channel3\core2\"
+copy /Y "%EXE%" "$(SolutionDir)..\Lead-Serverfiles\channel4\core1\"
+copy /Y "%EXE%" "$(SolutionDir)..\Lead-Serverfiles\channel4\core2\"
+copy /Y "%EXE%" "$(SolutionDir)..\Lead-Serverfiles\channel99\"
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if exist "$(SolutionDir)..\Lead-Serverfiles\auth\auth.exe" del "$(SolutionDir)..\Lead-Serverfiles\auth\auth.exe"
+if exist "$(SolutionDir)..\Lead-Serverfiles\channel*\*.exe" del "$(SolutionDir)..\Lead-Serverfiles\channel*\*.exe"
+</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="affect.cpp" />
