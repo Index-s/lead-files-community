@@ -811,14 +811,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\matrix_card.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\matrix_card.h"
-				>
-			</File>
-			<File
 				RelativePath=".\messenger_manager.cpp"
 				>
 			</File>
@@ -916,14 +908,6 @@
 			</File>
 			<File
 				RelativePath=".\party.h"
-				>
-			</File>
-			<File
-				RelativePath=".\passpod.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\passpod.h"
 				>
 			</File>
 			<File

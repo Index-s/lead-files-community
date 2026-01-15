@@ -283,9 +283,6 @@
     <ClCompile Include="marriage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="matrix_card.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="messenger_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -320,9 +317,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="party.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="passpod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pcbang.cpp">
@@ -729,9 +723,6 @@
     <ClInclude Include="marriage.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="matrix_card.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="messenger_manager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -769,9 +760,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="party.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="passpod.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="pcbang.h">

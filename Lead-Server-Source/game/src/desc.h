@@ -157,13 +157,7 @@ class DESC
 		void			SendLoginSuccessPacket();
 		//void			SendServerStatePacket(int nIndex);
 
-		void			SetMatrixCode(const char * c_psz) { m_stMatrixCode = c_psz; }
-		const char *		GetMatrixCode() { return m_stMatrixCode.c_str(); }
 
-		void			SetMatrixCardRowsAndColumns(unsigned long rows, unsigned long cols);
-		unsigned long		GetMatrixRows();
-		unsigned long		GetMatrixCols();
-		bool			CheckMatrixTryCount();
 
 		void			SetPanamaKey(DWORD dwKey)	{m_dwPanamaKey = dwKey;}
 		DWORD			GetPanamaKey() const		{ return m_dwPanamaKey; }
@@ -233,9 +227,6 @@ class DESC
 
 		int			m_iCurrentSequence;
 
-		DWORD			m_dwMatrixRows;
-		DWORD			m_dwMatrixCols;
-		BYTE			m_bMatrixTryCount;
 
 		CLoginKey *		m_pkLoginKey;
 		DWORD			m_dwLoginKey;
@@ -247,7 +238,6 @@ class DESC
 		bool			m_bHackCRCQuery;
 
 		std::string		m_stClientVersion;
-		std::string		m_stMatrixCode;
 
 		std::string		m_Login;
 		int				m_outtime;
@@ -270,14 +260,8 @@ class DESC
 		LPEVENT			m_pkDisconnectEvent;
 
 	protected:
-		std::string m_stMatrixCardID;
-		std::string m_stMatrixQuiz;
 
 	public:
-		void SetMatrixCardID( const char * szCardID ) { m_stMatrixCardID = szCardID;} 
-		const char * GetMatrixCardID() { return m_stMatrixCardID.c_str();}
-		void SetMatrixQuiz( const char * szCode ) { m_stMatrixCode = szCode; }
-		const char * GetMatrixQuiz() { return m_stMatrixCode.c_str(); }
 
 		void SetLogin( const std::string & login ) { m_Login = login; }
 		void SetLogin( const char * login ) { m_Login = login; }

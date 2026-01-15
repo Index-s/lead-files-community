@@ -1056,9 +1056,6 @@
 				RelativePath=".\Locale_inc_KO.h">
 			</File>
 			<File
-				RelativePath=".\Locale_inc_NEWCIBN.h">
-			</File>
-			<File
 				RelativePath=".\Locale_inc_SG.h">
 			</File>
 			<File

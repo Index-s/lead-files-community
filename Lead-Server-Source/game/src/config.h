@@ -20,8 +20,6 @@ extern WORD db_port;
 extern char teen_addr[ADDRESS_MAX_LEN + 1];
 extern WORD teen_port;
 
-extern char passpod_addr[ADDRESS_MAX_LEN + 1];
-extern WORD passpod_port;
 
 extern int passes_per_sec;
 extern int save_event_second_cycle;

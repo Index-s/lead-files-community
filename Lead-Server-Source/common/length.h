@@ -67,8 +67,6 @@ enum EMisc
 	//LIMIT_GOLD
 	GOLD_MAX = 2000000000,
 
-	MAX_PASSPOD = 8 ,
-
 		
 	//END_LIMIT_GOLD
 
@@ -101,11 +99,6 @@ enum EMisc
 */
 };
 
-enum EMatrixCard
-{
-	MATRIX_CODE_MAX_LEN		= 192,
-	MATRIX_ANSWER_MAX_LEN	= 8,
-};
 
 enum EWearPositions
 {

@@ -367,7 +367,6 @@ class CInputAuth : public CInputProcessor
 	public:
 		void		Login(LPDESC d, const char * c_pData);
 		void		LoginOpenID(LPDESC d, const char * c_pData);		//2012.07.19 OpenID : ±è¿ë¿í
-		void		PasspodAnswer(LPDESC d, const char * c_pData );
 
 };
 

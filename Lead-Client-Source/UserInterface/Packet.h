@@ -119,7 +119,6 @@ enum
 	HEADER_CG_HACK								= 105,
     HEADER_CG_CHANGE_NAME                       = 106,
     HEADER_CG_SMS                               = 107,
-    HEADER_CG_CHINA_MATRIX_CARD                 = 108,
     HEADER_CG_LOGIN2                            = 109,
 	HEADER_CG_DUNGEON							= 110,
 	HEADER_CG_LOGIN3							= 111,
@@ -129,8 +128,6 @@ enum
 	HEADER_CG_LOGIN4							= 115,
 	HEADER_CG_LOGIN5_OPENID						= 116,	//OpenID : 실행시 받은 인증키를 서버에 보냄.
 
-	HEADER_CG_RUNUP_MATRIX_ANSWER               = 201,
-	HEADER_CG_NEWCIBN_PASSPOD_ANSWER			= 202,
 
 
 	HEADER_CG_DRAGON_SOUL_REFINE			= 205,
@@ -263,7 +260,6 @@ enum
     HEADER_GC_SEPCIAL_EFFECT                    = 114,
 	HEADER_GC_NPC_POSITION						= 115,
 
-    HEADER_GC_CHINA_MATRIX_CARD                 = 116,
     HEADER_GC_CHARACTER_UPDATE2                 = 117,
     HEADER_GC_LOGIN_KEY                         = 118,
     HEADER_GC_REFINE_INFORMATION_NEW            = 119,
@@ -304,9 +300,6 @@ enum
 
 	HEADER_GC_AUTH_SUCCESS_OPENID				= 154,
 
-	HEADER_GC_RUNUP_MATRIX_QUIZ                 = 201,
-	HEADER_GC_NEWCIBN_PASSPOD_REQUEST			= 202,
-	HEADER_GC_NEWCIBN_PASSPOD_FAILURE			= 203,
 
 #ifdef __AUCTION__
 	HEADER_GC_AUCTOIN_ITEM_LIST					= 206,
@@ -374,12 +367,7 @@ enum
 
 	REFINE_MATERIAL_MAX_NUM = 5,
 
-	CHINA_MATRIX_ANSWER_MAX_LEN	= 8,
 
-	RUNUP_MATRIX_QUIZ_MAX_LEN	= 8,
-	RUNUP_MATRIX_ANSWER_MAX_LEN = 4,
-	NEWCIBN_PASSPOD_ANSWER_MAX_LEN = 8,
-	NEWCIBN_PASSPOD_FAILURE_MAX_LEN = 128,
 
 	WEAR_MAX_NUM = 11,
 
@@ -1025,23 +1013,8 @@ typedef struct command_crc_report
 	DWORD dwRootPackCRC32;
 } TPacketCGCRCReport;
 
-typedef struct command_china_matrix_card
-{
-	BYTE	bHeader;
-	char	szAnswer[CHINA_MATRIX_ANSWER_MAX_LEN + 1];
-} TPacketCGChinaMatrixCard;
 
-typedef struct command_runup_matrix_answer
-{
-	BYTE	bHeader;
-	char	szAnswer[RUNUP_MATRIX_ANSWER_MAX_LEN + 1];
-} TPacketCGRunupMatrixAnswer;
 
-typedef struct command_newcibn_passpod_answer
-{
-	BYTE	bHeader;
-	char	szAnswer[NEWCIBN_PASSPOD_ANSWER_MAX_LEN + 1];
-} TPacketCGNEWCIBNPasspodAnswer;
 
 enum EPartyExpDistributionType
 {
@@ -2358,29 +2331,9 @@ enum EBlockAction
     BLOCK_PARTY_REQUEST         = (1 << 5),
 };
 
-typedef struct packet_china_matrixd_card
-{
-	BYTE	bHeader;
-	DWORD	dwRows;
-	DWORD	dwCols;
-} TPacketGCChinaMatrixCard;
 
-typedef struct packet_runup_matrixd_quiz
-{
-	BYTE	bHeader;
-	char	szQuiz[RUNUP_MATRIX_QUIZ_MAX_LEN + 1];	
-} TPacketGCRunupMatrixQuiz;
 
-typedef struct packet_newcibn_passpod_request
-{
-	BYTE	bHeader;
-} TPacketGCNEWCIBNPasspodRequest;
 
-typedef struct packet_newcibn_passpod_failure
-{
-	BYTE	bHeader;
-	char	szMessage[NEWCIBN_PASSPOD_FAILURE_MAX_LEN + 1];
-} TPacketGCNEWCIBNPasspodFailure;
 
 typedef struct packet_login_key
 {

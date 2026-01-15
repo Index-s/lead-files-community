@@ -12,7 +12,6 @@
 #include "item.h"
 #include "item_manager.h"
 #include "p2p.h"
-#include "matrix_card.h"
 #include "log.h"
 #include "login_data.h"
 #include "locale_service.h"
@@ -20,39 +19,8 @@
 #include "spam.h"
 #include "auth_brazil.h"
 
-extern bool g_bNoPasspod;
 extern std::string g_stBlockDate;
 extern int openid_server;
-
-//�߱� passpod ���� �Լ� 
-bool CheckPasspod(const char * account)
-{
-	char szQuery[1024];
-
-	snprintf(szQuery, sizeof(szQuery), "SELECT ID FROM passpod WHERE Login='%s'", account); 
-	SQLMsg * pMsg = DBManager::instance().DirectQuery(szQuery);
- 	
-	if (!pMsg)
-	{
-		//fprintf(stderr, "cannot get the MATRIX\n");
-		sys_log(0, "cannot get the PASSPOD");
-		delete pMsg;
-		return false;
-	}
-
-	if (pMsg->Get()->uiNumRows == 0)
-	{
-		puts(szQuery);
-		sys_log(0, "[PASSPOD]DirectQuery failed(%s)", szQuery);
-
-		delete pMsg;
-		return false;
-	}
-
-	delete pMsg;
-
-	return true;
-}
 
 
 DBManager::DBManager() : m_bIsConnect(false)
@@ -244,76 +212,25 @@ void DBManager::SendAuthLogin(LPDESC d)
 	SendLoginPing(r.login);
 }
 
-void DBManager::LoginPrepare(BYTE bBillType, DWORD dwBillID, long lRemainSecs, LPDESC d, DWORD * pdwClientKey, int * paiPremiumTimes)
-{
-	const TAccountTable & r = d->GetAccountTable();
+void DBManager::LoginPrepare(BYTE bBillType, DWORD dwBillID, long lRemainSecs, LPDESC d, DWORD * pdwClientKey, int * paiPremiumTimes)
+{
+	const TAccountTable & r = d->GetAccountTable();
+
+	CLoginData * pkLD = M2_NEW CLoginData;
+
+	pkLD->SetKey(d->GetLoginKey());
+	pkLD->SetLogin(r.login);
+	pkLD->SetIP(d->GetHostName());
+	pkLD->SetClientKey(pdwClientKey);
+
+	if (paiPremiumTimes)
+		pkLD->SetPremium(paiPremiumTimes);
+
+	InsertLoginData(pkLD);
+
+	SendAuthLogin(d);
+}
 
-	CLoginData * pkLD = M2_NEW CLoginData;
-
-	pkLD->SetKey(d->GetLoginKey());
-	pkLD->SetLogin(r.login);
-	pkLD->SetIP(d->GetHostName());
-	pkLD->SetClientKey(pdwClientKey);
-
-	if (paiPremiumTimes)
-		pkLD->SetPremium(paiPremiumTimes);
-
-	InsertLoginData(pkLD);
-
-	if (*d->GetMatrixCode())
-	{
-		unsigned long rows = 0, cols = 0;
-		MatrixCardRndCoordinate(rows, cols);
-
-		d->SetMatrixCardRowsAndColumns(rows, cols);
-
-		TPacketGCMatrixCard pm;
-
-		pm.bHeader = HEADER_GC_MATRIX_CARD;
-		pm.dwRows = rows;
-		pm.dwCols = cols;
-
-		d->Packet(&pm, sizeof(TPacketGCMatrixCard));
-
-		sys_log(0, "MATRIX_QUERY: %s %c%d %c%d %c%d %c%d %s", 
-				r.login,
-				MATRIX_CARD_ROW(rows, 0) + 'A',
-				MATRIX_CARD_COL(cols, 0) + 1,
-				MATRIX_CARD_ROW(rows, 1) + 'A',
-				MATRIX_CARD_COL(cols, 1) + 1,
-				MATRIX_CARD_ROW(rows, 2) + 'A',
-				MATRIX_CARD_COL(cols, 2) + 1,
-				MATRIX_CARD_ROW(rows, 3) + 'A',
-				MATRIX_CARD_COL(cols, 3) + 1,
-				d->GetMatrixCode());
-	}
-	else
-	{
-		if (LC_IsNewCIBN())
-		{
-			if (!g_bNoPasspod)
-			{
-				if (CheckPasspod(r.login))
-				{
-					BYTE id = HEADER_GC_REQUEST_PASSPOD;
-					d->Packet(&id, sizeof(BYTE));
-					sys_log(0, "%s request passpod", r.login);
-				}
-				else
-				{
-					SendAuthLogin(d);
-
-				}
-			}
-			else
-			{
-				SendAuthLogin(d);
-			}
-		}
-		else
-			SendAuthLogin(d);
-	}
-}
 
 void DBManager::AnalyzeReturnQuery(SQLMsg * pMsg)
 {
@@ -363,84 +280,41 @@ void DBManager::AnalyzeReturnQuery(SQLMsg * pMsg)
 					// PASSWORD('%s'), password, securitycode, social_id, id, status
 					char szEncrytPassword[45 + 1];
 					char szPassword[45 + 1];
-					char szMatrixCode[MATRIX_CODE_MAX_LEN + 1];
-					char szSocialID[SOCIAL_ID_MAX_LEN + 1];
+						char szSocialID[SOCIAL_ID_MAX_LEN + 1];
 					char szStatus[ACCOUNT_STATUS_MAX_LEN + 1];
 					DWORD dwID = 0;
 
-					if (!row[col]) 
-					{ 
-						sys_err("error column %d", col);
-						M2_DELETE(pinfo);
-					   	break; 
-					}
+					if (!row[col])
+				{
+					col++;
+				}
+				else
+				{
+					col++;
+				}
 					
 					strlcpy(szEncrytPassword, row[col++], sizeof(szEncrytPassword));
 
-					if (!row[col]) 
-					{
-					   	sys_err("error column %d", col);
-						M2_DELETE(pinfo);
-					   	break;
-				   	}
-				
-					strlcpy(szPassword, row[col++], sizeof(szPassword));
-
-					if (!row[col]) 
-					{
-						*szMatrixCode = '\0'; 
-						col++;
-					}
+					if (!row[col])
+				{
+					col++;
+				}
+				else
+				{
+					col++;
+				}
 					else
 					{
-						strlcpy(szMatrixCode, row[col++], sizeof(szMatrixCode));
 					}
 
 					if (!row[col])
-				   	{ 
-						sys_err("error column %d", col); 
-						M2_DELETE(pinfo);
-						break;
-				   	}
-
-					strlcpy(szSocialID, row[col++], sizeof(szSocialID));
-
-					if (!row[col])
-				   	{
-					   	sys_err("error column %d", col);
-						M2_DELETE(pinfo);
-					   	break;
-				   	}
-				
-					str_to_number(dwID, row[col++]);
-					
-					if (!row[col]) 
-					{
-					   	sys_err("error column %d", col); 
-						M2_DELETE(pinfo);
-						break;
-				   	}
-
-					strlcpy(szStatus, row[col++], sizeof(szStatus));
-
-					BYTE bNotAvail = 0;
-					str_to_number(bNotAvail, row[col++]);
-
-					int aiPremiumTimes[PREMIUM_MAX_NUM];
-					memset(&aiPremiumTimes, 0, sizeof(aiPremiumTimes));
-
-					char szCreateDate[256] = "00000000";
-
-					if (!g_iUseLocale)
-					{
-						str_to_number(aiPremiumTimes[PREMIUM_EXP], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_ITEM], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_SAFEBOX], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_AUTOLOOT], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_FISH_MIND], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_MARRIAGE_FAST], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_GOLD], row[col++]);
-					}
+				{
+					col++;
+				}
+				else
+				{
+					col++;
+				}
 					else
 					{
 						str_to_number(aiPremiumTimes[PREMIUM_EXP], row[col++]);
@@ -523,7 +397,6 @@ void DBManager::AnalyzeReturnQuery(SQLMsg * pMsg)
 						strlcpy(r.social_id, szSocialID, sizeof(r.social_id));
 						DESC_MANAGER::instance().ConnectAccount(r.login, d);
 
-						d->SetMatrixCode(szMatrixCode);
 
 						sys_log(0, "QID_AUTH_LOGIN: SUCCESS %s", pinfo->login);
 
@@ -585,84 +458,41 @@ void DBManager::AnalyzeReturnQuery(SQLMsg * pMsg)
 					// PASSWORD('%s'), password, securitycode, social_id, id, status
 					char szEncrytPassword[45 + 1];
 					char szPassword[45 + 1];
-					char szMatrixCode[MATRIX_CODE_MAX_LEN + 1];
-					char szSocialID[SOCIAL_ID_MAX_LEN + 1];
+						char szSocialID[SOCIAL_ID_MAX_LEN + 1];
 					char szStatus[ACCOUNT_STATUS_MAX_LEN + 1];
 					DWORD dwID = 0;
 
-					if (!row[col]) 
-					{ 
-						sys_err("error column %d", col);
-						M2_DELETE(pinfo);
-					   	break; 
-					}
+					if (!row[col])
+				{
+					col++;
+				}
+				else
+				{
+					col++;
+				}
 					
 					strlcpy(szEncrytPassword, row[col++], sizeof(szEncrytPassword));
 
-					if (!row[col]) 
-					{
-					   	sys_err("error column %d", col);
-						M2_DELETE(pinfo);
-					   	break;
-				   	}
-				
-					strlcpy(szPassword, row[col++], sizeof(szPassword));
-
-					if (!row[col]) 
-					{
-						*szMatrixCode = '\0'; 
-						col++;
-					}
+					if (!row[col])
+				{
+					col++;
+				}
+				else
+				{
+					col++;
+				}
 					else
 					{
-						strlcpy(szMatrixCode, row[col++], sizeof(szMatrixCode));
 					}
 
 					if (!row[col])
-				   	{ 
-						sys_err("error column %d", col); 
-						M2_DELETE(pinfo);
-						break;
-				   	}
-
-					strlcpy(szSocialID, row[col++], sizeof(szSocialID));
-
-					if (!row[col])
-				   	{
-					   	sys_err("error column %d", col);
-						M2_DELETE(pinfo);
-					   	break;
-				   	}
-				
-					str_to_number(dwID, row[col++]);
-					
-					if (!row[col]) 
-					{
-					   	sys_err("error column %d", col); 
-						M2_DELETE(pinfo);
-						break;
-				   	}
-
-					strlcpy(szStatus, row[col++], sizeof(szStatus));
-
-					BYTE bNotAvail = 0;
-					str_to_number(bNotAvail, row[col++]);
-
-					int aiPremiumTimes[PREMIUM_MAX_NUM];
-					memset(&aiPremiumTimes, 0, sizeof(aiPremiumTimes));
-
-					char szCreateDate[256] = "00000000";
-
-					if (!g_iUseLocale)
-					{
-						str_to_number(aiPremiumTimes[PREMIUM_EXP], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_ITEM], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_SAFEBOX], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_AUTOLOOT], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_FISH_MIND], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_MARRIAGE_FAST], row[col++]);
-						str_to_number(aiPremiumTimes[PREMIUM_GOLD], row[col++]);
-					}
+				{
+					col++;
+				}
+				else
+				{
+					col++;
+				}
 					else
 					{
 						str_to_number(aiPremiumTimes[PREMIUM_EXP], row[col++]);
@@ -751,7 +581,6 @@ void DBManager::AnalyzeReturnQuery(SQLMsg * pMsg)
 						strlcpy(r.social_id, szSocialID, sizeof(r.social_id));
 						DESC_MANAGER::instance().ConnectAccount(r.login, d);
 
-						d->SetMatrixCode(szMatrixCode);
 						sys_log(0, "QID_AUTH_LOGIN_OPENID: SUCCESS %s", pinfo->login);
 					}
 				}

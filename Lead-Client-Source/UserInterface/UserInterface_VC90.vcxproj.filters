@@ -448,9 +448,6 @@
     <ClInclude Include="Locale_inc_KO_DEV.h">
       <Filter>Locale</Filter>
     </ClInclude>
-    <ClInclude Include="Locale_inc_NEWCIBN.h">
-      <Filter>Locale</Filter>
-    </ClInclude>
     <ClInclude Include="Locale_inc_SG.h">
       <Filter>Locale</Filter>
     </ClInclude>

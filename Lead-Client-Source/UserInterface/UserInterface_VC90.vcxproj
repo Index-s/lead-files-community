@@ -294,7 +294,6 @@
     <ClInclude Include="Locale_inc_JP.h" />
     <ClInclude Include="Locale_inc_KO.h" />
     <ClInclude Include="Locale_inc_KO_DEV.h" />
-    <ClInclude Include="Locale_inc_NEWCIBN.h" />
     <ClInclude Include="Locale_inc_SG.h" />
     <ClInclude Include="Locale_inc_VI.h" />
     <ClInclude Include="MarkImage.h" />
