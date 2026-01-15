@@ -1,5 +1,10 @@
 # Generated build files
-/db/db_d.*
+db/db_d.*
+db/PTS
+db/syserr
+db/syslog
+db/data
+db/locale
 auth/auth.exe
 auth/packet_info
 auth/PTS
@@ -9,8 +14,8 @@ auth/data
 auth/locale
 channel[1-4]/core[12]/game_d.*
 channel[1-4]/core[12]/packet_info
-channel[1-4]/core[12]/p2p_packet_info
-channel[1-4]/core[12]/PTS
+channel[1-4]/core[12]/p2p_packet_info*
+channel[1-4]/core[12]/PTS*
 channel[1-4]/core[12]/syserr
 channel[1-4]/core[12]/syslog
 channel[1-4]/core/[12]/data
