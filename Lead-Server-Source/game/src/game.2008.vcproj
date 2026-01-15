@@ -671,22 +671,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\HackShield.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\HackShield.h"
-				>
-			</File>
-			<File
-				RelativePath=".\HackShield_Impl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\HackShield_Impl.h"
-				>
-			</File>
-			<File
 				RelativePath=".\horse_rider.cpp"
 				>
 			</File>

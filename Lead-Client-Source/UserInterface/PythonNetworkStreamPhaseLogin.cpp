@@ -4,9 +4,6 @@
 #include "Test.h"
 #include "AccountConnector.h"
 
-#include "Hackshield.h"
-#include "WiseLogicXTrap.h"
-
 // Login ---------------------------------------------------------------------------
 void CPythonNetworkStream::LoginPhase()
 {
