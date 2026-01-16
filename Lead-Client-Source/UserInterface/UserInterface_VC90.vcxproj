@@ -225,8 +225,6 @@
     <ClCompile Include="PythonMessenger.cpp" />
     <ClCompile Include="PythonMiniMap.cpp" />
     <ClCompile Include="PythonMiniMapModule.cpp" />
-    <ClCompile Include="PythonNetworkDatagram.cpp" />
-    <ClCompile Include="PythonNetworkDatagramModule.cpp" />
     <ClCompile Include="PythonNetworkStream.cpp" />
     <ClCompile Include="PythonNetworkStreamCommand.cpp" />
     <ClCompile Include="PythonNetworkStreamEvent.cpp" />
@@ -316,7 +314,6 @@
     <ClInclude Include="PythonItem.h" />
     <ClInclude Include="PythonMessenger.h" />
     <ClInclude Include="PythonMiniMap.h" />
-    <ClInclude Include="PythonNetworkDatagram.h" />
     <ClInclude Include="PythonNetworkStream.h" />
     <ClInclude Include="PythonNonPlayer.h" />
     <ClInclude Include="PythonPlayer.h" />

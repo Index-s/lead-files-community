@@ -18,16 +18,6 @@ void CPythonNetworkStream::HandShakePhase()
 				return;
 			break;
 
-		case HEADER_GC_BINDUDP:
-			{
-				TPacketGCBindUDP BindUDP;
-				
-				if (!Recv(sizeof(TPacketGCBindUDP), &BindUDP))
-					return;
-
-				return;
-			}
-			break;
 
 		case HEADER_GC_HANDSHAKE:
 			{

@@ -253,10 +253,8 @@
     <ClCompile Include="PythonExceptionSender.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="PythonNetworkDatagram.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="PythonNetworkDatagramModule.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="PythonNetworkStream.cpp">
@@ -472,7 +470,6 @@
     <ClInclude Include="PythonExceptionSender.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="PythonNetworkDatagram.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="PythonNetworkStream.h">

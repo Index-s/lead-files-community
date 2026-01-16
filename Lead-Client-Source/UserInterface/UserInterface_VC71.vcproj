@@ -293,13 +293,10 @@
 				RelativePath="PythonExceptionSender.h">
 			</File>
 			<File
-				RelativePath="PythonNetworkDatagram.cpp">
 			</File>
 			<File
-				RelativePath="PythonNetworkDatagram.h">
 			</File>
 			<File
-				RelativePath="PythonNetworkDatagramModule.cpp">
 			</File>
 			<File
 				RelativePath="PythonNetworkStream.cpp">
