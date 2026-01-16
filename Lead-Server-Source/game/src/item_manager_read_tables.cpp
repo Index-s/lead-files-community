@@ -624,7 +624,7 @@ bool ITEM_MANAGER::ReadMonsterDropItemGroup(const char * c_pszFileName)
 		}
 		else if (strType == "drop")
 		{
-			CDropItemGroup* pkGroup;
+			CDropItemGroup* pkGroup = nullptr;
 			bool bNew = true;
 			itertype(m_map_pkDropItemGroup) it = m_map_pkDropItemGroup.find (iMobVnum);
 			if (it == m_map_pkDropItemGroup.end())
@@ -675,7 +675,9 @@ bool ITEM_MANAGER::ReadMonsterDropItemGroup(const char * c_pszFileName)
 					DWORD dwPct = (DWORD)(10000.0f * fPercent);
 
 					sys_log(0,"        name %s pct %d count %d", name.c_str(), dwPct, iCount);
-					pkGroup->AddItem(dwVnum, dwPct, iCount);
+
+					if (pkGroup)
+						pkGroup->AddItem(dwVnum, dwPct, iCount);
 
 					continue;
 				}
