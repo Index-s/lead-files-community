@@ -103,8 +103,6 @@ CInputAuth::CInputAuth()
 
 void CInputAuth::Login(LPDESC d, const char * c_pData)
 {
-	extern bool Metin2Server_IsInvalid();
-
 	TPacketCGLogin3 * pinfo = (TPacketCGLogin3 *) c_pData;
 
 	if (!g_bAuthServer)
@@ -225,8 +223,6 @@ void CInputAuth::Login(LPDESC d, const char * c_pData)
 
 void CInputAuth::LoginOpenID(LPDESC d, const char * c_pData)
 {
-	extern bool Metin2Server_IsInvalid();
-
 	//OpenID test code.
 	TPacketCGLogin5 *tempInfo1 = (TPacketCGLogin5 *)c_pData;
 

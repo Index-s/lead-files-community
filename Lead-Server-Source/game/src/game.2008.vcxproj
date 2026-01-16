@@ -50,7 +50,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)../../liblua/include;$(ProjectDir)../../libmysql/6.0.2/win32;$(ProjectDir)../../libdevil/;$(ProjectDir)../../libxtrap/include;$(SolutionDir)../Lead-Extern/include;$(ProjectDir)../../../Extern;$(ProjectDir)../../libserverkey;$(ProjectDir)../../../Extern/openssl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)../../liblua/include;$(ProjectDir)../../libmysql/6.0.2/win32;$(ProjectDir)../../libdevil/;$(ProjectDir)../../libxtrap/include;$(SolutionDir)../Lead-Extern/include;$(ProjectDir)../../../Extern;$(ProjectDir)../../../Extern/openssl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;__WIN32__;_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T;_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -102,7 +102,6 @@
     <ClCompile Include="char_resist.cpp" />
     <ClCompile Include="char_skill.cpp" />
     <ClCompile Include="char_state.cpp" />
-    <ClCompile Include="check_server.cpp" />
     <ClCompile Include="cipher.cpp" />
     <ClCompile Include="ClientPackageCryptInfo.cpp" />
     <ClCompile Include="cmd.cpp" />
@@ -231,7 +230,6 @@
     <ClCompile Include="target.cpp" />
     <ClCompile Include="text_file_loader.cpp" />
     <ClCompile Include="threeway_war.cpp" />
-    <ClCompile Include="TrafficProfiler.cpp" />
     <ClCompile Include="trigger.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="vector.cpp" />
@@ -262,7 +260,6 @@
     <ClInclude Include="building.h" />
     <ClInclude Include="char.h" />
     <ClInclude Include="char_manager.h" />
-    <ClInclude Include="check_server.h" />
     <ClInclude Include="cipher.h" />
     <ClInclude Include="ClientPackageCryptInfo.h" />
     <ClInclude Include="cmd.h" />
@@ -361,7 +358,6 @@
     <ClInclude Include="target.h" />
     <ClInclude Include="text_file_loader.h" />
     <ClInclude Include="threeway_war.h" />
-    <ClInclude Include="TrafficProfiler.h" />
     <ClInclude Include="typedef.h" />
     <ClInclude Include="unique_item.h" />
     <ClInclude Include="utils.h" />
@@ -385,10 +381,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libpoly\libpoly.2008.vcxproj">
       <Project>{bd8e86dd-07ba-49b0-bf04-3282da8377eb}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libserverkey\libserverkey.vcxproj">
-      <Project>{991e4247-cb13-4ca9-b0f1-b662594935a7}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\libsql\libsql.2008.vcxproj">

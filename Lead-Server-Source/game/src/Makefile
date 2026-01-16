@@ -92,7 +92,7 @@ CPPFILE = BattleArena.cpp FSM.cpp MarkConvert.cpp MarkImage.cpp MarkManager.cpp 
 		  skill_power.cpp affect.cpp\
 		  SpeedServer.cpp questlua_speedserver.cpp\
 		  auction_manager.cpp ClientPackageCryptInfo.cpp cipher.cpp\
-		  buff_on_attributes.cpp check_server.cpp dragon_soul_table.cpp DragonSoul.cpp\
+		  buff_on_attributes.cpp dragon_soul_table.cpp DragonSoul.cpp\
 		  group_text_parse_tree.cpp char_dragonsoul.cpp questlua_dragonsoul.cpp\
 		  shop_manager.cpp shopEx.cpp item_manager_read_tables.cpp
 

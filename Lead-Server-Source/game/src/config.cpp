@@ -19,7 +19,6 @@
 #include "dev_log.h"
 #include "db.h"
 #include "skill_power.h"
-#include "check_server.h"
 
 using std::string;
 
@@ -34,18 +33,11 @@ int		ping_event_second_cycle = passes_per_sec * 60;
 bool	g_bNoMoreClient = false;
 bool	g_bNoRegen = false;
 
-// TRAFFIC_PROFILER
-bool		g_bTrafficProfileOn = false;
-DWORD		g_dwTrafficProfileFlushCycle = 3600;
-// END_OF_TRAFFIC_PROFILER
-
 int			test_server = 0;
 int			speed_server = 0;
 #ifdef __AUCTION__
 int			auction_server = 0;
 #endif
-bool		distribution_test_server = false;
-bool		china_event_server = false;
 bool		guild_mark_server = true;
 BYTE		guild_mark_min_level = 3;
 bool		no_wander = false;
@@ -818,17 +810,6 @@ void config_init(const string& st_localeServiceName)
 			continue;
 		}
 #endif
-		TOKEN("distribution_test_server")
-		{
-			str_to_number(distribution_test_server, value_string);
-			continue;
-		}
-
-		TOKEN("china_event_server")
-		{
-			str_to_number(china_event_server, value_string);
-			continue;
-		}
 
 		TOKEN("shutdowned")
 		{
@@ -841,13 +822,6 @@ void config_init(const string& st_localeServiceName)
 			g_bNoRegen = true;
 			continue;
 		}
-
-		TOKEN("traffic_profile")
-		{
-			g_bTrafficProfileOn = true;
-			continue;
-		}
-
 
 		TOKEN("map_allow")
 		{
@@ -1059,12 +1033,6 @@ void config_init(const string& st_localeServiceName)
 			else
 				g_BlockCharCreation = true;
 
-			continue;
-		}
-
-		TOKEN("server_key")
-		{
-			CheckServer::AddServerKey(value_string);
 			continue;
 		}
 	}

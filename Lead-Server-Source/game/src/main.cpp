@@ -38,7 +38,6 @@
 #include "wedding.h"
 #include "fishing.h"
 #include "item_addon.h"
-#include "TrafficProfiler.h"
 #include "locale_service.h"
 #include "arena.h"
 #include "OXEvent.h"
@@ -72,12 +71,6 @@
 #include <execinfo.h>
 #endif
 
-// 윈도우에서 테스트할 때는 항상 서버키 체크
-#ifdef _WIN32
-	//#define _USE_SERVER_KEY_
-#endif
-#include "check_server.h"
-
 extern void WriteVersion();
 //extern const char * _malloc_options;
 #if defined(__FreeBSD__) && defined(DEBUG_ALLOC)
@@ -92,10 +85,6 @@ void WriteMallocMessage(const char* p1, const char* p2, const char* p3, const ch
 	::fclose(fp);
 }
 #endif
-
-// TRAFFIC_PROFILER
-static const DWORD	TRAFFIC_PROFILE_FLUSH_CYCLE = 3600;	///< TrafficProfiler 의 Flush cycle. 1시간 간격
-// END_OF_TRAFFIC_PROFILER
 
 // 게임과 연결되는 소켓
 volatile int	num_events_called = 0;
@@ -302,87 +291,6 @@ void heartbeat(LPHEART ht, int pulse)
 	}
 }
 
-static bool g_isInvalidServer = false;
-
-bool Metin2Server_IsInvalid()
-{
-	return g_isInvalidServer;
-}
-
-void Metin2Server_Check()
-{
-#ifdef _SERVER_CHECK_
-
-#ifdef _USE_SERVER_KEY_
-	if (false == CheckServer::CheckIp(g_szPublicIP))
-	{
-#ifdef _WIN32
-		fprintf(stderr, "check ip failed\n");
-#endif
-		g_isInvalidServer = true;
-	}
-	return;
-#endif
-
-	if (LC_IsEurope() || test_server)
-		return;
-
-
-	// 브라질 ip
-	if (strncmp (g_szPublicIP, "189.112.1", 9) == 0)
-	{
-		return;
-	}
-
-	// 캐나다 ip
-	if (strncmp (g_szPublicIP, "74.200.6", 8) == 0)
-	{
-		return;
-	}
-
-	return;
-
-	static const size_t CheckServerListSize = 1;
-	static const char* CheckServerList[] = { "202.31.178.251"};
-	static const int CheckServerPort = 7120;
-
-	socket_t sockConnector = INVALID_SOCKET;
-
-	for (size_t i = 0 ; i < CheckServerListSize ; i++)
-	{
-		sockConnector = socket_connect( CheckServerList[i], CheckServerPort );
-
-		if (0 < sockConnector)
-			break;
-	}
-
-	if (0 > sockConnector)
-	{
-		if (true != LC_IsEurope()) // 유럽은 접속을 하지 못하면 인증된 것으로 간주
-			g_isInvalidServer = true;
-
-		return;
-	}
-
-	char buf[256] = { 0, };
-
-	socket_read(sockConnector, buf, sizeof(buf) - 1);
-
-	sys_log(0, "recv[%s]", buf);
-	
-	if (strncmp(buf, "OK", 2) == 0)
-		g_isInvalidServer = false;
-	else if (strncmp(buf, "CK", 2) == 0)
-		g_isInvalidServer = true;
-
-	socket_close(sockConnector);
-#else
-	g_isInvalidServer = false;
-	return;
-#endif
-	
-}
-
 static void CleanUpForEarlyExit() {
 	CancelReloadSpamEvent();
 }
@@ -445,7 +353,6 @@ int main(int argc, char **argv)
 
 	DESC_MANAGER	desc_manager;
 
-	TrafficProfiler	trafficProfiler;
 	CTableBySkill SkillPowerByLevel;
 	CPolymorphUtils polymorph_utils;
 	CProfiler		profiler;
@@ -484,18 +391,6 @@ int main(int argc, char **argv)
 	Blend_Item_init();
 	ani_init();
 	PanamaLoad();
-
-	Metin2Server_Check();
-
-#if defined(_WIN32) && defined(_USE_SERVER_KEY_)
-	if (CheckServer::IsFail())
-	{
-		return 1;
-	}
-#endif
-
-	if ( g_bTrafficProfileOn )
-		TrafficProfiler::instance().Initialize( TRAFFIC_PROFILE_FLUSH_CYCLE, "ProfileLog" );
 
 #if defined (__FreeBSD__) && defined(__FILEMONITOR__)
 	PFN_FileChangeListener pPackageNotifyFunc =  &(DESC_MANAGER::NotifyClientPackageFileChanged);
@@ -559,8 +454,6 @@ int main(int argc, char **argv)
 	quest_manager.Destroy();
 	sys_log(0, "<shutdown> Destroying building::CManager...");
 	building_manager.Destroy();
-	sys_log(0, "<shutdown> Flushing TrafficProfiler...");
-	trafficProfiler.Flush();
 
 	destroy();
 
@@ -577,8 +470,7 @@ void usage()
 			"-p <port>    : bind port number (port must be over 1024)\n"
 			"-l <level>   : sets log level\n"
 			"-v           : log to stdout\n"
-			"-r           : do not load regen tables\n"
-			"-t           : traffic proflie on\n");
+			"-r           : do not load regen tables\n");
 }
 
 int start(int argc, char **argv)
@@ -653,12 +545,6 @@ int start(int argc, char **argv)
 			case 'r':
 				g_bNoRegen = true;
 				break;
-
-				// TRAFFIC_PROFILER
-			case 't':
-				g_bTrafficProfileOn = true;
-				break;
-				// END_OF_TRAFFIC_PROFILER
 		}
 	}
 
@@ -841,12 +727,6 @@ int idle()
 		memset(&thecore_profiler[0], 0, sizeof(thecore_profiler));
 		memset(&s_dwProfiler[0], 0, sizeof(s_dwProfiler));
 	}
-#ifdef _USE_SERVER_KEY_
-	if (Metin2Server_IsInvalid() && 0 == (thecore_random() % 7146))
-	{
-		return 0; // shutdown
-	}
-#endif
 
 #ifdef __WIN32__
 	if (_kbhit()) {
