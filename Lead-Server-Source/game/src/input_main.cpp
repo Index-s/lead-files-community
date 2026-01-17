@@ -37,7 +37,6 @@
 #include "ani.h"
 #include "motion.h"
 #include "OXEvent.h"
-#include "locale_service.h"
 #include "DragonSoul.h"
 
 extern void SendShout(const char * szText, BYTE bEmpire);
@@ -2441,19 +2440,8 @@ void CInputMain::AnswerMakeGuild(LPCHARACTER ch, const char* c_pData)
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> [%s] 길드가 생성되었습니다."), cp.name);
 
-		int GuildCreateFee;
-
-		if (LC_IsBrazil())
-		{
-			GuildCreateFee = 500000;
-		}
-		else
-		{
-			GuildCreateFee = 200000;
-		}
-
-		ch->PointChange(POINT_GOLD, -GuildCreateFee);
-		DBManager::instance().SendMoneyLog(MONEY_LOG_GUILD, ch->GetPlayerID(), -GuildCreateFee);
+		ch->PointChange(POINT_GOLD, -gGuildCreateFee);
+		DBManager::instance().SendMoneyLog(MONEY_LOG_GUILD, ch->GetPlayerID(), -gGuildCreateFee);
 
 		char Log[128];
 		snprintf(Log, sizeof(Log), "GUILD_NAME %s MASTER %s", cp.name, ch->GetName());
@@ -2659,10 +2647,6 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 					member->SetQuestFlag("guild_manage.new_withdraw_time", get_global_time());
 					pGuild->RequestRemoveMember(member->GetPlayerID());
 
-					if (LC_IsBrazil() == true)
-					{
-						DBManager::instance().Query("REPLACE INTO guild_invite_limit VALUES(%d, %d)", pGuild->GetID(), get_global_time());
-					}
 				}
 				else
 				{

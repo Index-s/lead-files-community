@@ -1307,13 +1307,10 @@ void CHARACTER::Disconnect(const char * c_pszReason)
 
 	LogManager::instance().CharLog(this, 0, "LOGOUT", buf);
 
-	if (LC_IsYMIR() || LC_IsKorea() || LC_IsBrazil())
+	if (LC_IsYMIR() || LC_IsKorea())
 	{
 		long playTime = GetRealPoint(POINT_PLAYTIME) - m_dwLoginPlayTime;
 		LogManager::instance().LoginLog(false, GetDesc()->GetAccountTable().id, GetPlayerID(), GetLevel(), GetJob(), playTime);
-
-		if (LC_IsBrazil() != true)
-			CPCBangManager::instance().Log(GetDesc()->GetHostName(), GetPlayerID(), playTime);
 	}
 
 	if (m_pWarMap)
@@ -4300,7 +4297,7 @@ bool CHARACTER::RequestToParty(LPCHARACTER leader)
 			return false;
 
 		case PERR_LVBOUNDARY:
-			ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<파티> -30 ~ +30 레벨 이내의 상대방만 초대할 수 있습니다.")); 
+			ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<파티> -%d ~ +%d 레벨 이내의 상대방만 초대할 수 있습니다."), gPartyGapLevel, gPartyGapLevel); 
 			return false;
 
 		case PERR_LOWLEVEL:
@@ -4640,18 +4637,7 @@ CHARACTER::PartyJoinErrCode CHARACTER::IsPartyJoinableCondition(const LPCHARACTE
 
 static bool __party_can_join_by_level(LPCHARACTER leader, LPCHARACTER quest)
 {
-	int	level_limit = 30;
-
-	if (LC_IsCanada())
-		level_limit = 15;
-	else if (LC_IsBrazil() == true)
-	{
-		level_limit = 10;
-	}
-	else
-		level_limit = 30;
-
-	return (abs(leader->GetLevel() - quest->GetLevel()) <= level_limit);
+	return (abs(leader->GetLevel() - quest->GetLevel()) <= gPartyGapLevel);
 }
 
 CHARACTER::PartyJoinErrCode CHARACTER::IsPartyJoinableMutableCondition(const LPCHARACTER pchLeader, const LPCHARACTER pchGuest)

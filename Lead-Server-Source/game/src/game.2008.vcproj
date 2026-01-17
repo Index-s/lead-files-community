@@ -235,13 +235,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\auth_brazil.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\auth_brazil.h"
-				>
-			</File>
 			<File
 				RelativePath=".\banword.cpp"
 				>

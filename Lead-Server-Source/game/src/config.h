@@ -100,6 +100,9 @@ extern bool g_protectNormalPlayer;      // 범법자가 "평화모드" 인 일반유저를 공�
 extern DWORD g_GoldDropTimeLimitValue;
 
 extern int gPlayerMaxLevel;
+extern BYTE gPartyGapLevel;
+
+extern int gGuildCreateFee;
 
 extern bool g_BlockCharCreation;
 

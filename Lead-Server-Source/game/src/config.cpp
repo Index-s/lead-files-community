@@ -48,12 +48,7 @@ char		g_szInternalIP[16] = "0";
 bool		g_bSkillDisable = false;
 int			g_iFullUserCount = 1200;
 int			g_iBusyUserCount = 650;
-//Canada
-//int			g_iFullUserCount = 600;
-//int			g_iBusyUserCount = 350;
-//Brazil
-//int			g_iFullUserCount = 650;
-//int			g_iBusyUserCount = 450;
+
 bool		g_bEmpireWhisper = true;
 BYTE		g_bAuthServer = false;
 
@@ -110,6 +105,9 @@ bool		LoadClientVersion();
 bool            g_protectNormalPlayer   = false;        // 범법자가 "평화모드" 인 일반유저를 공격하지 못함
 
 int gPlayerMaxLevel = 99;
+BYTE gPartyGapLevel = 30;
+
+int gGuildCreateFee = 200000;
 
 bool g_BlockCharCreation = false;
 
@@ -1020,6 +1018,24 @@ void config_init(const string& st_localeServiceName)
 			gPlayerMaxLevel = MINMAX(1, gPlayerMaxLevel, PLAYER_MAX_LEVEL_CONST);
 
 			fprintf(stderr, "PLAYER_MAX_LEVEL: %d\n", gPlayerMaxLevel);
+		}
+
+		TOKEN("party_gap_level")
+		{
+			str_to_number(gPartyGapLevel, value_string);
+
+			gPartyGapLevel = MINMAX(1, gPartyGapLevel, PLAYER_MAX_LEVEL_CONST);
+
+			fprintf(stderr, "PARTY_GAP_LEVEL: %d\n", gPartyGapLevel);
+		}
+
+		TOKEN("guild_create_fee")
+		{
+			str_to_number(gGuildCreateFee, value_string);
+
+			gGuildCreateFee = MINMAX(1, gGuildCreateFee, GOLD_MAX);
+
+			fprintf(stderr, "GUILD_CREATE_FEE: %d\n", gGuildCreateFee);
 		}
 
 		TOKEN("block_char_creation")
