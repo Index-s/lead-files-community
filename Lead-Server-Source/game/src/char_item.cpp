@@ -5439,8 +5439,8 @@ bool CHARACTER::DropGold(int gold)
 			if (gold > 1000)
 				LogManager::instance().CharLog(this, gold, "DROP_GOLD", "");
 
-			item->StartDestroyEvent(60);
-			ChatPacket(CHAT_TYPE_INFO, LC_TEXT("떨어진 아이템은 %d분 후 사라집니다."), 1);
+			item->StartDestroyEvent(150);
+			ChatPacket(CHAT_TYPE_INFO, LC_TEXT("떨어진 아이템은 %d분 후 사라집니다."), 150/60);
 		}
 
 		Save();
