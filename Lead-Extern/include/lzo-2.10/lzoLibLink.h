@@ -20,7 +20,7 @@
 #endif
 
 #if defined( _DEBUG ) || defined( DEBUG )
-#define _RUNTIME_DEBUG					"d"
+#define _RUNTIME_DEBUG					"_d"
 #else
 #define _RUNTIME_DEBUG					""
 #endif
@@ -30,6 +30,6 @@
 
 #endif
 
-#pragma comment( lib, "lzo-2.03" _RUNTIME_LIBRARY ".lib" )
+#pragma comment( lib, "lzo-2.10" _RUNTIME_LIBRARY ".lib" )
 
 #endif /* !_LZOLIBLINK_H_ */
