@@ -1367,7 +1367,7 @@ void CIME::SetupImeApi()
 
 	if(ImmGetIMEFileNameA(ms_hklCurrent, szImeFile, COUNTOF(szImeFile) - 1) == 0)
 		return;
-	if(stricmp(szImeFile, CHS_IMEFILENAME_QQPINYIN) == 0 || stricmp(szImeFile, CHS_IMEFILENAME_SOGOUPY) == 0 || stricmp(szImeFile, CHS_IMEFILENAME_GOOGLEPINYIN2) == 0)
+	if(_stricmp(szImeFile, CHS_IMEFILENAME_QQPINYIN) == 0 || _stricmp(szImeFile, CHS_IMEFILENAME_SOGOUPY) == 0 || _stricmp(szImeFile, CHS_IMEFILENAME_GOOGLEPINYIN2) == 0)
 		ms_bUseIMMCandidate = true;
 	if (ms_bUILessMode)
 		return;

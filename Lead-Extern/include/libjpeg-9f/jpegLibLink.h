@@ -20,7 +20,7 @@
 #endif
 
 #if defined( _DEBUG ) || defined( DEBUG )
-#define _RUNTIME_DEBUG				"d"
+#define _RUNTIME_DEBUG				"_d"
 #else
 #define _RUNTIME_DEBUG				""
 #endif
@@ -30,7 +30,7 @@
 
 #endif
 
-#define LIBJPEG_VERSION				"6b"
+#define LIBJPEG_VERSION				"9f"
 
 #pragma comment( lib, "libjpeg-" LIBJPEG_VERSION _RUNTIME_LIBRARY ".lib" )
 
