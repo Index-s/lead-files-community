@@ -3545,38 +3545,6 @@ ACMD(do_threeway_war_myinfo)
 			CThreeWayWar::instance().GetReviveTokenForPlayer(ch->GetPlayerID()));
 }
 
-ACMD(do_rmcandidacy)
-{
-	char arg1[256];
-
-	one_argument(argument, arg1, sizeof(arg1));
-
-	if (!*arg1)
-	{
-		ch->ChatPacket(CHAT_TYPE_INFO, "Usage: rmcandidacy <name>");
-		return;
-	}
-		
-	LPCHARACTER tch = CHARACTER_MANAGER::instance().FindPC(arg1); 
-
-	if (!tch)
-	{
-		CCI * pkCCI = P2P_MANAGER::instance().Find(arg1);
-
-		if (pkCCI)
-		{
-			if (pkCCI->bChannel != g_bChannel)
-			{
-				ch->ChatPacket(CHAT_TYPE_INFO, "Target is in %d channel (my channel %d)", pkCCI->bChannel, g_bChannel);
-				return;
-			}
-		}
-	}
-
-	db_clientdesc->DBPacket(HEADER_GD_RMCANDIDACY, 0, NULL, 32);
-	db_clientdesc->Packet(arg1, 32); 
-}
-
 ACMD(do_reset_subskill)
 {
 	char arg1[256];

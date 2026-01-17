@@ -332,8 +332,6 @@ void CHARACTER::Initialize()
 
 	m_iMyShopTime = 0;
 
-	InitMC();
-
 	m_deposit_pulse = 0;
 
 	SET_OVER_TIME(this, OT_NONE);
