@@ -85,22 +85,22 @@ BYTE gm_new_get_level( const char * name, const char * host, const char* account
 
 	    if ( host )
 	    {
-		if ( it->second.pset_Host )
-		{
-		    if ( it->second.pset_Host->end() == it->second.pset_Host->find( host ) )
-		    {
-			sys_log(0, "GM_NEW_GET_LEVEL : BAD HOST IN HOST_LIST");
-			return GM_PLAYER;
-		    }
-		}
-		else
-		{
-		    if ( strcmp ( it->second.Info.m_szContactIP, host  ) != 0 )
-		    {
-			sys_log(0, "GM_NEW_GET_LEVEL : BAD HOST IN GMLIST");
-			return GM_PLAYER;
-		    }
-		}
+			if ( it->second.pset_Host )
+			{
+			    if ( it->second.pset_Host->end() == it->second.pset_Host->find( host ) )
+			    {
+					sys_log(0, "GM_NEW_GET_LEVEL : BAD HOST IN HOST_LIST");
+					return GM_PLAYER;
+			    }
+			}
+			else
+			{
+			    if ( strcmp ( it->second.Info.m_szContactIP, host  ) != 0 )
+			    {
+					sys_log(0, "GM_NEW_GET_LEVEL : BAD HOST IN GMLIST");
+					return GM_PLAYER;
+			    }
+			}
 	    }
 	    sys_log(0, "GM_NEW_GET_LEVEL : FIND HOST");
 	    
