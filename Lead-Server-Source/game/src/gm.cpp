@@ -83,11 +83,14 @@ BYTE gm_new_get_level( const char * name, const char * host, const char* account
 	else
 	{
 
-	    if ( host )
+		// Do not check for host name if contact ip is 'ALL' or empty
+	    if (host &&
+			strlen(it->second.Info.m_szContactIP) > 0 &&
+			strcmp(it->second.Info.m_szContactIP, "ALL") != 0)
 	    {
-			if ( it->second.pset_Host )
+			if (it->second.pset_Host)
 			{
-			    if ( it->second.pset_Host->end() == it->second.pset_Host->find( host ) )
+			    if (it->second.pset_Host->end() == it->second.pset_Host->find(host) )
 			    {
 					sys_log(0, "GM_NEW_GET_LEVEL : BAD HOST IN HOST_LIST");
 					return GM_PLAYER;
