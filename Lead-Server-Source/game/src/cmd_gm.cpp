@@ -3517,12 +3517,8 @@ ACMD(do_flush)
 
 	DWORD pid = (DWORD) strtoul(arg1, NULL, 10);
 
-	auto tch = CHARACTER_MANAGER::instance().FindByPID(pid);
-	if (!tch) {
-		ch->ChatPacket(CHAT_TYPE_INFO, "player_id %u not found", pid);
-		return;
-	}
-	tch->Save();
+	db_clientdesc->DBPacketHeader(HEADER_GD_FLUSH_CACHE, 0, sizeof(DWORD));
+	db_clientdesc->Packet(&pid, sizeof(DWORD));
 }
 
 ACMD(do_eclipse)
