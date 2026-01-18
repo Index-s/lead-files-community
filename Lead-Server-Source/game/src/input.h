@@ -243,8 +243,6 @@ protected:
 
 	void		SetEventFlag(const char* c_pData);
 
-	void		VCard(const char * c_pData);
-
 	void		CreateObject(const char * c_pData);
 	void		DeleteObject(const char * c_pData);
 	void		UpdateLand(const char * c_pData);
@@ -314,7 +312,6 @@ class CInputP2P : public CInputProcessor
 		void		Disconnect(const char * c_pData);
 		void		MessengerAdd(const char * c_pData);
 		void		MessengerRemove(const char * c_pData);
-		void		MessengerMobile(const char * c_pData);
 		void		FindPosition(LPDESC d, const char* c_pData);
 		void		WarpCharacter(const char* c_pData);
 		void		GuildWarZoneMapIndex(const char* c_pData);
@@ -323,7 +320,6 @@ class CInputP2P : public CInputProcessor
 		void		XmasWarpSantaReply(const char * c_pData);
 		void		LoginPing(LPDESC d, const char * c_pData);
 		void		BlockChat(const char * c_pData);
-		void		PCBangUpdate(const char* c_pData);
 		void		IamAwake(LPDESC d, const char * c_pData);
 
 	protected:

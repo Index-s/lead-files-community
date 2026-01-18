@@ -15,7 +15,6 @@
 #include "log.h"
 #include "login_data.h"
 #include "locale_service.h"
-#include "pcbang.h"
 #include "spam.h"
 
 extern std::string g_stBlockDate;
@@ -493,75 +492,38 @@ void DBManager::AnalyzeReturnQuery(SQLMsg * pMsg)
 			break;
 			// END_OF_BLOCK_CHAT
 
-			// PCBANG_IP_LIST
-		case QID_PCBANG_IP_LIST_CHECK:
+		case QID_JAPAN_CREATE_ID :
 			{
-				const std::string PCBANG_IP_TABLE_NAME("pcbang_ip");
+				TPacketCGLogin3 * pinfo = (TPacketCGLogin3 *) qi->pvData ;
 
-				if (pMsg->Get()->uiNumRows > 0)
+				if( pMsg->Get()->uiAffectedRows == 0 || pMsg->Get()->uiAffectedRows == (uint32_t)-1 )
 				{
-					MYSQL_ROW row;
-					bool isFinded = false;
-
-					while ((row = mysql_fetch_row(pMsg->Get()->pSQLResult)))
-					{
-						const char* c_szName = row[0];
-						const char* c_szUpdateTime = row[12];
-
-						if (test_server)
-							sys_log(0, "%s:%s", c_szName, c_szUpdateTime);
-
-						if (PCBANG_IP_TABLE_NAME == c_szName)
-						{
-							isFinded = true;
-
-							static std::string s_stLastTime;
-							if (s_stLastTime != c_szUpdateTime)
-							{
-								s_stLastTime = c_szUpdateTime;
-								sys_log(0, "'%s' mysql table is UPDATED(%s)", PCBANG_IP_TABLE_NAME.c_str(), c_szUpdateTime);
-								ReturnQuery(QID_PCBANG_IP_LIST_SELECT, 0, NULL, "SELECT pcbang_id, ip FROM %s;", PCBANG_IP_TABLE_NAME.c_str());
-							}
-							else
-							{
-								sys_log(0, "'%s' mysql table is NOT updated(%s)", PCBANG_IP_TABLE_NAME.c_str(), c_szUpdateTime);
-							}
-							break;
-						}
-					}
-
-					if (!isFinded)
-					{
-						sys_err(0, "'%s' mysql table CANNOT FIND", PCBANG_IP_TABLE_NAME.c_str());
-					}
+					LPDESC d = DESC_MANAGER::instance().FindByLoginKey(qi->dwIdent) ;
+					sys_log(0, "[AUTH_JAPAN]   NOID") ;
+					sys_log(0, "[AUTH_JAPAN] : Failed to create a new account %s", pinfo->login) ;
+					LoginFailure(d, "NOID") ;
+					M2_DELETE(pinfo);
 				}
-				else if (test_server)
+				else
 				{
-					sys_err(0, "'%s' mysql table is NOT EXIST", PCBANG_IP_TABLE_NAME.c_str());
+					sys_log(0, "[AUTH_JAPAN] : Succeed to create a new account %s", pinfo->login) ;
+
+					ReturnQuery(QID_AUTH_LOGIN_OPENID, qi->dwIdent, pinfo,
+							"SELECT PASSWORD('%s'),password,securitycode,social_id,id,status,availDt - NOW() > 0,"
+							"UNIX_TIMESTAMP(silver_expire),"
+							"UNIX_TIMESTAMP(gold_expire),"
+							"UNIX_TIMESTAMP(safebox_expire),"
+							"UNIX_TIMESTAMP(autoloot_expire),"
+							"UNIX_TIMESTAMP(fish_mind_expire),"
+							"UNIX_TIMESTAMP(marriage_fast_expire),"
+							"UNIX_TIMESTAMP(money_drop_rate_expire),"
+							"UNIX_TIMESTAMP(create_time)"
+							" FROM account WHERE login='%s'",
+							pinfo->passwd, pinfo->login) ;
 				}
 			}
 			break;
 
-		case QID_PCBANG_IP_LIST_SELECT:
-			{
-				if (pMsg->Get()->uiNumRows > 0)
-				{
-					MYSQL_ROW row;
-
-					while ((row = mysql_fetch_row(pMsg->Get()->pSQLResult)))
-					{
-						CPCBangManager::instance().InsertIP(row[0], row[1]);
-					}
-				}
-				else if (test_server)
-				{
-					sys_log(0, "PCBANG_IP_LIST is EMPTY");
-				}
-			}
-			break;
-
-
-			// END_OF_PCBANG_IP_LIST
 		default:
 			sys_err("FATAL ERROR!!! Unhandled return query id %d", qi->iType);
 			break;
@@ -593,29 +555,6 @@ void DBManager::SendMoneyLog(BYTE type, DWORD vnum, int gold)
 	p.vnum = vnum;
 	p.gold = gold;
 	db_clientdesc->DBPacket(HEADER_GD_MONEY_LOG, 0, &p, sizeof(p));
-}
-
-void VCardUse(LPCHARACTER CardOwner, LPCHARACTER CardTaker, LPITEM item)
-{
-	TPacketGDVCard p;
-
-	p.dwID = item->GetSocket(0);
-	strlcpy(p.szSellCharacter, CardOwner->GetName(), sizeof(p.szSellCharacter));
-	strlcpy(p.szSellAccount, CardOwner->GetDesc()->GetAccountTable().login, sizeof(p.szSellAccount));
-	strlcpy(p.szBuyCharacter, CardTaker->GetName(), sizeof(p.szBuyCharacter));
-	strlcpy(p.szBuyAccount, CardTaker->GetDesc()->GetAccountTable().login, sizeof(p.szBuyAccount));
-
-	db_clientdesc->DBPacket(HEADER_GD_VCARD, 0, &p, sizeof(TPacketGDVCard));
-
-	CardTaker->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%d占쏙옙占쏙옙 占쏙옙占쏙옙占시곤옙占쏙옙 占쌩곤옙 占실억옙占쏙옙占싹댐옙. (占쏙옙占쏙옙占쏙옙호 %d)"), item->GetSocket(1) / 60, item->GetSocket(0));
-
-	LogManager::instance().VCardLog(p.dwID, CardTaker->GetX(), CardTaker->GetY(), g_stHostname.c_str(),
-			CardOwner->GetName(), CardOwner->GetDesc()->GetHostName(),
-			CardTaker->GetName(), CardTaker->GetDesc()->GetHostName());
-
-	ITEM_MANAGER::instance().RemoveItem(item);
-
-	sys_log(0, "VCARD_TAKE: %u %s -> %s", p.dwID, CardOwner->GetName(), CardTaker->GetName());
 }
 
 size_t DBManager::EscapeString(char* dst, size_t dstSize, const char *src, size_t srcSize)

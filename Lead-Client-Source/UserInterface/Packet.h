@@ -118,7 +118,6 @@ enum
 	
 	HEADER_CG_HACK								= 105,
     HEADER_CG_CHANGE_NAME                       = 106,
-    HEADER_CG_SMS                               = 107,
     HEADER_CG_LOGIN2                            = 109,
 	HEADER_CG_DUNGEON							= 110,
 	HEADER_CG_LOGIN3							= 111,
@@ -535,13 +534,6 @@ typedef struct command_whisper
     char        szNameTo[CHARACTER_NAME_MAX_LEN + 1];
 } TPacketCGWhisper;
 
-typedef struct command_sms
-{
-    BYTE        bHeader;
-    WORD        wSize;
-    char        szNameTo[CHARACTER_NAME_MAX_LEN + 1];
-} TPacketCGSMS;
-
 enum EBattleMode
 {
 	BATTLEMODE_ATTACK = 0,
@@ -736,8 +728,7 @@ enum
 	MESSENGER_SUBHEADER_GC_LIST,
 	MESSENGER_SUBHEADER_GC_LOGIN,
 	MESSENGER_SUBHEADER_GC_LOGOUT,
-	MESSENGER_SUBHEADER_GC_INVITE,
-	MESSENGER_SUBHEADER_GC_MOBILE,
+	MESSENGER_SUBHEADER_GC_INVITE
 };
 
 typedef struct packet_messenger
@@ -757,7 +748,6 @@ enum
 {
 	MESSENGER_CONNECTED_STATE_OFFLINE,
 	MESSENGER_CONNECTED_STATE_ONLINE,
-	MESSENGER_CONNECTED_STATE_MOBILE,
 };
 
 typedef struct packet_messenger_list_online
@@ -1559,8 +1549,6 @@ enum EPointTypes
    
     POINT_SKILL_DEFEND_BONUS,       // 123 스킬 방어 데미지
     POINT_NORMAL_HIT_DEFEND_BONUS,  // 124 평타 방어 데미지
-    POINT_PC_BANG_EXP_BONUS,        // 125
-	POINT_PC_BANG_DROP_BONUS,       // 126 PC방 전용 드롭률 보너스
 
 	POINT_ENERGY = 128,				// 128 기력
 

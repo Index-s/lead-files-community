@@ -16,8 +16,6 @@ enum EMisc
 	ABILITY_MAX_NUM			= 50,
 	EMPIRE_MAX_NUM			= 4,
 	BANWORD_MAX_LEN			= 24,
-	SMS_MAX_LEN				= 80,
-	MOBILE_MAX_LEN			= 32,
 	SOCIAL_ID_MAX_LEN		= 18,
 
 	GUILD_NAME_MAX_LEN		= 12,
@@ -401,8 +399,6 @@ enum EApplyTypes
 	APPLY_NORMAL_HIT_DAMAGE_BONUS,	// 72 평타 데미지 * (100+x)%
 	APPLY_SKILL_DEFEND_BONUS,		// 73 스킬 데미지 방어 * (100-x)%
 	APPLY_NORMAL_HIT_DEFEND_BONUS,	// 74 평타 데미지 방어 * (100-x)%
-	APPLY_PC_BANG_EXP_BONUS,		// 75 PC방 아이템 EXP 보너스
-	APPLY_PC_BANG_DROP_BONUS,		// 76 PC방 아이템 드롭율 보너스
 
 	APPLY_EXTRACT_HP_PCT,			// 77 사용시 HP 소모
 
