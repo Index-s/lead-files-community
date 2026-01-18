@@ -154,12 +154,12 @@ bool CPythonNetworkStream::SendSelectEmpirePacket(DWORD dwEmpireID)
 
 bool CPythonNetworkStream::SendSelectCharacterPacket(BYTE Index)
 {
-	TPacketCGPlayerSelect SelectCharacterPacket;
+	TPacketCGCharacterSelect SelectCharacterPacket;
 
 	SelectCharacterPacket.header = HEADER_CG_CHARACTER_SELECT;
 	SelectCharacterPacket.index = Index;
 
-	if (!Send(sizeof(TPacketCGPlayerSelect), &SelectCharacterPacket))
+	if (!Send(sizeof(TPacketCGCharacterSelect), &SelectCharacterPacket))
 	{
 		Tracen("SendSelectCharacterPacket - Error");
 		return false;
@@ -170,13 +170,13 @@ bool CPythonNetworkStream::SendSelectCharacterPacket(BYTE Index)
 
 bool CPythonNetworkStream::SendDestroyCharacterPacket(BYTE index, const char * szPrivateCode)
 {
-    TPacketCGPlayerDelete DestroyCharacterPacket;
+    TPacketCGCharacterDelete DestroyCharacterPacket;
 
 	DestroyCharacterPacket.header = HEADER_CG_CHARACTER_DELETE;
 	DestroyCharacterPacket.index = index;
 	strncpy(DestroyCharacterPacket.private_code, szPrivateCode, PRIVATE_CODE_LENGTH);
 
-	if (!Send(sizeof(TPacketCGPlayerDelete), &DestroyCharacterPacket))
+	if (!Send(sizeof(TPacketCGCharacterDelete), &DestroyCharacterPacket))
 	{
 		Tracen("SendDestroyCharacterPacket");
 		return false;
@@ -187,7 +187,7 @@ bool CPythonNetworkStream::SendDestroyCharacterPacket(BYTE index, const char * s
 
 bool CPythonNetworkStream::SendCreateCharacterPacket(BYTE index, const char *name, BYTE job, BYTE shape, BYTE byCON, BYTE byINT, BYTE bySTR, BYTE byDEX)
 {
-	TPacketCGPlayerCreate createCharacterPacket;
+	TPacketCGCharacterCreate createCharacterPacket;
 
 	createCharacterPacket.header = HEADER_CG_CHARACTER_CREATE;
 	createCharacterPacket.index = index;
@@ -199,7 +199,7 @@ bool CPythonNetworkStream::SendCreateCharacterPacket(BYTE index, const char *nam
 	createCharacterPacket.Str = bySTR;
 	createCharacterPacket.Dex = byDEX;
 
-	if (!Send(sizeof(TPacketCGPlayerCreate), &createCharacterPacket))
+	if (!Send(sizeof(TPacketCGCharacterCreate), &createCharacterPacket))
 	{
 		Tracen("Failed to SendCreateCharacterPacket");
 		return false;
@@ -226,7 +226,7 @@ bool CPythonNetworkStream::SendChangeNamePacket(BYTE index, const char *name)
 
 bool CPythonNetworkStream::__RecvPlayerCreateSuccessPacket()
 {
-	TPacketGCPlayerCreateSuccess kCreateSuccessPacket;
+	TPacketGCCharacterCreateSuccess kCreateSuccessPacket;
 
 	if (!Recv(sizeof(kCreateSuccessPacket), &kCreateSuccessPacket))
 		return false;

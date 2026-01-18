@@ -150,9 +150,9 @@ CPacketInfoCG::CPacketInfoCG()
 	Set(HEADER_CG_CHAT, sizeof(TPacketCGChat), "Chat", true);
 	Set(HEADER_CG_WHISPER, sizeof(TPacketCGWhisper), "Whisper", true);
 
-	Set(HEADER_CG_CHARACTER_SELECT, sizeof(TPacketCGPlayerSelect), "Select", true);
-	Set(HEADER_CG_CHARACTER_CREATE, sizeof(TPacketCGPlayerCreate), "Create", true);
-	Set(HEADER_CG_CHARACTER_DELETE, sizeof(TPacketCGPlayerDelete), "Delete", true);
+	Set(HEADER_CG_CHARACTER_SELECT, sizeof(TPacketCGCharacterSelect), "Select", true);
+	Set(HEADER_CG_CHARACTER_CREATE, sizeof(TPacketCGCharacterCreate), "Create", true);
+	Set(HEADER_CG_CHARACTER_DELETE, sizeof(TPacketCGCharacterDelete), "Delete", true);
 	Set(HEADER_CG_ENTERGAME, sizeof(TPacketCGEnterGame), "EnterGame", true);
 
 	Set(HEADER_CG_ITEM_USE, sizeof(TPacketCGItemUse), "ItemUse", true);

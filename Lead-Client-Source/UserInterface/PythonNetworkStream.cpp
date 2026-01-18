@@ -46,7 +46,7 @@ class CMainPacketHeaderMap : public CNetworkPacketHeaderMap
 			Set(HEADER_GC_LOGIN_SUCCESS,		CNetworkPacketHeaderMap::TPacketType(sizeof(TPacketGCLoginSuccess), STATIC_SIZE_PACKET));
 			Set(HEADER_GC_LOGIN_FAILURE,		CNetworkPacketHeaderMap::TPacketType(sizeof(TPacketGCLoginFailure), STATIC_SIZE_PACKET));
 
-			Set(HEADER_GC_CHARACTER_CREATE_SUCCESS,		 CNetworkPacketHeaderMap::TPacketType(sizeof(TPacketGCPlayerCreateSuccess), STATIC_SIZE_PACKET));
+			Set(HEADER_GC_CHARACTER_CREATE_SUCCESS,		 CNetworkPacketHeaderMap::TPacketType(sizeof(TPacketGCCharacterCreateSuccess), STATIC_SIZE_PACKET));
 			Set(HEADER_GC_CHARACTER_CREATE_FAILURE,		 CNetworkPacketHeaderMap::TPacketType(sizeof(TPacketGCCreateFailure), STATIC_SIZE_PACKET));
 			Set(HEADER_GC_CHARACTER_DELETE_SUCCESS,		 CNetworkPacketHeaderMap::TPacketType(sizeof(TPacketGCBlank), STATIC_SIZE_PACKET));
 			Set(HEADER_GC_CHARACTER_DELETE_WRONG_SOCIAL_ID, CNetworkPacketHeaderMap::TPacketType(sizeof(TPacketGCBlank), STATIC_SIZE_PACKET));

@@ -515,14 +515,14 @@ typedef struct command_player_select
 {
 	BYTE	header;
 	BYTE	index;
-} TPacketCGPlayerSelect;
+} TPacketCGCharacterSelect;
 
 typedef struct command_player_delete
 {
 	BYTE	header;
 	BYTE	index;
 	char	private_code[PRIVATE_CODE_LENGTH];
-} TPacketCGPlayerDelete;
+} TPacketCGCharacterDelete;
 
 typedef struct packet_player_delete_success
 {
@@ -541,14 +541,14 @@ typedef struct command_player_create
 	BYTE	Int;
 	BYTE	Str;
 	BYTE	Dex;
-} TPacketCGPlayerCreate;
+} TPacketCGCharacterCreate;
 
 typedef struct command_player_create_success
 {
 	BYTE		header;
 	BYTE		bAccountCharacterIndex;
 	TSimplePlayer	player;
-} TPacketGCPlayerCreateSuccess;
+} TPacketGCCharacterCreateSuccess;
 
 // 공격
 typedef struct command_attack
