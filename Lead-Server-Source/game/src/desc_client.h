@@ -40,7 +40,6 @@ class CLIENT_DESC : public DESC
 
 		CInputDB 	m_inputDB;
 		CInputP2P 	m_inputP2P;
-		CInputTeen	m_inputTeen;
 };
 
 
