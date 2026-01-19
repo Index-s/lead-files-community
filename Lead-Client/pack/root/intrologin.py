@@ -136,8 +136,6 @@ class ConnectingDialog(ui.ScriptWindow):
 
 class LoginWindow(ui.ScriptWindow):
 
-	IS_TEST = net.IsTest()
-
 	def __init__(self, stream):
 		print "NEW LOGIN WINDOW  ----------------------------------------------------------------------------"
 		ui.ScriptWindow.__init__(self)
@@ -488,10 +486,7 @@ class LoginWindow(ui.ScriptWindow):
 			import exception
 			exception.Abort("LoginWindow.__LoadScript.BindObject")
 
-		if self.IS_TEST:
-			self.selectConnectButton.Hide()
-		else:
-			self.selectConnectButton.SetEvent(ui.__mem_func__(self.__OnClickSelectConnectButton))
+		self.selectConnectButton.SetEvent(ui.__mem_func__(self.__OnClickSelectConnectButton))
 
 		self.serverBoard.OnKeyUp = ui.__mem_func__(self.__ServerBoard_OnKeyUp)
 		self.xServerBoard, self.yServerBoard = self.serverBoard.GetLocalPosition()
@@ -633,44 +628,22 @@ class LoginWindow(ui.ScriptWindow):
 
 		id=loginInfo.get("id", "")
 		pwd=loginInfo.get("pwd", "")
+		addr=loginInfo.get("addr", "")
+		port=loginInfo.get("port", 0)
+		account_addr=loginInfo.get("account_addr", addr)
+		account_port=loginInfo.get("account_port", port)
 
-		if self.IS_TEST:
-			try:
-				addr=loginInfo["addr"]
-				port=loginInfo["port"]
-				account_addr=addr
-				account_port=port
+		locale = loginInfo.get("locale", "")
 
-				net.SetMarkServer(addr, port)
-				self.__SetServerInfo(locale.CHANNEL_TEST_SERVER_ADDR % (addr, port))
-			except:
-				try:
-					addr=serverInfo.TESTADDR["ip"]
-					port=serverInfo.TESTADDR["tcp_port"]
+		if addr and port:
+			net.SetMarkServer(addr, port)
 
-					net.SetMarkServer(addr, port)
-					self.__SetServerInfo(locale.CHANNEL_TEST_SERVER)
-				except:
-					import exception
-					exception.Abort("LoginWindow.__LoadLoginInfo - �׽�Ʈ���� �ּҰ� �����ϴ�")
-
-		else:
-			addr=loginInfo.get("addr", "")
-			port=loginInfo.get("port", 0)
-			account_addr=loginInfo.get("account_addr", addr)
-			account_port=loginInfo.get("account_port", port)
-
-			locale = loginInfo.get("locale", "")
-
-			if addr and port:
-				net.SetMarkServer(addr, port)
-
-				if locale == "ymir" :
-					net.SetServerInfo("õ�� ����")
-					self.serverInfo.SetText("Y:"+addr+":"+str(port))
-				else:
-					net.SetServerInfo(addr+":"+str(port))
-					self.serverInfo.SetText("K:"+addr+":"+str(port))
+			if locale == "ymir" :
+				net.SetServerInfo("õ�� ����")
+				self.serverInfo.SetText("Y:"+addr+":"+str(port))
+			else:
+				net.SetServerInfo(addr+":"+str(port))
+				self.serverInfo.SetText("K:"+addr+":"+str(port))
 
 		slot=loginInfo.get("slot", 0)
 		isAutoLogin=loginInfo.get("auto", 0)
