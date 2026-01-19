@@ -474,12 +474,6 @@
 				>
 			</File>
 			<File
-				>
-			</File>
-			<File
-				>
-			</File>
-			<File
 				RelativePath=".\desc.cpp"
 				>
 			</File>
@@ -593,9 +587,6 @@
 			</File>
 			<File
 				RelativePath=".\exchange.h"
-				>
-			</File>
-			<File
 				>
 			</File>
 			<File

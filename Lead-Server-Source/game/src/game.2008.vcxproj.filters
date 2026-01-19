@@ -175,7 +175,6 @@
     <ClInclude Include="crc32.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="db.h" />
-    <ClInclude Include="debug_allocator.h" />
     <ClInclude Include="desc.h" />
     <ClInclude Include="desc_client.h" />
     <ClInclude Include="desc_manager.h" />
@@ -222,7 +221,6 @@
     <ClInclude Include="motion.h" />
     <ClInclude Include="OXEvent.h" />
     <ClInclude Include="p2p.h" />
-    <ClInclude Include="packet.h" />
     <ClInclude Include="packet_info.h" />
     <ClInclude Include="panama.h" />
     <ClInclude Include="party.h" />
@@ -266,8 +264,6 @@
     <ClInclude Include="xmas_event.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="any_function.inc">
-      <Filter>Source Files</Filter>
-    </None>
+    <None Include="any_function.inc" />
   </ItemGroup>
 </Project>

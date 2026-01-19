@@ -20,7 +20,7 @@
 #include "DragonSoul.h"
 #include "buff_on_attributes.h"
 #include "belt_inventory_helper.h"
-#include "../../common/VnumHelper.h"
+#include "common/VnumHelper.h"
 
 CItem::CItem(DWORD dwVnum)
 	: m_dwVnum(dwVnum), m_bWindow(0), m_dwID(0), m_bEquipped(false), m_dwVID(0), m_wCell(0), m_dwCount(0), m_lFlag(0), m_dwLastOwnerPID(0),
@@ -178,18 +178,6 @@ void CItem::SetProto(const TItemTable * table)
 	assert(table != NULL);
 	m_pProto = table;
 	SetFlag(m_pProto->dwFlags);
-}
-
-void CItem::UsePacketEncode(LPCHARACTER ch, LPCHARACTER victim, struct packet_item_use *packet)
-{
-	if (!GetVnum())
-		return;
-
-	packet->header 	= HEADER_GC_ITEM_USE;
-	packet->ch_vid 	= ch->GetVID();
-	packet->victim_vid 	= victim->GetVID();
-	packet->Cell = TItemPos(GetWindow(), m_wCell);
-	packet->vnum	= GetVnum();
 }
 
 void CItem::RemoveFlag(long bit)
@@ -1552,7 +1540,7 @@ void CItem::SetAccessorySocketDownGradeTime(DWORD time)
 	SetSocket(2, time); 
 
 	if (test_server && GetOwner())
-		GetOwner()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s에서 소켓 빠질때까지 남은 시간 %d"), GetName(), time);
+		GetOwner()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Time remaining until socket is removed from %s: %d"), GetName(), time);
 }
 
 EVENTFUNC(accessory_socket_expire_event)
@@ -1700,7 +1688,7 @@ void CItem::AccessorySocketDegrade()
 
 		if (ch)
 		{
-			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s에 박혀있던 보석이 사라집니다."), GetName());
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("A gem socketed in the %s has vanished."), GetName());
 		}
 
 		ModifyPoints(false);

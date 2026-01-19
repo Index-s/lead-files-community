@@ -1,4 +1,4 @@
-#include "stdafx.h" 
+﻿#include "stdafx.h" 
 #include "constants.h"
 #include "config.h"
 #include "utils.h"
@@ -202,13 +202,13 @@ void CInputDB::PlayerCreateSuccess(LPDESC d, const char * data)
 	TAccountTable & r_Tab = d->GetAccountTable();
 	r_Tab.players[pPacketDB->bAccountCharacterIndex] = pPacketDB->player;
 
-	TPacketGCPlayerCreateSuccess pack;
+	TPacketGCCharacterCreateSuccess pack;
 
 	pack.header = HEADER_GC_CHARACTER_CREATE_SUCCESS;
 	pack.bAccountCharacterIndex = pPacketDB->bAccountCharacterIndex;
 	pack.player = pPacketDB->player;
 
-	d->Packet(&pack, sizeof(TPacketGCPlayerCreateSuccess));
+	d->Packet(&pack, sizeof(TPacketGCCharacterCreateSuccess));
 
 	// 기본 무기와 귀환부를 지급
 	TPlayerItem t;
@@ -1046,7 +1046,7 @@ void CInputDB::SafeboxLoad(LPDESC d, const char * c_pData)
 	//PREVENT_TRADE_WINDOW
 	if (ch->GetShopOwner() || ch->GetExchange() || ch->GetMyShop() || ch->IsCubeOpen() )
 	{
-		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("다른거래창이 열린상태에서는 창고를 열수가 없습니다." ) );
+		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("You cannot open a Storeroom while another window is open.") );
 		d->GetCharacter()->CancelSafeboxLoad();
 		return;
 	}
@@ -1089,7 +1089,7 @@ void CInputDB::SafeboxWrongPassword(LPDESC d)
 	if (!d->GetCharacter())
 		return;
 
-	TPacketCGSafeboxWrongPassword p;
+	TPacketGCSafeboxWrongPassword p;
 	p.bHeader = HEADER_GC_SAFEBOX_WRONG_PASSWORD;
 	d->Packet(&p, sizeof(p));
 
@@ -1107,11 +1107,11 @@ void CInputDB::SafeboxChangePasswordAnswer(LPDESC d, const char* c_pData)
 	TSafeboxChangePasswordPacketAnswer* p = (TSafeboxChangePasswordPacketAnswer*) c_pData;
 	if (p->flag)
 	{
-		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<창고> 창고 비밀번호가 변경되었습니다."));
+		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[Storeroom] Storeroom password has been changed."));
 	}
 	else
 	{
-		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<창고> 기존 비밀번호가 틀렸습니다."));
+		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[Storeroom] You have entered the wrong password."));
 	}
 }
 

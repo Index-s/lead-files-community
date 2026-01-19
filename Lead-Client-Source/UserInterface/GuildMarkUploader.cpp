@@ -3,9 +3,6 @@
 #include "Packet.h"
 #include "Test.h"
 
-#ifdef __VTUNE__
-#else
-
 CGuildMarkUploader::CGuildMarkUploader()
  : m_pbySymbolBuf(NULL)
 {
@@ -320,12 +317,12 @@ bool CGuildMarkUploader::__SendSymbolPacket()
 	if (!m_pbySymbolBuf)
 		return false;
 
-	TPacketCGSymbolUpload kPacketSymbolUpload;
+	TPacketCGGuildSymbolUpload kPacketSymbolUpload;
 	kPacketSymbolUpload.header=HEADER_CG_GUILD_SYMBOL_UPLOAD;
-	kPacketSymbolUpload.handle=m_dwGuildID;
-	kPacketSymbolUpload.size=sizeof(TPacketCGSymbolUpload) + m_dwSymbolBufSize;
+	kPacketSymbolUpload.size=sizeof(TPacketCGGuildSymbolUpload) + m_dwSymbolBufSize;
+	kPacketSymbolUpload.guild_id=m_dwGuildID;
 
-	if (!Send(sizeof(TPacketCGSymbolUpload), &kPacketSymbolUpload))
+	if (!Send(sizeof(TPacketCGGuildSymbolUpload), &kPacketSymbolUpload))
 		return false;
 	if (!Send(m_dwSymbolBufSize, m_pbySymbolBuf))
 		return false;
@@ -479,4 +476,3 @@ bool CGuildMarkUploader::__AnalyzePacket(UINT uHeader, UINT uPacketSize, bool (C
 
 	return (this->*pfnDispatchPacket)();
 }
-#endif
