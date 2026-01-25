@@ -2017,7 +2017,7 @@ ACMD(do_reload)
 				break;
 				//END_RELOAD_ADMIN
 			case 'c':	// cube
-				// 로컬 프로세스만 갱산한다.
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading crafting infomation."));
 				Cube_init ();
 				break;
 			default:
@@ -2027,6 +2027,8 @@ ACMD(do_reload)
 					char szETCDropItemFileName[FILE_NAME_LEN];
 					char szMOBDropItemFileName[FILE_NAME_LEN];
 					char szSpecialItemGroupFileName[FILE_NAME_LEN];
+					char szCommonDropItemFileName[FILE_NAME_LEN];
+					char szDropItemGroupFileName[FILE_NAME_LEN];
 
 					snprintf(szETCDropItemFileName, sizeof(szETCDropItemFileName),
 						"%s/etc_drop_item.txt", LocaleService_GetBasePath().c_str());
@@ -2034,24 +2036,40 @@ ACMD(do_reload)
 						"%s/mob_drop_item.txt", LocaleService_GetBasePath().c_str());
 					snprintf(szSpecialItemGroupFileName, sizeof(szSpecialItemGroupFileName),
 						"%s/special_item_group.txt", LocaleService_GetBasePath().c_str());
+					snprintf(szCommonDropItemFileName, sizeof(szCommonDropItemFileName),
+						"%s/common_drop_item.txt", LocaleService_GetBasePath().c_str());
+					snprintf(szDropItemGroupFileName, sizeof(szDropItemGroupFileName),
+						"%s/drop_item_group.txt", LocaleService_GetBasePath().c_str());
 
 					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: ETCDropItem: %s", szETCDropItemFileName);
-					if (!ITEM_MANAGER::instance().ReadEtcDropItemFile(szETCDropItemFileName, true))
+					if (!ITEM_MANAGER::instance().ReadEtcDropItemFile(szETCDropItemFileName))
 						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload ETCDropItem: %s", szETCDropItemFileName);
 					else
 						ch->ChatPacket(CHAT_TYPE_INFO, "reload success: ETCDropItem: %s", szETCDropItemFileName);
 
 					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: SpecialItemGroup: %s", szSpecialItemGroupFileName);
-					if (!ITEM_MANAGER::instance().ReadSpecialDropItemFile(szSpecialItemGroupFileName, true))
+					if (!ITEM_MANAGER::instance().ReadSpecialDropItemFile(szSpecialItemGroupFileName))
 						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload SpecialItemGroup: %s", szSpecialItemGroupFileName);
 					else
 						ch->ChatPacket(CHAT_TYPE_INFO, "reload success: SpecialItemGroup: %s", szSpecialItemGroupFileName);
 
 					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: MOBDropItemFile: %s", szMOBDropItemFileName);
-					if (!ITEM_MANAGER::instance().ReadMonsterDropItemGroup(szMOBDropItemFileName, true))
+					if (!ITEM_MANAGER::instance().ReadMonsterDropItemGroup(szMOBDropItemFileName))
 						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload MOBDropItemFile: %s", szMOBDropItemFileName);
 					else
 						ch->ChatPacket(CHAT_TYPE_INFO, "reload success: MOBDropItemFile: %s", szMOBDropItemFileName);
+
+					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: CommonDropItem: %s", szCommonDropItemFileName);
+					if (!ITEM_MANAGER::instance().ReadCommonDropItemFile(szCommonDropItemFileName))
+						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload CommonDropItem: %s", szCommonDropItemFileName);
+					else
+						ch->ChatPacket(CHAT_TYPE_INFO, "reload success: CommonDropItem: %s", szCommonDropItemFileName);
+					
+					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: DropItemGroup: %s", szDropItemGroupFileName);
+					if (!ITEM_MANAGER::instance().ReadDropItemGroup(szDropItemGroupFileName))
+						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload DropItemGroup: %s", szDropItemGroupFileName);
+					else
+						ch->ChatPacket(CHAT_TYPE_INFO, "reload success: DropItemGroup: %s", szDropItemGroupFileName);
 				}
 				else if (strstr(arg1, "group"))
 				{
