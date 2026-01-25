@@ -2082,11 +2082,11 @@ ACMD(do_reload)
 						"%s/group_group.txt", LocaleService_GetBasePath().c_str());
 
 					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: mob groups: %s", szGroupFileName);
-					if (!CMobManager::instance().LoadGroup(szGroupFileName, true))
+					if (!CMobManager::instance().LoadGroup(szGroupFileName))
 						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload mob groups: %s", szGroupFileName);
 
 					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: mob group group: %s", szGroupGroupFileName);
-					if (!CMobManager::instance().LoadGroupGroup(szGroupGroupFileName, true))
+					if (!CMobManager::instance().LoadGroupGroup(szGroupGroupFileName))
 						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload mob group group: %s", szGroupGroupFileName);
 				}
 				else if (strstr(arg1, "regen"))

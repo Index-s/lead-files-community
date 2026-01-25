@@ -1,27 +1,27 @@
 Group Schmuckschatulle
 {
 	Vnum 50033
-	1	14009	1	1 -- Kupferhalskette+9 (Chance 1/3)
-	2	16009	1	1 -- Kupferarmband+9    (Chance 1/3)
-	3	17009	1	1 -- Kupferohrringe+9   (Chance 1/3)
+	1	14009	1	1 -- Copper Necklace+9 (Chance 1/3)
+	2	16009	1	1 -- Copper Bracelet+9    (Chance 1/3)
+	3	17009	1	1 -- Copper Earrings+9   (Chance 1/3)
 }
 
 Group Boss_Truhe_Spezial
 {
 	Vnum 50080
 	Type pct
-	1	19	1	20 -- 20% Chance auf Schwert+9
-	2	gold	100000	50 -- 50% Chance auf 100k Gold
-	3	exp	5000	10 -- 10% Chance auf 5000 EXP
+	1	19	1	20 -- 20% Chance auf Sword+9
+	2	gold	100000	50 -- 50% Chance of 100k Gold
+	3	exp	5000	10 -- 10% Chance of 5000 EXP
 }
 
 Group Bonus_Set_1
 {
-	Vnum 71135 -- Vnum des Items (z.B. Halbmondring)
+	Vnum 71135 -- Vnum Item (e.g Halfmoon ring)
 	Type attr
 	1	MAX_HP	2000
 	2	ATT_BONUS_TO_MONSTER	10
 	3	RESIST_MAGIC	15
-	-- Der Source spielt diesen Effekt beim Anziehen ab:
+	-- The source performs this effect while equip:
 	effect "d:/ymir work/effect/etc/firework/victory.mse"
 }

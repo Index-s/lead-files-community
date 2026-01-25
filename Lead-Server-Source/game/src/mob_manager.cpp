@@ -245,17 +245,17 @@ CMobGroup * CMobManager::GetGroup(DWORD dwVnum)
 	return it->second;
 }
 
-bool CMobManager::LoadGroupGroup(const char* c_pszFileName, bool isReloading)
+bool CMobManager::LoadGroupGroup(const char* c_pszFileName)
 {
 	CTextFileLoader loader;
 
 	if (!loader.Load(c_pszFileName))
 		return false;
+	
+	DeleteMapValues MapCleaner;
 
 	std::string stName;
 	std::map<DWORD, CMobGroupGroup*> tempLoader;
-	if (isReloading)
-		sys_log(0, "RELOADING group group: %s", c_pszFileName);
 
 	for (DWORD i = 0; i < loader.GetChildNodeCount(); ++i)
 	{
@@ -269,7 +269,8 @@ bool CMobManager::LoadGroupGroup(const char* c_pszFileName, bool isReloading)
 		{
 			sys_err("LoadGroupGroup : Syntax error %s : no vnum, node %s", c_pszFileName, stName.c_str());
 			loader.SetParentNode();
-			continue;
+			MapCleaner(tempLoader);
+			return false;
 		}
 
 		TTokenVector * pTok;
@@ -302,38 +303,26 @@ bool CMobManager::LoadGroupGroup(const char* c_pszFileName, bool isReloading)
 		}
 
 		loader.SetParentNode();
-
-		if (isReloading)
-			tempLoader.insert(std::make_pair((DWORD)iVnum, pkGroup));
-		else
-			m_map_pkMobGroupGroup.insert(std::make_pair((DWORD)iVnum, pkGroup));
+		tempLoader.insert(std::make_pair((DWORD)iVnum, pkGroup));
 	}
 
-	if (isReloading)
-	{
-		for (std::map<DWORD, CMobGroupGroup*>::iterator it = m_map_pkMobGroupGroup.begin(); it != m_map_pkMobGroupGroup.end(); it++)
-			M2_DELETE(it->second);
-		m_map_pkMobGroupGroup.clear();
-		for (std::map<DWORD, CMobGroupGroup*>::iterator it = tempLoader.begin(); it != tempLoader.end(); it++)
-		{
-			m_map_pkMobGroupGroup[it->first] = it->second;
-		}
-	}
+	MapCleaner(m_map_pkMobGroupGroup);
+	m_map_pkMobGroupGroup = tempLoader;
 
 	return true;
 }
 
-bool CMobManager::LoadGroup(const char* c_pszFileName, bool isReloading)
+bool CMobManager::LoadGroup(const char* c_pszFileName)
 {
 	CTextFileLoader loader;
 
 	if (!loader.Load(c_pszFileName))
 		return false;
 
+	DeleteMapValues MapCleaner;
+
 	std::string stName;
 	std::map<DWORD, CMobGroup*> tempLoader;
-	if (isReloading)
-		sys_log(0, "RELOADING groups: %s", c_pszFileName);
 
 	for (DWORD i = 0; i < loader.GetChildNodeCount(); ++i)
 	{
@@ -347,23 +336,18 @@ bool CMobManager::LoadGroup(const char* c_pszFileName, bool isReloading)
 		{
 			sys_err("LoadGroup : Syntax error %s : no vnum, node %s", c_pszFileName, stName.c_str());
 			loader.SetParentNode();
-			continue;
+			MapCleaner(tempLoader);
+			return false;
 		}
 
 		TTokenVector * pTok;
 
-		if (!loader.GetTokenVector("leader", &pTok))
+		if (!loader.GetTokenVector("leader", &pTok) || pTok->size() < 2)
 		{
 			sys_err("LoadGroup : Syntax error %s : no leader, node %s", c_pszFileName, stName.c_str());
 			loader.SetParentNode();
-			continue;
-		}
-
-		if (pTok->size() < 2)
-		{
-			sys_err("LoadGroup : Syntax error %s : no leader vnum, node %s", c_pszFileName, stName.c_str());
-			loader.SetParentNode();
-			continue;
+			MapCleaner(tempLoader);
+			return false;
 		}
 
 		CMobGroup * pkGroup = M2_NEW CMobGroup;
@@ -394,23 +378,11 @@ bool CMobManager::LoadGroup(const char* c_pszFileName, bool isReloading)
 		}
 
 		loader.SetParentNode();
-
-		if (isReloading)
-			tempLoader.insert(std::map<DWORD, CMobGroup*>::value_type(iVnum, pkGroup));
-		else
-			m_map_pkMobGroup.insert(std::map<DWORD, CMobGroup*>::value_type(iVnum, pkGroup));
+		tempLoader.insert(std::make_pair((DWORD)iVnum, pkGroup));
 	}
 
-	if (isReloading)
-	{
-		for (std::map<DWORD, CMobGroup*>::iterator it = m_map_pkMobGroup.begin(); it != m_map_pkMobGroup.end(); it++)
-			M2_DELETE(it->second);
-		m_map_pkMobGroup.clear();
-		for (std::map<DWORD, CMobGroup*>::iterator it = tempLoader.begin(); it != tempLoader.end(); it++)
-		{
-			m_map_pkMobGroup[it->first] = it->second;
-		}
-	}
+	MapCleaner(m_map_pkMobGroup);
+	m_map_pkMobGroup = tempLoader;
 
 	return true;
 }
