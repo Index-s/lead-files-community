@@ -922,3 +922,67 @@ UPLOAD_MARK_CHECK_NEED_RECONNECT	Πρέπει να γίνει σύνδεση εκ νέου.
 UPLOAD_MARK_UPLOAD_NEED_RECONNECT	Πρέπει να γίνει σύνδεση εκ νέου.
 USE_ITEM_FAILURE_PRIVATE_SHOP	Δεν μπορείς να χρησιμοποιήσεις αντικείμενα όσο έχεις ανοιχτό το ιδιωτικό κατάστημα.
 USE_SKILL_ERROR_UNKNOWN	Άγνωστο σφάλμα ικανοτήτων: %s
+TARGET_INFO_RESISTS	ΏΏΏΏΏΏΏ:
+TARGET_INFO_RESISTS_LINE0	ΏΏΏΏΏ: %d%% ΏΏΏΏΏΏΏ: %d%% ΏΏΏΏΏΏΏ: %d%%
+TARGET_INFO_RESISTS_LINE1	ΏΏΏΏΏΏΏ: %d%% ΏΏΏΏΏΏΏΏΏΏΏ: %d%% ΏΏΏΏ: %d%%
+TARGET_INFO_REGEN_INFO	TP reg. %d%% ΏΏΏΏ %d ΏΏΏΏ.
+TARGET_INFO_GOLD_MIN_MAX	Yang: %s ~ %s
+TARGET_INFO_DAMAGE	ΏΏΏΏΏ ΏΏΏΏΏΏΏΏΏΏ: %s - %s
+TARGET_INFO_DEFENSE	ΏΏΏΏΏ: %s
+TARGET_INFO_EXP	ΏΏΏΏΏΏΏΏ: %s
+TARGET_INFO_MAINRACE	ΏΏΏΏ: %s
+TARGET_INFO_MAX_HP	ΏΏΏΏΏΏΏΏ ΏΏΏΏΏΏ ΏΏΏΏ: %s
+TARGET_INFO_NO_ITEM_TEXT	ΏΏΏ ΏΏΏΏΏΏΏΏ ΏΏΏΏΏΏΏΏΏ ΏΏΏΏΏΏΏΏΏΏΏ
+TARGET_INFO_NO_RACE	ΏΏΏΏΏ ΏΏΏΏ
+TARGET_INFO_NEWRACE_INSECT	ΏΏΏΏΏΏ
+TARGET_INFO_NEWRACE_FIRE	ΏΏΏΏΏΏΏΏ ΏΏΏΏΏ
+TARGET_INFO_NEWRACE_ICE	ΏΏΏΏΏΏΏΏ ΏΏΏΏΏ
+TARGET_INFO_NEWRACE_DESERT	ΏΏΏΏΏΏ
+TARGET_INFO_NEWRACE_TREE	ΏΏΏΏΏΏ
+TARGET_INFO_RACE_ANIMAL	ΏΏΏ
+TARGET_INFO_RACE_DARK	ΏΏΏΏΏΏ ΏΏΏ ΏΏΏΏΏΏΏ
+TARGET_INFO_RACE_DEVIL	ΏΏΏΏΏΏΏΏ
+TARGET_INFO_RACE_EARTH	ΏΏΏΏΏΏ ΏΏΏ ΏΏ
+TARGET_INFO_RACE_ELEC	ΏΏΏΏΏΏ ΏΏΏΏ ΏΏΏΏΏΏΏ 
+TARGET_INFO_RACE_FIRE	ΏΏΏΏΏΏ ΏΏΏ ΏΏΏΏΏ
+TARGET_INFO_RACE_HUMAN	ΏΏΏΏΏ ΏΏΏΏΏΏΏΏ
+TARGET_INFO_RACE_ICE	ΏΏΏΏΏΏ ΏΏΏΏ ΏΏΏΏ
+TARGET_INFO_RACE_METIN	ΏΏΏΏΏ Metin
+TARGET_INFO_RACE_MILGYO	ΏΏΏΏΏΏΏΏΏΏ 
+TARGET_INFO_RACE_ORC	ΏΏΏ
+TARGET_INFO_RACE_UNDEAD	ΏΏΏΏΏΏΏΏΏΏΏΏΏ
+TARGET_INFO_RACE_WIND	ΏΏΏΏΏΏ ΏΏΏΏ ΏΏΏΏΏ
+TARGET_INFO_STONE_NAME	ΏΏΏΏΏ ΏΏΏΏΏΏΏΏ
+TARGET_INFO_SUBRACE	ΏΏΏΏΏΏΏ: %s
+TARGET_INFO_RESISTS	Αντοχές:
+TARGET_INFO_RESISTS_LINE0	Σπαθί: %d%% Δίχειρο: %d%% Καμπάνα: %d%%
+TARGET_INFO_RESISTS_LINE1	Δίχειρο: %d%% Ανεμιστήρας: %d%% Τόξο: %d%%
+TARGET_INFO_REGEN_INFO	TP reg. %d%% κάθε %d δευτ.
+TARGET_INFO_GOLD_MIN_MAX	Yang: %s ~ %s
+TARGET_INFO_DAMAGE	Ζημιά χτυπήματος: %s - %s
+TARGET_INFO_DEFENSE	¶μυνα: %s
+TARGET_INFO_EXP	Εμπειρία: %s
+TARGET_INFO_MAINRACE	Φυλή: %s
+TARGET_INFO_MAX_HP	Μέγιστοι πόντοι ζωής: %s
+TARGET_INFO_NO_ITEM_TEXT	Δεν υπάρχουν διαθέσιμα αντικείμενα
+TARGET_INFO_NO_RACE	Χωρίς φυλή
+TARGET_INFO_NEWRACE_INSECT	Έντομο
+TARGET_INFO_NEWRACE_FIRE	Τεράστιο τέρας
+TARGET_INFO_NEWRACE_ICE	Τεράστιο τέρας
+TARGET_INFO_NEWRACE_DESERT	Έρημος
+TARGET_INFO_NEWRACE_TREE	Δέντρο
+TARGET_INFO_RACE_ANIMAL	Ζώα
+TARGET_INFO_RACE_DARK	Αντοχή στο σκοτάδι
+TARGET_INFO_RACE_DEVIL	Διάβολος
+TARGET_INFO_RACE_EARTH	Αντοχή στη γη
+TARGET_INFO_RACE_ELEC	Αντοχή στον κεραυνό 
+TARGET_INFO_RACE_FIRE	Αντοχή στη φωτιά
+TARGET_INFO_RACE_HUMAN	Μισοί άνθρωποι
+TARGET_INFO_RACE_ICE	Αντοχή στον πάγο
+TARGET_INFO_RACE_METIN	Πέτρα Metin
+TARGET_INFO_RACE_MILGYO	Εσωτερικός 
+TARGET_INFO_RACE_ORC	Όρκ
+TARGET_INFO_RACE_UNDEAD	Νεκροζώντανος
+TARGET_INFO_RACE_WIND	Αντοχή στον άνεμο
+TARGET_INFO_STONE_NAME	Πέτρα φάντασμα
+TARGET_INFO_SUBRACE	Υποφυλή: %s

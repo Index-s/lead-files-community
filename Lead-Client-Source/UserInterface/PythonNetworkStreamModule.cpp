@@ -337,6 +337,25 @@ PyObject* netConnectToAccountServer(PyObject* poSelf, PyObject* poArgs)
 	return Py_BuildNone();
 }
 
+PyObject* netTargetInfoLoad(PyObject* poSelf, PyObject* poArgs)
+{
+	DWORD dwVID;
+
+	if (!PyArg_ParseTuple(poArgs, "i", &dwVID))
+	{
+		return Py_BuildException();
+	}
+	if (dwVID < 0)
+	{
+		return Py_BuildNone();
+	}
+
+	CPythonNetworkStream& rns = CPythonNetworkStream::Instance();
+	rns.SendTargetInfoLoadPacket(dwVID);
+
+	return Py_BuildNone();
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 PyObject* netSetLoginInfo(PyObject* poSelf, PyObject* poArgs)
@@ -1673,6 +1692,8 @@ void initnet()
 		{ "ExitApplication",					netExitApplication,						METH_VARARGS },
 		{ "ConnectTCP",							netConnectTCP,							METH_VARARGS },
 		{ "ConnectToAccountServer",				netConnectToAccountServer,				METH_VARARGS },
+		
+		{ "SendTargetInfoLoad",					netTargetInfoLoad,						METH_VARARGS },
 
 		{ "SendLoginPacket",					netSendLoginPacket,						METH_VARARGS },
 		{ "SendSelectEmpirePacket",				netSendSelectEmpirePacket,				METH_VARARGS },

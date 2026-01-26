@@ -176,6 +176,7 @@ public:
 	{
 		DWORD dwItemVnumStart;
 		DWORD dwItemVnumEnd;
+		DWORD dwItemVnum = number(dwItemVnumStart, dwItemVnumEnd);
 		int iCount;
 		int iRarePct;
 
@@ -225,6 +226,15 @@ public:
 	const SMobItemGroupInfo& GetOne() const
 	{
 		return m_vecItems[GetOneIndex()];
+	}
+
+	std::vector<std::pair<int, int>> GetVector()
+	{
+		std::vector<std::pair<int, int>> item_list;
+		for (auto& x : m_vecItems)
+			item_list.emplace_back(std::make_pair(x.dwItemVnum, x.iCount));
+
+		return item_list;
 	}
 
 	const std::vector<int>& GetProbVector() const
@@ -403,6 +413,7 @@ class ITEM_MANAGER : public singleton<ITEM_MANAGER>
 
 		bool			GetDropPct(LPCHARACTER pkChr, LPCHARACTER pkKiller, OUT int& iDeltaPercent, OUT int& iRandRange);
 		bool			CreateDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::vector<LPITEM> & vec_item);
+		bool			CreateDropItemVector(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::vector<std::pair<int, int> >& vec_item);
 
 		bool			ReadCommonDropItemFile(const char * c_pszFileName);
 		bool			ReadEtcDropItemFile(const char* c_pszFileName);

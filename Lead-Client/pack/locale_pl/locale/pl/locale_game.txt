@@ -922,3 +922,35 @@ UPLOAD_MARK_CHECK_NEED_RECONNECT	Wgrywanie musi zostaæ ponownie rozpoczête.
 UPLOAD_MARK_UPLOAD_NEED_RECONNECT	Wgrywanie musi zostaæ ponownie rozpoczête.
 USE_ITEM_FAILURE_PRIVATE_SHOP	Nie mo¿esz u¿ywaæ przedmiotów, jeœli otworzy³eœ prywatny Magazyn.
 USE_SKILL_ERROR_UNKNOWN	Nieznany B³¹d Umiejêtnoœci: %s
+TARGET_INFO_RESISTS	Odpornosci:
+TARGET_INFO_RESISTS_LINE0	Miecz: %d%% Dwureczny: %d%% Dzwon: %d%%
+TARGET_INFO_RESISTS_LINE1	Dwureczny: %d%% Wachlarz: %d%% Luk: %d%%
+TARGET_INFO_REGEN_INFO	TP reg. %d%% co %d sek.
+TARGET_INFO_GOLD_MIN_MAX	Yang: %s ~ %s
+TARGET_INFO_DAMAGE	Obrazenia od uderzenia: %s - %s
+TARGET_INFO_DEFENSE	Obrona: %s
+TARGET_INFO_EXP	Doswiadczenie: %s
+TARGET_INFO_MAINRACE	Rasa: %s
+TARGET_INFO_MAX_HP	Maks. punkty zycia: %s
+TARGET_INFO_NO_ITEM_TEXT	Brak dostepnych przedmiotów
+TARGET_INFO_NO_RACE	Brak rasy
+TARGET_INFO_NEWRACE_INSECT	Owad
+TARGET_INFO_NEWRACE_FIRE	Ognisty potwór
+TARGET_INFO_NEWRACE_ICE	Lodowy potwór
+TARGET_INFO_NEWRACE_DESERT	Pustynia
+TARGET_INFO_NEWRACE_TREE	Drzewo
+TARGET_INFO_RACE_ANIMAL	Zwierzeta
+TARGET_INFO_RACE_DARK	Odpornosc na ciemnosc
+TARGET_INFO_RACE_DEVIL	Diabel
+TARGET_INFO_RACE_EARTH	Odpornosc na ziemie
+TARGET_INFO_RACE_ELEC	Odpornosc na blyskawice 
+TARGET_INFO_RACE_FIRE	Odpornosc na ogien
+TARGET_INFO_RACE_HUMAN	Pólludzie
+TARGET_INFO_RACE_ICE	Odpornosc na lód
+TARGET_INFO_RACE_METIN	Kamien Metin
+TARGET_INFO_RACE_MILGYO	Ezoteryczna 
+TARGET_INFO_RACE_ORC	Orkowie
+TARGET_INFO_RACE_UNDEAD	Nieumarli
+TARGET_INFO_RACE_WIND	Odpornosc na wiatr
+TARGET_INFO_STONE_NAME	Kamien duchów
+TARGET_INFO_SUBRACE	Podrasa: %s

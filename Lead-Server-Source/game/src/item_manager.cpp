@@ -701,6 +701,156 @@ bool ITEM_MANAGER::GetDropPct(LPCHARACTER pkChr, LPCHARACTER pkKiller, OUT int& 
 	return true;
 }
 
+bool ITEM_MANAGER::CreateDropItemVector(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::vector<std::pair<int, int> >& vec_item)
+{
+	if (pkChr->IsPolymorphed() || pkChr->IsPC())
+	{
+		return false;
+	}
+
+	int iLevel = pkKiller->GetLevel();
+	bool iLevelMin = false;
+	bool iLevelMax = false;
+
+	BYTE bRank = pkChr->GetMobRank();
+
+	// Common Drop Items
+	//std::vector<CItemDropInfo>::iterator it = g_vec_pkCommonDropItem[bRank].begin();
+
+	//while (it != g_vec_pkCommonDropItem[bRank].end())
+	//{
+	//	const CItemDropInfo& c_rInfo = *(it++);
+
+	//	if (iLevel < c_rInfo.m_iLevelStart || iLevel > c_rInfo.m_iLevelEnd)
+	//		continue;
+
+	//	TItemTable* table = GetTable(c_rInfo.m_dwVnum);
+
+	//	if (!table)
+	//		continue;
+
+	//	if (c_rInfo.m_dwVnum > 70103 && c_rInfo.m_dwVnum < 70108)
+	//	{
+
+	//		if (c_rInfo.m_dwVnum != pkChr->GetPolymorphItemVnum())
+	//		{
+	//			continue;
+	//		}
+	//	}
+
+	//	vec_item.push_back(std::make_pair(c_rInfo.m_dwVnum, 1));
+	//}
+
+	// Drop Item Group
+	{
+		auto it = m_map_pkDropItemGroup.find(pkChr->GetRaceNum());
+
+		if (it != m_map_pkDropItemGroup.end())
+		{
+			auto v = it->second->GetVector();
+
+			for (DWORD i = 0; i < v.size(); ++i)
+			{
+				DWORD dwVnum = number(v[i].dwVnumStart, v[i].dwVnumEnd);
+				vec_item.push_back(std::make_pair(dwVnum, v[i].iCount));
+			}
+		}
+	}
+
+	// MobDropItem Group
+	{
+		auto it = m_map_pkMobItemGroup.find(pkChr->GetRaceNum());
+
+		if (it != m_map_pkMobItemGroup.end())
+		{
+			std::vector<CMobItemGroup*>& vec_pGroups = it->second;
+
+			for (int i = 0; i < vec_pGroups.size(); ++i)
+			{
+				CMobItemGroup* pGroup = vec_pGroups[i];
+
+				if (pGroup && !pGroup->IsEmpty())
+				{
+					auto vec_items = pGroup->GetVector();
+					for (auto& x : vec_items)
+						vec_item.push_back(std::make_pair(x.first, x.second));
+
+				}
+				// END_OF_MOB_DROP_ITEM_BUG_FIX
+			}
+		}
+	}
+
+	// Level Item Group
+	{
+		auto it = m_map_pkLevelItemGroup.find(pkChr->GetRaceNum());
+
+		if (it != m_map_pkLevelItemGroup.end())
+		{
+			if (it->second->GetLevelLimitStart() <= (DWORD)iLevel)
+			{
+				iLevelMin = true;
+			}
+			if (it->second->GetLevelLimitEnd() >= (DWORD)iLevel)
+			{
+				iLevelMax = true;
+			}
+			if (iLevelMin && iLevelMax)
+			{
+				auto v = it->second->GetVector();
+				for (DWORD i = 0; i < v.size(); i++)
+				{
+					DWORD dwVnum = number(v[i].dwVNumStart, v[i].dwVNumEnd);
+					vec_item.push_back(std::make_pair(dwVnum, v[i].iCount));
+				}
+			}
+		}
+	}
+
+	// BuyerTheitGloves Item Group
+	{
+		if (pkKiller->GetPremiumRemainSeconds(PREMIUM_ITEM) > 0 ||
+			pkKiller->IsEquipUniqueGroup(UNIQUE_GROUP_DOUBLE_ITEM))
+		{
+			auto it = m_map_pkGloveItemGroup.find(pkChr->GetRaceNum());
+
+			if (it != m_map_pkGloveItemGroup.end())
+			{
+				auto v = it->second->GetVector();
+
+				for (DWORD i = 0; i < v.size(); ++i)
+				{
+					DWORD dwVnum = number(v[i].dwVnumStart, v[i].dwVnumEnd);
+					vec_item.push_back(std::make_pair(dwVnum, v[i].iCount));
+				}
+			}
+		}
+	}
+
+	// ETC DropItem
+	if (pkChr->GetMobDropItemVnum())
+	{
+		auto it = m_map_dwEtcItemDropProb.find(pkChr->GetMobDropItemVnum());
+
+		if (it != m_map_dwEtcItemDropProb.end())
+		{
+			vec_item.push_back(std::make_pair(pkChr->GetMobDropItemVnum(), 1));
+		}
+	}
+
+	if (pkChr->IsStone())
+	{
+		if (pkChr->GetDropMetinStoneVnum())
+		{
+			vec_item.push_back(std::make_pair(pkChr->GetDropMetinStoneVnum(), 1));
+		}
+	}
+
+	std::sort(vec_item.begin(), vec_item.end(), std::less<std::pair<int, int> >());
+
+	return vec_item.size();
+}
+
 bool ITEM_MANAGER::CreateDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::vector<LPITEM> & vec_item)
 {
 	int iLevel = pkKiller->GetLevel();

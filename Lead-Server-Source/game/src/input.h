@@ -154,6 +154,7 @@ class CInputMain : public CInputProcessor
 		int			MyShop(LPCHARACTER ch, const char * c_pData, size_t uiBytes);
 
 		void		Refine(LPCHARACTER ch, const char* c_pData);
+		void		TargetInfoLoad(LPCHARACTER ch, const char* c_pData);
 };
 
 class CInputDead : public CInputMain

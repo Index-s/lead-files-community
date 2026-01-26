@@ -312,6 +312,9 @@ class ToolTip(ui.ThinBoard):
 		self.SetPosition(x, y)
 
 class ItemToolTip(ToolTip):
+	isStone = False
+	isBook = False
+	isBook2 = False
 
 	CHARACTER_NAMES = ( 
 		localeInfo.TOOLTIP_WARRIOR,
@@ -542,6 +545,38 @@ class ItemToolTip(ToolTip):
 
 		self.AddItemData(itemVnum, metinSlot, attrSlot)
 
+	def SetItemToolTipStone(self, itemVnum):
+		self.itemVnum = itemVnum
+		item.SelectItem(itemVnum)
+		itemType = item.GetItemType()
+
+		itemDesc = item.GetItemDescription()
+		itemSummary = item.GetItemSummary()
+		attrSlot = 0
+		self.__AdjustMaxWidth(attrSlot, itemDesc)
+		itemName = item.GetItemName()
+		realName = itemName[:itemName.find("+")]
+		self.SetTitle(realName + " +0 - +4")
+
+		## Description ###
+		self.AppendDescription(itemDesc, 26)
+		self.AppendDescription(itemSummary, 26, self.CONDITION_COLOR)
+
+		if item.ITEM_TYPE_METIN == itemType:
+			self.AppendMetinInformation()
+			self.AppendMetinWearInformation()
+
+		for i in xrange(item.LIMIT_MAX_NUM):
+			(limitType, limitValue) = item.GetLimit(i)
+
+			if item.LIMIT_REAL_TIME_START_FIRST_USE == limitType:
+				self.AppendRealTimeStartFirstUseLastTime(item, metinSlot, i)
+
+			elif item.LIMIT_TIMER_BASED_ON_WEAR == limitType:
+				self.AppendTimerBasedOnWearLastTime(metinSlot)
+
+		self.ShowToolTip()
+
 	def SetShopItem(self, slotIndex):
 		itemVnum = shop.GetItemID(slotIndex)
 		if 0 == itemVnum:
@@ -758,7 +793,12 @@ class ItemToolTip(ToolTip):
 		self.SetTitle(itemName)
 
 	def __SetNormalItemTitle(self):
-		self.SetTitle(item.GetItemName())
+		if self.isStone:
+			itemName = item.GetItemName()
+			realName = itemName[:itemName.find("+")]
+			self.SetTitle(realName + " +0 - +4")
+		else:
+			self.SetTitle(item.GetItemName())
 
 	def __SetSpecialItemTitle(self):
 		self.AppendTextLine(item.GetItemName(), self.SPECIAL_TITLE_COLOR)
@@ -826,26 +866,33 @@ class ItemToolTip(ToolTip):
 			return
 
 		### Skill Book ###
-		elif 50300 == itemVnum:
-			if 0 != metinSlot:
+		elif 50300 == itemVnum and not self.isBook:
+			if 0 != metinSlot and not self.isBook:
 				self.__SetSkillBookToolTip(metinSlot[0], localeInfo.TOOLTIP_SKILLBOOK_NAME, 1)
-
 				self.ShowToolTip()
-			return 
-		elif 70037 == itemVnum:
-			if 0 != metinSlot:
+			elif self.isBook:
+				self.SetTitle(item.GetItemName())
+				self.AppendDescription(item.GetItemDescription(), 26)
+				self.AppendDescription(item.GetItemSummary(), 26, self.CONDITION_COLOR)
+				self.ShowToolTip()					
+			return
+		elif 70037 == itemVnum :
+			if 0 != metinSlot and not self.isBook2:
 				self.__SetSkillBookToolTip(metinSlot[0], localeInfo.TOOLTIP_SKILL_FORGET_BOOK_NAME, 0)
 				self.AppendDescription(item.GetItemDescription(), 26)
 				self.AppendDescription(item.GetItemSummary(), 26, self.CONDITION_COLOR)
-
 				self.ShowToolTip()
+			elif self.isBook2:
+				self.SetTitle(item.GetItemName())
+				self.AppendDescription(item.GetItemDescription(), 26)
+				self.AppendDescription(item.GetItemSummary(), 26, self.CONDITION_COLOR)
+				self.ShowToolTip()					
 			return
 		elif 70055 == itemVnum:
 			if 0 != metinSlot:
 				self.__SetSkillBookToolTip(metinSlot[0], localeInfo.TOOLTIP_SKILL_FORGET_BOOK_NAME, 0)
 				self.AppendDescription(item.GetItemDescription(), 26)
 				self.AppendDescription(item.GetItemSummary(), 26, self.CONDITION_COLOR)
-
 				self.ShowToolTip()
 			return
 		###########################################################################################

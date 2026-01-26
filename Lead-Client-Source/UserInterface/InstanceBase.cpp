@@ -759,7 +759,7 @@ bool CInstanceBase::Create(const SCreateData& c_rkCreateData)
 	__Create_SetName(c_rkCreateData);
 
 	if (IsEnemy() || IsStone())
-		m_dwLevel = CPythonNonPlayer::Instance().GetMobLevel(GetRace());
+		m_dwLevel = CPythonNonPlayer::Instance().GetMonsterLevel(GetRace());
 	else
 		m_dwLevel = c_rkCreateData.m_dwLevel;
 	m_dwGuildID = c_rkCreateData.m_dwGuildID;
