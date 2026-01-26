@@ -1003,7 +1003,6 @@ inline void RegisterAllPacketsGenerated()
     dbg.RegRecv(HEADER_GC_AUTH_SUCCESS, "GC_AUTH_SUCCESS", Print_TPacketGCAuthSuccess);
     dbg.RegRecv(HEADER_GC_HYBRIDCRYPT_KEYS, "GC_HYBRIDCRYPT_KEYS", Print_TPacketGCHybridCryptKeys);
     dbg.RegRecv(HEADER_GC_HYBRIDCRYPT_SDB, "GC_HYBRIDCRYPT_SDB", Print_TPacketGCPackageSDB);
-    dbg.RegRecv(HEADER_GC_ROULETTE, "GC_ROULETTE", PrintHexDump); // no struct found
     dbg.RegRecv(HEADER_GC_SPECIFIC_EFFECT, "GC_SPECIFIC_EFFECT", Print_TPacketGCSpecificEffect);
     dbg.RegRecv(HEADER_GC_DRAGON_SOUL_REFINE, "GC_DRAGON_SOUL_REFINE", Print_TPacketGCDragonSoulRefine);
     dbg.RegRecv(HEADER_GC_RESPOND_CHANNELSTATUS, "GC_RESPOND_CHANNELSTATUS", Print_TPacketGCStateCheck);
