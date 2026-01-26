@@ -215,7 +215,7 @@ DWORD CItem::GetCount()
 	if (GetType() == ITEM_ELK) return MIN(m_dwCount, INT_MAX);
 	else
 	{
-		return MIN(m_dwCount, 200);
+		return MIN(m_dwCount, g_bItemCountLimit);
 	}
 }
 
@@ -227,7 +227,7 @@ bool CItem::SetCount(DWORD count)
 	}
 	else
 	{
-		m_dwCount = MIN(count, ITEM_MAX_COUNT);
+		m_dwCount = MIN(count, g_bItemCountLimit);
 	}
 
 	if (count == 0 && m_pOwner)

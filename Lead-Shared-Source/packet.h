@@ -631,7 +631,7 @@ typedef struct command_item_drop2
 	BYTE 	header;
 	TItemPos 	Cell;
 	DWORD	gold;
-	BYTE	count;
+	ItemStackType	count;
 } TPacketCGItemDrop2;
 
 typedef struct command_item_move
@@ -639,7 +639,7 @@ typedef struct command_item_move
 	BYTE 	header;
 	TItemPos	Cell;
 	TItemPos	CellTo;
-	BYTE	count;
+	ItemStackType	count;
 } TPacketCGItemMove;
 
 typedef struct command_item_pickup
@@ -677,13 +677,13 @@ enum
 
 typedef struct command_shop_buy
 {
-	BYTE	count;
+	ItemStackType	count;
 } TPacketCGShopBuy;
 
 typedef struct command_shop_sell
 {
 	BYTE	pos;
-	BYTE	count;
+	ItemStackType	count;
 } TPacketCGShopSell;
 
 typedef struct command_shop
@@ -1053,7 +1053,7 @@ typedef struct packet_item_set
 	BYTE	header;
 	TItemPos Cell;
 	DWORD	vnum;
-	BYTE	count;
+	ItemStackType	count;
 	DWORD	flags;
 	DWORD	anti_flags;
 	bool	highlight;
@@ -1087,7 +1087,7 @@ typedef struct packet_item_update
 {
 	BYTE	header;
 	TItemPos Cell;
-	BYTE	count;
+	ItemStackType	count;
 	long	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TPacketGCItemUpdate;
@@ -1161,7 +1161,7 @@ typedef struct packet_shop_item
 {   
 	DWORD       vnum;
 	DWORD       price;
-	BYTE        count;
+	ItemStackType        count;
 	BYTE		display_pos;
 	long	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
@@ -2003,7 +2003,7 @@ typedef struct packet_channel
 typedef struct SEquipmentItemSet
 {
 	uint32_t vnum;
-	BYTE count;
+	ItemStackType count;
 	int32_t alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TEquipmentItemSet;

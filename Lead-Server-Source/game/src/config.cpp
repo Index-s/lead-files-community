@@ -93,11 +93,13 @@ void		LoadValidCRCList();
 bool            g_protectNormalPlayer   = false;        // 범법자가 "평화모드" 인 일반유저를 공격하지 못함
 
 int gPlayerMaxLevel = 99;
+
 // NEW CONFIG VARIABLES
 BYTE g_PartyGapLevel = 30;
 int g_GuildCreateFee = 200000;
 int g_DeathExpLossCap = 800000;
 int g_SkillBookExp = 20000;
+ItemStackType g_bItemCountLimit = 200;
 // NEW CONFIG VARIABLES
 
 bool g_BlockCharCreation = false;
@@ -979,6 +981,13 @@ void config_init(const string& st_localeServiceName)
 			g_SkillBookExp = MAX(0, g_SkillBookExp);
 
 			fprintf(stderr, "SKILL_BOOK_EXP: %d\n", g_SkillBookExp);
+		}
+
+		TOKEN("item_count_limit")
+		{
+			str_to_number(g_bItemCountLimit, value_string);
+			fprintf(stdout, "ITEM_COUNT_LIMIT: %d\n", g_bItemCountLimit);
+			continue;
 		}
 
 		TOKEN("block_char_creation")
