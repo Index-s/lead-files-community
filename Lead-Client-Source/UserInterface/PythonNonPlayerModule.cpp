@@ -326,4 +326,23 @@ void initNonPlayer()
 	PyModule_AddIntConstant(poModule, "MOB_RESIST_WIND", CPythonNonPlayer::MOB_RESIST_WIND);
 	PyModule_AddIntConstant(poModule, "MOB_RESIST_POISON", CPythonNonPlayer::MOB_RESIST_POISON);
 	PyModule_AddIntConstant(poModule, "MOB_RESIST_MAX_NUM", CPythonNonPlayer::MOB_RESISTS_MAX_NUM);
+
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_ANIMAL", RACE_FLAG_ANIMAL);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_UNDEAD", RACE_FLAG_UNDEAD);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_DEVIL", RACE_FLAG_DEVIL);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_HUMAN", RACE_FLAG_HUMAN);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_ORC", RACE_FLAG_ORC);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_MILGYO", RACE_FLAG_MILGYO);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_INSECT", RACE_FLAG_INSECT);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_FIRE", RACE_FLAG_FIRE);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_ICE", RACE_FLAG_ICE);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_DESERT", RACE_FLAG_DESERT);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_TREE", RACE_FLAG_TREE);
+
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_ATT_ELEC", RACE_FLAG_ATT_ELEC);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_ATT_FIRE", RACE_FLAG_ATT_FIRE);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_ATT_ICE", RACE_FLAG_ATT_ICE);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_ATT_WIND", RACE_FLAG_ATT_WIND);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_ATT_EARTH", RACE_FLAG_ATT_EARTH);
+	PyModule_AddIntConstant(poModule, "RACE_FLAG_ATT_DARK", RACE_FLAG_ATT_DARK);
 }

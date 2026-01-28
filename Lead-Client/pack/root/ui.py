@@ -587,12 +587,13 @@ class ListBoxExNew(Window):
 		self.basePos=0
 		self.baseIndex=0
 		self.maxSteps=0
+		self.totalItemHeight = 0
 		self.viewSteps = viewSteps
 		self.stepSize = stepSize
 		self.itemList=[]
 
 		self.scrollBar=None
-
+		
 		self.SetWindowName("NONAME_ListBoxEx")
 
 	def __del__(self):
@@ -625,34 +626,48 @@ class ListBoxExNew(Window):
 			oldItem.ResetCurrentHeight()
 			oldItem.Hide()
 
-		self.basePos=basePos
-
+		self.basePos = basePos
+		pixelOffset = basePos 
+		
 		baseIndex = 0
-		while basePos > 0:
-			basePos -= self.itemList[baseIndex].GetHeight() / self.stepSize
-			if basePos < 0:
-				self.itemList[baseIndex].SetRemoveTop(self.stepSize * abs(basePos))
+		accumulatedHeight = 0
+		
+		while baseIndex < len(self.itemList):
+			itemHeight = self.itemList[baseIndex].GetHeight()
+			
+			if accumulatedHeight + itemHeight > pixelOffset:
+				topRemove = pixelOffset - accumulatedHeight
+				self.itemList[baseIndex].SetRemoveTop(topRemove)
 				break
+			
+			accumulatedHeight += itemHeight
 			baseIndex += 1
+			
 		self.baseIndex = baseIndex
 
-		stepCount = 0
 		self.viewItemCount = 0
+		currentRenderY = 0
+		viewHeightPixels = self.GetHeight()
+
 		while baseIndex < len(self.itemList):
-			stepCount += self.itemList[baseIndex].GetCurrentHeight() / self.stepSize
+			item = self.itemList[baseIndex]
+			itemCurrentHeight = item.GetCurrentHeight()
+			
+			if currentRenderY + itemCurrentHeight > viewHeightPixels:
+				visibleAmount = viewHeightPixels - currentRenderY
+				removeBottom = itemCurrentHeight - visibleAmount
+				item.SetRemoveBottom(removeBottom)
+				itemCurrentHeight = visibleAmount
+			
+			item.SetPosition(0, currentRenderY)
+			item.Show()
+			
+			currentRenderY += itemCurrentHeight
 			self.viewItemCount += 1
-			if stepCount > self.viewSteps:
-				self.itemList[baseIndex].SetRemoveBottom(self.stepSize * (stepCount - self.viewSteps))
-				break
-			elif stepCount == self.viewSteps:
-				break
 			baseIndex += 1
 
-		y = 0
-		for newItem in self.itemList[self.baseIndex:self.baseIndex+self.viewItemCount]:
-			newItem.SetPosition(0, y)
-			newItem.Show()
-			y += newItem.GetCurrentHeight()
+			if currentRenderY >= viewHeightPixels:
+				break
 
 	def GetItemIndex(self, argItem):
 		return self.itemList.index(argItem)
@@ -666,23 +681,23 @@ class ListBoxExNew(Window):
 	def RemoveAllItems(self):
 		self.itemList=[]
 		self.maxSteps=0
-
+		self.totalItemHeight = 0
 		if self.scrollBar:
 			self.scrollBar.SetPos(0)
 
 	def RemoveItem(self, delItem):
-		self.maxSteps -= delItem.GetHeight() / self.stepSize
+		self.totalItemHeight -= delItem.GetHeight()
 		self.itemList.remove(delItem)
+		
+		if self.stepSize > 0:
+			self.maxSteps = int((self.totalItemHeight + self.stepSize - 1) / self.stepSize)
 
 	def AppendItem(self, newItem):
-		if newItem.GetHeight() % self.stepSize != 0:
-			import dbg
-			dbg.TraceError("Invalid AppendItem height %d stepSize %d" % (newItem.GetHeight(), self.stepSize))
-			return
-
-		self.maxSteps += newItem.GetHeight() / self.stepSize
 		newItem.SetParent(self)
 		self.itemList.append(newItem)
+		self.totalItemHeight += newItem.GetHeight()
+		if self.stepSize > 0:
+			self.maxSteps = int((self.totalItemHeight + self.stepSize - 1) / self.stepSize)
 
 	def SetScrollBar(self, scrollBar):
 		scrollBar.SetScrollEvent(__mem_func__(self.__OnScroll))
@@ -692,10 +707,9 @@ class ListBoxExNew(Window):
 		self.SetBasePos(int(self.scrollBar.GetPos()*self.__GetScrollLen()), FALSE)
 
 	def __GetScrollLen(self):
-		scrollLen=self.maxSteps-self.viewSteps
-		if scrollLen<0:
+		scrollLen = self.totalItemHeight - self.GetHeight()
+		if scrollLen < 0:
 			return 0
-
 		return scrollLen
 
 	def __GetViewItemCount(self):

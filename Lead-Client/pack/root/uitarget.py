@@ -34,20 +34,54 @@ class TargetBoard(ui.ThinBoard):
 				self.nameLine = nameLine
 
 				self.SetSize(width, 32 + 5)
+				self.baseTextY = 0 
 
 			def LoadImage(self, image, name = None):
 				self.image.LoadImage(image)
-				self.SetSize(self.GetWidth(), self.image.GetHeight() + 5 * (self.image.GetHeight() / 32))
+				
+				imgWidth = self.image.GetWidth()
+				imgHeight = self.image.GetHeight()
+				
+				calculatedHeight = max(32, imgHeight) + 5
+				self.SetSize(self.GetWidth(), calculatedHeight)
+				
+				self.image.SetPosition(0, (calculatedHeight - imgHeight) / 2)
+				self.baseTextY = (calculatedHeight - 15) / 2
+				
 				if name != None:
 					self.SetText(name)
+					self.nameLine.SetPosition(imgWidth + 5, self.baseTextY)
 
 			def SetText(self, text):
 				self.nameLine.SetText(text)
 
 			def RefreshHeight(self):
 				ui.ListBoxExNew.Item.RefreshHeight(self)
-				self.image.SetRenderingRect(0.0, 0.0 - float(self.removeTop) / float(self.GetHeight()), 0.0, 0.0 - float(self.removeBottom) / float(self.GetHeight()))
-				self.image.SetPosition(0, - self.removeTop)
+
+				fullHeight = float(self.GetHeight())
+				if fullHeight == 0:
+					return
+
+				self.image.SetRenderingRect(
+					0.0, 
+					0.0 - float(self.removeTop) / fullHeight, 
+					0.0, 
+					0.0 - float(self.removeBottom) / fullHeight
+				)
+				self.image.SetPosition(0, -self.removeTop)
+				
+				if self.nameLine:
+					imgWidth = self.image.GetWidth()
+				
+					currentTextY = self.baseTextY - self.removeTop
+					self.nameLine.SetPosition(imgWidth + 5, currentTextY)
+
+					currentVisibleHeight = fullHeight - self.removeTop - self.removeBottom
+					textHeight = 15 
+					if currentTextY < 0 or (currentTextY + textHeight) > currentVisibleHeight:
+						self.nameLine.Hide()
+					else:
+						self.nameLine.Show()
 
 		MAX_ITEM_COUNT = 5
 
@@ -85,29 +119,6 @@ class TargetBoard(ui.ThinBoard):
 			180,	#  15  30
 		]
 
-		RACE_FLAG_TO_NAME = {
-			1 << 0  : localeInfo.TARGET_INFO_RACE_ANIMAL,
-			1 << 1 	: localeInfo.TARGET_INFO_RACE_UNDEAD,
-			1 << 2  : localeInfo.TARGET_INFO_RACE_DEVIL,
-			1 << 3  : localeInfo.TARGET_INFO_RACE_HUMAN,
-			1 << 4  : localeInfo.TARGET_INFO_RACE_ORC,
-			1 << 5  : localeInfo.TARGET_INFO_RACE_MILGYO,
-			1 << 6	: localeInfo.TARGET_INFO_NEWRACE_INSECT,
-			1 << 7	: localeInfo.TARGET_INFO_NEWRACE_FIRE,
-			1 << 8	: localeInfo.TARGET_INFO_NEWRACE_ICE,
-			1 << 9	: localeInfo.TARGET_INFO_NEWRACE_DESERT,
-			1 << 10	: localeInfo.TARGET_INFO_NEWRACE_TREE,
-		}
-
-		SUB_RACE_FLAG_TO_NAME = {
-			1 << 11 : localeInfo.TARGET_INFO_RACE_ELEC,
-			1 << 12 : localeInfo.TARGET_INFO_RACE_FIRE,
-			1 << 13 : localeInfo.TARGET_INFO_RACE_ICE,
-			1 << 14 : localeInfo.TARGET_INFO_RACE_WIND,
-			1 << 15 : localeInfo.TARGET_INFO_RACE_EARTH,
-			1 << 16 : localeInfo.TARGET_INFO_RACE_DARK,
-		}
-
 		STONE_START_VNUM = 28030
 		STONE_LAST_VNUM = 28042
 
@@ -130,6 +141,10 @@ class TargetBoard(ui.ThinBoard):
 			self.stoneVnum = None
 			self.lastStoneVnum = 0
 			self.nextStoneIconChange = 0
+
+			self.race_flags_primary = []
+			self.race_flags_elements = []
+			self.__PrepareDynamicRaceFlags()
 
 			self.SetSize(self.BOARD_WIDTH, 0)
 
@@ -154,6 +169,41 @@ class TargetBoard(ui.ThinBoard):
 		def Close(self):
 			self.itemTooltip.HideToolTip()
 			self.Hide()
+
+		def __PrepareDynamicRaceFlags(self):
+			ELEMENT_START_FLAG = nonplayer.RACE_FLAG_ATT_ELEC
+
+			for attr_name in dir(nonplayer):
+				if not attr_name.startswith("RACE_FLAG_"):
+					continue
+					
+				flag_value = getattr(nonplayer, attr_name)
+				if flag_value == 0:
+					continue
+
+				is_element = (flag_value >= ELEMENT_START_FLAG)				
+				pure_id = attr_name.replace("RACE_FLAG_", "").replace("ATT_", "")
+				
+				display_name = None
+				
+				if is_element:
+					search_keys = ["TARGET_INFO_RACE_" + pure_id]
+				else:
+					search_keys = ["TARGET_INFO_RACE_" + pure_id, "TARGET_INFO_NEWRACE_" + pure_id]
+
+				for key in search_keys:
+					if hasattr(localeInfo, key):
+						display_name = getattr(localeInfo, key)
+						break
+				
+				if display_name:
+					if is_element:
+						self.race_flags_elements.append((flag_value, display_name))
+					else:
+						self.race_flags_primary.append((flag_value, display_name))
+
+			self.race_flags_primary.sort()
+			self.race_flags_elements.sort()
 
 		def __LoadInformation(self, race):
 			self.yPos = 7
@@ -217,31 +267,28 @@ class TargetBoard(ui.ThinBoard):
 			self.AppendTextLine(localeInfo.TARGET_INFO_REGEN_INFO % (nonplayer.GetMonsterRegenPercent(race), nonplayer.GetMonsterRegenCycle(race)))
 
 		def __LoadInformation_Race(self, race):
-			dwRaceFlag = nonplayer.GetMonsterRaceFlag(race)
 			self.AppendSeperator()
+			
+			dwRaceFlag = nonplayer.GetMonsterRaceFlag(race)
+			main_race_list = []
+			element_list = []
 
-			mainrace = ""
-			subrace = ""
-			for i in xrange(17):
-				curFlag = 1 << i
-				if HAS_FLAG(dwRaceFlag, curFlag):
-					if self.RACE_FLAG_TO_NAME.has_key(curFlag):
-						mainrace += self.RACE_FLAG_TO_NAME[curFlag] + ", "
-					elif self.SUB_RACE_FLAG_TO_NAME.has_key(curFlag):
-						subrace += self.SUB_RACE_FLAG_TO_NAME[curFlag] + ", "
+			for flag, name in self.race_flags_primary:
+				if dwRaceFlag & flag:
+					main_race_list.append(name)
+			
 			if nonplayer.IsMonsterStone(race):
-				mainrace += localeInfo.TARGET_INFO_RACE_METIN + ", "
-			if mainrace == "":
-				mainrace = localeInfo.TARGET_INFO_NO_RACE
-			else:
-				mainrace = mainrace[:-2]
-			if subrace == "":
-				subrace = localeInfo.TARGET_INFO_NO_RACE
-			else:
-				subrace = subrace[:-2]
+				main_race_list.append(localeInfo.TARGET_INFO_RACE_METIN)
 
-			self.AppendTextLine(localeInfo.TARGET_INFO_MAINRACE % mainrace)
-			self.AppendTextLine(localeInfo.TARGET_INFO_SUBRACE % subrace)
+			for flag, name in self.race_flags_elements:
+				if dwRaceFlag & flag:
+					element_list.append(name)
+
+			main_race_str = ", ".join(main_race_list) if main_race_list else localeInfo.TARGET_INFO_NO_RACE
+			element_str = ", ".join(element_list) if element_list else localeInfo.TARGET_INFO_NO_RACE
+
+			self.AppendTextLine(localeInfo.TARGET_INFO_MAINRACE % main_race_str)
+			self.AppendTextLine(localeInfo.TARGET_INFO_SUBRACE % element_str)
 
 		def __LoadInformation_Drops(self, race):
 			self.AppendSeperator()
