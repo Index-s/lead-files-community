@@ -190,12 +190,6 @@ class Window(object):
 	def Hide(self):
 		wndMgr.Hide(self.hWnd)
 
-	def SetVisible(self, is_show):
-		if is_show:
-			self.Show()
-		else:
-			self.Hide()
-
 	def Lock(self):
 		wndMgr.Lock(self.hWnd)
 
