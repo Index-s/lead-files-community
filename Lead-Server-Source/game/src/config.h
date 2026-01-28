@@ -86,14 +86,14 @@ extern int VIEW_RANGE;
 extern int VIEW_BONUS_RANGE;
 
 extern bool g_bCheckMultiHack;
-extern bool g_protectNormalPlayer;      // ¹ü¹ıÀÚ°¡ "ÆòÈ­¸ğµå" ÀÎ ÀÏ¹İÀ¯Àú¸¦ °ø°İÇÏÁö ¸øÇÔ
+extern bool g_protectNormalPlayer;      // ë²”ë²•ìê°€ "í‰í™”ëª¨ë“œ" ì¸ ì¼ë°˜ìœ ì €ë¥¼ ê³µê²©í•˜ì§€ ëª»í•¨
 
 extern DWORD g_GoldDropTimeLimitValue;
 
 extern int gPlayerMaxLevel;
 
 // NEW CONFIGURATION VARIABLES
-extern bool g_bCreatePublicFiles;
+extern bool g_CreateDocumentationFiles ;
 extern BYTE g_PartyGapLevel;
 extern int g_GuildCreateFee;
 extern int g_DeathExpLossCap;

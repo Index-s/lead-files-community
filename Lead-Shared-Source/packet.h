@@ -46,6 +46,8 @@ enum
 	HEADER_CG_SHOOT				= 54,
 	HEADER_CG_MYSHOP				= 55,
 
+	HEADER_CG_TARGET_INFO_LOAD = 59,
+
 	HEADER_CG_ITEM_USE_TO_ITEM			= 60,
 	HEADER_CG_TARGET			 	= 61,
 
@@ -159,6 +161,8 @@ enum
 	HEADER_GC_PING				= 44,
 	HEADER_GC_SCRIPT				= 45,
 	HEADER_GC_QUEST_CONFIRM			= 46,
+
+	HEADER_GC_TARGET_INFO			= 58,
 
 	HEADER_GC_OWNERSHIP				= 62,
 	HEADER_GC_TARGET			 	= 63,
@@ -1374,6 +1378,21 @@ typedef struct packet_target
 	DWORD	dwVID;
 	BYTE	bHPPercent;
 } TPacketGCTarget;
+
+typedef struct packet_target_info
+{
+	BYTE	header;
+	DWORD	dwVID;
+	DWORD	race;
+	DWORD	dwVnum;
+	BYTE	count;
+} TPacketGCTargetInfo;
+
+typedef struct packet_target_info_load
+{
+	BYTE header;
+	DWORD dwVID;
+} TPacketCGTargetInfoLoad;
 
 typedef struct packet_warp
 {

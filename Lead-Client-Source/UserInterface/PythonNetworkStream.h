@@ -304,6 +304,7 @@ class CPythonNetworkStream : public CNetworkStream, public CSingleton<CPythonNet
 		bool SendMessengerAddByVIDPacket(DWORD vid);
 		bool SendMessengerAddByNamePacket(const char * c_szName);
 		bool SendMessengerRemovePacket(const char * c_szKey, const char * c_szName);
+		bool SendTargetInfoLoadPacket(DWORD dwVID);
 
 	protected:
 		bool OnProcess();	// State들을 실제로 실행한다.
@@ -453,6 +454,7 @@ class CPythonNetworkStream : public CNetworkStream, public CSingleton<CPythonNet
 		bool RecvTargetPacket();
 		bool RecvViewEquipPacket();
 		bool RecvDamageInfoPacket();
+		bool RecvTargetInfoPacket();
 
 		// Fly
 		bool RecvCreateFlyPacket();

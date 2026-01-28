@@ -9,8 +9,421 @@ import chr
 import nonplayer
 import localeInfo
 import constInfo
+import uiToolTip
+import item
+
+MONSTER_INFO_DATA = {}
+def HAS_FLAG(value, flag):
+	return (value & flag) == flag
 
 class TargetBoard(ui.ThinBoard):
+	class InfoBoard(ui.ThinBoard):
+		class ItemListBoxItem(ui.ListBoxExNew.Item):
+			def __init__(self, width):
+				ui.ListBoxExNew.Item.__init__(self)
+
+				image = ui.ExpandedImageBox()
+				image.SetParent(self)
+				image.Show()
+				self.image = image
+
+				nameLine = ui.TextLine()
+				nameLine.SetParent(self)
+				nameLine.SetPosition(32 + 5, 0)
+				nameLine.Show()
+				self.nameLine = nameLine
+
+				self.SetSize(width, 32 + 5)
+				self.baseTextY = 0 
+
+			def LoadImage(self, image, name = None):
+				self.image.LoadImage(image)
+				
+				imgWidth = self.image.GetWidth()
+				imgHeight = self.image.GetHeight()
+				
+				calculatedHeight = max(32, imgHeight) + 5
+				self.SetSize(self.GetWidth(), calculatedHeight)
+				
+				self.image.SetPosition(0, (calculatedHeight - imgHeight) / 2)
+				self.baseTextY = (calculatedHeight - 15) / 2
+				
+				if name != None:
+					self.SetText(name)
+					self.nameLine.SetPosition(imgWidth + 5, self.baseTextY)
+
+			def SetText(self, text):
+				self.nameLine.SetText(text)
+
+			def RefreshHeight(self):
+				ui.ListBoxExNew.Item.RefreshHeight(self)
+
+				fullHeight = float(self.GetHeight())
+				if fullHeight == 0:
+					return
+
+				self.image.SetRenderingRect(
+					0.0, 
+					0.0 - float(self.removeTop) / fullHeight, 
+					0.0, 
+					0.0 - float(self.removeBottom) / fullHeight
+				)
+				self.image.SetPosition(0, -self.removeTop)
+				
+				if self.nameLine:
+					imgWidth = self.image.GetWidth()
+				
+					currentTextY = self.baseTextY - self.removeTop
+					self.nameLine.SetPosition(imgWidth + 5, currentTextY)
+
+					currentVisibleHeight = fullHeight - self.removeTop - self.removeBottom
+					textHeight = 15 
+					if currentTextY < 0 or (currentTextY + textHeight) > currentVisibleHeight:
+						self.nameLine.Hide()
+					else:
+						self.nameLine.Show()
+
+		MAX_ITEM_COUNT = 5
+
+		EXP_BASE_LVDELTA = [
+			1,  #  -15 0
+			5,  #  -14 1
+			10, #  -13 2
+			20, #  -12 3
+			30, #  -11 4
+			50, #  -10 5
+			70, #  -9  6
+			80, #  -8  7
+			85, #  -7  8
+			90, #  -6  9
+			92, #  -5  10
+			94, #  -4  11
+			96, #  -3  12
+			98, #  -2  13
+			100,	#  -1  14
+			100,	#  0   15
+			105,	#  1   16
+			110,	#  2   17
+			115,	#  3   18
+			120,	#  4   19
+			125,	#  5   20
+			130,	#  6   21
+			135,	#  7   22
+			140,	#  8   23
+			145,	#  9   24
+			150,	#  10  25
+			155,	#  11  26
+			160,	#  12  27
+			165,	#  13  28
+			170,	#  14  29
+			180,	#  15  30
+		]
+
+		STONE_START_VNUM = 28030
+		STONE_LAST_VNUM = 28042
+
+		BOARD_WIDTH = 250
+
+		def __init__(self):
+			ui.ThinBoard.__init__(self)
+
+			self.HideCorners(self.LT)
+			self.HideCorners(self.RT)
+			self.HideLine(self.T)
+
+			self.race = 0
+			self.hasItems = False
+
+			self.itemTooltip = uiToolTip.ItemToolTip()
+			self.itemTooltip.HideToolTip()
+
+			self.stoneImg = None
+			self.stoneVnum = None
+			self.lastStoneVnum = 0
+			self.nextStoneIconChange = 0
+
+			self.race_flags_primary = []
+			self.race_flags_elements = []
+			self.__PrepareDynamicRaceFlags()
+
+			self.SetSize(self.BOARD_WIDTH, 0)
+
+		def __del__(self):
+			ui.ThinBoard.__del__(self)
+
+		def __UpdatePosition(self, targetBoard):
+			self.SetPosition(targetBoard.GetLeft() + (targetBoard.GetWidth() - self.GetWidth()) / 2, targetBoard.GetBottom() - 17)
+
+		def Open(self, targetBoard, race):
+			self.__LoadInformation(race)
+
+			self.SetSize(self.BOARD_WIDTH, self.yPos + 10)
+			self.__UpdatePosition(targetBoard)
+
+			self.Show()
+
+		def Refresh(self):
+			self.__LoadInformation(self.race)
+			self.SetSize(self.BOARD_WIDTH, self.yPos + 10)
+
+		def Close(self):
+			self.itemTooltip.HideToolTip()
+			self.Hide()
+
+		def __PrepareDynamicRaceFlags(self):
+			ELEMENT_START_FLAG = nonplayer.RACE_FLAG_ATT_ELEC
+
+			for attr_name in dir(nonplayer):
+				if not attr_name.startswith("RACE_FLAG_"):
+					continue
+					
+				flag_value = getattr(nonplayer, attr_name)
+				if flag_value == 0:
+					continue
+
+				is_element = (flag_value >= ELEMENT_START_FLAG)				
+				pure_id = attr_name.replace("RACE_FLAG_", "").replace("ATT_", "")
+				
+				display_name = None
+				
+				if is_element:
+					search_keys = ["TARGET_INFO_RACE_" + pure_id]
+				else:
+					search_keys = ["TARGET_INFO_RACE_" + pure_id, "TARGET_INFO_NEWRACE_" + pure_id]
+
+				for key in search_keys:
+					if hasattr(localeInfo, key):
+						display_name = getattr(localeInfo, key)
+						break
+				
+				if display_name:
+					if is_element:
+						self.race_flags_elements.append((flag_value, display_name))
+					else:
+						self.race_flags_primary.append((flag_value, display_name))
+
+			self.race_flags_primary.sort()
+			self.race_flags_elements.sort()
+
+		def __LoadInformation(self, race):
+			self.yPos = 7
+			self.children = []
+			self.race = race
+			self.stoneImg = None
+			self.stoneVnum = None
+			self.nextStoneIconChange = 0
+
+			self.__LoadInformation_Default(race)
+			self.__LoadInformation_Race(race)
+			self.__LoadInformation_Resists(race)
+			self.__LoadInformation_Drops(race)
+
+		def __LoadInformation_Default_GetHitRate(self, race):
+			attacker_dx = nonplayer.GetMonsterDX(race)
+			attacker_level = nonplayer.GetMonsterLevel(race)
+
+			self_dx = player.GetStatus(player.DX)
+			self_level = player.GetStatus(player.LEVEL)
+
+			iARSrc = min(90, (attacker_dx * 4 + attacker_level * 2) / 6)
+			iERSrc = min(90, (self_dx * 4 + self_level * 2) / 6)
+
+			fAR = (float(iARSrc) + 210.0) / 300.0
+			fER = (float(iERSrc) * 2 + 5) / (float(iERSrc) + 95) * 3.0 / 10.0
+
+			return fAR - fER
+			
+		def __LoadInformation_Resists(self, race):
+			self.AppendSeperator()
+			self.AppendTextLine(localeInfo.TARGET_INFO_RESISTS)
+			self.AppendTextLine(localeInfo.TARGET_INFO_RESISTS_LINE0 % (nonplayer.GetMonsterResist(race, nonplayer.MOB_RESIST_SWORD), nonplayer.GetMonsterResist(race, nonplayer.MOB_RESIST_TWOHAND), nonplayer.GetMonsterResist(race, nonplayer.MOB_RESIST_BELL)))
+			self.AppendTextLine(localeInfo.TARGET_INFO_RESISTS_LINE1 % (nonplayer.GetMonsterResist(race, nonplayer.MOB_RESIST_DAGGER), nonplayer.GetMonsterResist(race, nonplayer.MOB_RESIST_FAN), nonplayer.GetMonsterResist(race, nonplayer.MOB_RESIST_BOW)))
+
+		def __LoadInformation_Default(self, race):
+			self.AppendSeperator()
+			self.AppendTextLine(localeInfo.TARGET_INFO_MAX_HP % localeInfo.DottedNumber(nonplayer.GetMonsterMaxHP(race)))
+
+			# calc att damage
+			monsterLevel = nonplayer.GetMonsterLevel(race)
+			fHitRate = self.__LoadInformation_Default_GetHitRate(race)
+			iDamMin, iDamMax = nonplayer.GetMonsterDamage(race)
+			iDamMin = int((iDamMin + nonplayer.GetMonsterST(race)) * 2 * fHitRate) + monsterLevel * 2
+			iDamMax = int((iDamMax + nonplayer.GetMonsterST(race)) * 2 * fHitRate) + monsterLevel * 2
+			iDef = player.GetStatus(player.DEF_GRADE) * (100 + player.GetStatus(player.DEF_BONUS)) / 100
+			fDamMulti = nonplayer.GetMonsterDamageMultiply(race)
+			iDamMin = int(max(0, iDamMin - iDef) * fDamMulti)
+			iDamMax = int(max(0, iDamMax - iDef) * fDamMulti)
+			if iDamMin < 1:
+				iDamMin = 1
+			if iDamMax < 5:
+				iDamMax = 5
+			self.AppendTextLine(localeInfo.TARGET_INFO_DAMAGE % (str(iDamMin), str(iDamMax)))
+
+			idx = min(len(self.EXP_BASE_LVDELTA) - 1, max(0, (monsterLevel + 15) - player.GetStatus(player.LEVEL)))
+			iExp = nonplayer.GetMonsterExp(race) * self.EXP_BASE_LVDELTA[idx] / 100
+			self.AppendTextLine(localeInfo.TARGET_INFO_EXP % localeInfo.DottedNumber(iExp))
+
+			self.AppendTextLine(localeInfo.TARGET_INFO_GOLD_MIN_MAX % (localeInfo.DottedNumber(nonplayer.GetMonsterGoldMin(race)), localeInfo.DottedNumber(nonplayer.GetMonsterGoldMax(race))))
+			self.AppendTextLine(localeInfo.TARGET_INFO_REGEN_INFO % (nonplayer.GetMonsterRegenPercent(race), nonplayer.GetMonsterRegenCycle(race)))
+
+		def __LoadInformation_Race(self, race):
+			self.AppendSeperator()
+			
+			dwRaceFlag = nonplayer.GetMonsterRaceFlag(race)
+			main_race_list = []
+			element_list = []
+
+			for flag, name in self.race_flags_primary:
+				if dwRaceFlag & flag:
+					main_race_list.append(name)
+			
+			if nonplayer.IsMonsterStone(race):
+				main_race_list.append(localeInfo.TARGET_INFO_RACE_METIN)
+
+			for flag, name in self.race_flags_elements:
+				if dwRaceFlag & flag:
+					element_list.append(name)
+
+			main_race_str = ", ".join(main_race_list) if main_race_list else localeInfo.TARGET_INFO_NO_RACE
+			element_str = ", ".join(element_list) if element_list else localeInfo.TARGET_INFO_NO_RACE
+
+			self.AppendTextLine(localeInfo.TARGET_INFO_MAINRACE % main_race_str)
+			self.AppendTextLine(localeInfo.TARGET_INFO_SUBRACE % element_str)
+
+		def __LoadInformation_Drops(self, race):
+			self.AppendSeperator()
+
+			if race in MONSTER_INFO_DATA:
+				if len(MONSTER_INFO_DATA[race]["items"]) == 0:
+					self.AppendTextLine(localeInfo.TARGET_INFO_NO_ITEM_TEXT)
+				else:
+					itemListBox = ui.ListBoxExNew(32 + 5, self.MAX_ITEM_COUNT)
+					itemListBox.SetSize(self.GetWidth() - 15 * 2 - ui.ScrollBar.SCROLLBAR_WIDTH, (32 + 5) * self.MAX_ITEM_COUNT)
+					height = 0
+					for curItem in MONSTER_INFO_DATA[race]["items"]:
+						if curItem.has_key("vnum_list"):
+							height += self.AppendItem(itemListBox, curItem["vnum_list"], curItem["count"])
+						else:
+							height += self.AppendItem(itemListBox, curItem["vnum"], curItem["count"])
+					if height < itemListBox.GetHeight():
+						itemListBox.SetSize(itemListBox.GetWidth(), height)
+					self.AppendWindow(itemListBox, 15)
+					itemListBox.SetBasePos(0)
+
+					if height > itemListBox.GetHeight():
+						itemScrollBar = ui.ScrollBar()
+						itemScrollBar.SetParent(self)
+						itemScrollBar.SetPosition(itemListBox.GetRight(), itemListBox.GetTop())
+						itemScrollBar.SetScrollBarSize(itemListBox.GetHeight())
+						itemScrollBar.SetMiddleBarSize(float(itemListBox.GetHeight()) / float(height))
+						itemScrollBar.Show()
+						itemListBox.SetScrollBar(itemScrollBar)
+			else:
+				self.AppendTextLine(localeInfo.TARGET_INFO_NO_ITEM_TEXT)
+
+		def AppendTextLine(self, text):
+			textLine = ui.TextLine()
+			textLine.SetParent(self)
+			textLine.SetWindowHorizontalAlignCenter()
+			textLine.SetHorizontalAlignCenter()
+			textLine.SetText(text)
+			textLine.SetPosition(0, self.yPos)
+			textLine.Show()
+
+			self.children.append(textLine)
+			self.yPos += 17
+
+		def AppendSeperator(self):
+			img = ui.ImageBox()
+			img.LoadImage("d:/ymir work/ui/seperator.tga")
+			self.AppendWindow(img)
+			img.SetPosition(img.GetLeft(), img.GetTop() - 15)
+			self.yPos -= 15
+
+		def AppendItem(self, listBox, vnums, count):
+			if type(vnums) == int:
+				vnum = vnums
+			else:
+				vnums.sort()
+				vnum = vnums[0]
+
+			item.SelectItem(vnum)
+			itemName = item.GetItemName()
+
+			if type(vnums) != int and len(vnums) > 1:
+				if item.GetItemType() == item.ITEM_TYPE_METIN:
+					realName = localeInfo.TARGET_INFO_STONE_NAME
+					itemName = "%s +%d - +%d" % (realName, vnums[0] % 10, vnums[-1] % 10)
+				else:
+					pos = itemName.find("+")
+					realName = itemName[:pos] if pos != -1 else itemName
+					itemName = "%s +%d - +%d" % (realName.strip(), vnums[0] % 10, vnums[-1] % 10)
+				
+				vnum = vnums[-1]
+
+			myItem = self.ItemListBoxItem(listBox.GetWidth())
+			myItem.LoadImage(item.GetIconImageFileName())
+
+			if count <= 1:
+				myItem.SetText(itemName)
+			else:
+				myItem.SetText("%dx %s" % (count, itemName))
+
+			myItem.SAFE_SetOverInEvent(self.OnShowItemTooltip, vnum)
+			myItem.SAFE_SetOverOutEvent(self.OnHideItemTooltip)
+			listBox.AppendItem(myItem)
+
+			if item.GetItemType() == item.ITEM_TYPE_METIN:
+				self.stoneImg = myItem
+				self.stoneVnum = vnums
+				self.lastStoneVnum = self.STONE_LAST_VNUM + vnums[-1] % 1000 / 100 * 100
+
+			return myItem.GetHeight()
+
+		def OnShowItemTooltip(self, vnum):
+			item.SelectItem(vnum)
+			if item.GetItemType() == item.ITEM_TYPE_METIN:
+				self.itemTooltip.isStone = True
+				self.itemTooltip.SetItemToolTip(self.lastStoneVnum)
+			else:
+				self.itemTooltip.isStone = False
+				self.itemTooltip.SetItemToolTip(vnum)
+
+		def OnHideItemTooltip(self):
+			self.itemTooltip.HideToolTip()
+
+		def AppendWindow(self, wnd, x = 0, width = 0, height = 0):
+			if width == 0:
+				width = wnd.GetWidth()
+			if height == 0:
+				height = wnd.GetHeight()
+
+			wnd.SetParent(self)
+			if x == 0:
+				wnd.SetPosition((self.GetWidth() - width) / 2, self.yPos)
+			else:
+				wnd.SetPosition(x, self.yPos)
+			wnd.Show()
+
+			self.children.append(wnd)
+			self.yPos += height + 5
+
+		def OnUpdate(self):
+			if self.stoneImg != None and self.stoneVnum != None and app.GetTime() >= self.nextStoneIconChange:
+				nextImg = self.lastStoneVnum + 1
+				if nextImg % 100 > self.STONE_LAST_VNUM % 100:
+					nextImg -= (self.STONE_LAST_VNUM - self.STONE_START_VNUM) + 1
+				self.lastStoneVnum = nextImg
+				self.nextStoneIconChange = app.GetTime() + 2.5
+
+				item.SelectItem(nextImg)
+				itemName = item.GetItemName()
+				realName = itemName[:itemName.find("+")]
+				realName = realName + "+0 - +4"
+				self.stoneImg.LoadImage(item.GetIconImageFileName(), realName)
+
+				if self.itemTooltip.IsShow() and self.itemTooltip.isStone:
+					self.itemTooltip.SetItemToolTip(nextImg)
 
 	BUTTON_NAME_LIST = ( 
 		localeInfo.TARGET_BUTTON_WHISPER, 
@@ -72,6 +485,18 @@ class TargetBoard(ui.ThinBoard):
 			hpGauge.SetWindowHorizontalAlignRight()
 			closeButton.SetWindowHorizontalAlignRight()
 
+			infoButton = ui.Button()
+			infoButton.SetParent(self)
+			infoButton.SetUpVisual("d:/ymir work/ui/pattern/q_mark_01.tga")
+			infoButton.SetOverVisual("d:/ymir work/ui/pattern/q_mark_02.tga")
+			infoButton.SetDownVisual("d:/ymir work/ui/pattern/q_mark_01.tga")
+			infoButton.SetEvent(ui.__mem_func__(self.OnPressedInfoButton))
+			infoButton.Hide()
+
+			infoBoard = self.InfoBoard()
+			infoBoard.Hide()
+			infoButton.showWnd = infoBoard
+
 		closeButton.SetEvent(ui.__mem_func__(self.OnPressedCloseButton))
 		closeButton.Show()
 
@@ -119,9 +544,11 @@ class TargetBoard(ui.ThinBoard):
 
 		self.name = name
 		self.hpGauge = hpGauge
+		self.infoButton = infoButton
 		self.closeButton = closeButton
 		self.nameString = 0
 		self.nameLength = 0
+		self.vnum = 0
 		self.vid = 0
 		self.eventWhisper = None
 		self.isShowButton = False
@@ -137,11 +564,13 @@ class TargetBoard(ui.ThinBoard):
 	def __Initialize(self):
 		self.nameString = ""
 		self.nameLength = 0
+		self.vnum = 0
 		self.vid = 0
 		self.isShowButton = False
 
 	def Destroy(self):
 		self.eventWhisper = None
+		self.infoButton = None
 		self.closeButton = None
 		self.showingButtonList = None
 		self.buttonDict = None
@@ -149,12 +578,31 @@ class TargetBoard(ui.ThinBoard):
 		self.hpGauge = None
 		self.__Initialize()
 
+	def RefreshMonsterInfoBoard(self):
+		if not self.infoButton.showWnd.IsShow():
+			return
+
+		self.infoButton.showWnd.Refresh()
+
+	def OnPressedInfoButton(self):
+		vid = player.GetTargetVID()
+		if vid:
+			race = nonplayer.GetRaceNumByVID(vid)
+			if race in MONSTER_INFO_DATA:
+				del MONSTER_INFO_DATA[race]
+		net.SendTargetInfoLoad(player.GetTargetVID())
+		if self.infoButton.showWnd.IsShow():
+			self.infoButton.showWnd.Close()
+		elif self.vnum != 0:
+			self.infoButton.showWnd.Open(self, self.vnum)
+
 	def OnPressedCloseButton(self):
 		player.ClearTarget()
 		self.Close()
 
 	def Close(self):
 		self.__Initialize()
+		self.infoButton.showWnd.Close()
 		self.Hide()
 
 	def Open(self, vid, name):
@@ -236,15 +684,19 @@ class TargetBoard(ui.ThinBoard):
 		self.name.SetHorizontalAlignCenter()
 		self.name.SetWindowHorizontalAlignCenter()
 		self.hpGauge.Hide()
+		self.infoButton.Hide()
+		self.infoButton.showWnd.Close()
 		self.SetSize(250, 40)
 
 	def SetTargetVID(self, vid):
 		self.vid = vid
+		self.vnum = 0
 
 	def SetEnemyVID(self, vid):
 		self.SetTargetVID(vid)
 
 		name = chr.GetNameByVID(vid)
+		vnum = nonplayer.GetRaceNumByVID(vid)
 		level = nonplayer.GetLevelByVID(vid)
 		grade = nonplayer.GetGradeByVID(vid)
 
@@ -255,6 +707,14 @@ class TargetBoard(ui.ThinBoard):
 			nameFront += "(" + self.GRADE_NAME[grade] + ") "
 
 		self.SetTargetName(nameFront + name)
+
+		(textWidth, textHeight) = self.name.GetTextSize()
+
+		self.infoButton.SetPosition(textWidth + 25, 12)
+		self.infoButton.SetWindowHorizontalAlignLeft()
+
+		self.vnum = vnum
+		self.infoButton.Show()
 
 	def GetTargetVID(self):
 		return self.vid

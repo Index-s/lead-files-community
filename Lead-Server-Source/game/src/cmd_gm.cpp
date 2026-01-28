@@ -1983,133 +1983,107 @@ ACMD(do_reload)
 
 	if (*arg1)
 	{
+		auto Notify = [&](const char* name, int state, const std::string& error = "")
+			{
+				if (state == 1)
+					ch->ChatPacket(CHAT_TYPE_INFO, "|cFF00FF00[OK] %s Success", name);
+				else
+					ch->ChatPacket(CHAT_TYPE_INFO, "|cFFFF0000[FAIL] %s Failed: %s", name, error.c_str());
+			};
+
 		switch (LOWER(*arg1))
 		{
-			case 'u':
+			case 'u': // User Count
 				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading state_user_count."));
 				LoadStateUserCount();
 				break;
 
-			case 'p':
+			case 'p': // Proto
 				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading prototype tables,"));
 				db_clientdesc->DBPacket(HEADER_GD_RELOAD_PROTO, 0, NULL, 0);
 				break;
 
-			case 's':
+			case 's': // Strings
 				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading notice string."));
 				DBManager::instance().LoadDBString();
 				break;
 
-			case 'q':
+			case 'q': // Quest
 				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading quest."));
 				quest::CQuestManager::instance().Reload();
 				break;
 
-			case 'f':
+			case 'f': // Fishing
 				fishing::Initialize();
 				break;
 
-				//RELOAD_ADMIN
-			case 'a':
-				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading Admin infomation."));
+			case 'a': // Admin
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading Admin information."));
 				db_clientdesc->DBPacket(HEADER_GD_RELOAD_ADMIN, 0, NULL, 0);
-				sys_log(0, "Reloading admin infomation.");
 				break;
-				//END_RELOAD_ADMIN
-			case 'c':	// cube
-				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading crafting infomation."));
-				Cube_init ();
+
+			case 'c': // Cube
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading crafting information."));
+				Cube_init();
 				break;
-			default:
-				const int FILE_NAME_LEN = 256;
-				if (strstr(arg1, "drop"))
-				{
-					char szETCDropItemFileName[FILE_NAME_LEN];
-					char szMOBDropItemFileName[FILE_NAME_LEN];
-					char szSpecialItemGroupFileName[FILE_NAME_LEN];
-					char szCommonDropItemFileName[FILE_NAME_LEN];
-					char szDropItemGroupFileName[FILE_NAME_LEN];
 
-					snprintf(szETCDropItemFileName, sizeof(szETCDropItemFileName),
-						"%s/etc_drop_item.txt", LocaleService_GetBasePath().c_str());
-					snprintf(szMOBDropItemFileName, sizeof(szMOBDropItemFileName),
-						"%s/mob_drop_item.txt", LocaleService_GetBasePath().c_str());
-					snprintf(szSpecialItemGroupFileName, sizeof(szSpecialItemGroupFileName),
-						"%s/special_item_group.txt", LocaleService_GetBasePath().c_str());
-					snprintf(szCommonDropItemFileName, sizeof(szCommonDropItemFileName),
-						"%s/common_drop_item.txt", LocaleService_GetBasePath().c_str());
-					snprintf(szDropItemGroupFileName, sizeof(szDropItemGroupFileName),
-						"%s/drop_item_group.txt", LocaleService_GetBasePath().c_str());
+			case 'd': // Drops
+			{
+				std::string basePath = LocaleService_GetBasePath();
 
-					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: ETCDropItem: %s", szETCDropItemFileName);
-					if (!ITEM_MANAGER::instance().ReadEtcDropItemFile(szETCDropItemFileName))
-						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload ETCDropItem: %s", szETCDropItemFileName);
-					else
-						ch->ChatPacket(CHAT_TYPE_INFO, "reload success: ETCDropItem: %s", szETCDropItemFileName);
+				auto ReloadDropFile = [&](const char* name, const char* filename, std::pair<bool, std::string>(ITEM_MANAGER::* func)(const char*))
+					{
+						std::string fullPath = basePath + "/" + filename;
+						auto [success, errorMsg] = (ITEM_MANAGER::instance().*func)(fullPath.c_str());
 
-					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: SpecialItemGroup: %s", szSpecialItemGroupFileName);
-					if (!ITEM_MANAGER::instance().ReadSpecialDropItemFile(szSpecialItemGroupFileName))
-						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload SpecialItemGroup: %s", szSpecialItemGroupFileName);
-					else
-						ch->ChatPacket(CHAT_TYPE_INFO, "reload success: SpecialItemGroup: %s", szSpecialItemGroupFileName);
+						if (success) Notify(name, 1);
+						else Notify(name, 2, errorMsg);
+					};
 
-					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: MOBDropItemFile: %s", szMOBDropItemFileName);
-					if (!ITEM_MANAGER::instance().ReadMonsterDropItemGroup(szMOBDropItemFileName))
-						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload MOBDropItemFile: %s", szMOBDropItemFileName);
-					else
-						ch->ChatPacket(CHAT_TYPE_INFO, "reload success: MOBDropItemFile: %s", szMOBDropItemFileName);
-
-					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: CommonDropItem: %s", szCommonDropItemFileName);
-					if (!ITEM_MANAGER::instance().ReadCommonDropItemFile(szCommonDropItemFileName))
-						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload CommonDropItem: %s", szCommonDropItemFileName);
-					else
-						ch->ChatPacket(CHAT_TYPE_INFO, "reload success: CommonDropItem: %s", szCommonDropItemFileName);
-					
-					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: DropItemGroup: %s", szDropItemGroupFileName);
-					if (!ITEM_MANAGER::instance().ReadDropItemGroup(szDropItemGroupFileName))
-						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload DropItemGroup: %s", szDropItemGroupFileName);
-					else
-						ch->ChatPacket(CHAT_TYPE_INFO, "reload success: DropItemGroup: %s", szDropItemGroupFileName);
-				}
-				else if (strstr(arg1, "group"))
-				{
-					char szGroupFileName[FILE_NAME_LEN];
-					char szGroupGroupFileName[FILE_NAME_LEN];
-
-					snprintf(szGroupFileName, sizeof(szGroupGroupFileName),
-						"%s/group.txt", LocaleService_GetBasePath().c_str());
-					snprintf(szGroupGroupFileName, sizeof(szGroupGroupFileName),
-						"%s/group_group.txt", LocaleService_GetBasePath().c_str());
-
-					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: mob groups: %s", szGroupFileName);
-					if (!CMobManager::instance().LoadGroup(szGroupFileName))
-						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload mob groups: %s", szGroupFileName);
-
-					ch->ChatPacket(CHAT_TYPE_INFO, "Reloading: mob group group: %s", szGroupGroupFileName);
-					if (!CMobManager::instance().LoadGroupGroup(szGroupGroupFileName))
-						ch->ChatPacket(CHAT_TYPE_INFO, "failed to reload mob group group: %s", szGroupGroupFileName);
-				}
-				else if (strstr(arg1, "regen"))
-				{
-					SendNoticeMap("Reloading regens!", ch->GetMapIndex(), false);
-					regen_free_map(ch->GetMapIndex());
-					CHARACTER_MANAGER::instance().DestroyCharacterInMap(ch->GetMapIndex());
-					regen_reload(ch->GetMapIndex());
-					SendNoticeMap("Regens reloaded!", ch->GetMapIndex(), false);
-				}
+				ReloadDropFile("Drop Group", "drop_item_group.txt", &ITEM_MANAGER::ReadDropItemGroup);
+				ReloadDropFile("ETC Drop", "etc_drop_item.txt", &ITEM_MANAGER::ReadEtcDropItemFile);
+				ReloadDropFile("Special Group", "special_item_group.txt", &ITEM_MANAGER::ReadSpecialDropItemFile);
+				ReloadDropFile("Mob Drop", "mob_drop_item.txt", &ITEM_MANAGER::ReadMonsterDropItemGroup);
+				ReloadDropFile("Common Drop", "common_drop_item.txt", &ITEM_MANAGER::ReadCommonDropItemFile);
 				break;
+			}
+
+			case 'g': // Groups
+			{
+				std::string basePath = LocaleService_GetBasePath();
+				std::string groupPath = basePath + "/group.txt";
+				std::string groupGroupPath = basePath + "/group_group.txt";
+
+				if (CMobManager::instance().LoadGroup(groupPath.c_str()))
+					Notify("Mob Groups", 1);
+				else
+					Notify("Mob Groups", 2, "Check Syserr");
+
+				if (CMobManager::instance().LoadGroupGroup(groupGroupPath.c_str()))
+					Notify("Mob Group-Groups", 1);
+				else
+					Notify("Mob Group-Groups", 2, "Check Syserr");
+				break;
+			}
+
+			case 'r': // Regen
+			{
+				regen_free_map(ch->GetMapIndex());
+				CHARACTER_MANAGER::instance().DestroyCharacterInMap(ch->GetMapIndex());
+				regen_reload(ch->GetMapIndex());
+				Notify("Regens", 1);
+				break;
+			}
 		}
 	}
 	else
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading state_user_count."));
 		LoadStateUserCount();
-
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading prototype tables,"));
 		db_clientdesc->DBPacket(HEADER_GD_RELOAD_PROTO, 0, NULL, 0);
-
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Reloading notice string."));
-		DBManager::instance().LoadDBString();    
+		DBManager::instance().LoadDBString();
 	}
 }
 
@@ -3705,11 +3679,6 @@ ACMD(do_clear_land)
 	ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Guild Land(%d) Cleared"), pLand->GetID());
 
 	building::CManager::instance().ClearLand(pLand->GetID());
-}
-
-ACMD(do_special_item)
-{
-    ITEM_MANAGER::instance().ConvSpecialDropItemFile();
 }
 
 ACMD(do_set_stat)

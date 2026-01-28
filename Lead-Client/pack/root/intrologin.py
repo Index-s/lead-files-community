@@ -16,6 +16,7 @@ import time
 import serverCommandParser
 import ime
 import uiScriptLocale
+import uiTarget
 
 LOGIN_DELAY_SEC = 0.0
 SKIP_LOGIN_PHASE = False
@@ -595,6 +596,7 @@ class LoginWindow(ui.ScriptWindow):
 			self.stream.popupWindow.Close()
 			self.stream.popupWindow.Open(localeInfo.LOGIN_CONNETING, self.SetPasswordEditLineFocus, localeInfo.UI_CANCEL)
             
+		uiTarget.MONSTER_INFO_DATA.clear()
 		self.stream.SetLoginInfo(id, pwd)
 		self.stream.Connect()
 

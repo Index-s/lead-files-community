@@ -133,7 +133,22 @@ class CPythonNonPlayer : public CSingleton<CPythonNonPlayer>
 		BYTE				GetEventTypeByVID(DWORD dwVID);
 		DWORD				GetMonsterColor(DWORD dwVnum);
 		const char*			GetMonsterName(DWORD dwVnum);
-		BYTE				GetMobLevel(DWORD dwVnum);
+
+		DWORD				GetMonsterMaxHP(DWORD dwVnum);
+		DWORD				GetMonsterRaceFlag(DWORD dwVnum);
+		DWORD				GetMonsterLevel(DWORD dwVnum);
+		DWORD				GetMonsterDamage1(DWORD dwVnum);
+		DWORD				GetMonsterDamage2(DWORD dwVnum);
+		DWORD				GetMonsterExp(DWORD dwVnum);
+		float				GetMonsterDamageMultiply(DWORD dwVnum);
+		DWORD				GetMonsterST(DWORD dwVnum);
+		DWORD				GetMonsterDX(DWORD dwVnum);
+		bool				IsMonsterStone(DWORD dwVnum);
+		BYTE				GetMonsterRegenCycle(DWORD dwVnum);
+		BYTE				GetMonsterRegenPercent(DWORD dwVnum);
+		DWORD				GetMonsterGoldMin(DWORD dwVnum);
+		DWORD				GetMonsterGoldMax(DWORD dwVnum);
+		DWORD				GetMonsterResist(DWORD dwVnum, BYTE bResistNum);
 
 		// Function for outer
 		void				GetMatchableMobList(int iLevel, int iInterval, TMobTableList * pMobTableList);

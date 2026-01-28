@@ -369,6 +369,12 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 
 		//////////////////////////////////////////////////////////////////////////////////
 		// Basic Points
+	private:
+		DWORD			dwLastTargetInfoPulse;
+
+	public:
+		DWORD			GetLastTargetInfoPulse() const { return dwLastTargetInfoPulse; }
+		void			SetLastTargetInfoPulse(DWORD pulse) { dwLastTargetInfoPulse = pulse; }
 	public:
 		DWORD			GetPlayerID() const	{ return m_dwPlayerID; }
 

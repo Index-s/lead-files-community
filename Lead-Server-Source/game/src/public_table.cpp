@@ -15,9 +15,9 @@ std::string stDirName = "public/";
 
 void PUBLIC_CreateLists()
 {
-	if (!g_bCreatePublicFiles)
+	if (!g_CreateDocumentationFiles )
 	{
-		sys_err("Only public creator server creating public lists.");
+		sys_log(0, "Only public creator server creating public lists.");
 		return;
 	}
 

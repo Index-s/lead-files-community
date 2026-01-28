@@ -47,6 +47,39 @@ static int __deposit_limit()
 	return (1000*10000); // 1Ãµ¸¸
 }
 
+void CInputMain::TargetInfoLoad(LPCHARACTER ch, const char* c_pData)
+{
+	TPacketCGTargetInfoLoad* p = (TPacketCGTargetInfoLoad*)c_pData;
+	TPacketGCTargetInfo pInfo;
+	TEMP_BUFFER buf;
+	pInfo.header = HEADER_GC_TARGET_INFO;
+	static std::vector<std::pair<int, int> > s_vec_item;
+	s_vec_item.clear();
+	LPCHARACTER m_pkChrTarget = CHARACTER_MANAGER::instance().Find(p->dwVID);
+	
+	if (!ch || !m_pkChrTarget)
+		return;
+
+	if ((m_pkChrTarget->IsMonster() || m_pkChrTarget->IsStone()) && ITEM_MANAGER::instance().CreateDropItemVector(m_pkChrTarget, ch, s_vec_item))
+	{
+		pInfo.dwVID = m_pkChrTarget->GetVID();
+		pInfo.race = m_pkChrTarget->GetRaceNum();
+
+		for (const auto& [vnum, count] : s_vec_item)
+		{
+			pInfo.dwVnum = vnum;
+			pInfo.count = count;
+
+			buf.write(&pInfo, sizeof(pInfo));
+		}
+
+		if (buf.size() > 0)
+		{
+			ch->GetDesc()->Packet(buf.read_peek(), buf.size());
+		}
+	}
+}
+
 void SendBlockChatInfo(LPCHARACTER ch, int sec)
 {
 	if (sec <= 0)
@@ -3212,6 +3245,10 @@ int CInputMain::Analyze(LPDESC d, BYTE bHeader, const char * c_pData)
 				}
 			}
 
+			break;
+
+		case HEADER_CG_TARGET_INFO_LOAD:
+			TargetInfoLoad(ch, c_pData);
 			break;
 	}
 	return (iExtraLen);

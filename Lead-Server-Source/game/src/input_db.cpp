@@ -45,6 +45,7 @@ extern BYTE		g_bAuthServer;
 extern void gm_insert(const char * name, BYTE level);
 extern BYTE	gm_get_level(const char * name, const char * host, const char* account );
 extern void gm_host_insert(const char * host);
+extern void PUBLIC_CreateLists();
 
 #define MAPNAME_DEFAULT	"none"
 
@@ -778,34 +779,22 @@ void CInputDB::Boot(const char* data)
 	}
 
 
+	const std::string basePath = LocaleService_GetBasePath();
+	const std::string mapPath = LocaleService_GetMapPath();
 
-	// LOCALE_SERVICE
-	const int FILE_NAME_LEN = 256;
-	char szCommonDropItemFileName[FILE_NAME_LEN];
-	char szETCDropItemFileName[FILE_NAME_LEN];
-	char szMOBDropItemFileName[FILE_NAME_LEN];
-	char szDropItemGroupFileName[FILE_NAME_LEN];
-	char szSpecialItemGroupFileName[FILE_NAME_LEN];
-	char szMapIndexFileName[FILE_NAME_LEN];
-	char szItemVnumMaskTableFileName[FILE_NAME_LEN];
-	char szDragonSoulTableFileName[FILE_NAME_LEN];
+	auto LoadIMFile = [&](const std::string& fileName, auto func) -> bool {
+		sys_log(0, "LoadLocaleFile: %s", fileName.c_str());
 
-	snprintf(szCommonDropItemFileName, sizeof(szCommonDropItemFileName),
-			"%s/common_drop_item.txt", LocaleService_GetBasePath().c_str());
-	snprintf(szETCDropItemFileName, sizeof(szETCDropItemFileName),
-			"%s/etc_drop_item.txt", LocaleService_GetBasePath().c_str());
-	snprintf(szMOBDropItemFileName, sizeof(szMOBDropItemFileName),
-			"%s/mob_drop_item.txt", LocaleService_GetBasePath().c_str());
-	snprintf(szSpecialItemGroupFileName, sizeof(szSpecialItemGroupFileName),
-			"%s/special_item_group.txt", LocaleService_GetBasePath().c_str());
-	snprintf(szDropItemGroupFileName, sizeof(szDropItemGroupFileName),
-			"%s/drop_item_group.txt", LocaleService_GetBasePath().c_str());
-	snprintf(szMapIndexFileName, sizeof(szMapIndexFileName),
-			"%s/index", LocaleService_GetMapPath().c_str());
-	snprintf(szItemVnumMaskTableFileName, sizeof(szItemVnumMaskTableFileName),
-			"%s/ori_to_new_table.txt", LocaleService_GetBasePath().c_str());
-	snprintf(szDragonSoulTableFileName, sizeof(szDragonSoulTableFileName),
-			"%s/dragon_soul_table.txt", LocaleService_GetBasePath().c_str());
+		auto [status, msg] = (ITEM_MANAGER::instance().*func)(fileName.c_str());
+
+		if (!status) {
+			sys_err("cannot load %s, Error: %s", fileName.c_str(), msg.c_str());
+			thecore_shutdown();
+			return false;
+		}
+
+		return true;
+	};
 
 	sys_log(0, "Initializing Informations of Cube System");
 	if (!Cube_InformationInitialize())
@@ -815,70 +804,27 @@ void CInputDB::Boot(const char* data)
 		return;
 	}
 
-	sys_log(0, "LoadLocaleFile: CommonDropItem: %s", szCommonDropItemFileName);
-	if (!ITEM_MANAGER::instance().ReadCommonDropItemFile(szCommonDropItemFileName))
+	if (!LoadIMFile(basePath + "/common_drop_item.txt", &ITEM_MANAGER::ReadCommonDropItemFile)) return;
+	if (!LoadIMFile(basePath + "/etc_drop_item.txt", &ITEM_MANAGER::ReadEtcDropItemFile)) return;
+	if (!LoadIMFile(basePath + "/drop_item_group.txt", &ITEM_MANAGER::ReadDropItemGroup)) return;
+	if (!LoadIMFile(basePath + "/special_item_group.txt", &ITEM_MANAGER::ReadSpecialDropItemFile)) return;
+	if (!LoadIMFile(basePath + "/mob_drop_item.txt", &ITEM_MANAGER::ReadMonsterDropItemGroup)) return;
+
+	const std::string mapIndexFile = mapPath + "/index";
+	sys_log(0, "LoadLocaleFile: MapIndex: %s", mapIndexFile.c_str());
+	if (!SECTREE_MANAGER::instance().Build(mapIndexFile.c_str(), mapPath.c_str()))
 	{
-		sys_err("cannot load CommonDropItem: %s", szCommonDropItemFileName);
+		sys_err("cannot load MapIndex: %s", mapIndexFile.c_str());
 		thecore_shutdown();
 		return;
 	}
 
-	sys_log(0, "LoadLocaleFile: ETCDropItem: %s", szETCDropItemFileName);
-	if (!ITEM_MANAGER::instance().ReadEtcDropItemFile(szETCDropItemFileName))
+	const std::string dsTableFile = basePath + "/dragon_soul_table.txt";
+	sys_log(0, "LoadLocaleFile: DragonSoulTable: %s", dsTableFile.c_str());
+	if (!DSManager::instance().ReadDragonSoulTableFile(dsTableFile.c_str()))
 	{
-		sys_err("cannot load ETCDropItem: %s", szETCDropItemFileName);
-		thecore_shutdown();
-		return;
+		sys_err("cannot load DragonSoulTable: %s", dsTableFile.c_str());
 	}
-
-	sys_log(0, "LoadLocaleFile: DropItemGroup: %s", szDropItemGroupFileName);
-	if (!ITEM_MANAGER::instance().ReadDropItemGroup(szDropItemGroupFileName))
-	{
-		sys_err("cannot load DropItemGroup: %s", szDropItemGroupFileName);
-		thecore_shutdown();
-		return;
-	}
-
-	sys_log(0, "LoadLocaleFile: SpecialItemGroup: %s", szSpecialItemGroupFileName);
-	if (!ITEM_MANAGER::instance().ReadSpecialDropItemFile(szSpecialItemGroupFileName))
-	{
-		sys_err("cannot load SpecialItemGroup: %s", szSpecialItemGroupFileName);
-		thecore_shutdown();
-		return;
-	}
-
-	sys_log(0, "LoadLocaleFile: ItemVnumMaskTable : %s", szItemVnumMaskTableFileName);
-	if (!ITEM_MANAGER::instance().ReadItemVnumMaskTable(szItemVnumMaskTableFileName))
-	{
-		sys_log(0, "Could not open MaskItemTable");
-	}
-
-	sys_log(0, "LoadLocaleFile: MOBDropItemFile: %s", szMOBDropItemFileName);
-	if (!ITEM_MANAGER::instance().ReadMonsterDropItemGroup(szMOBDropItemFileName))
-	{
-		sys_err("cannot load MOBDropItemFile: %s", szMOBDropItemFileName);
-		thecore_shutdown();
-		return;
-	}
-
-	sys_log(0, "LoadLocaleFile: MapIndex: %s", szMapIndexFileName);
-	if (!SECTREE_MANAGER::instance().Build(szMapIndexFileName, LocaleService_GetMapPath().c_str()))
-	{
-		sys_err("cannot load MapIndex: %s", szMapIndexFileName);
-		thecore_shutdown();
-		return;
-	}
-
-	sys_log(0, "LoadLocaleFile: DragonSoulTable: %s", szDragonSoulTableFileName);
-	if (!DSManager::instance().ReadDragonSoulTableFile(szDragonSoulTableFileName))
-	{
-		sys_err("cannot load DragonSoulTable: %s", szDragonSoulTableFileName);
-		//thecore_shutdown();
-		//return;
-	}
-
-	// END_OF_LOCALE_SERVICE
-
 
 	building::CManager::instance().FinalizeBoot();
 
@@ -891,7 +837,8 @@ void CInputDB::Boot(const char* data)
 		CMobManager::instance().DumpRegenCount("mob_count");
 	}
 
-	extern void PUBLIC_CreateLists();
+	if (g_CreateDocumentationFiles )
+		PUBLIC_CreateLists();
 }
 
 EVENTINFO(quest_login_event_info)

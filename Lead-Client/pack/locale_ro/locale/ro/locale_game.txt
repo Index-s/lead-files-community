@@ -922,3 +922,35 @@ UPLOAD_MARK_CHECK_NEED_RECONNECT	Upload-ul trebuie pornit încã odatã
 UPLOAD_MARK_UPLOAD_NEED_RECONNECT	Upload-ul terbuie pornit încã odatã
 USE_ITEM_FAILURE_PRIVATE_SHOP	Nu poþi folosi obiectul dacã ai deschis un magazin.
 USE_SKILL_ERROR_UNKNOWN	Greºealã de competenþã necunoscutã: %s
+TARGET_INFO_RESISTS	Rezisten?e:
+TARGET_INFO_RESISTS_LINE0	Sabie: %d%% Cu doua mâini: %d%% Clopot: %d%%
+TARGET_INFO_RESISTS_LINE1	Cu doua mâini: %d%% Evantai: %d%% Arc: %d%%
+TARGET_INFO_REGEN_INFO	TP reg. %d%% la fiecare %d sec.
+TARGET_INFO_GOLD_MIN_MAX	Yang: %s ~ %s
+TARGET_INFO_DAMAGE	Daune la lovitura: %s - %s
+TARGET_INFO_DEFENSE	Aparare: %s
+TARGET_INFO_EXP	Experien?a: %s
+TARGET_INFO_MAINRACE	Rasa: %s
+TARGET_INFO_MAX_HP	Puncte de via?a maxime: %s
+TARGET_INFO_NO_ITEM_TEXT	Nu sunt obiecte disponibile
+TARGET_INFO_NO_RACE	Fara rasa
+TARGET_INFO_NEWRACE_INSECT	Insecta
+TARGET_INFO_NEWRACE_FIRE	Monstru de foc
+TARGET_INFO_NEWRACE_ICE	Monstru de ghea?a
+TARGET_INFO_NEWRACE_DESERT	De?ert
+TARGET_INFO_NEWRACE_TREE	Copac
+TARGET_INFO_RACE_ANIMAL	Animale
+TARGET_INFO_RACE_DARK	Rezisten?a la întuneric
+TARGET_INFO_RACE_DEVIL	Diavol
+TARGET_INFO_RACE_EARTH	Rezisten?a la pamânt
+TARGET_INFO_RACE_ELEC	Rezisten?a la fulgere 
+TARGET_INFO_RACE_FIRE	Rezisten?a la foc
+TARGET_INFO_RACE_HUMAN	Jumatate oameni
+TARGET_INFO_RACE_ICE	Rezisten?a la ghea?a
+TARGET_INFO_RACE_METIN	Piatra Metin
+TARGET_INFO_RACE_MILGYO	Ezoteric 
+TARGET_INFO_RACE_ORC	Orci
+TARGET_INFO_RACE_UNDEAD	Necro?i
+TARGET_INFO_RACE_WIND	Rezisten?a la vânt
+TARGET_INFO_STONE_NAME	Piatra fantoma
+TARGET_INFO_SUBRACE	Subrasa: %s

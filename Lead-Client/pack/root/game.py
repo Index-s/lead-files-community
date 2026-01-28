@@ -1571,7 +1571,56 @@ class GameWindow(ui.ScriptWindow):
 		if self.affectShower:
 			self.affectShower.OnUpdateLovePoint(lovePoint)
 	# END_OF_WEDDING
-	
+
+	def BINARY_AddTargetMonsterDropInfo(self, raceNum, itemVnum, itemCount):
+		if not raceNum in uiTarget.MONSTER_INFO_DATA:
+			uiTarget.MONSTER_INFO_DATA.update({raceNum : {}})
+			uiTarget.MONSTER_INFO_DATA[raceNum].update({"items" : []})
+		
+		curList = uiTarget.MONSTER_INFO_DATA[raceNum]["items"]
+
+		item.SelectItem(itemVnum)
+		itemName = item.GetItemName()
+		itemType = item.GetItemType()
+		
+		isUpgradeable = (itemType == item.ITEM_TYPE_WEAPON or itemType == item.ITEM_TYPE_ARMOR)
+		isMetin = (itemType == item.ITEM_TYPE_METIN)
+
+		pos = itemName.find("+")
+		baseName = itemName[:pos].strip() if pos != -1 else itemName
+
+		for curItem in curList:
+			if isUpgradeable:
+				if curItem.has_key("vnum_list"):
+					vList = curItem["vnum_list"]
+					if (itemVnum >= min(vList) - 1 and itemVnum <= max(vList) + 1):
+						item.SelectItem(vList[0])
+						if item.GetItemName().find(baseName) != -1:
+							if not (itemVnum in vList):
+								vList.append(itemVnum)
+								vList.sort()
+							return
+			elif isMetin:
+				if curItem.has_key("vnum_list"):
+					vList = curItem["vnum_list"]
+					if (vList[0] / 100) == (itemVnum / 100):
+						if not (itemVnum in vList):
+							vList.append(itemVnum)
+							vList.sort()
+						return
+			else:
+				if curItem.has_key("vnum") and curItem["vnum"] == itemVnum and curItem["count"] == itemCount:
+					return
+
+		if isUpgradeable or isMetin:
+			curList.append({"vnum_list": [itemVnum], "count": itemCount})
+		else:
+			curList.append({"vnum": itemVnum, "count": itemCount})
+
+	def BINARY_RefreshTargetMonsterDropInfo(self, raceNum):
+		if self.targetBoard:
+			self.targetBoard.RefreshMonsterInfoBoard()
+
 	# QUEST_CONFIRM
 	def BINARY_OnQuestConfirm(self, msg, timeout, pid):
 		confirmDialog = uiCommon.QuestionDialogWithTimeLimit()
