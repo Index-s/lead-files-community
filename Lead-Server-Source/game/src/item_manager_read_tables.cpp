@@ -29,7 +29,7 @@ struct VnumRange { DWORD start; DWORD end; };
 static std::vector<VnumRange> ParseVnumConfig(std::string_view input)
 {
 	std::vector<VnumRange> results;
-	if (input.empty()) 
+	if (input.empty())
 		return results;
 
 	size_t first = 0;
@@ -49,7 +49,7 @@ static std::vector<VnumRange> ParseVnumConfig(std::string_view input)
 			first = second + 1;
 		}
 
-		if (segment.empty()) 
+		if (segment.empty())
 			continue;
 
 		if (size_t tilde = segment.find('~'); tilde != std::string_view::npos)
