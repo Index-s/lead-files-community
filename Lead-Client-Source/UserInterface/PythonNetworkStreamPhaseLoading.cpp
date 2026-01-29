@@ -205,6 +205,7 @@ bool CPythonNetworkStream::RecvMainCharacter()
 	PyCallClassMemberFunc(m_apoPhaseWnd[PHASE_WINDOW_LOAD], "LoadData", Py_BuildValue("(ii)", MainChrPacket.lx, MainChrPacket.ly));
 
 	//Tracef(" >> RecvMainCharacter\n");
+	Warp(MainChrPacket.lx, MainChrPacket.ly);
 
 	return true;
 }
@@ -230,6 +231,7 @@ bool CPythonNetworkStream::RecvMainCharacter2_EMPIRE()
 	PyCallClassMemberFunc(m_apoPhaseWnd[PHASE_WINDOW_LOAD], "LoadData", Py_BuildValue("(ii)", mainChrPacket.lx, mainChrPacket.ly));
 
 	//Tracef(" >> RecvMainCharacterNew : %d\n", m_dwMainActorEmpire);
+	Warp(mainChrPacket.lx, mainChrPacket.ly);
 
 	return true;
 }
@@ -257,6 +259,8 @@ bool CPythonNetworkStream::RecvMainCharacter3_BGM()
 
 	//Tracef(" >> RecvMainCharacterNew : %d\n", m_dwMainActorEmpire);
 
+	Warp(mainChrPacket.lx, mainChrPacket.ly);
+
 	return true;
 }
 
@@ -282,6 +286,8 @@ bool CPythonNetworkStream::RecvMainCharacter4_BGM_VOL()
 	PyCallClassMemberFunc(m_apoPhaseWnd[PHASE_WINDOW_LOAD], "LoadData", Py_BuildValue("(ii)", mainChrPacket.lx, mainChrPacket.ly));
 
 	//Tracef(" >> RecvMainCharacterNew : %d\n", m_dwMainActorEmpire);
+	
+	Warp(mainChrPacket.lx, mainChrPacket.ly);
 
 	return true;
 }
