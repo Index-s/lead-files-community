@@ -1750,16 +1750,20 @@ namespace quest
 
 	void CQuestManager::CancelServerTimers(DWORD arg)
 	{
-		auto erase_check = [&](auto&& it) {
-			if (it.first.second == arg) {
-				auto event = it.second;
+		for (auto it = m_mapServerTimer.begin(); it != m_mapServerTimer.end(); )
+		{
+			if (it->first.second == arg)
+			{
+				auto event = it->second;
 				event_cancel(&event);
+
+				it = m_mapServerTimer.erase(it);
 			}
-
-			return it.first.second == arg;
-		};
-
-		std::erase_if(m_mapServerTimer, erase_check);
+			else
+			{
+				++it;
+			}
+		}
 	}
 
 	void CQuestManager::SetServerTimerArg(DWORD dwArg)
