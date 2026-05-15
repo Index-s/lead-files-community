@@ -22,24 +22,20 @@ cd $ROOT/db && sh install.sh
 cd $ROOT/auth && sh install.sh
 
 # Install channel1
-cd $ROOT/channel1/first && sh install.sh
 cd $ROOT/channel1/game1 && sh install.sh
 cd $ROOT/channel1/game2 && sh install.sh
 
 # Install channel2
-cd $ROOT/channel2/first && sh install.sh
 cd $ROOT/channel2/game1 && sh install.sh
 cd $ROOT/channel2/game2 && sh install.sh
 
 # Install channel3
-cd $ROOT/channel3/first && sh install.sh
 cd $ROOT/channel3/game1 && sh install.sh
 cd $ROOT/channel3/game2 && sh install.sh
 
 # Install channel4
-cd $ROOT/channel4/first && sh install.sh
 cd $ROOT/channel4/game1 && sh install.sh
 cd $ROOT/channel4/game2 && sh install.sh
 
-# Install game99
-cd $ROOT/game99 && sh install.sh
+# Install channel99
+cd $ROOT/channel99 && sh install.sh

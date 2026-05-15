@@ -30,8 +30,8 @@ cd $ROOT/channel4/first && sh clean.sh
 cd $ROOT/channel4/game1 && sh clean.sh
 cd $ROOT/channel4/game2 && sh clean.sh
 
-# Clear game99
-cd $ROOT/game99 && sh clean.sh
+# Clear channel99
+cd $ROOT/channel99 && sh clean.sh
 
 sleep 2
 echo -e "\033[32mServer cleaned!\033[0m"

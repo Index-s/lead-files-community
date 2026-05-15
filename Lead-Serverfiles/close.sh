@@ -45,9 +45,9 @@ cd $ROOT/channel4/game2 && sh shut.sh
 echo -e "\033[31mStopping channel4/game1..\033[0m"
 cd $ROOT/channel4/game1 && sh shut.sh
 
-# Shutdown game99
-echo -e "\033[31mStopping game99..\033[0m"
-cd $ROOT/game99 && sh shut.sh
+# Shutdown channel99
+echo -e "\033[31mStopping channel99..\033[0m"
+cd $ROOT/channel99 && sh shut.sh
 
 # Shutdown db
 echo -e "\033[31mStopping db..\033[0m"
