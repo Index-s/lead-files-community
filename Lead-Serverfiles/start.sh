@@ -35,11 +35,6 @@ ch1_start() # Run channel1
 	echo -e "\033[31mStarting channel1/game1..\033[0m"
 	cd $ROOT/channel1/game1 && sh run.sh
 	sleep 2
-	clear
-	echo -e "\033[31mStarting channel1/first..\033[0m"
-	cd $ROOT/channel1/first && sh run.sh
-	sleep 2
-	clear
 }
 
 ch2_start() # Run channel2
@@ -50,10 +45,6 @@ ch2_start() # Run channel2
 	clear
 	echo -e "\033[31mStarting channel2/game1..\033[0m"
 	cd $ROOT/channel2/game1 && sh run.sh
-	sleep 2
-	clear
-	echo -e "\033[31mStarting channel2/first..\033[0m"
-	cd $ROOT/channel2/first && sh run.sh
 	sleep 2
 	clear
 }
@@ -68,10 +59,6 @@ ch3_start() # Run channel3
 	cd $ROOT/channel3/game1 && sh run.sh
 	sleep 2
 	clear
-	echo -e "\033[31mStarting channel3/first..\033[0m"
-	cd $ROOT/channel3/first && sh run.sh
-	sleep 2
-	clear
 }
 
 ch4_start() # Run channel4
@@ -84,18 +71,14 @@ ch4_start() # Run channel4
 	cd $ROOT/channel4/game1 && sh run.sh
 	sleep 2
 	clear
-	echo -e "\033[31mStarting channel3/first..\033[0m"
-	cd $ROOT/channel4/first && sh run.sh
-	sleep 2
-	clear
 }
 
-game99_start() # Run game99
+channel99_start() # Run channel99
 {
-	echo -e "\033[31mStarting game99..\033[0m"
-	cd $ROOT/game99 && sh run.sh
+	echo -e "\033[31mStarting channel9..\033[0m"
+	cd $ROOT/channel99 && sh run.sh
 	sleep 2
-	clear
+	#clear
 }
 
 echo -e "\033[31m  
@@ -113,7 +96,7 @@ case $chs in
 	db_start
 	auth_start
 	ch1_start
-	game99_start
+	channel99_start
 	echo -e "\033[32m \n Server started! CH1\033[0m"
 
 ;;
@@ -123,7 +106,7 @@ case $chs in
 	auth_start
 	ch1_start
 	ch2_start
-	game99_start
+	channel99_start
 	echo -e "\033[32m \n Server started! CH1-2\033[0m"
 
 ;;
@@ -133,7 +116,7 @@ case $chs in
 	ch1_start
 	ch2_start
 	ch3_start
-	game99_start
+	channel99_start
 	echo -e "\033[32m \n Server started! CH1-2-3\033[0m"
 ;;
 4*)
@@ -143,7 +126,7 @@ case $chs in
 	ch2_start
 	ch3_start
 	ch4_start
-	game99_start
+	channel99_start
 	echo -e "\033[32m \n Server started! CH1-2-3-4\033[0m"
 ;;
 esac
