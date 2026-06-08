@@ -34,8 +34,6 @@ LIBS = $(EXTERN_DIR)/lib/libIL.a \
        $(EXTERN_DIR)/lib/libpng.a \
        $(EXTERN_DIR)/lib/libjpeg-turbo.a \
        $(EXTERN_DIR)/lib/libcryptopp.a \
-       # TO-DO: Don't rely on lzo lib to be on the system
-       # Freebsd package system if fucked up and removes pretty everything very fast 
        -L/usr/local/lib -llzo2 \
        ../../liblua/lib/liblua.a \
        ../../liblua/lib/liblualib.a \
