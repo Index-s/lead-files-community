@@ -6,7 +6,7 @@ import pymysql
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 3306
 DEFAULT_USER = "root"
-DEFAULT_PASSWORD = ""
+DEFAULT_PASSWORD = "password"
 
 DATABASES = ["account", "common", "log", "player"]
 

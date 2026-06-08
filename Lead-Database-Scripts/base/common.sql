@@ -1,95 +1,133 @@
-/*
- Navicat Premium Dump SQL
+-- MySQL dump 10.13  Distrib 5.6.51, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: common
+-- ------------------------------------------------------
+-- Server version	5.5.5-10.6.27-MariaDB-ubu2204
 
- Source Server         : Lead (local)
- Source Server Type    : MySQL
- Source Server Version : 50651 (5.6.51)
- Source Host           : localhost:3306
- Source Schema         : common
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
- Target Server Type    : MySQL
- Target Server Version : 50651 (5.6.51)
- File Encoding         : 65001
+--
+-- Table structure for table `gmhost`
+--
 
- Date: 18/01/2026 07:39:31
-*/
-
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for gmhost
--- ----------------------------
 DROP TABLE IF EXISTS `gmhost`;
-CREATE TABLE `gmhost`  (
-  `mIP` varchar(16) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT ''
-) ENGINE = MyISAM CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `gmhost` (
+  `mIP` varchar(16) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of gmhost
--- ----------------------------
+--
+-- Dumping data for table `gmhost`
+--
+
+LOCK TABLES `gmhost` WRITE;
+/*!40000 ALTER TABLE `gmhost` DISABLE KEYS */;
 INSERT INTO `gmhost` VALUES ('*.*.*.*');
+/*!40000 ALTER TABLE `gmhost` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- ----------------------------
--- Table structure for gmlist
--- ----------------------------
+--
+-- Table structure for table `gmlist`
+--
+
 DROP TABLE IF EXISTS `gmlist`;
-CREATE TABLE `gmlist`  (
-  `mID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `mAccount` varchar(32) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
-  `mName` varchar(32) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
-  `mContactIP` varchar(16) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
-  `mServerIP` varchar(16) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'ALL',
-  `mAuthority` enum('IMPLEMENTOR','HIGH_WIZARD','GOD','LOW_WIZARD','PLAYER') CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT 'PLAYER',
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `gmlist` (
+  `mID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `mAccount` varchar(32) NOT NULL DEFAULT '',
+  `mName` varchar(32) NOT NULL DEFAULT '',
+  `mContactIP` varchar(16) NOT NULL DEFAULT '',
+  `mServerIP` varchar(16) NOT NULL DEFAULT 'ALL',
+  `mAuthority` enum('IMPLEMENTOR','HIGH_WIZARD','GOD','LOW_WIZARD','PLAYER') DEFAULT 'PLAYER',
   PRIMARY KEY (`mID`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of gmlist
--- ----------------------------
-INSERT INTO `gmlist` VALUES (1, 'admin', '[SA]Admin', '', 'ALL', 'IMPLEMENTOR');
-INSERT INTO `gmlist` VALUES (2, 'lead', 'Lead0x194', '', 'ALL', 'IMPLEMENTOR');
+--
+-- Dumping data for table `gmlist`
+--
 
--- ----------------------------
--- Table structure for locale
--- ----------------------------
+LOCK TABLES `gmlist` WRITE;
+/*!40000 ALTER TABLE `gmlist` DISABLE KEYS */;
+INSERT INTO `gmlist` VALUES (1,'admin','[SA]Admin','','ALL','IMPLEMENTOR'),(2,'lead','Lead0x194','','ALL','IMPLEMENTOR');
+/*!40000 ALTER TABLE `gmlist` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `locale`
+--
+
 DROP TABLE IF EXISTS `locale`;
-CREATE TABLE `locale`  (
-  `mKey` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
-  `mValue` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `locale` (
+  `mKey` varchar(255) NOT NULL DEFAULT '',
+  `mValue` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`mKey`) USING BTREE
-) ENGINE = MyISAM CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of locale
--- ----------------------------
-INSERT INTO `locale` VALUES ('LOCALE', 'english');
-INSERT INTO `locale` VALUES ('DB_NAME_COLUMN', 'locale_name');
-INSERT INTO `locale` VALUES ('SKILL_POWER_BY_LEVEL_TYPE0', '0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125');
-INSERT INTO `locale` VALUES ('SKILL_POWER_BY_LEVEL_TYPE1', '0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125');
-INSERT INTO `locale` VALUES ('SKILL_POWER_BY_LEVEL_TYPE2', '0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125');
-INSERT INTO `locale` VALUES ('SKILL_POWER_BY_LEVEL_TYPE3', '0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125');
-INSERT INTO `locale` VALUES ('SKILL_POWER_BY_LEVEL_TYPE4', '0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125');
-INSERT INTO `locale` VALUES ('SKILL_POWER_BY_LEVEL_TYPE5', '0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125');
-INSERT INTO `locale` VALUES ('SKILL_POWER_BY_LEVEL_TYPE6', '0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125');
-INSERT INTO `locale` VALUES ('SKILL_POWER_BY_LEVEL_TYPE7', '0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125');
-INSERT INTO `locale` VALUES ('SKILL_DAMAGE_BY_LEVEL_UNDER_90', '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0');
-INSERT INTO `locale` VALUES ('SKILL_DAMAGE_BY_LEVEL_UNDER_45', '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0');
-INSERT INTO `locale` VALUES ('SKILL_POWER_BY_LEVEL', '0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125');
+--
+-- Dumping data for table `locale`
+--
 
--- ----------------------------
--- Table structure for spam_db
--- ----------------------------
+LOCK TABLES `locale` WRITE;
+/*!40000 ALTER TABLE `locale` DISABLE KEYS */;
+INSERT INTO `locale` VALUES ('LOCALE','english'),('DB_NAME_COLUMN','locale_name'),('SKILL_POWER_BY_LEVEL_TYPE0','0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125'),('SKILL_POWER_BY_LEVEL_TYPE1','0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125'),('SKILL_POWER_BY_LEVEL_TYPE2','0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125'),('SKILL_POWER_BY_LEVEL_TYPE3','0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125'),('SKILL_POWER_BY_LEVEL_TYPE4','0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125'),('SKILL_POWER_BY_LEVEL_TYPE5','0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125'),('SKILL_POWER_BY_LEVEL_TYPE6','0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125'),('SKILL_POWER_BY_LEVEL_TYPE7','0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125'),('SKILL_DAMAGE_BY_LEVEL_UNDER_90','0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0'),('SKILL_DAMAGE_BY_LEVEL_UNDER_45','0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0'),('SKILL_POWER_BY_LEVEL','0 5 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 50 52 54 56 58 60 63 66 69 72 82 85 88 91 94 98 102 106 110 115 125 125 125 125 125');
+/*!40000 ALTER TABLE `locale` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `spam_db`
+--
+
 DROP TABLE IF EXISTS `spam_db`;
-CREATE TABLE `spam_db`  (
-  `type` set('GOOD','SPAM') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'SPAM',
-  `word` varchar(256) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `spam_db` (
+  `type` set('GOOD','SPAM') NOT NULL DEFAULT 'SPAM',
+  `word` varchar(256) NOT NULL,
   `score` int(11) NOT NULL DEFAULT 10,
   PRIMARY KEY (`word`) USING BTREE
-) ENGINE = MyISAM CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of spam_db
--- ----------------------------
+--
+-- Dumping data for table `spam_db`
+--
 
-SET FOREIGN_KEY_CHECKS = 1;
+LOCK TABLES `spam_db` WRITE;
+/*!40000 ALTER TABLE `spam_db` DISABLE KEYS */;
+/*!40000 ALTER TABLE `spam_db` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping events for database 'common'
+--
+
+--
+-- Dumping routines for database 'common'
+--
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-06-08 21:35:17

@@ -1,36 +1,37 @@
-/*
- Navicat Premium Dump SQL
+-- MySQL dump 10.13  Distrib 5.6.51, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: account
+-- ------------------------------------------------------
+-- Server version	5.5.5-10.6.27-MariaDB-ubu2204
 
- Source Server         : Lead (local)
- Source Server Type    : MySQL
- Source Server Version : 50651 (5.6.51)
- Source Host           : localhost:3306
- Source Schema         : account
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
- Target Server Type    : MySQL
- Target Server Version : 50651 (5.6.51)
- File Encoding         : 65001
+--
+-- Table structure for table `account`
+--
 
- Date: 18/01/2026 07:39:21
-*/
-
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for account
--- ----------------------------
 DROP TABLE IF EXISTS `account`;
-CREATE TABLE `account`  (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `account` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `login` varchar(30) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `password` varchar(45) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `social_id` varchar(13) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `email` varchar(64) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
+  `login` varchar(30) NOT NULL DEFAULT '',
+  `password` varchar(45) NOT NULL DEFAULT '',
+  `social_id` varchar(13) NOT NULL DEFAULT '',
+  `email` varchar(64) NOT NULL DEFAULT '',
   `create_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `is_testor` tinyint(1) NOT NULL DEFAULT 0,
-  `status` varchar(8) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT 'OK',
-  `newsletter` tinyint(1) NULL DEFAULT 0,
+  `status` varchar(8) NOT NULL DEFAULT 'OK',
+  `newsletter` tinyint(1) DEFAULT 0,
   `empire` tinyint(4) NOT NULL DEFAULT 0,
   `name_checked` tinyint(1) NOT NULL DEFAULT 0,
   `availDt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -45,33 +46,63 @@ CREATE TABLE `account`  (
   `money_drop_rate_expire` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `total_cash` int(11) NOT NULL DEFAULT 0,
   `total_mileage` int(11) NOT NULL DEFAULT 0,
-  `channel_company` varchar(30) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `ip` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci NULL DEFAULT NULL,
+  `channel_company` varchar(30) NOT NULL DEFAULT '',
+  `ip` varchar(255) DEFAULT NULL,
   `last_play` datetime NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `login`(`login`) USING BTREE,
-  INDEX `social_id`(`social_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 4 CHARACTER SET = ascii COLLATE = ascii_general_ci ROW_FORMAT = DYNAMIC;
+  UNIQUE KEY `login` (`login`) USING BTREE,
+  KEY `social_id` (`social_id`) USING BTREE
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=ascii COLLATE=ascii_general_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of account
--- ----------------------------
-INSERT INTO `account` VALUES (1, 'admin', '*CC67043C7BCFF5EEA5566BD9B1F3C74FD9A5CF5D', '1234567', '', '0000-00-00 00:00:00', 0, 'OK', 0, 0, 0, '0000-00-00 00:00:00', 0, 1650, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, '', NULL, '2021-11-21 20:10:46');
-INSERT INTO `account` VALUES (2, 'test', '*CC67043C7BCFF5EEA5566BD9B1F3C74FD9A5CF5D', '1234567', '', '0000-00-00 00:00:00', 0, 'OK', 0, 0, 0, '0000-00-00 00:00:00', 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, '', NULL, '2021-08-06 11:42:12');
-INSERT INTO `account` VALUES (3, 'lead', '*B80C9E4ED1FC4DF7053FBFC483045CCBC8C66AE2', '1234567', '', '0000-00-00 00:00:00', 0, 'OK', 0, 0, 0, '0000-00-00 00:00:00', 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, '', NULL, '0000-00-00 00:00:00');
+--
+-- Dumping data for table `account`
+--
 
--- ----------------------------
--- Table structure for string
--- ----------------------------
+LOCK TABLES `account` WRITE;
+/*!40000 ALTER TABLE `account` DISABLE KEYS */;
+INSERT INTO `account` VALUES (1,'admin','*CC67043C7BCFF5EEA5566BD9B1F3C74FD9A5CF5D','1234567','','0000-00-00 00:00:00',0,'OK',0,0,0,'0000-00-00 00:00:00',0,1650,'0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,0,'',NULL,'2021-11-21 20:10:46'),(2,'test','*CC67043C7BCFF5EEA5566BD9B1F3C74FD9A5CF5D','1234567','','0000-00-00 00:00:00',0,'OK',0,0,0,'0000-00-00 00:00:00',0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,0,'',NULL,'2021-08-06 11:42:12'),(3,'lead','*B80C9E4ED1FC4DF7053FBFC483045CCBC8C66AE2','1234567','','0000-00-00 00:00:00',0,'OK',0,0,0,'0000-00-00 00:00:00',0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00',0,0,'',NULL,'0000-00-00 00:00:00');
+/*!40000 ALTER TABLE `account` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `string`
+--
+
 DROP TABLE IF EXISTS `string`;
-CREATE TABLE `string`  (
-  `name` varchar(64) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
-  `text` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `string` (
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `text` text DEFAULT NULL,
   PRIMARY KEY (`name`) USING BTREE
-) ENGINE = MyISAM CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of string
--- ----------------------------
+--
+-- Dumping data for table `string`
+--
 
-SET FOREIGN_KEY_CHECKS = 1;
+LOCK TABLES `string` WRITE;
+/*!40000 ALTER TABLE `string` DISABLE KEYS */;
+/*!40000 ALTER TABLE `string` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping events for database 'account'
+--
+
+--
+-- Dumping routines for database 'account'
+--
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-06-08 21:35:17
