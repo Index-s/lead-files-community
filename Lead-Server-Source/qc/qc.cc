@@ -586,7 +586,7 @@ void parse(char * filename)
 					string callname;
 					bool registered = false;
 					if (prev.t.token == '.')
-						prev.t.token == TK_DO; // any token
+						prev.t.token = TK_DO; // any token
 					while (1)
 					{
 						if (lexstate.t.token == TK_DO || lexstate.t.token == TK_IF /*|| lexstate.t.token == TK_FOR*/ || lexstate.t.token == TK_BEGIN || lexstate.t.token == TK_FUNCTION)

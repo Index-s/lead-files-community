@@ -2321,8 +2321,8 @@ struct TPacketGCSwitchbot
 struct TSwitchbotUpdateItem
 {
 	BYTE	slot;
-	BYTE	vnum;
-	BYTE	count;
+	DWORD	vnum;
+	DWORD	count;
 	long	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 };
