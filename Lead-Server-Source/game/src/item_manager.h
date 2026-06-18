@@ -92,9 +92,9 @@ public:
 			for (size_t i = 0; i < m_vecProbs.size(); ++i)
 			{
 				if (number(1, 100) <= m_vecProbs[i])
-					idx_vec.push_back(i);
+					idx_vec.push_back(static_cast<int>(i));
 			}
-			return idx_vec.size();
+			return static_cast<int>(idx_vec.size());
 		}
 		else
 		{
@@ -108,7 +108,7 @@ public:
 		if (m_vecProbs.empty()) return -1;
 		int n = number(1, m_vecProbs.back());
 		auto it = std::lower_bound(m_vecProbs.begin(), m_vecProbs.end(), n);
-		return std::distance(m_vecProbs.begin(), it);
+		return static_cast<int>(std::distance(m_vecProbs.begin(), it));
 	}
 
 	int GetVnum(int idx) const { return m_vecItems[idx].GetRandomVnum(); }
@@ -142,7 +142,7 @@ public:
 
 	int GetGroupSize() const
 	{
-		return m_vecProbs.size();
+		return static_cast<int>(m_vecProbs.size());
 	}
 
 	DWORD m_dwVnum;
@@ -201,7 +201,7 @@ public:
 	{
 		int n = number(1, m_vecProbs.back());
 		itertype(m_vecProbs) it = lower_bound(m_vecProbs.begin(), m_vecProbs.end(), n);
-		return std::distance(m_vecProbs.begin(), it);
+		return static_cast<int>(std::distance(m_vecProbs.begin(), it));
 	}
 	// END_OF_MOB_DROP_ITEM_BUG_FIX
 

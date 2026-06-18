@@ -80,7 +80,7 @@ namespace quest
 
 	struct AStateScriptType
 	{
-		int		GetSize() const { return m_code.size(); }
+		int		GetSize() const { return static_cast<int>(m_code.size()); }
 		const char*	GetCode() const { return &m_code[0]; }
 
 		std::vector<char> m_code;
