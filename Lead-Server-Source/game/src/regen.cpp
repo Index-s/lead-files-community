@@ -829,11 +829,7 @@ void regen_register_map(const char* szBaseName, long lMapIndex, int base_x, int 
 {
 	TMapDataContainer* container = new TMapDataContainer;
 	memset(container->szBaseName, 0, sizeof(container->szBaseName));
-#ifdef __FreeBSD__
-	strlcpy(container->szBaseName, szBaseName, sizeof(container->szBaseName) - 1);
-#else
-	strncpy(container->szBaseName, szBaseName, sizeof(container->szBaseName) - 1);
-#endif
+	strlcpy(container->szBaseName, szBaseName, sizeof(container->szBaseName));
 	container->base_x = base_x;
 	container->base_y = base_y;
 	mbMapDataContainer[lMapIndex] = container;

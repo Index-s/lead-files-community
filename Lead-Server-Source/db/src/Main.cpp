@@ -225,7 +225,11 @@ int Start()
 
 	if (CConfig::instance().GetValue("SQL_PLAYER", line, 256))
 	{
+#ifdef _WIN32
+		sscanf_s(line, " %s %s %s %s %d ", szAddr, (unsigned)sizeof(szAddr), szDB, (unsigned)sizeof(szDB), szUser, (unsigned)sizeof(szUser), szPassword, (unsigned)sizeof(szPassword), &iPort);
+#else
 		sscanf(line, " %s %s %s %s %d ", szAddr, szDB, szUser, szPassword, &iPort);
+#endif
 		sys_log(0, "connecting to MySQL server (player)");
 
 		int iRetry = 5;
@@ -253,7 +257,11 @@ int Start()
 
 	if (CConfig::instance().GetValue("SQL_ACCOUNT", line, 256))
 	{
+#ifdef _WIN32
+		sscanf_s(line, " %s %s %s %s %d ", szAddr, (unsigned)sizeof(szAddr), szDB, (unsigned)sizeof(szDB), szUser, (unsigned)sizeof(szUser), szPassword, (unsigned)sizeof(szPassword), &iPort);
+#else
 		sscanf(line, " %s %s %s %s %d ", szAddr, szDB, szUser, szPassword, &iPort);
+#endif
 		sys_log(0, "connecting to MySQL server (account)");
 
 		int iRetry = 5;
@@ -280,7 +288,11 @@ int Start()
 
 	if (CConfig::instance().GetValue("SQL_COMMON", line, 256))
 	{
+#ifdef _WIN32
+		sscanf_s(line, " %s %s %s %s %d ", szAddr, (unsigned)sizeof(szAddr), szDB, (unsigned)sizeof(szDB), szUser, (unsigned)sizeof(szUser), szPassword, (unsigned)sizeof(szPassword), &iPort);
+#else
 		sscanf(line, " %s %s %s %s %d ", szAddr, szDB, szUser, szPassword, &iPort);
+#endif
 		sys_log(0, "connecting to MySQL server (common)");
 
 		int iRetry = 5;

@@ -185,19 +185,35 @@ int SECTREE_MANAGER::LoadSettingFile(long lMapIndex, const char * c_pszSettingFi
 
 	while (fgets(buf, 256, fp))
 	{
+#ifdef _WIN32
+		sscanf_s(buf, " %s ", cmd, (unsigned)sizeof(cmd));
+#else
 		sscanf(buf, " %s ", cmd);
+#endif
 
 		if (!_stricmp(cmd, "MapSize"))
 		{
+#ifdef _WIN32
+			sscanf_s(buf, " %s %d %d ", cmd, (unsigned)sizeof(cmd), &iWidth, &iHeight);
+#else
 			sscanf(buf, " %s %d %d ", cmd, &iWidth, &iHeight);
+#endif
 		}
 		else if (!_stricmp(cmd, "BasePosition"))
 		{
+#ifdef _WIN32
+			sscanf_s(buf, " %s %d %d", cmd, (unsigned)sizeof(cmd), &r_setting.iBaseX, &r_setting.iBaseY);
+#else
 			sscanf(buf, " %s %d %d", cmd, &r_setting.iBaseX, &r_setting.iBaseY);
+#endif
 		}
 		else if (!_stricmp(cmd, "CellScale"))
 		{
+#ifdef _WIN32
+			sscanf_s(buf, " %s %d ", cmd, (unsigned)sizeof(cmd), &r_setting.iCellScale);
+#else
 			sscanf(buf, " %s %d ", cmd, &r_setting.iCellScale);
+#endif
 		}
 	}
 
@@ -319,12 +335,21 @@ bool SECTREE_MANAGER::LoadMapRegion(const char * c_pszFileName, TMapSetting & r_
 	int iX=0, iY=0;
 	PIXEL_POSITION pos[3] = { {0,0,0}, {0,0,0}, {0,0,0} };
 
-	fscanf(fp, " %d %d ", &iX, &iY);
+#ifdef _WIN32
+	fscanf_s(fp, " %d %d ", &iX, &iY);
 
-	int iEmpirePositionCount = fscanf(fp, " %d %d %d %d %d %d ", 
+	int iEmpirePositionCount = fscanf_s(fp, " %d %d %d %d %d %d ",
 			&pos[0].x, &pos[0].y,
 			&pos[1].x, &pos[1].y,
 			&pos[2].x, &pos[2].y);
+#else
+	fscanf(fp, " %d %d ", &iX, &iY);
+
+	int iEmpirePositionCount = fscanf(fp, " %d %d %d %d %d %d ",
+			&pos[0].x, &pos[0].y,
+			&pos[1].x, &pos[1].y,
+			&pos[2].x, &pos[2].y);
+#endif
 
 	fclose(fp);
 
@@ -691,7 +716,11 @@ int SECTREE_MANAGER::Build(const char * c_pszListFileName, const char* c_pszMapB
 		if (!strncmp(buf, "//", 2) || *buf == '#')
 			continue;
 
+#ifdef _WIN32
+		sscanf_s(buf, " %d %s ", &iIndex, szMapName, (unsigned)sizeof(szMapName));
+#else
 		sscanf(buf, " %d %s ", &iIndex, szMapName);
+#endif
 
 		snprintf(szFilename, sizeof(szFilename), "%s/%s/Setting.txt", c_pszMapBasePath, szMapName);
 

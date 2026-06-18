@@ -2516,8 +2516,14 @@ void UsageLog()
 		return;
 
 	ct = time(0);
-	lt = *localtime(&ct);
-	time_s = asctime(&lt);
+	localtime_r(&ct, &lt);
+	char _abuf[32];
+#ifdef _WIN32
+	asctime_s(_abuf, sizeof(_abuf), &lt);
+#else
+	asctime_r(&lt, _abuf);
+#endif
+	time_s = _abuf;
 
 	time_s[strlen(time_s) - 1] = '\0';
 
@@ -3500,9 +3506,9 @@ void CClientManager::ChargeCash(const TRequestChargeCash* packet)
 	char szQuery[512];
 
 	if (ERequestCharge_Cash == packet->eChargeType)
-		sprintf(szQuery, "update account set `cash` = `cash` + %d where id = %d limit 1", packet->dwAmount, packet->dwAID);
+		snprintf(szQuery, sizeof(szQuery), "update account set `cash` = `cash` + %d where id = %d limit 1", packet->dwAmount, packet->dwAID);
 	else if(ERequestCharge_Mileage == packet->eChargeType)
-		sprintf(szQuery, "update account set `mileage` = `mileage` + %d where id = %d limit 1", packet->dwAmount, packet->dwAID);
+		snprintf(szQuery, sizeof(szQuery), "update account set `mileage` = `mileage` + %d where id = %d limit 1", packet->dwAmount, packet->dwAID);
 	else
 	{
 		sys_err ("Invalid request charge type (type : %d, amount : %d, aid : %d)", packet->eChargeType, packet->dwAmount, packet->dwAID);

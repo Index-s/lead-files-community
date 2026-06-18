@@ -518,7 +518,8 @@ void DESC::Log(const char * format, ...)
 	va_list args;
 
 	time_t ct = get_global_time();
-	struct tm tm = *localtime(&ct);
+	struct tm tm;
+	localtime_r(&ct, &tm);
 
 	fprintf(m_pLogFile,
 			"%02d %02d %02d:%02d:%02d | ",

@@ -409,14 +409,14 @@ void CClientManager::ItemAward(CPeer * peer,char* login)
 		TItemAward * pItemAward = *(it++);		
 		char* whyStr = pItemAward->szWhy;	//why call room reading
 		char cmdStr[100] = "";	//why The value read from the call room is copied to a temporary string.
-		strcpy(cmdStr,whyStr);	// This is because if a token is used in the process of obtaining a command, the original is also tokenized.
+		strlcpy(cmdStr,whyStr,sizeof(cmdStr));	// This is because if a token is used in the process of obtaining a command, the original is also tokenized.
 		char command[20] = "";
-		strcpy(command,GetCommand(cmdStr));	// command get		
+		strlcpy(command,GetCommand(cmdStr),sizeof(command));	// command get
 		if( !(strcmp(command,"GIFT") ))	// command go GIFT This side
 		{
 			TPacketItemAwardInfromer giftData;
-			strcpy(giftData.login, pItemAward->szLogin);	// Copy Login ID
-			strcpy(giftData.command, command);					// Copy command
+			strlcpy(giftData.login, pItemAward->szLogin, sizeof(giftData.login));	// Copy Login ID
+			strlcpy(giftData.command, command, sizeof(giftData.command));					// Copy command
 			giftData.vnum = pItemAward->dwVnum;				// item vnum also copy
 			ForwardPacket(HEADER_DG_ITEMAWARD_INFORMER,&giftData,sizeof(TPacketItemAwardInfromer));
 		}
@@ -426,11 +426,12 @@ char* CClientManager::GetCommand(char* str)
 {
 	static char command[20] = "";
 	char* tok;
+	char* saveptr = NULL;
 
 	if( str[0] == '[' )
 	{
-		tok = strtok(str,"]");			
-		strcat(command,&tok[1]);		
+		tok = strtok_r(str,"]",&saveptr);
+		strlcat(command,&tok[1],sizeof(command));
 	}
 
 	return command;

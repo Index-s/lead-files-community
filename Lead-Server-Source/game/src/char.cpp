@@ -6187,7 +6187,11 @@ namespace {
 
 				char szTmp[64];
 
+#ifdef _WIN32
+				if (3 != sscanf_s(pkWarp->GetName(), " %s %ld %ld ", szTmp, (unsigned)sizeof(szTmp), &m_lTargetX, &m_lTargetY))
+#else
 				if (3 != sscanf(pkWarp->GetName(), " %s %ld %ld ", szTmp, &m_lTargetX, &m_lTargetY))
+#endif
 				{
 					if (number(1, 100) < 5)
 						sys_err("Warp NPC name wrong : vnum(%d) name(%s)", pkWarp->GetRaceNum(), pkWarp->GetName());

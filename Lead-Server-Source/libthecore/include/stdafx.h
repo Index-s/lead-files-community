@@ -47,6 +47,7 @@
 #define strncasecmp(s1, s2, n) _strnicmp(s1, s2, n)
 #define atoll(str) _atoi64(str)
 #define localtime_r(timet, result) localtime_s(result, timet)
+#define gmtime_r(timet, result) gmtime_s(result, timet)
 #define strtok_r(s, delim, ptrptr) strtok_s(s, delim, ptrptr)
 #define strdup(str) _strdup(str)
 

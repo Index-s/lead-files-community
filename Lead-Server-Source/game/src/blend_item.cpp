@@ -75,7 +75,8 @@ bool	Blend_Item_load(char *file)
 		if (one_line[0]=='#')
 			continue;
 
-		const char* token_string = strtok(one_line, delim);
+		char *saveptr = NULL;
+		const char* token_string = strtok_r(one_line, delim, &saveptr);
 
 		if (NULL==token_string)
 			continue;
@@ -87,7 +88,7 @@ bool	Blend_Item_load(char *file)
 		}
 		else TOKEN("item_vnum")
 		{
-			v = strtok(NULL, delim);
+			v = strtok_r(NULL, delim, &saveptr);
 
 			if (NULL==v)
 			{
@@ -99,7 +100,7 @@ bool	Blend_Item_load(char *file)
 		}
 		else TOKEN("apply_type")
 		{
-			v = strtok(NULL, delim);
+			v = strtok_r(NULL, delim, &saveptr);
 
 			if (NULL==v)
 			{
@@ -117,7 +118,7 @@ bool	Blend_Item_load(char *file)
 		{
 			for (int i=0; i<MAX_BLEND_ITEM_VALUE; ++i)
 			{
-				v = strtok(NULL, delim);
+				v = strtok_r(NULL, delim, &saveptr);
 
 				if (NULL==v)
 				{
@@ -125,14 +126,14 @@ bool	Blend_Item_load(char *file)
 					return false;
 				}
 
-				str_to_number(blend_item_info->apply_value[i], v); 
+				str_to_number(blend_item_info->apply_value[i], v);
 			}
 		}
 		else TOKEN("apply_duration")
 		{
 			for (int i=0; i<MAX_BLEND_ITEM_VALUE; ++i)
 			{
-				v = strtok(NULL, delim);
+				v = strtok_r(NULL, delim, &saveptr);
 
 				if (NULL==v)
 				{

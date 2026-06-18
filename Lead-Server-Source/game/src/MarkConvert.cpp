@@ -78,7 +78,11 @@ bool GuildMarkConvert(const std::vector<DWORD> & vecGuildID)
 
 	while (fgets(line, sizeof(line)-1, fp))
 	{
+#ifdef _WIN32
+		sscanf_s(line, "%u %u", &guild_id, &mark_id);
+#else
 		sscanf(line, "%u %u", &guild_id, &mark_id);
+#endif
 
 		if (find(vecGuildID.begin(), vecGuildID.end(), guild_id) == vecGuildID.end())
 		{

@@ -395,6 +395,7 @@ bool Cube_load (const char *file)
 	int		value1, value2;
 	const char	*delim = " \t\r\n";
 	char	*v, *token_string;
+	char	*saveptr = NULL;
 	CUBE_DATA	*cube_data = NULL;
 	CUBE_VALUE	cube_value = {0,0};
 
@@ -411,16 +412,16 @@ bool Cube_load (const char *file)
 		if (one_line[0] == '#')
 			continue;
 
-		token_string = strtok(one_line, delim);
+		token_string = strtok_r(one_line, delim, &saveptr);
 
 		if (NULL == token_string)
 			continue;
 
 		// set value1, value2
-		if ((v = strtok(NULL, delim)))
+		if ((v = strtok_r(NULL, delim, &saveptr)))
 			str_to_number(value1, v);
 
-		if ((v = strtok(NULL, delim)))
+		if ((v = strtok_r(NULL, delim, &saveptr)))
 			str_to_number(value2, v);
 
 		TOKEN("section")
@@ -767,8 +768,8 @@ void Cube_MakeCubeInformationText()
 				for (TCubeValueVector::iterator iter = materialInfo.complicateMaterial.begin(); materialInfo.complicateMaterial.end() != iter; ++iter)
 				{
 					char tempBuffer[128];
-					sprintf(tempBuffer, "%d,%d|", iter->vnum, iter->count);
-					
+					snprintf(tempBuffer, sizeof(tempBuffer), "%d,%d|", iter->vnum, iter->count);
+
 					infoText += std::string(tempBuffer);
 				}
 
@@ -782,7 +783,7 @@ void Cube_MakeCubeInformationText()
 			for (TCubeValueVector::iterator iter = materialInfo.material.begin(); materialInfo.material.end() != iter; ++iter)
 			{
 				char tempBuffer[128];
-				sprintf(tempBuffer, "%d,%d&", iter->vnum, iter->count);
+				snprintf(tempBuffer, sizeof(tempBuffer), "%d,%d&", iter->vnum, iter->count);
 				infoText += std::string(tempBuffer);
 			}
 
@@ -792,7 +793,7 @@ void Cube_MakeCubeInformationText()
 			if (0 < materialInfo.gold)
 			{
 				char temp[128];
-				sprintf(temp, "%d", materialInfo.gold);
+				snprintf(temp, sizeof(temp), "%d", materialInfo.gold);
 				infoText += std::string("/") + temp;
 			}
 
@@ -923,7 +924,7 @@ void Cube_request_result_list(LPCHARACTER ch)
 		{
 			const SCubeMaterialInfo& materialInfo = *iter;
 			char temp[128];
-			sprintf(temp, "%d,%d", materialInfo.reward.vnum, materialInfo.reward.count);
+			snprintf(temp, sizeof(temp), "%d,%d", materialInfo.reward.vnum, materialInfo.reward.count);
 
 			resultText += std::string(temp) + "/";
 		}

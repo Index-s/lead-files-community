@@ -53,7 +53,16 @@ namespace quest
 	int _time_to_str(lua_State* L)
 	{
 		time_t curTime = (time_t)lua_tonumber(L, -1);
-		lua_pushstring(L, asctime(gmtime(&curTime)));
+		struct tm _tmbuf;
+		gmtime_r(&curTime, &_tmbuf);
+		struct tm* _tmptr = &_tmbuf;
+		char _abuf[32];
+#ifdef _WIN32
+		asctime_s(_abuf, sizeof(_abuf), _tmptr);
+#else
+		asctime_r(_tmptr, _abuf);
+#endif
+		lua_pushstring(L, _abuf);
 		return 1;
 	}
 

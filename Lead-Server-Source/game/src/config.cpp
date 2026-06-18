@@ -1142,7 +1142,11 @@ void LoadValidCRCList()
 			DWORD dwValidClientProcessCRC;
 			DWORD dwValidClientFileCRC;
 
+#ifdef _WIN32
+			sscanf_s(buf, " %u %u ", &dwValidClientProcessCRC, &dwValidClientFileCRC);
+#else
 			sscanf(buf, " %u %u ", &dwValidClientProcessCRC, &dwValidClientFileCRC);
+#endif
 
 			s_set_dwProcessCRC.insert(dwValidClientProcessCRC);
 			s_set_dwFileCRC.insert(dwValidClientFileCRC);
@@ -1161,7 +1165,11 @@ void LoadStateUserCount()
 	if (!fp)
 		return;
 
+#ifdef _WIN32
+	fscanf_s(fp, " %d %d ", &g_iFullUserCount, &g_iBusyUserCount);
+#else
 	fscanf(fp, " %d %d ", &g_iFullUserCount, &g_iBusyUserCount);
+#endif
 
 	fclose(fp);
 }

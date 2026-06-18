@@ -91,8 +91,9 @@ DWORD FN_attack_speed_from_file(const char *file)
 
 	while (fgets(buf, 1024, fp))
 	{
-		field	= strtok(buf, delim);
-		value	= strtok(NULL, delim);
+		char *	saveptr	= NULL;
+		field	= strtok_r(buf, delim, &saveptr);
+		value	= strtok_r(NULL, delim, &saveptr);
 
 		if (field && value)
 		{

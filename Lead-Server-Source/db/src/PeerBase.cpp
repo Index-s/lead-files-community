@@ -158,7 +158,13 @@ int CPeerBase::Recv()
 
 	if (bytes_read < 0)
 	{
+#ifdef _WIN32
+		char _ebuf[256];
+		strerror_s(_ebuf, sizeof(_ebuf), errno);
+		sys_err("socket_read failed %s", _ebuf);
+#else
 		sys_err("socket_read failed %s", strerror(errno));
+#endif
 		return -1;
 	}
 	else if (bytes_read == 0)
