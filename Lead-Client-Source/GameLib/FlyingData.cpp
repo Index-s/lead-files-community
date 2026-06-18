@@ -102,7 +102,7 @@ DWORD CFlyingData::AttachFlyEffect(int iType, const std::string & strFilename, f
 	}
 	
 	m_AttachDataVector.push_back(fad);
-	return m_AttachDataVector.size()-1;
+	return static_cast<DWORD>(m_AttachDataVector.size()-1);
 }
 
 void CFlyingData::RemoveAttach(int iIndex)

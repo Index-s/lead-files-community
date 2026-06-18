@@ -16,7 +16,7 @@ bool CMemoryTextFileLoader::SplitLineByTab(DWORD dwLine, CTokenVector* pstTokenV
 	pstTokenVector->clear();
 
 	const std::string & c_rstLine = GetLineString(dwLine);
-	const int c_iLineLength = c_rstLine.length();
+	const int c_iLineLength = static_cast<int>(c_rstLine.length());
 
 	if (0 == c_iLineLength)
 		return false;
@@ -25,7 +25,7 @@ bool CMemoryTextFileLoader::SplitLineByTab(DWORD dwLine, CTokenVector* pstTokenV
 
 	do
 	{
-		int beginPos = c_rstLine.find_first_of("\t", basePos);
+		int beginPos = static_cast<int>(c_rstLine.find_first_of("\t", basePos));
 
 		pstTokenVector->push_back(c_rstLine.substr(basePos, beginPos-basePos));
 
@@ -47,7 +47,7 @@ int CMemoryTextFileLoader::SplitLine2(DWORD dwLine, CTokenVector* pstTokenVector
 
 	do
 	{
-		int beginPos = c_rstLine.find_first_not_of(c_szDelimeter, basePos);
+		int beginPos = static_cast<int>(c_rstLine.find_first_not_of(c_szDelimeter, basePos));
 
 		if (beginPos < 0)
 			return -1;
@@ -57,7 +57,7 @@ int CMemoryTextFileLoader::SplitLine2(DWORD dwLine, CTokenVector* pstTokenVector
 		if (c_rstLine[beginPos] == '"')
 		{
 			++beginPos;
-			endPos = c_rstLine.find_first_of("\"", beginPos);
+			endPos = static_cast<int>(c_rstLine.find_first_of("\"", beginPos));
 
 			if (endPos < 0)
 				return -2;
@@ -66,7 +66,7 @@ int CMemoryTextFileLoader::SplitLine2(DWORD dwLine, CTokenVector* pstTokenVector
 		}
 		else
 		{
-			endPos = c_rstLine.find_first_of(c_szDelimeter, beginPos);
+			endPos = static_cast<int>(c_rstLine.find_first_of(c_szDelimeter, beginPos));
 			basePos = endPos;
 		}
 
@@ -92,7 +92,7 @@ bool CMemoryTextFileLoader::SplitLine(DWORD dwLine, CTokenVector* pstTokenVector
 
 	do
 	{
-		int beginPos = c_rstLine.find_first_not_of(c_szDelimeter, basePos);
+		int beginPos = static_cast<int>(c_rstLine.find_first_not_of(c_szDelimeter, basePos));
 		if (beginPos < 0)
 			return false;
 
@@ -101,16 +101,16 @@ bool CMemoryTextFileLoader::SplitLine(DWORD dwLine, CTokenVector* pstTokenVector
 		if (c_rstLine[beginPos] == '"')
 		{
 			++beginPos;
-			endPos = c_rstLine.find_first_of("\"", beginPos);
+			endPos = static_cast<int>(c_rstLine.find_first_of("\"", beginPos));
 
 			if (endPos < 0)
 				return false;
-			
+
 			basePos = endPos + 1;
 		}
 		else
 		{
-			endPos = c_rstLine.find_first_of(c_szDelimeter, beginPos);
+			endPos = static_cast<int>(c_rstLine.find_first_of(c_szDelimeter, beginPos));
 			basePos = endPos;
 		}
 
@@ -126,7 +126,7 @@ bool CMemoryTextFileLoader::SplitLine(DWORD dwLine, CTokenVector* pstTokenVector
 
 DWORD CMemoryTextFileLoader::GetLineCount()
 {
-	return m_stLineVector.size();
+	return static_cast<DWORD>(m_stLineVector.size());
 }
 
 bool CMemoryTextFileLoader::CheckLineIndex(DWORD dwLine)
@@ -237,7 +237,7 @@ bool CDiskFileLoader::Read(int size, void* pvDst)
 {
 	assert(m_fp != NULL);
 
-	int ret = fread(pvDst, size, 1, m_fp);
+	int ret = static_cast<int>(fread(pvDst, size, 1, m_fp));
 
 	if (ret <= 0)
 		return false;

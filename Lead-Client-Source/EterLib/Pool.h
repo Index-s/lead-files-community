@@ -88,7 +88,7 @@ class CDynamicPool
 		
 		DWORD GetCapacity()
 		{
-			return m_kVct_pkData.size();
+			return static_cast<DWORD>(m_kVct_pkData.size());
 		}
 
 	protected:

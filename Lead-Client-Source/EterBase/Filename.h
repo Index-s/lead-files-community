@@ -232,7 +232,7 @@ inline std::string CFileNameHelper::NoPath(const std::string& str)
 
 	if (nLength > 0)
 	{
-		strcpy(szPath, str.c_str());
+		strcpy_s(szPath, sizeof(szPath), str.c_str());
 
 		for (size_t i = nLength - 1; i > 0; i--)
 		{

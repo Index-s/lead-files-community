@@ -32,8 +32,8 @@ int split_string(const std::string& input, const std::string& delimiter, std::ve
 {
 	int iPos = 0;
 	int newPos = -1;
-	UINT sizeS2 = delimiter.size();
-	UINT isize = input.size();
+	UINT sizeS2 = static_cast<UINT>(delimiter.size());
+	UINT isize = static_cast<UINT>(input.size());
 
 	if ((isize == 0) || (sizeS2 == 0))
 	{
@@ -42,7 +42,7 @@ int split_string(const std::string& input, const std::string& delimiter, std::ve
 
 	std::vector<int> positions;
 
-	newPos = input.find(delimiter, 0);
+	newPos = static_cast<int>(input.find(delimiter, 0));
 
 	if (newPos < 0)
 		return 0; 
@@ -54,7 +54,7 @@ int split_string(const std::string& input, const std::string& delimiter, std::ve
 		numFound++;
 		positions.push_back(newPos);
 		iPos = newPos;
-		newPos = input.find(delimiter, iPos+sizeS2);
+		newPos = static_cast<int>(input.find(delimiter, iPos+sizeS2));
 	}
 
 	if (numFound == 0)

@@ -110,7 +110,7 @@ void CTextureSet::AddEmptyTexture()
 
 unsigned long CTextureSet::GetTextureCount()
 {
-	return m_Textures.size();
+	return static_cast<unsigned long>(m_Textures.size());
 }
 
 TTerrainTexture	& CTextureSet::GetTexture(unsigned long ulIndex)
@@ -217,7 +217,7 @@ bool CTextureSet::AddTexture(const char * c_szFileName,
 	
 	m_Textures.reserve(m_Textures.size() + 1);
 
-	SetTexture(m_Textures.size() - 1,
+	SetTexture(static_cast<unsigned long>(m_Textures.size() - 1),
 			   c_szFileName,
 			   fuScale,
 			   fvScale,

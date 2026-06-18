@@ -1,13 +1,9 @@
 ﻿#pragma once
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
 
 #pragma warning(disable:4710)	// not inlined
 #pragma warning(disable:4786)	// Turn off anything that goes beyond character 255
-#pragma warning(disable:4244)	// type conversion possible lose of data
 
 #include <windows.h>
 #include <assert.h>

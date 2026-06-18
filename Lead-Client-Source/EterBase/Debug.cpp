@@ -210,7 +210,7 @@ void TraceError(const char* c_szFormat, ...)
 	char szBuf[DEBUG_STRING_MAX_LEN+2];
 
 	strncpy(szBuf, "SYSERR: ", DEBUG_STRING_MAX_LEN);
-	int len = strlen(szBuf);
+	int len = static_cast<int>(strlen(szBuf));
 
 	va_list args;
 	va_start(args, c_szFormat);

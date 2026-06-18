@@ -188,12 +188,12 @@ DWORD CGuildMarkManager::__AllocMarkID(DWORD guildID)
 
 DWORD CGuildMarkManager::GetMarkImageCount() const
 {
-	return m_mapIdx_Image.size();
+	return static_cast<DWORD>(m_mapIdx_Image.size());
 }
 
 DWORD CGuildMarkManager::GetMarkCount() const
 {
-	return m_mapGID_MarkID.size();
+	return static_cast<DWORD>(m_mapGID_MarkID.size());
 }
 
 // SERVER
@@ -361,13 +361,13 @@ void CGuildMarkManager::SaveSymbol(const char* filename)
 		return;
 	}
 
-	DWORD symbolCount = m_mapSymbol.size();
+	DWORD symbolCount = static_cast<DWORD>(m_mapSymbol.size());
 	fwrite(&symbolCount, 4, 1, fp);
 
 	for (std::map<DWORD, TGuildSymbol>::iterator it = m_mapSymbol.begin(); it != m_mapSymbol.end(); ++it)
 	{
 		DWORD guildID = it->first;
-		DWORD dwSize = it->second.raw.size();
+		DWORD dwSize = static_cast<DWORD>(it->second.raw.size());
 		fwrite(&guildID, 4, 1, fp);
 		fwrite(&dwSize, 4, 1, fp);
 		fwrite(&it->second.raw[0], 1, dwSize, fp);

@@ -71,7 +71,7 @@ static void mem_term_destination(j_compress_ptr cinfo)
 { 
   struct jpeg_destination_mgr*dmgr = 
       (struct jpeg_destination_mgr*)(cinfo->dest);
-  len = destlen - dmgr->free_in_buffer;
+  len = static_cast<int>(destlen - dmgr->free_in_buffer); // bounded by destlen (int buffer capacity)
   dmgr->free_in_buffer = 0;
 }
 
@@ -221,14 +221,14 @@ void mem_init_source (j_decompress_ptr cinfo)
 boolean mem_fill_input_buffer (j_decompress_ptr cinfo)
 {
     struct jpeg_source_mgr* mgr = cinfo->src;
-    printf("fill %d\n", size - mgr->bytes_in_buffer);
+    printf("fill %zu\n", size - mgr->bytes_in_buffer);
     return 0;
 }
 
 void mem_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 {
     struct jpeg_source_mgr* mgr = cinfo->src;
-    printf("skip %d +%d\n", size - mgr->bytes_in_buffer, num_bytes);
+    printf("skip %zu +%ld\n", size - mgr->bytes_in_buffer, num_bytes);
     if(num_bytes<=0)
 	return;
     mgr->next_input_byte += num_bytes;
@@ -238,7 +238,7 @@ void mem_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 boolean mem_resync_to_restart (j_decompress_ptr cinfo, int desired)
 {
     struct jpeg_source_mgr* mgr = cinfo->src;
-    printf("resync %d\n", size - mgr->bytes_in_buffer);
+    printf("resync %zu\n", size - mgr->bytes_in_buffer);
     mgr->next_input_byte = data;
     mgr->bytes_in_buffer = size;
     return 1;

@@ -602,7 +602,7 @@ void CSlotWindow::OnRefreshSlot()
 
 DWORD CSlotWindow::GetSlotCount()
 {
-	return m_SlotList.size();
+	return static_cast<DWORD>(m_SlotList.size());
 }
 
 void CSlotWindow::LockSlot(DWORD dwIndex)
@@ -702,7 +702,7 @@ void CSlotWindow::ClearSelected()
 
 DWORD CSlotWindow::GetSelectedSlotCount()
 {
-	return m_dwSelectedSlotIndexList.size();
+	return static_cast<DWORD>(m_dwSelectedSlotIndexList.size());
 }
 
 DWORD CSlotWindow::GetSelectedSlotNumber(DWORD dwIndex)

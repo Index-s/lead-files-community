@@ -1034,10 +1034,10 @@ bool CPythonNetworkStream::SendChatPacket(const char * c_szChat, BYTE byType)
 	if (ClientCommand(c_szChat))
 		return true;
 
-	int iTextLen = strlen(c_szChat) + 1;
+	int iTextLen = static_cast<int>(strlen(c_szChat) + 1);
 	TPacketCGChat ChatPacket;
 	ChatPacket.header = HEADER_CG_CHAT;
-	ChatPacket.size = sizeof(ChatPacket) + iTextLen;
+	ChatPacket.size = static_cast<WORD>(sizeof(ChatPacket) + iTextLen);
 	ChatPacket.type = byType;
 
 	if (!Send(sizeof(ChatPacket), &ChatPacket))
@@ -1198,7 +1198,7 @@ bool CPythonNetworkStream::RecvChatPacket()
 					{
 						if (false == pkInstChatter->IsNPC() && false == pkInstChatter->IsEnemy())
 						{
-							__FilterInsult(p, strlen(p));
+							__FilterInsult(p, static_cast<UINT>(strlen(p)));
 						}
 					}
 
@@ -1241,7 +1241,7 @@ bool CPythonNetworkStream::RecvChatPacket()
 			if (p)
 			{
 				if (m_isEnableChatInsultFilter)
-					__FilterInsult(p, strlen(p));
+					__FilterInsult(p, static_cast<UINT>(strlen(p)));
 			}
 		}
 
@@ -1289,10 +1289,10 @@ bool CPythonNetworkStream::SendWhisperPacket(const char * name, const char * c_s
 	if (strlen(c_szChat) >= 255)
 		return true;
 
-	int iTextLen = strlen(c_szChat) + 1;
+	int iTextLen = static_cast<int>(strlen(c_szChat) + 1);
 	TPacketCGWhisper WhisperPacket;
 	WhisperPacket.bHeader = HEADER_CG_WHISPER;
-	WhisperPacket.wSize = sizeof(WhisperPacket) + iTextLen;
+	WhisperPacket.wSize = static_cast<WORD>(sizeof(WhisperPacket) + iTextLen);
 
 	strncpy(WhisperPacket.szNameTo, name, sizeof(WhisperPacket.szNameTo) - 1);
 
@@ -4145,7 +4145,7 @@ bool CPythonNetworkStream::RecvSwitchbotPacket()
 			const int test = sizeof(CPythonSwitchbot::TSwitchbottAttributeTable);
 
 			CPythonSwitchbot::TSwitchbottAttributeTable table;
-			if (!Recv(table_size, &table))
+			if (!Recv(static_cast<int>(table_size), &table))
 			{
 				return false;
 			}

@@ -1,18 +1,11 @@
 ﻿#pragma once
 
-#define WIN32_LEAN_AND_MEAN	
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+#define WIN32_LEAN_AND_MEAN
 
 #define _WIN32_DCOM
 
 #pragma warning(disable:4710)	// not inlined
 #pragma warning(disable:4786)	// Turn off anything that goes beyond character 255
-#pragma warning(disable:4244)	// type conversion possible lose of data
-
-#pragma warning(disable:4018)
-#pragma warning(disable:4245)
 #pragma warning(disable:4512)
 #pragma warning(disable:4201)
 

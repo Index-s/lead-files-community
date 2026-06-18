@@ -613,7 +613,7 @@ void CSkyBox::SetCloudColor(const TGradientColor & c_rColor, const TGradientColo
 
 void CSkyBox::SetSkyColor(const TVectorGradientColor & c_rColorVector, const TVectorGradientColor & c_rNextColorVector, long lTransitionTime)
 {
-	unsigned long ulVectorGradientColornum = 0;
+	size_t ulVectorGradientColornum = 0;
 	unsigned long uck;
 	for (unsigned char ucj = 0; ucj < 4; ++ucj)
 	{

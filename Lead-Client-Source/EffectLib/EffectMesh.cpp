@@ -32,7 +32,7 @@ DWORD CEffectMesh::GetFrameCount()
 
 DWORD CEffectMesh::GetMeshCount()
 {
-	return m_pEffectMeshDataVector.size();
+	return static_cast<DWORD>(m_pEffectMeshDataVector.size());
 }
 
 CEffectMesh::TEffectMeshData * CEffectMesh::GetMeshDataPointer(DWORD dwMeshIndex)
@@ -187,7 +187,7 @@ BOOL CEffectMesh::__LoadData_Ver002(int iSize, const BYTE * c_pbBuf)
 		pMeshData->pImageVector.clear();
 
 		std::string strExtension;
-		GetFileExtension(pMeshData->szDiffuseMapFileName, strlen(pMeshData->szDiffuseMapFileName), &strExtension);
+		GetFileExtension(pMeshData->szDiffuseMapFileName, static_cast<int>(strlen(pMeshData->szDiffuseMapFileName)), &strExtension);
 		stl_lowers(strExtension);
 
 		if (0 == strExtension.compare("ifl"))
@@ -332,7 +332,7 @@ BOOL CEffectMesh::__LoadData_Ver001(int iSize, const BYTE * c_pbBuf)
 		pMeshData->pImageVector.clear();
 
 		std::string strExtension;
-		GetFileExtension(pMeshData->szDiffuseMapFileName, strlen(pMeshData->szDiffuseMapFileName), &strExtension);
+		GetFileExtension(pMeshData->szDiffuseMapFileName, static_cast<int>(strlen(pMeshData->szDiffuseMapFileName)), &strExtension);
 		stl_lowers(strExtension);
 
 		if (0 == strExtension.compare("ifl"))
@@ -497,7 +497,7 @@ bool CEffectMeshScript::GetMeshDataPointer(DWORD dwMeshIndex, TMeshData ** ppMes
 
 int CEffectMeshScript::GetMeshDataCount()
 {
-	return m_MeshDataVector.size();
+	return static_cast<int>(m_MeshDataVector.size());
 }
 
 int CEffectMeshScript::GetBillboardType(DWORD dwMeshIndex)

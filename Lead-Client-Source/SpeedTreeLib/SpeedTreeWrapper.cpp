@@ -806,7 +806,7 @@ CSpeedTreeWrapper * CSpeedTreeWrapper::MakeInstance()
 
 CSpeedTreeWrapper ** CSpeedTreeWrapper::GetInstances(UINT& nCount)
 {
-	nCount = m_vInstances.size();
+	nCount = static_cast<UINT>(m_vInstances.size());
 	if (nCount)
 		return &(m_vInstances[0]);
 	else

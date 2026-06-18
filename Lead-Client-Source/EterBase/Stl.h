@@ -218,7 +218,7 @@ class stl_stack_pool
 		{
 			assert(!m_dataVector.empty() && "stl_stack_pool::alloc you MUST run stl_stack_pool::initialize");
 
-			int max = m_dataVector.size();
+			int max = static_cast<int>(m_dataVector.size());
 
 			if (m_pos >= max)
 			{

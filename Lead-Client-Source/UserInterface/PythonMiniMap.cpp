@@ -715,8 +715,8 @@ void CPythonMiniMap::RegisterAtlasMark(BYTE byType, const char * c_szName, long 
 		case CActorInstance::TYPE_WARP:
 			aAtlasMarkInfo.m_byType = TYPE_WARP;
 			{
-				int iPos = aAtlasMarkInfo.m_strText.find(" ");
-				if (iPos >= 0)
+				size_t iPos = aAtlasMarkInfo.m_strText.find(" ");
+				if (iPos != std::string::npos)
 					aAtlasMarkInfo.m_strText[iPos]=0;
 				
 			}

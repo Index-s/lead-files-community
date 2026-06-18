@@ -115,7 +115,7 @@ T ELRightCoord_ConvertToPlainCoordDegree(T srcDegree)
 template<typename C>
 void string_join(const std::string& sep, const C& container, std::string* ret)
 {
-	unsigned int capacity = sep.length() * container.size() - 1;
+	size_t capacity = sep.length() * container.size() - 1;
     
     // calculate string sequence
     {

@@ -200,13 +200,31 @@ bool PyTuple_GetBoolean(PyObject* poArgs, int pos, bool* ret)
 {
 	if (pos >= PyTuple_Size(poArgs))
 		return false;
-	
+
 	PyObject* poItem = PyTuple_GetItem(poArgs, pos);
 
 	if (!poItem)
 		return false;
 
 	*ret = PyLong_AsLong(poItem) ? true : false;
+	return true;
+}
+
+PyObject* Py_BuildHandle(const void* ptr)
+{
+	// "K" packs an unsigned long long (full pointer width on x64) into a Python integer.
+	return Py_BuildValue("K", (unsigned long long)(uintptr_t)ptr);
+}
+
+bool PyTuple_GetHandle(PyObject* poArgs, int pos, void** ret)
+{
+	// Read the full 64-bit value back before narrowing to a pointer, so the high half of
+	// pointers above 4GB survives the round-trip (the int-based getters would truncate it).
+	long long llValue;
+	if (!PyTuple_GetLongLong(poArgs, pos, &llValue))
+		return false;
+
+	*ret = (void*)(uintptr_t)llValue;
 	return true;
 }
 

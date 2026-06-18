@@ -228,7 +228,7 @@ DWORD CPythonEventManager::GetEmptyEventSetSlot()
 	}
 
 	m_EventSetVector.push_back(NULL);
-	return m_EventSetVector.size()-1;
+	return static_cast<DWORD>(m_EventSetVector.size()-1);
 }
 
 void CPythonEventManager::SetRestrictedCount(int iIndex, int iCount)
@@ -402,7 +402,7 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 			pEventSet->strCurrentLine.append(c_rstValue);
 			pEventSet->pCurrentTextLine->SetValueString(pEventSet->strCurrentLine);
 			pEventSet->pCurrentTextLine->SetColor(pEventSet->CurrentColor.r,pEventSet->CurrentColor.g,pEventSet->CurrentColor.b);
-			pEventSet->iCurrentLetter+=c_rstValue.length();
+			pEventSet->iCurrentLetter+=static_cast<int>(c_rstValue.length());
 
 			if (pEventSet->iCurrentLetter >= pEventSet->iRestrictedCharacterCount)
 			{
@@ -715,7 +715,7 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 				pEventSet->strCurrentLine.append(pItemData->GetName());
 				pEventSet->pCurrentTextLine->SetValue(pEventSet->strCurrentLine.c_str());
 				pEventSet->pCurrentTextLine->SetColor(1.0f, 0.2f, 0.2f);
-				pEventSet->iCurrentLetter+= strlen(pItemData->GetName());
+				pEventSet->iCurrentLetter+= static_cast<int>(strlen(pItemData->GetName()));
 
 				if (pEventSet->iCurrentLetter >= pEventSet->iRestrictedCharacterCount)
 					__InsertLine(*pEventSet);
@@ -735,7 +735,7 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 			{
 				pEventSet->strCurrentLine.append(c_szName);
 				pEventSet->pCurrentTextLine->SetValue(pEventSet->strCurrentLine.c_str());
-				pEventSet->iCurrentLetter+= strlen(c_szName);
+				pEventSet->iCurrentLetter+= static_cast<int>(strlen(c_szName));
 
 				if (pEventSet->iCurrentLetter >= pEventSet->iRestrictedCharacterCount)
 					__InsertLine(*pEventSet);
@@ -887,7 +887,7 @@ void CPythonEventManager::MakeQuestion(TEventSet * pEventSet, script::TArgList &
 		return;
 
 	PyCallClassMemberFunc(pEventSet->poEventHandler, "MakeQuestion", Py_BuildValue("(i)", rArgumentList.size()));
-	pEventSet->nAnswer = rArgumentList.size();
+	pEventSet->nAnswer = static_cast<int>(rArgumentList.size());
 
 	int iIndex = 0;
 	for (script::TArgList::iterator itor=rArgumentList.begin(); itor!=rArgumentList.end(); ++itor)
@@ -947,7 +947,7 @@ int CPythonEventManager::GetLineCount(int iIndex)
 		return 0;
 
 	TEventSet * pEventSet = m_EventSetVector[iIndex];
-	return pEventSet->ScriptTextLineList.size()+pEventSet->iAdjustLine;
+	return static_cast<int>(pEventSet->ScriptTextLineList.size())+pEventSet->iAdjustLine;
 }
 
 void CPythonEventManager::ClearLine(TEventSet * pEventSet)

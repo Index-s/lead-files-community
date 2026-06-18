@@ -35,9 +35,9 @@ BOOL CRaceData::LoadRaceData(const char * c_szFileName)
 			return FALSE;
 		}
 
-		UINT uLineCount=pSmokeTokenVector->size()/2;
+		size_t uLineCount=pSmokeTokenVector->size()/2;
 
-		for (UINT uLine=0; uLine<uLineCount; ++uLine)
+		for (size_t uLine=0; uLine<uLineCount; ++uLine)
 		{
 			int eSmoke=atoi(pSmokeTokenVector->at(uLine*2+0).c_str());
 			if (eSmoke<0 || eSmoke>=SMOKE_NUM)

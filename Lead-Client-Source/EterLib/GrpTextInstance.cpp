@@ -33,7 +33,7 @@ int CGraphicTextInstance::Hyperlink_GetText(char* buf, int len)
 
 	int codePage = GetDefaultCodePage();
 
-	return Ymir_WideCharToMultiByte(codePage, 0, gs_hyperlinkText.c_str(), gs_hyperlinkText.length(), buf, len, NULL, NULL);	
+	return Ymir_WideCharToMultiByte(codePage, 0, gs_hyperlinkText.c_str(), static_cast<int>(gs_hyperlinkText.length()), buf, len, NULL, NULL);
 }
 
 int CGraphicTextInstance::__DrawCharacter(CGraphicFontTexture * pFontTexture, WORD codePage, wchar_t text, DWORD dwColor)
@@ -55,7 +55,7 @@ int CGraphicTextInstance::__DrawCharacter(CGraphicFontTexture * pFontTexture, WO
 
 void CGraphicTextInstance::__GetTextPos(DWORD index, float* x, float* y)
 {
-	index = min(index, m_pCharInfoVector.size());
+	index = min(index, static_cast<DWORD>(m_pCharInfoVector.size()));
 
 	float sx = 0;
 	float sy = 0;
@@ -181,7 +181,7 @@ void CGraphicTextInstance::Update()
 			{
 
 				wchar_t* wArabicText = (wchar_t*)_alloca(sizeof(wchar_t) * wTextLen);
-				int wArabicTextLen = Arabic_MakeShape(wText, wTextLen, wArabicText, wTextLen);
+				int wArabicTextLen = static_cast<int>(Arabic_MakeShape(wText, wTextLen, wArabicText, wTextLen));
 
 				bool isEnglish = true;
 				int nEnglishBase = wArabicTextLen - 1;

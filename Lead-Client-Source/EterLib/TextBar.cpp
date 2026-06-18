@@ -45,7 +45,7 @@ void CTextBar::SetTextColor(int r, int g, int b)
 void CTextBar::GetTextExtent(const char * c_szText, SIZE* p_size)
 {
 	HDC hDC = m_dib.GetDCHandle();
-	GetTextExtentPoint32(hDC, c_szText, strlen(c_szText), p_size); 
+	GetTextExtentPoint32(hDC, c_szText, static_cast<int>(strlen(c_szText)), p_size);
 }
 
 void CTextBar::TextOut(int ix, int iy, const char * c_szText)

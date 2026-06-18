@@ -124,7 +124,7 @@ namespace NEffectUpdateDecorator
 				it_end(ted.it_end),
 				it_cur(ted.it_cur),
 				it_next(ted.it_next),
-				pData((T*)( (unsigned char*)ted.pData - (DWORD)pFirstInstance + (DWORD)pInstance))
+				pData((T*)( (unsigned char*)ted.pData - (uintptr_t)pFirstInstance + (uintptr_t)pInstance))
 			{
 				if (it_start == it_end)
 					*pData = T();

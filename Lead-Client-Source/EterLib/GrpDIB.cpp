@@ -77,7 +77,7 @@ void CGraphicDib::SetBkMode(int iBkMode)
 void CGraphicDib::TextOut(int ix, int iy, const char * c_szText)
 {
 	::SetBkColor(m_hDC, 0);	
-	::TextOut(m_hDC, ix, iy, c_szText, strlen(c_szText));
+	::TextOut(m_hDC, ix, iy, c_szText, static_cast<int>(strlen(c_szText)));
 }
 
 void CGraphicDib::Put(HDC hDC, int x, int y)

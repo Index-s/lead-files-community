@@ -18,11 +18,11 @@ BOOL CItemManager::SelectItemData(DWORD dwIndex)
 
 	if (m_ItemMap.end() == f)
 	{
-		int n = m_vec_ItemRange.size();
-		for (int i = 0; i < n; i++)
+		size_t n = m_vec_ItemRange.size();
+		for (size_t i = 0; i < n; i++)
 		{
 			CItemData * p = m_vec_ItemRange[i];
-			const CItemData::TItemTable * pTable = p->GetTable(); 
+			const CItemData::TItemTable * pTable = p->GetTable();
 			if ((pTable->dwVnum < dwIndex) &&
 				dwIndex < (pTable->dwVnum + pTable->dwVnumRange))
 			{
@@ -53,11 +53,11 @@ BOOL CItemManager::GetItemDataPointer(DWORD dwItemID, CItemData ** ppItemData)
 
 	if (m_ItemMap.end() == f)
 	{
-		int n = m_vec_ItemRange.size();
-		for (int i = 0; i < n; i++)
+		size_t n = m_vec_ItemRange.size();
+		for (size_t i = 0; i < n; i++)
 		{
 			CItemData * p = m_vec_ItemRange[i];
-			const CItemData::TItemTable * pTable = p->GetTable(); 
+			const CItemData::TItemTable * pTable = p->GetTable();
 			if ((pTable->dwVnum < dwItemID) &&
 				dwItemID < (pTable->dwVnum + pTable->dwVnumRange))
 			{
@@ -140,16 +140,16 @@ bool CItemManager::LoadItemList(const char * c_szFileName)
 
 const std::string& __SnapString(const std::string& c_rstSrc, std::string& rstTemp)
 {
-	UINT uSrcLen=c_rstSrc.length();
+	size_t uSrcLen=c_rstSrc.length();
 	if (uSrcLen<2)
 		return c_rstSrc;
 
 	if (c_rstSrc[0]!='"')
 		return c_rstSrc;
 
-	UINT uLeftCut=1;
-	
-	UINT uRightCut=uSrcLen;
+	size_t uLeftCut=1;
+
+	size_t uRightCut=uSrcLen;
 	if (c_rstSrc[uSrcLen-1]=='"')
 		uRightCut=uSrcLen-1;	
 
@@ -200,10 +200,10 @@ bool CItemManager::LoadItemDesc(const char* c_szFileName)
 
 DWORD GetHashCode( const char* pString )
 {
-	   unsigned long i,len;
+	   size_t i,len;
 	   unsigned long ch;
 	   unsigned long result;
-	   
+
 	   len     = strlen( pString );
 	   result = 5381;
 	   for( i=0; i<len; i++ )

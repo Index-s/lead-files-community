@@ -93,22 +93,22 @@ bool SplitToken(const char * c_szLine, CTokenVector * pstTokenVector, const char
 	std::string stToken;
 	std::string strLine = c_szLine;
 
-	DWORD basePos = 0;
+	std::string::size_type basePos = 0;
 
 	do
 	{
-		int beginPos = strLine.find_first_not_of(c_szDelimeter, basePos);
-		if (beginPos < 0)
+		std::string::size_type beginPos = strLine.find_first_not_of(c_szDelimeter, basePos);
+		if (beginPos == std::string::npos)
 			return false;
 
-		int endPos;
+		std::string::size_type endPos;
 
 		if (strLine[beginPos] == '"')
 		{
 			++beginPos;
 			endPos = strLine.find_first_of("\"", beginPos);
 
-			if (endPos < 0)
+			if (endPos == std::string::npos)
 				return false;
 			
 			basePos = endPos + 1;

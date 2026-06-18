@@ -16,7 +16,7 @@ void CSoundData::Assign(const char* filename)
 {
 	assert(m_assigned == false);
 
-	strncpy(m_filename, filename, sizeof(m_filename)-1);
+	strncpy_s(m_filename, sizeof(m_filename), filename, _TRUNCATE);
 	m_assigned = true;
 }
 

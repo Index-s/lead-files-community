@@ -103,8 +103,8 @@ bool CGraphicSubImage::OnLoad(int iSize, const void* c_pvBuf)
 	if ("2.0"==c_rstVersion)
 	{	
 		const std::string& c_rstSubFileName=GetFileNameString();
-		int nPos=c_rstSubFileName.find_last_of('\\', -1);
-		if (nPos>=0)
+		std::string::size_type nPos=c_rstSubFileName.find_last_of('\\', std::string::npos);
+		if (nPos!=std::string::npos)
 		{
 			nPos++;
 			memcpy(szFileName, c_rstSubFileName.c_str(), nPos);

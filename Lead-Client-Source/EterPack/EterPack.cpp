@@ -79,7 +79,7 @@ void CMakePackLog::Writef(const char* c_szFormat, ...)
 	va_start(args, c_szFormat);
 
 	char szBuf[1024];
-	int nBufLen = _vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	int nBufLen = _vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	szBuf[nBufLen++] = '\0';
 	__Write(szBuf, nBufLen);
 }
@@ -93,7 +93,7 @@ void CMakePackLog::Writenf(const char* c_szFormat, ...)
 	va_start(args, c_szFormat);
 
 	char szBuf[1024+1];
-	int nBufLen = _vsnprintf(szBuf, sizeof(szBuf)-1, c_szFormat, args);
+	int nBufLen = _vsnprintf_s(szBuf, sizeof(szBuf), sizeof(szBuf)-1, c_szFormat, args);
 	if (nBufLen > 0)
 	{
 		szBuf[nBufLen++] = '\n';
@@ -107,7 +107,7 @@ void CMakePackLog::Write(const char* c_szBuf)
 	if (!__IsLogMode())
 		return;
 
-	__Write(c_szBuf, strlen(c_szBuf)+1);
+	__Write(c_szBuf, static_cast<int>(strlen(c_szBuf)+1));
 }
 
 void CMakePackLog::__Write(const char* c_szBuf, int nBufLen)
@@ -116,7 +116,7 @@ void CMakePackLog::__Write(const char* c_szBuf, int nBufLen)
 		return;
 
 	if (NULL==m_fp)
-		m_fp=fopen(m_stFileName.c_str(), "w");
+		fopen_s(&m_fp, m_stFileName.c_str(), "w");
 
 	fwrite(c_szBuf, nBufLen, 1, m_fp);
 
@@ -134,7 +134,7 @@ void CMakePackLog::WriteErrorf(const char* c_szFormat, ...)
 	va_start(args, c_szFormat);
 
 	char szBuf[1024];
-	int nBufLen = _vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	int nBufLen = _vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	szBuf[nBufLen++] = '\0';
 	__WriteError(szBuf, nBufLen);
 }
@@ -148,7 +148,7 @@ void CMakePackLog::WriteErrornf(const char* c_szFormat, ...)
 	va_start(args, c_szFormat);
 
 	char szBuf[1024+1];
-	int nBufLen = _vsnprintf(szBuf, sizeof(szBuf)-1, c_szFormat, args);
+	int nBufLen = _vsnprintf_s(szBuf, sizeof(szBuf), sizeof(szBuf)-1, c_szFormat, args);
 	if (nBufLen > 0)
 	{
 		szBuf[nBufLen++] = '\n';
@@ -162,7 +162,7 @@ void CMakePackLog::WriteError(const char* c_szBuf)
 	if (!__IsLogMode())
 		return;
 
-	__WriteError(c_szBuf, strlen(c_szBuf)+1);
+	__WriteError(c_szBuf, static_cast<int>(strlen(c_szBuf)+1));
 }
 
 void CMakePackLog::__WriteError(const char* c_szBuf, int nBufLen)
@@ -171,7 +171,7 @@ void CMakePackLog::__WriteError(const char* c_szBuf, int nBufLen)
 		return;
 
 	if (NULL==m_fp_err)
-		m_fp_err=fopen(m_stErrorFileName.c_str(), "w");
+		fopen_s(&m_fp_err, m_stErrorFileName.c_str(), "w");
 
 	fwrite(c_szBuf, nBufLen, 1, m_fp_err);
 
@@ -244,10 +244,10 @@ bool CEterPack::Create(CEterFileDict& rkFileDict, const char * dbname, const cha
 
 	m_stPathName = pathName;
 
-	strncpy(m_dbName, dbname, DBNAME_MAX_LEN);
-	
-	strncpy(m_indexFileName, dbname, MAX_PATH);
-	strcat(m_indexFileName, ".eix");
+	strncpy_s(m_dbName, sizeof(m_dbName), dbname, _TRUNCATE);
+
+	strncpy_s(m_indexFileName, sizeof(m_indexFileName), dbname, _TRUNCATE);
+	strcat_s(m_indexFileName, sizeof(m_indexFileName), ".eix");
 
 	m_stDataFileName = dbname;
 	m_stDataFileName += ".epk";
@@ -362,7 +362,7 @@ bool CEterPack::EncryptIndexFile()
 
 	FILE * fp;
 
-	fp = fopen(m_indexFileName, "wb");
+	fopen_s(&fp, m_indexFileName, "wb");
 
 	if (!fp)
 	{
@@ -1074,7 +1074,8 @@ bool CEterPack::CreateIndexFile()
 {
 	FILE * fp;
 
-	if (NULL != (fp = fopen(m_indexFileName, "rb")))
+	fopen_s(&fp, m_indexFileName, "rb");
+	if (NULL != fp)
 	{
 		fclose(fp);
 		return true;
@@ -1085,8 +1086,8 @@ bool CEterPack::CreateIndexFile()
 	//
 	// The file does not exist, so create a new one.
 	//
-	fp = fopen(m_indexFileName, "wb");
-	
+	fopen_s(&fp, m_indexFileName, "wb");
+
 	if (!fp)
 		return false;
 
@@ -1176,7 +1177,7 @@ TEterPackIndex* CEterPack::NewIndex(CFileBase& file, const char* filename, long 
 		index->id = GetNewIndexPosition(file);
 	}
 
-	strncpy(index->filename, filename, FILENAME_MAX_LEN);
+	strncpy_s(index->filename, sizeof(index->filename), filename, _TRUNCATE);
 	index->filename[FILENAME_MAX_LEN] = '\0';
 	inlineConvertPackFilename(index->filename);
 
@@ -1189,7 +1190,7 @@ TEterPackIndex* CEterPack::NewIndex(CFileBase& file, const char* filename, long 
 TEterPackIndex* CEterPack::FindIndex(const char * filename)
 {
 	static char tmpFilename[MAX_PATH + 1];
-	strncpy(tmpFilename, filename, MAX_PATH);
+	strncpy_s(tmpFilename, sizeof(tmpFilename), filename, _TRUNCATE);
 	inlineConvertPackFilename(tmpFilename);
 
 	DWORD filename_crc = GetCRC32(tmpFilename, strlen(tmpFilename));
@@ -1209,8 +1210,9 @@ bool CEterPack::IsExist(const char * filename)
 bool CEterPack::CreateDataFile()
 {
 	FILE * fp;
-	
-	if (NULL != (fp = fopen(m_stDataFileName.c_str(), "rb")))
+
+	fopen_s(&fp, m_stDataFileName.c_str(), "rb");
+	if (NULL != fp)
 	{
 		fclose(fp);
 		return true;
@@ -1218,7 +1220,7 @@ bool CEterPack::CreateDataFile()
 	else if (m_bReadOnly)
 		return false;
 
-	fp = fopen(m_stDataFileName.c_str(), "wb");
+	fopen_s(&fp, m_stDataFileName.c_str(), "wb");
 
 	if (!fp)
 		return false;

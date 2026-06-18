@@ -49,7 +49,7 @@ typedef WFILE RFILE; /* Same struct with different invariants */
 static int r_string(char *s, int n, RFILE *p)
 {
 	if (p->fp != NULL)
-		return fread(s, 1, n, p->fp);
+		return (int)fread(s, 1, n, p->fp); /* bounded by n (int); r_string contract returns int */
 	if (p->end - p->ptr < n)
 		n = p->end - p->ptr;
 	memcpy(s, p->ptr, n);

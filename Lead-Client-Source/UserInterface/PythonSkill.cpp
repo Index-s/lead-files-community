@@ -25,7 +25,7 @@ int SplitLine(const char * c_szText, CTokenVector* pstTokenVector, const char * 
 
 	do
 	{
-		int beginPos = stLine.find_first_not_of(c_szDelimeter, basePos);
+		int beginPos = static_cast<int>(stLine.find_first_not_of(c_szDelimeter, basePos));
 
 		if (beginPos < 0)
 			return -1;
@@ -35,7 +35,7 @@ int SplitLine(const char * c_szText, CTokenVector* pstTokenVector, const char * 
 		if (stLine[beginPos] == '"')
 		{
 			++beginPos;
-			endPos = stLine.find_first_of("\"", beginPos);
+			endPos = static_cast<int>(stLine.find_first_of("\"", beginPos));
 
 			if (endPos < 0)
 				return -2;
@@ -44,7 +44,7 @@ int SplitLine(const char * c_szText, CTokenVector* pstTokenVector, const char * 
 		}
 		else
 		{
-			endPos = stLine.find_first_of(c_szDelimeter, beginPos);
+			endPos = static_cast<int>(stLine.find_first_of(c_szDelimeter, beginPos));
 			basePos = endPos;
 		}
 
@@ -207,20 +207,20 @@ bool CPythonSkill::RegisterSkillTable(const char * c_szFileName)
 				src_poly_mwep = "";
 
 				// MIN
-				string_replace_word(c_strPointPoly.c_str(), c_strPointPoly.length(),
-					"number", 6, "min", 3, src_poly_rand);				
-				string_replace_word(src_poly_rand.c_str(), src_poly_rand.length(),
+				string_replace_word(c_strPointPoly.c_str(), static_cast<int>(c_strPointPoly.length()),
+					"number", 6, "min", 3, src_poly_rand);
+				string_replace_word(src_poly_rand.c_str(), static_cast<int>(src_poly_rand.length()),
 					"atk", 3, "minatk", 6, src_poly_atk);
-				string_replace_word(src_poly_atk.c_str(), src_poly_atk.length(),
+				string_replace_word(src_poly_atk.c_str(), static_cast<int>(src_poly_atk.length()),
 					"mwep", 4, "minmwep", 7, affect.strAffectMinFormula);
 				// END_OF_MIN
 
 				// MAX
-				string_replace_word(c_strPointPoly.c_str(), c_strPointPoly.length(),
-					"number", 6, "max", 3, src_poly_rand);				
-				string_replace_word(src_poly_rand.c_str(), src_poly_rand.length(),
+				string_replace_word(c_strPointPoly.c_str(), static_cast<int>(c_strPointPoly.length()),
+					"number", 6, "max", 3, src_poly_rand);
+				string_replace_word(src_poly_rand.c_str(), static_cast<int>(src_poly_rand.length()),
 					"atk", 3, "maxatk", 6, src_poly_atk);
-				string_replace_word(src_poly_atk.c_str(), src_poly_atk.length(),
+				string_replace_word(src_poly_atk.c_str(), static_cast<int>(src_poly_atk.length()),
 					"mwep", 4, "maxmwep", 7, affect.strAffectMaxFormula);
 				// END_OF_MAX
 								
@@ -646,10 +646,10 @@ bool CPythonSkill::RegisterSkill(DWORD dwSkillIndex, const char * c_szFileName)
 
 		if (isConditionData)
 		{
-			DWORD dwSize = pConditionDataVector->size();
+			size_t dwSize = pConditionDataVector->size();
 			SkillData.ConditionDataVector.clear();
 			SkillData.ConditionDataVector.resize(dwSize);
-			for (DWORD i = 0; i < dwSize; ++i)
+			for (size_t i = 0; i < dwSize; ++i)
 			{
 				SkillData.ConditionDataVector[i] = pConditionDataVector->at(i);
 			}
@@ -669,10 +669,10 @@ bool CPythonSkill::RegisterSkill(DWORD dwSkillIndex, const char * c_szFileName)
 
 		if (isAffectData)
 		{
-			DWORD dwSize = pAffectDataVector->size()/3;
+			size_t dwSize = pAffectDataVector->size()/3;
 			SkillData.AffectDataVector.clear();
 			SkillData.AffectDataVector.resize(dwSize);
-			for (DWORD i = 0; i < dwSize; ++i)
+			for (size_t i = 0; i < dwSize; ++i)
 			{
 				SkillData.AffectDataVector[i].strAffectDescription = pAffectDataVector->at(i*3+0);
 				SkillData.AffectDataVector[i].strAffectMinFormula = pAffectDataVector->at(i*3+1);
@@ -851,7 +851,7 @@ void CPythonSkill::TEST()
 
 		strLine += "\t";
 		std::string strFileName = rSkillData.strIconFileName;
-		int iPos = strFileName.find_last_of("/", rSkillData.strIconFileName.length());
+		int iPos = static_cast<int>(strFileName.find_last_of("/", rSkillData.strIconFileName.length()));
 		if (iPos > 0)
 			strFileName = strFileName.substr(iPos+1, strFileName.length() - iPos - 4 - 1);
 		strLine += strFileName;
@@ -1310,7 +1310,7 @@ const char * CPythonSkill::SSkillData::GetAffectDescription(DWORD dwIndex, float
 		// #0000870: [M2AE] Crash occurs in certain Arabic sentences in Korean mode
 		static std::string strDescription;
 		strDescription = c_rstrAffectDescription;
-		int first = strDescription.find("%.0f");
+		int first = static_cast<int>(strDescription.find("%.0f"));
 		if (first >= 0)
 		{
 			fMinValue = floorf(fMinValue);
@@ -1319,7 +1319,7 @@ const char * CPythonSkill::SSkillData::GetAffectDescription(DWORD dwIndex, float
 			_snprintf(szMinValue, sizeof(szMinValue), "%.0f", fMinValue);
 			strDescription.replace(first, 4, szMinValue);
 
-			int second = strDescription.find("%.0f", first);
+			int second = static_cast<int>(strDescription.find("%.0f", first));
 			if (second >= 0)
 			{
 				fMaxValue = floorf(fMaxValue);
@@ -2016,9 +2016,9 @@ PyObject * skillGetIconImage(PyObject * poSelf, PyObject * poArgs)
 
 	CPythonSkill::SSkillData * c_pSkillData;
 	if (!CPythonSkill::Instance().GetSkillData(iSkillIndex, &c_pSkillData))
-		return Py_BuildValue("i", 0);	// Instead of throwing an exception, it returns 0.
+		return Py_BuildHandle(NULL);	// Instead of throwing an exception, it returns 0.
 
-	return Py_BuildValue("i", c_pSkillData->pImage);
+	return Py_BuildHandle(c_pSkillData->pImage);
 }
 
 
@@ -2036,7 +2036,7 @@ PyObject * skillGetIconInstance(PyObject * poSelf, PyObject * poArgs)
 	CGraphicImageInstance * pImageInstance = CGraphicImageInstance::New();
 	pImageInstance->SetImagePointer(c_pSkillData->pImage);
 
-	return Py_BuildValue("i", pImageInstance);
+	return Py_BuildHandle(pImageInstance);
 }
 
 PyObject * skillGetIconImageNew(PyObject * poSelf, PyObject * poArgs)
@@ -2051,15 +2051,15 @@ PyObject * skillGetIconImageNew(PyObject * poSelf, PyObject * poArgs)
 
 	CPythonSkill::SSkillData * c_pSkillData;
 	if (!CPythonSkill::Instance().GetSkillData(iSkillIndex, &c_pSkillData))
-		return Py_BuildValue("i", 0);	// Instead of throwing an exception, it returns 0.
+		return Py_BuildHandle(NULL);	// Instead of throwing an exception, it returns 0.
 
 	if (iGradeIndex < 0)
 		iGradeIndex = 0;
-	
-	if (iGradeIndex >= CPythonSkill::SKILL_GRADE_COUNT)		
+
+	if (iGradeIndex >= CPythonSkill::SKILL_GRADE_COUNT)
 		iGradeIndex = CPythonSkill::SKILL_GRADE_COUNT-1;
 
-	return Py_BuildValue("i", c_pSkillData->GradeData[iGradeIndex].pImage);
+	return Py_BuildHandle(c_pSkillData->GradeData[iGradeIndex].pImage);
 }
 
 PyObject * skillGetIconInstanceNew(PyObject * poSelf, PyObject * poArgs)
@@ -2087,16 +2087,16 @@ PyObject * skillGetIconInstanceNew(PyObject * poSelf, PyObject * poArgs)
 	CGraphicImageInstance * pImageInstance = CGraphicImageInstance::New();
 	pImageInstance->SetImagePointer(c_pSkillData->GradeData[iGradeIndex].pImage);
 
-	return Py_BuildValue("i", pImageInstance);
+	return Py_BuildHandle(pImageInstance);
 }
 
 PyObject * skillDeleteIconInstance(PyObject * poSelf, PyObject * poArgs)
 {
-	int iHandle;
-	if (!PyTuple_GetInteger(poArgs, 0, &iHandle))
+	void* hHandle;
+	if (!PyTuple_GetHandle(poArgs, 0, &hHandle))
 		return Py_BadArgument();
 
-	CGraphicImageInstance::Delete((CGraphicImageInstance *) iHandle);
+	CGraphicImageInstance::Delete((CGraphicImageInstance *)hHandle);
 	return Py_BuildNone();
 }
 

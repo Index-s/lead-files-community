@@ -16,7 +16,7 @@ bool CEterPackCursor::Open(const char* filename)
 	assert(m_pPack != NULL);
 	
 	char tmpFilename[MAX_PATH + 1];
-	strncpy(tmpFilename, filename, MAX_PATH);
+	strncpy_s(tmpFilename, sizeof(tmpFilename), filename, _TRUNCATE);
 	inlineConvertPackFilename(tmpFilename);
 	
 	if (!m_pPack->Get(m_file, tmpFilename, &m_pData))

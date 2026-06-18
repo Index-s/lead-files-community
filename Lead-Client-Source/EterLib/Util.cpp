@@ -260,7 +260,7 @@ const char*	GetFontFaceFromCodePage(WORD codePage)
 
 	HDC hDC=GetDC(NULL);
 
-	if(EnumFontFamiliesEx(hDC, &logFont, (FONTENUMPROC)EnumFontFamExProc, (LONG)fontFace, 0) == 0)
+	if(EnumFontFamiliesEx(hDC, &logFont, (FONTENUMPROC)EnumFontFamExProc, (LPARAM)fontFace, 0) == 0)
 	{
 		ReleaseDC(NULL, hDC);
 		return fontFace;
@@ -268,7 +268,7 @@ const char*	GetFontFaceFromCodePage(WORD codePage)
 
 	fontFace = GetFontFaceFromCodePageNT(codePage);
 
-	if(EnumFontFamiliesEx(hDC, &logFont, (FONTENUMPROC)EnumFontFamExProc, (LONG)fontFace, 0) == 0)
+	if(EnumFontFamiliesEx(hDC, &logFont, (FONTENUMPROC)EnumFontFamExProc, (LPARAM)fontFace, 0) == 0)
 	{
 		ReleaseDC(NULL, hDC);
 		return fontFace;
@@ -326,7 +326,7 @@ void __strcat1(char * str,int i)
 void base64_decode(const char * str,char * resultStr)
 {
 	int nCount=0, i=0, r, result;
-	int length = strlen(str);
+	size_t length = strlen(str);
 	char szDest[5]="";
 
 	strcpy(resultStr,"");

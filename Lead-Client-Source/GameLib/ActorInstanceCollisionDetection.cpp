@@ -312,7 +312,7 @@ BOOL CActorInstance::__SplashAttackProcess(CActorInstance & rVictim)
 	{
 		rHittedInstanceMap.insert(std::make_pair(&rVictim, GetLocalTime()+c_rAttackData.fInvisibleTime));
 
-		int iCurrentHitCount = rHittedInstanceMap.size();
+		int iCurrentHitCount = static_cast<int>(rHittedInstanceMap.size());
 		int iMaxHitCount = (0 == c_rAttackData.iHitLimitCount ? 16 : c_rAttackData.iHitLimitCount);
 		//Tracef(" ------------------- Splash Hit : %d\n", iCurrentHitCount);
 
@@ -436,7 +436,7 @@ BOOL CActorInstance::__NormalAttackProcess(CActorInstance & rVictim)
 
 							//Tracef(" ----------- Next Hit : %d\n", itHitData->second.size());
 
-							int iCurrentHitCount = itHitData->second.size();
+							int iCurrentHitCount = static_cast<int>(itHitData->second.size());
 							// NOTE: Normal attack is limited to 16 people.
 							if (NRaceData::MOTION_TYPE_COMBO == pad->iMotionType || NRaceData::MOTION_TYPE_NORMAL == pad->iMotionType)
 							{

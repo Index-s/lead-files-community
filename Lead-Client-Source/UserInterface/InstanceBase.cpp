@@ -878,7 +878,7 @@ void CInstanceBase::__Create_SetName(const SCreateData& c_rkCreateData)
 		return;
 	}
 
-	SetNameString(c_rkCreateData.m_stName.c_str(), c_rkCreateData.m_stName.length());
+	SetNameString(c_rkCreateData.m_stName.c_str(), static_cast<int>(c_rkCreateData.m_stName.length()));
 }
 
 void CInstanceBase::__Create_SetWarpName(const SCreateData& c_rkCreateData)
@@ -887,16 +887,16 @@ void CInstanceBase::__Create_SetWarpName(const SCreateData& c_rkCreateData)
 	if (CPythonNonPlayer::Instance().GetName(c_rkCreateData.m_dwRace, &c_szName))
 	{
 		std::string strName = c_szName;
-		int iFindingPos = strName.find_first_of(" ", 0);
+		int iFindingPos = static_cast<int>(strName.find_first_of(" ", 0));
 		if (iFindingPos > 0)
 		{
 			strName.resize(iFindingPos);
 		}
-		SetNameString(strName.c_str(), strName.length());
+		SetNameString(strName.c_str(), static_cast<int>(strName.length()));
 	}
 	else
 	{
-		SetNameString(c_rkCreateData.m_stName.c_str(), c_rkCreateData.m_stName.length());
+		SetNameString(c_rkCreateData.m_stName.c_str(), static_cast<int>(c_rkCreateData.m_stName.length()));
 	}
 }
 

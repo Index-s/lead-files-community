@@ -308,9 +308,8 @@ void CTGAImage::SetAlphaChannel(bool isExist)
 
 bool CTGAImage::SaveToDiskFile(const char* c_szFileName)
 {
-	FILE * fp = fopen(c_szFileName, "wb");
-	
-	if (!fp)
+	FILE * fp = NULL;
+	if (fopen_s(&fp, c_szFileName, "wb") != 0 || !fp)
 		return false;
 
 	fwrite(&m_Header, 18, 1, fp);

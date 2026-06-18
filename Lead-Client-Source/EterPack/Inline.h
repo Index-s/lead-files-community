@@ -11,7 +11,7 @@ inline void inlinePathCreate(const char* path)
 	while (NULL != (k = strchr(p, '/')))
 	{
 		memset(dir, 0, sizeof(dir));
-		strncpy(dir, path, k - path);
+		strncpy_s(dir, sizeof(dir), path, k - path);
 		CreateDirectory(dir, NULL);
 		p = k + 1;
 	}

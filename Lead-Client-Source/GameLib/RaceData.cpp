@@ -231,7 +231,7 @@ BOOL CRaceData::GetMotionVectorPointer(WORD wMotionMode, WORD wMotionIndex, cons
 
 DWORD CRaceData::GetAttachingDataCount()
 {
-	return m_AttachingDataVector.size();
+	return static_cast<DWORD>(m_AttachingDataVector.size());
 }
 
 BOOL CRaceData::GetAttachingDataPointer(DWORD dwIndex, const NRaceData::TAttachingData ** c_ppAttachingData)

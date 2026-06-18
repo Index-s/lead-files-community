@@ -272,9 +272,9 @@ void NRaceData::SaveCollisionData(FILE * File, int iTabCount, const TCollisionDa
 // Attaching Data
 void NRaceData::SaveAttachingData(FILE * File, int iTabCount, const TAttachingDataVector & c_rAttachingDataVector)
 {
-	DWORD dwAttachingDataCount = c_rAttachingDataVector.size();
+	size_t dwAttachingDataCount = c_rAttachingDataVector.size();
 
-	PrintfTabs(File, iTabCount, "AttachingDataCount       %d\n", dwAttachingDataCount);
+	PrintfTabs(File, iTabCount, "AttachingDataCount       %d\n", (int)dwAttachingDataCount);
 	PrintfTabs(File, iTabCount, "\n");
 
 	for (DWORD i = 0; i < dwAttachingDataCount; ++i)

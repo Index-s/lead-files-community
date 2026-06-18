@@ -72,7 +72,7 @@ int LocaleString_RightTrim(char* base, int len)
 
 void LocaleString_RightTrim(char* base)
 {
-	LocaleString_RightTrim(base, strlen(base));
+	LocaleString_RightTrim(base, static_cast<int>(strlen(base)));
 }
 
 void OLD_rtrim(char* base)
@@ -287,7 +287,7 @@ bool Group::Create(const std::string & stSource)
         TraceError("Source file has no content");
         return false;
     }
-	int str_len = stSource.length();
+	int str_len = static_cast<int>(stSource.length());
 	int str_pos = 0;
 	
 	DWORD codePage = GetDefaultCodePage();

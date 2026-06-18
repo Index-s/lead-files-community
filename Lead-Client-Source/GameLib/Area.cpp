@@ -165,14 +165,14 @@ void CArea::RenderEffect()
 	}
 }
 
-DWORD CArea::DEBUG_GetRenderedCRCNum() 
-{ return m_kRenderedThingInstanceCRCWithNumberVector.size(); }
+DWORD CArea::DEBUG_GetRenderedCRCNum()
+{ return static_cast<DWORD>(m_kRenderedThingInstanceCRCWithNumberVector.size()); }
 
 CArea::TCRCWithNumberVector & CArea::DEBUG_GetRenderedCRCWithNumVector() 
 { return m_kRenderedThingInstanceCRCWithNumberVector; }
 
 DWORD CArea::DEBUG_GetRenderedGrapphicThingInstanceNum()
-{ return m_kRenderedGrapphicThingInstanceVector.size(); }
+{ return static_cast<DWORD>(m_kRenderedGrapphicThingInstanceVector.size()); }
 
 void CArea::CollectRenderingObject(std::vector<CGraphicThingInstance*>& rkVct_pkOpaqueThingInst)
 {
@@ -566,7 +566,7 @@ void CArea::__SetObjectInstance_SetEffect(TObjectInstance * pObjectInstance, con
 
 	pEffectInstance->SetGlobalMatrix(mat);
 
-	pObjectInstance->dwEffectInstanceIndex = m_EffectInstanceMap.size();
+	pObjectInstance->dwEffectInstanceIndex = static_cast<DWORD>(m_EffectInstanceMap.size());
 	m_EffectInstanceMap.insert(TEffectInstanceMap::value_type(pObjectInstance->dwEffectInstanceIndex, pEffectInstance));
 }
 
@@ -947,7 +947,7 @@ bool CArea::__Load_LoadObject(const char * c_szFileName)
 			if (s!=rVector[4].npos)
 			{
 				ObjectData.m_fYaw = atoi(rVector[4].substr(0,s-1).c_str());
-				int p = s+1;
+				std::string::size_type p = s+1;
 				s = rVector[4].find('#',p);
 				ObjectData.m_fPitch = atoi(rVector[4].substr(p,s-1-p+1).c_str());
 				ObjectData.m_fRoll = atoi(rVector[4].substr(s+1).c_str());
@@ -1076,7 +1076,7 @@ bool CArea::CheckObjectIndex(DWORD dwIndex) const
 
 DWORD CArea::GetObjectDataCount()
 {
-	return m_ObjectDataVector.size();
+	return static_cast<DWORD>(m_ObjectDataVector.size());
 }
 
 bool CArea::GetObjectDataPointer(DWORD dwIndex, const TObjectData ** ppObjectData) const
@@ -1093,7 +1093,7 @@ bool CArea::GetObjectDataPointer(DWORD dwIndex, const TObjectData ** ppObjectDat
 
 const DWORD CArea::GetObjectInstanceCount() const
 {
-	return m_ObjectInstanceVector.size();
+	return static_cast<DWORD>(m_ObjectInstanceVector.size());
 }
 
 const bool CArea::GetObjectInstancePointer(const DWORD & dwIndex, const TObjectInstance ** ppObjectInstance) const

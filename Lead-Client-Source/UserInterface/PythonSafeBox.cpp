@@ -49,7 +49,7 @@ GoldType CPythonSafeBox::GetMoney()
 
 int CPythonSafeBox::GetCurrentSafeBoxSize()
 {
-	return m_ItemInstanceVector.size();
+	return static_cast<int>(m_ItemInstanceVector.size());
 }
 
 BOOL CPythonSafeBox::GetSlotItemID(DWORD dwSlotIndex, DWORD* pdwItemID)
@@ -141,7 +141,7 @@ BOOL CPythonSafeBox::GetSlotMallItemID(DWORD dwSlotIndex, DWORD * pdwItemID)
 
 DWORD CPythonSafeBox::GetMallSize()
 {
-	return m_MallItemInstanceVector.size();
+	return static_cast<DWORD>(m_MallItemInstanceVector.size());
 }
 
 CPythonSafeBox::CPythonSafeBox()

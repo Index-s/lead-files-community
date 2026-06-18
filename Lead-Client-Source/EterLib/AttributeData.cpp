@@ -33,7 +33,7 @@ const THeightDataVector & CAttributeData::GetHeightDataVector() const
 
 DWORD CAttributeData::GetHeightDataCount() const
 {
-	return m_HeightDataVector.size();
+	return static_cast<DWORD>(m_HeightDataVector.size());
 }
 
 BOOL CAttributeData::GetHeightDataPointer(DWORD dwIndex, const THeightData ** c_ppHeightData) const

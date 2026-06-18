@@ -323,7 +323,7 @@ bool CPythonGraphic::SaveScreenShot(const char * c_pszFileName)
 			char imgDesc[64];
 			GenScreenShotTag(c_pszFileName, GetCRC32(tail, tailSize), imgDesc, sizeof(imgDesc));
 
-			int imgDescLen = strlen(imgDesc) + 1;
+			size_t imgDescLen = strlen(imgDesc) + 1;
 			
 			unsigned char exifHeader[] = {
 				0xe1,
@@ -363,7 +363,7 @@ bool CPythonGraphic::SaveScreenShot(const char * c_pszFileName)
 				0x0,
 			};
 
-			exifHeader[2] = sizeof(exifHeader) + imgDescLen;
+			exifHeader[2] = static_cast<unsigned char>(sizeof(exifHeader) + imgDescLen);
 
 			FILE* dstFilePtr = fopen(c_pszFileName, "wb");
 			//FILE* dstFilePtr = fopen("temp.jpg", "wb");
@@ -555,7 +555,7 @@ void CPythonGraphic::RenderCoolTimeBox(float fxCenter, float fyCenter, float fRa
 	if (vertices.empty())
 		return;
 
-	if (SetPDTStream(&vertices[0], vertices.size()))
+	if (SetPDTStream(&vertices[0], static_cast<UINT>(vertices.size())))
 	{
 		STATEMANAGER.SaveTextureStageState(0, D3DTSS_COLORARG1,	D3DTA_DIFFUSE);
 		STATEMANAGER.SaveTextureStageState(0, D3DTSS_COLOROP,	D3DTOP_SELECTARG1);

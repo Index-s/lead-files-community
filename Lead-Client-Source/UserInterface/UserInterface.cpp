@@ -352,7 +352,7 @@ bool RunMainScript(CPythonLauncher& pyLauncher, const char* lpCmdLine)
 
 bool Main(HINSTANCE hInstance, LPSTR lpCmdLine)
 {
-	DWORD dwRandSeed=time(NULL)+DWORD(GetCurrentProcess());
+	DWORD dwRandSeed=(DWORD)(time(NULL)+(DWORD_PTR)GetCurrentProcess());
 	srandom(dwRandSeed);
 	srand(random());
 

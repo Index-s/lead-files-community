@@ -219,7 +219,7 @@ void CEffectMeshInstance::OnSetDataPointer(CEffectElementBase * pElement)
 
 		CFrameController & rFrameController = m_TextureInstanceVector[j].TextureFrameController;
 		rFrameController.Clear();
-		rFrameController.SetMaxFrame(rTextureVector.size());
+		rFrameController.SetMaxFrame(static_cast<DWORD>(rTextureVector.size()));
 		rFrameController.SetFrameTime(pMeshData->fTextureAnimationFrameDelay);
 		rFrameController.SetLoopFlag(pMeshData->bTextureAnimationLoopEnable);
 		rFrameController.SetStartFrame(pMeshData->dwTextureAnimationStartFrame);

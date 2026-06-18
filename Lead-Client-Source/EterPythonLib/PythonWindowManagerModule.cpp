@@ -5,13 +5,13 @@
 
 bool PyTuple_GetWindow(PyObject* poArgs, int pos, UI::CWindow ** ppRetWindow)
 {
-	int iHandle;
-	if (!PyTuple_GetInteger(poArgs, pos, &iHandle))
+	void* hHandle;
+	if (!PyTuple_GetHandle(poArgs, pos, &hHandle))
 		return false;
-	if (!iHandle)
+	if (!hHandle)
 		return false;
 
-	*ppRetWindow = (UI::CWindow*)iHandle;
+	*ppRetWindow = (UI::CWindow*)hHandle;
 	return true;
 }
 
@@ -53,7 +53,7 @@ PyObject * wndMgrRegister(PyObject * poSelf, PyObject * poArgs)
 	if (!pWindow)
 		return Py_BuildException();
 	
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // SlotWindow
@@ -67,7 +67,7 @@ PyObject * wndMgrRegisterSlotWindow(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterSlotWindow(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // GridSlotWindow
@@ -81,7 +81,7 @@ PyObject * wndMgrRegisterGridSlotWindow(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterGridSlotWindow(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // TextLine
@@ -95,7 +95,7 @@ PyObject * wndMgrRegisterTextLine(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterTextLine(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // MarkBox
@@ -109,7 +109,7 @@ PyObject * wndMgrRegisterMarkBox(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterMarkBox(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // ImageBox
@@ -123,7 +123,7 @@ PyObject * wndMgrRegisterImageBox(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterImageBox(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // ExpandedImageBox
@@ -137,7 +137,7 @@ PyObject * wndMgrRegisterExpandedImageBox(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterExpandedImageBox(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // AniImageBox
@@ -151,7 +151,7 @@ PyObject * wndMgrRegisterAniImageBox(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterAniImageBox(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // RegisterButton
@@ -165,7 +165,7 @@ PyObject * wndMgrRegisterButton(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterButton(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // RadioButton
@@ -179,7 +179,7 @@ PyObject * wndMgrRegisterRadioButton(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterRadioButton(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // ToggleButton
@@ -193,7 +193,7 @@ PyObject * wndMgrRegisterToggleButton(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterToggleButton(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // DragButton
@@ -207,7 +207,7 @@ PyObject * wndMgrRegisterDragButton(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterDragButton(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // Box
@@ -221,7 +221,7 @@ PyObject * wndMgrRegisterBox(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterBox(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // Bar
@@ -235,7 +235,7 @@ PyObject * wndMgrRegisterBar(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterBar(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // Line
@@ -249,7 +249,7 @@ PyObject * wndMgrRegisterLine(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterLine(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // Slot
@@ -263,7 +263,7 @@ PyObject * wndMgrRegisterBar3D(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterBar3D(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 
 // NumberLine
@@ -277,7 +277,7 @@ PyObject * wndMgrRegisterNumberLine(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CWindow * pWindow = UI::CWindowManager::Instance().RegisterNumberLine(po, szLayer);
-	return Py_BuildValue("i", pWindow);
+	return Py_BuildHandle(pWindow);
 }
 ///// Register /////
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1147,8 +1147,8 @@ PyObject * wndMgrSetSlot(PyObject * poSelf, PyObject * poArgs)
 	if (!PyTuple_GetInteger(poArgs, 4, &iHeight))
 		return Py_BuildException();
 
-	int iImageHandle;
-	if (!PyTuple_GetInteger(poArgs, 5, &iImageHandle))
+	void* hImageHandle;
+	if (!PyTuple_GetHandle(poArgs, 5, &hImageHandle))
 		return Py_BuildException();
 
 	D3DXCOLOR diffuseColor;
@@ -1177,7 +1177,7 @@ PyObject * wndMgrSetSlot(PyObject * poSelf, PyObject * poArgs)
 		return Py_BuildException();
 
 	UI::CSlotWindow * pSlotWin = (UI::CSlotWindow *)pWin;
-	pSlotWin->SetSlot(iSlotIndex, iItemIndex, iWidth, iHeight, (CGraphicImage *)iImageHandle, diffuseColor);
+	pSlotWin->SetSlot(iSlotIndex, iItemIndex, iWidth, iHeight, (CGraphicImage *)hImageHandle, diffuseColor);
 
 	return Py_BuildNone();
 }

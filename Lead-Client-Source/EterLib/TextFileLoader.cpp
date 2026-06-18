@@ -13,7 +13,7 @@ CDynamicPool<CTextFileLoader::SGroupNode>	CTextFileLoader::SGroupNode::ms_kPool;
 
 CTokenVector* CTextFileLoader::SGroupNode::GetTokenVector(const std::string& c_rstGroupName)
 {
-	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), c_rstGroupName.length());
+	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), static_cast<UINT>(c_rstGroupName.length()));
 
 	std::map<DWORD, CTokenVector>::iterator f=m_kMap_dwKey_kVct_stToken.find(dwGroupNameKey);
 	if (m_kMap_dwKey_kVct_stToken.end()==f)
@@ -24,7 +24,7 @@ CTokenVector* CTextFileLoader::SGroupNode::GetTokenVector(const std::string& c_r
 
 bool CTextFileLoader::SGroupNode::IsExistTokenVector(const std::string& c_rstGroupName)
 {
-	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), c_rstGroupName.length());
+	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), static_cast<UINT>(c_rstGroupName.length()));
 
 	if (m_kMap_dwKey_kVct_stToken.end()==m_kMap_dwKey_kVct_stToken.find(dwGroupNameKey))
 		return false;
@@ -34,7 +34,7 @@ bool CTextFileLoader::SGroupNode::IsExistTokenVector(const std::string& c_rstGro
 
 void CTextFileLoader::SGroupNode::InsertTokenVector(const std::string& c_rstGroupName, const CTokenVector& c_rkVct_stToken)
 {
-	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), c_rstGroupName.length());
+	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), static_cast<UINT>(c_rstGroupName.length()));
 
 	m_kMap_dwKey_kVct_stToken.insert(std::map<DWORD, CTokenVector>::value_type(dwGroupNameKey, c_rkVct_stToken));
 }
@@ -62,7 +62,7 @@ void CTextFileLoader::SGroupNode::SetGroupName(const std::string& c_rstGroupName
 	m_strGroupName=c_rstGroupName;
 	stl_lowers(m_strGroupName);
 
-	m_dwGroupNameKey=GenNameKey(m_strGroupName.c_str(), m_strGroupName.length());
+	m_dwGroupNameKey=GenNameKey(m_strGroupName.c_str(), static_cast<UINT>(m_strGroupName.length()));
 }
 
 
@@ -326,7 +326,7 @@ DWORD CTextFileLoader::GetChildNodeCount()
 		return 0;
 	}
 
-	return m_pcurNode->ChildNodeVector.size();
+	return static_cast<DWORD>(m_pcurNode->ChildNodeVector.size());
 }
 
 BOOL CTextFileLoader::SetChildNode(const char * c_szKey)
@@ -337,7 +337,7 @@ BOOL CTextFileLoader::SetChildNode(const char * c_szKey)
 		return FALSE;
 	}
 
-	DWORD dwKey=SGroupNode::GenNameKey(c_szKey, strlen(c_szKey));
+	DWORD dwKey=SGroupNode::GenNameKey(c_szKey, static_cast<UINT>(strlen(c_szKey)));
 
 	for (DWORD i = 0; i < m_pcurNode->ChildNodeVector.size(); ++i)
 	{

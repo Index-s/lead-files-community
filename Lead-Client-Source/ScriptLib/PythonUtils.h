@@ -16,6 +16,12 @@ bool PyTuple_GetDouble(PyObject* poArgs, int pos, double* ret);
 bool PyTuple_GetObject(PyObject* poArgs, int pos, PyObject** ret);
 bool PyTuple_GetBoolean(PyObject* poArgs, int pos, bool* ret);
 
+// 64-bit-safe opaque handle marshalling. A C pointer is round-tripped through Python as an
+// integer; Python integers are arbitrary precision, so carrying the full pointer width is
+// transparent to script code and avoids truncating pointers above 4GB on x64 (LLP64).
+PyObject* Py_BuildHandle(const void* ptr);
+bool PyTuple_GetHandle(PyObject* poArgs, int pos, void** ret);
+
 bool PyCallClassMemberFunc(PyObject* poClass, const char* c_szFunc, PyObject* poArgs);
 bool PyCallClassMemberFunc(PyObject* poClass, const char* c_szFunc, PyObject* poArgs, bool* pisRet);
 bool PyCallClassMemberFunc(PyObject* poClass, const char* c_szFunc, PyObject* poArgs, long * plRetValue);

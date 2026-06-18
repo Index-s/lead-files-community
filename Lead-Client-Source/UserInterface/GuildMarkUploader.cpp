@@ -278,7 +278,7 @@ bool CGuildMarkUploader::__SendSymbolPacket()
 
 	TPacketCGGuildSymbolUpload kPacketSymbolUpload;
 	kPacketSymbolUpload.header=HEADER_CG_GUILD_SYMBOL_UPLOAD;
-	kPacketSymbolUpload.size=sizeof(TPacketCGGuildSymbolUpload) + m_dwSymbolBufSize;
+	kPacketSymbolUpload.size=static_cast<WORD>(sizeof(TPacketCGGuildSymbolUpload) + m_dwSymbolBufSize);
 	kPacketSymbolUpload.guild_id=m_dwGuildID;
 
 	if (!Send(sizeof(TPacketCGGuildSymbolUpload), &kPacketSymbolUpload))

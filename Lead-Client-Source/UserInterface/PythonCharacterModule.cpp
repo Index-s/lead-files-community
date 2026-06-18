@@ -435,7 +435,7 @@ PyObject * chrSetNameString(PyObject* poSelf, PyObject* poArgs)
 	CInstanceBase * pkInst = CPythonCharacterManager::Instance().GetSelectedInstancePtr();
 	if (!pkInst)
 		return Py_BuildNone();
-	pkInst->SetNameString(c_szName, strlen(c_szName));
+	pkInst->SetNameString(c_szName, static_cast<int>(strlen(c_szName)));
 	return Py_BuildNone();
 }
 

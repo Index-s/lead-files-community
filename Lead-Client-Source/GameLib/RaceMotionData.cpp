@@ -250,7 +250,7 @@ float CRaceMotionData::GetLoopEndTime() const
 // Motion Event Data
 DWORD CRaceMotionData::GetMotionEventDataCount() const
 {
-	return m_MotionEventDataVector.size();
+	return static_cast<DWORD>(m_MotionEventDataVector.size());
 }
 
 BOOL CRaceMotionData::GetMotionEventDataPointer(BYTE byIndex, const CRaceMotionData::TMotionEventData ** c_ppData) const

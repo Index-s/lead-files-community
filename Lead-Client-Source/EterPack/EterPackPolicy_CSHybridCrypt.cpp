@@ -67,7 +67,7 @@ bool EterPackPolicy_CSHybridCrypt::GenerateCryptKey( std::string& rfileName )
 	std::string extName = GetFileExt(rfileName);
 	stl_lowers(extName);
 
-	DWORD  dwExtHash  = stringhash().GetHash(extName);
+	DWORD  dwExtHash  = static_cast<DWORD>(stringhash().GetHash(extName));
 
 	TCSHybridCryptKeyMap::const_iterator cit = m_mapHybridCryptKey.find( dwExtHash );
 
@@ -99,7 +99,7 @@ bool EterPackPolicy_CSHybridCrypt::GetPerFileCryptKey( std::string& rfileName, e
 
 	std::string extName = GetFileExt(fileNamelower);
 
-	TCSHybridCryptKeyMap::const_iterator cit = m_mapHybridCryptKey.find( stringhash().GetHash(extName));
+	TCSHybridCryptKeyMap::const_iterator cit = m_mapHybridCryptKey.find( static_cast<DWORD>(stringhash().GetHash(extName)));
 
 	if( cit == m_mapHybridCryptKey.end() )
 	{
@@ -250,7 +250,7 @@ void EterPackPolicy_CSHybridCrypt::WriteCryptKeyToFile( CFileBase& rFile )
 	//			key-16byte 
 	//			iv-16byte
 
-	DWORD dwCryptKeySize = m_mapHybridCryptKey.size();
+	DWORD dwCryptKeySize = static_cast<DWORD>(m_mapHybridCryptKey.size());
 	rFile.Write( &dwCryptKeySize, sizeof(DWORD) );
 
 	TCSHybridCryptKeyMap::const_iterator cit;
@@ -302,7 +302,7 @@ bool EterPackPolicy_CSHybridCrypt::GenerateSupplementaryDataBlock(std::string& r
 	std::string fileNamelower = rfilename;
 	stl_lowers( fileNamelower );
 
-	DWORD dwFileNameHash  = stringhash().GetHash(fileNamelower);
+	DWORD dwFileNameHash  = static_cast<DWORD>(stringhash().GetHash(fileNamelower));
 	TSupplementaryDataBlockMap::const_iterator cit = m_mapSDBMap.find( dwFileNameHash );
 
 	if( cit != m_mapSDBMap.end() )
@@ -354,7 +354,7 @@ bool EterPackPolicy_CSHybridCrypt::GetSupplementaryDataBlock( std::string& rfile
 	std::string fileNamelower = rfilename;
 	stl_lowers( fileNamelower );
 
-	DWORD dwFileNameHash  = stringhash().GetHash(fileNamelower);
+	DWORD dwFileNameHash  = static_cast<DWORD>(stringhash().GetHash(fileNamelower));
 	TSupplementaryDataBlockMap::const_iterator cit = m_mapSDBMap.find( dwFileNameHash );
 
 	if( cit == m_mapSDBMap.end() )
@@ -365,7 +365,7 @@ bool EterPackPolicy_CSHybridCrypt::GetSupplementaryDataBlock( std::string& rfile
 
 	const std::vector<BYTE>& vecSDB = cit->second.vecStream;
 
-	iSDBSize = vecSDB.size();
+	iSDBSize = static_cast<int>(vecSDB.size());
 
 	if(iSDBSize <= 0)
 	{
@@ -392,7 +392,7 @@ void EterPackPolicy_CSHybridCrypt::WriteSupplementaryDataBlockToFile( CFileBase&
 	//			sdb block size( 1byte )
 	//			sdb blocks 
 
-	DWORD dwSDBMapSize = m_mapSDBMap.size();
+	DWORD dwSDBMapSize = static_cast<DWORD>(m_mapSDBMap.size());
 	rFile.Write( &dwSDBMapSize, sizeof(DWORD) );
 
 	TSupplementaryDataBlockMap::const_iterator cit;
@@ -402,7 +402,7 @@ void EterPackPolicy_CSHybridCrypt::WriteSupplementaryDataBlockToFile( CFileBase&
 		rFile.Write( &dwFileNamehash, sizeof(DWORD) );
 
 		const std::string strRelatedMapName = cit->second.strRelatedMapName;
-		DWORD dwMapNameSize = strRelatedMapName.size();
+		DWORD dwMapNameSize = static_cast<DWORD>(strRelatedMapName.size());
 		rFile.Write( &dwMapNameSize, sizeof(DWORD) );
 		rFile.Write( strRelatedMapName.c_str(), dwMapNameSize );
 

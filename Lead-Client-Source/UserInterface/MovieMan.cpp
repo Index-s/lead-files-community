@@ -388,7 +388,7 @@ HRESULT CMovieMan::RenderFileToMMStream(const char *cpFilename, IMultiMediaStrea
 	pAMStream->AddMediaStream(NULL, &MSPID_PrimaryAudio, AMMSF_ADDDEFAULTRENDERER, NULL);
 
 	std::string ext;
-	GetFileExtension(cpFilename, strlen(cpFilename), &ext);
+	GetFileExtension(cpFilename, static_cast<int>(strlen(cpFilename)), &ext);
 	std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 	if (ext == "mpg")
 	{
