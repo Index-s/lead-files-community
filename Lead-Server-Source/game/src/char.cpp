@@ -6028,7 +6028,7 @@ void CHARACTER::SetPolymorph(DWORD dwRaceNum, bool bMaintainStat)
 	ComputeBattlePoints();
 }
 
-int CHARACTER::GetQuestFlag(const std::string& flag) const
+TimeT64 CHARACTER::GetQuestFlag(const std::string& flag) const
 {
 	quest::CQuestManager& q = quest::CQuestManager::instance();
 	quest::PC* pPC = q.GetPC(GetPlayerID());
@@ -6039,7 +6039,7 @@ int CHARACTER::GetQuestFlag(const std::string& flag) const
 	return pPC->GetFlag(flag);
 }
 
-void CHARACTER::SetQuestFlag(const std::string& flag, int value)
+void CHARACTER::SetQuestFlag(const std::string& flag, TimeT64 value)
 {
 	quest::CQuestManager& q = quest::CQuestManager::instance();
 	quest::PC* pPC = q.GetPC(GetPlayerID());

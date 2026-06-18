@@ -611,7 +611,7 @@ void CItem::ModifyPoints(bool bAdd)
 			{
 				DWORD dwVnum;
 
-				if ((dwVnum = GetSocket(i)) <= 2)
+				if ((dwVnum = static_cast<DWORD>(GetSocket(i))) <= 2)
 					continue;
 
 				TItemTable * p = ITEM_MANAGER::instance().GetTable(dwVnum);
@@ -1019,7 +1019,7 @@ void CItem::SetSocket(int i, TimeT64 v, bool bLog)
 	UpdatePacket();
 	Save();
 	if (bLog)
-		LogManager::instance().ItemLog(i, v, 0, GetID(), "SET_SOCKET", "", "", GetVnum());
+		LogManager::instance().ItemLog(i, static_cast<DWORD>(v), 0, GetID(), "SET_SOCKET", "", "", GetVnum());
 }
 
 GoldType CItem::GetGold()
@@ -1297,9 +1297,9 @@ EVENTFUNC(unique_expire_event)
 	}
 	else
 	{
-		uint32_t cur = static_cast<uint32_t>(get_global_time());
+		TimeT64 cur = get_global_time();
 
-		if (static_cast<uint32_t>(pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME)) <= cur)
+		if (pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME) <= cur)
 		{
 			pkItem->SetUniqueExpireEvent(NULL);
 			ITEM_MANAGER::instance().RemoveItem(pkItem, "UNIQUE_EXPIRE");
@@ -1311,7 +1311,7 @@ EVENTFUNC(unique_expire_event)
 			// correction
 			// by rtsummit
 			if (pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME) - cur < 600)
-				return PASSES_PER_SEC(pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME) - cur);
+				return PASSES_PER_SEC(static_cast<int>(pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME) - cur));
 			else
 				return PASSES_PER_SEC(600);
 		}
@@ -1332,7 +1332,7 @@ EVENTFUNC(timer_based_on_wear_expire_event)
 	}
 
 	LPITEM pkItem = info->item;
-	int remain_time = pkItem->GetSocket(ITEM_SOCKET_REMAIN_SEC) - processing_time/passes_per_sec;
+	int remain_time = static_cast<int>(pkItem->GetSocket(ITEM_SOCKET_REMAIN_SEC)) - processing_time/passes_per_sec;
 	if (remain_time <= 0)
 	{
 		sys_log(0, "ITEM EXPIRED : expired %s %u", pkItem->GetName(), pkItem->GetID());
@@ -1376,9 +1376,9 @@ EVENTFUNC(real_time_expire_event)
 	if (NULL == item)
 		return 0;
 
-	const uint32_t current = static_cast<uint32_t>(get_global_time());
+	const TimeT64 current = get_global_time();
 
-	if (current > static_cast<uint32_t>(item->GetSocket(0)))
+	if (current > item->GetSocket(0))
 	{
 		if(item->IsNewMountItem())
 		{
@@ -1442,7 +1442,7 @@ void CItem::StartUniqueExpireEvent()
 	if (GetVnum() == UNIQUE_ITEM_HIDE_ALIGNMENT_TITLE)
 		m_pOwner->ShowAlignment(false);
 
-	int iSec = GetSocket(ITEM_SOCKET_UNIQUE_SAVE_TIME);
+	int iSec = static_cast<int>(GetSocket(ITEM_SOCKET_UNIQUE_SAVE_TIME));
 
 	if (iSec == 0)
 		iSec = 60;
@@ -1471,8 +1471,8 @@ void CItem::StartTimerBasedOnWearExpireEvent()
 	if (-1 == GetProto()->cLimitTimerBasedOnWearIndex)
 		return;
 
-	int iSec = GetSocket(0);
-	
+	int iSec = static_cast<int>(GetSocket(0));
+
 	// To cut off the remaining time by minutes ...
 	if (0 != iSec)
 	{
@@ -1510,7 +1510,7 @@ void CItem::StopTimerBasedOnWearExpireEvent()
 	if (!m_pkTimerBasedOnWearExpireEvent)
 		return;
 
-	int remain_time = GetSocket(ITEM_SOCKET_REMAIN_SEC) - event_processing_time(m_pkTimerBasedOnWearExpireEvent) / passes_per_sec;
+	int remain_time = static_cast<int>(GetSocket(ITEM_SOCKET_REMAIN_SEC)) - event_processing_time(m_pkTimerBasedOnWearExpireEvent) / passes_per_sec;
 
 	SetSocket(ITEM_SOCKET_REMAIN_SEC, remain_time);
 	event_cancel(&m_pkTimerBasedOnWearExpireEvent);
@@ -1883,17 +1883,17 @@ void CItem::CopySocketTo(LPITEM pItem)
 
 int CItem::GetAccessorySocketGrade()
 {
-   	return MINMAX(0, GetSocket(0), GetAccessorySocketMaxGrade()); 
+   	return MINMAX(0, static_cast<int>(GetSocket(0)), GetAccessorySocketMaxGrade());
 }
 
 int CItem::GetAccessorySocketMaxGrade()
 {
-   	return MINMAX(0, GetSocket(1), ITEM_ACCESSORY_SOCKET_MAX_NUM);
+   	return MINMAX(0, static_cast<int>(GetSocket(1)), ITEM_ACCESSORY_SOCKET_MAX_NUM);
 }
 
 int CItem::GetAccessorySocketDownGradeTime()
 {
-	return MINMAX(0, GetSocket(2), aiAccessorySocketDegradeTime[GetAccessorySocketGrade()]);
+	return MINMAX(0, static_cast<int>(GetSocket(2)), aiAccessorySocketDegradeTime[GetAccessorySocketGrade()]);
 }
 
 void CItem::AttrLog()
@@ -1907,7 +1907,7 @@ void CItem::AttrLog()
 	{
 		if (m_alSockets[i])
 		{
-			LogManager::instance().ItemLog(i, m_alSockets[i], 0, GetID(), "INFO_SOCKET", "", pszIP ? pszIP : "", GetVnum());
+			LogManager::instance().ItemLog(i, static_cast<DWORD>(m_alSockets[i]), 0, GetID(), "INFO_SOCKET", "", pszIP ? pszIP : "", GetVnum());
 		}
 	}
 
@@ -1958,7 +1958,7 @@ int CItem::GiveMoreTime_Per(float fPercent)
 	if (IsDragonSoul())
 	{
 		DWORD duration = DSManager::instance().GetDuration(this);
-		int remain_sec = GetSocket(ITEM_SOCKET_REMAIN_SEC);
+		int remain_sec = static_cast<int>(GetSocket(ITEM_SOCKET_REMAIN_SEC));
 		int given_time = static_cast<int>(fPercent * duration / 100);
 		if (remain_sec == duration)
 			return false;
@@ -1983,7 +1983,7 @@ int CItem::GiveMoreTime_Fix(DWORD dwTime)
 	if (IsDragonSoul())
 	{
 		DWORD duration = DSManager::instance().GetDuration(this);
-		int remain_sec = GetSocket(ITEM_SOCKET_REMAIN_SEC);
+		int remain_sec = static_cast<int>(GetSocket(ITEM_SOCKET_REMAIN_SEC));
 		if (remain_sec == duration)
 			return false;
 		if ((dwTime + remain_sec) >= duration)

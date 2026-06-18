@@ -112,7 +112,7 @@ size_t CreatePlayerSaveQuery(char * pszQuery, size_t querySize, TPlayerTable * p
 			"horse_level = %d, "
 			"horse_riding = %d, "
 			"horse_hp = %d, "
-			"horse_hp_droptime = %u, "
+			"horse_hp_droptime = %lld, "
 			"horse_stamina = %d, "
 			"horse_skill_point = %d, "
 			,
@@ -751,7 +751,7 @@ void CClientManager::QUERY_PLAYER_SAVE(CPeer * peer, DWORD dwHandle, TPlayerTabl
 	PutPlayerCache(pkTab);
 }
 
-typedef std::map<DWORD, uint32_t> time_by_id_map_t;
+typedef std::map<DWORD, TimeT64> time_by_id_map_t;
 static time_by_id_map_t s_createTimeByAccountID;
 
 /*
@@ -768,7 +768,7 @@ void CClientManager::__QUERY_PLAYER_CREATE(CPeer *peer, DWORD dwHandle, TPlayerC
 
 	if (it != s_createTimeByAccountID.end())
 	{
-		uint32_t curtime = static_cast<uint32_t>(time(0));
+		TimeT64 curtime = time(0);
 
 		if (curtime - it->second < 30)
 		{
@@ -918,7 +918,7 @@ void CClientManager::__QUERY_PLAYER_CREATE(CPeer *peer, DWORD dwHandle, TPlayerC
 
 	sys_log(0, "7 name %s job %d", pack.player.szName, pack.player.byJob);
 
-	s_createTimeByAccountID[packet->account_id] = static_cast<uint32_t>(time(0));
+	s_createTimeByAccountID[packet->account_id] = time(0);
 }
 
 /*
@@ -1141,7 +1141,7 @@ void CClientManager::QUERY_ADD_AFFECT(CPeer * peer, TPacketGDAddAffect * p)
 	   */
 	snprintf(queryStr, sizeof(queryStr),
 			"REPLACE INTO affect%s (dwPID, bType, bApplyOn, lApplyValue, dwFlag, lDuration, lSPCost) "
-			"VALUES(%u, %u, %u, %ld, %u, %ld, %ld)",
+			"VALUES(%u, %u, %u, %ld, %u, %lld, %ld)",
 			GetTablePostfix(),
 			p->dwPID,
 			p->elem.dwType,

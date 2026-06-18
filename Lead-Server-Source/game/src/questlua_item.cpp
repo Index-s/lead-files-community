@@ -113,7 +113,7 @@ namespace quest
 			if (idx < 0 || idx >= ITEM_SOCKET_MAX_NUM)
 				lua_pushnumber(L,0);
 			else
-				lua_pushnumber(L, q.GetCurrentItem()->GetSocket(idx));
+				lua_pushnumber(L, static_cast<lua_Number>(q.GetCurrentItem()->GetSocket(idx)));
 		}
 		else
 		{
@@ -128,7 +128,7 @@ namespace quest
 		if (q.GetCurrentItem() && lua_isnumber(L,1) && lua_isnumber(L,2))
 		{
 			int idx = (int) lua_tonumber(L, 1);
-			int value = (int) lua_tonumber(L, 2);
+			TimeT64 value = (TimeT64) lua_tonumber(L, 2);
 			if (idx >=0 && idx < ITEM_SOCKET_MAX_NUM)
 				q.GetCurrentItem()->SetSocket(idx, value);
 		}

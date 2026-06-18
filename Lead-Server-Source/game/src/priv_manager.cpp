@@ -24,7 +24,7 @@ CPrivManager::CPrivManager()
 	memset(m_aakPrivEmpireData, 0, sizeof(m_aakPrivEmpireData));
 }
 
-void CPrivManager::RequestGiveGuildPriv(DWORD guild_id, BYTE type, int value, uint32_t duration_sec)
+void CPrivManager::RequestGiveGuildPriv(DWORD guild_id, BYTE type, int value, TimeT64 duration_sec)
 {
 	if (MAX_PRIV_NUM <= type)
 	{
@@ -33,7 +33,7 @@ void CPrivManager::RequestGiveGuildPriv(DWORD guild_id, BYTE type, int value, ui
 	}
 
 	value = MINMAX(0, value, 50);
-	duration_sec = MINMAX(0, duration_sec, 60*60*24*7);
+	duration_sec = MINMAX(0, static_cast<int>(duration_sec), 60*60*24*7);
 
 	TPacketGiveGuildPriv p;
 	p.type = type;
@@ -44,7 +44,7 @@ void CPrivManager::RequestGiveGuildPriv(DWORD guild_id, BYTE type, int value, ui
 	db_clientdesc->DBPacket(HEADER_GD_REQUEST_GUILD_PRIV, 0, &p, sizeof(p));
 }
 
-void CPrivManager::RequestGiveEmpirePriv(BYTE empire, BYTE type, int value, uint32_t duration_sec)
+void CPrivManager::RequestGiveEmpirePriv(BYTE empire, BYTE type, int value, TimeT64 duration_sec)
 {
 	if (MAX_PRIV_NUM <= type)
 	{
@@ -53,7 +53,7 @@ void CPrivManager::RequestGiveEmpirePriv(BYTE empire, BYTE type, int value, uint
 	}
 
 	value = MINMAX(0, value, 200);
-	duration_sec = MINMAX(0, duration_sec, 60*60*24*7);
+	duration_sec = MINMAX(0, static_cast<int>(duration_sec), 60*60*24*7);
 
 	TPacketGiveEmpirePriv p;
 	p.type = type;
@@ -82,7 +82,7 @@ void CPrivManager::RequestGiveCharacterPriv(DWORD pid, BYTE type, int value)
 	db_clientdesc->DBPacket(HEADER_GD_REQUEST_CHARACTER_PRIV, 0, &p, sizeof(p));
 }
 
-void CPrivManager::GiveGuildPriv(DWORD guild_id, BYTE type, int value, BYTE bLog, uint32_t end_time_sec)
+void CPrivManager::GiveGuildPriv(DWORD guild_id, BYTE type, int value, BYTE bLog, TimeT64 end_time_sec)
 {
 	if (MAX_PRIV_NUM <= type)
 	{
@@ -93,7 +93,7 @@ void CPrivManager::GiveGuildPriv(DWORD guild_id, BYTE type, int value, BYTE bLog
 	sys_log(0,"Set Guild Priv: guild_id(%u) type(%d) value(%d) duration_sec(%d)", guild_id, type, value, end_time_sec - get_global_time());
 
 	value = MINMAX(0, value, 50);
-	end_time_sec = MINMAX(0, static_cast<int>(end_time_sec), static_cast<int>(get_global_time()+60*60*24*7));
+	{ const TimeT64 maxEnd = get_global_time() + 60*60*24*7; if (end_time_sec < 0) end_time_sec = 0; else if (end_time_sec > maxEnd) end_time_sec = maxEnd; }
 
 	m_aPrivGuild[type][guild_id].value = value;
 	m_aPrivGuild[type][guild_id].end_time_sec = end_time_sec;
@@ -140,7 +140,7 @@ void CPrivManager::GiveCharacterPriv(DWORD pid, BYTE type, int value, BYTE bLog)
 		LogManager::instance().CharLog(pid, 0, type, value, "CHARACTER_PRIV", "", "");
 }
 
-void CPrivManager::GiveEmpirePriv(BYTE empire, BYTE type, int value, BYTE bLog, uint32_t end_time_sec)
+void CPrivManager::GiveEmpirePriv(BYTE empire, BYTE type, int value, BYTE bLog, TimeT64 end_time_sec)
 {
 	if (MAX_PRIV_NUM <= type)
 	{
@@ -151,7 +151,7 @@ void CPrivManager::GiveEmpirePriv(BYTE empire, BYTE type, int value, BYTE bLog, 
 	sys_log(0, "Set Empire Priv: empire(%d) type(%d) value(%d) duration_sec(%d)", empire, type, value, end_time_sec-get_global_time());
 
 	value = MINMAX(0, value, 200);
-	end_time_sec = MINMAX(0, static_cast<int>(end_time_sec), static_cast<int>(get_global_time()+60*60*24*7));
+	{ const TimeT64 maxEnd = get_global_time() + 60*60*24*7; if (end_time_sec < 0) end_time_sec = 0; else if (end_time_sec > maxEnd) end_time_sec = maxEnd; }
 
 	SPrivEmpireData& rkPrivEmpireData=m_aakPrivEmpireData[type][empire];
 	rkPrivEmpireData.m_value = value;

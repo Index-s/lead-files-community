@@ -136,7 +136,7 @@ namespace quest
 		private:
 			void		SetSendFlag(int idx);
 			void		ClearSendFlag() { m_iSendToClient = 0; }
-			void		SaveFlag(const string & name, int value);
+			void		SaveFlag(const string & name, TimeT64 value);
 
 			void		ClearCurrentQuestBeginFlag();
 			void		SetCurrentQuestBeginFlag();

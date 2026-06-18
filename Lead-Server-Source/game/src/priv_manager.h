@@ -1,5 +1,6 @@
 #ifndef __PRIV_MANAGER_H
 #define __PRIV_MANAGER_H
+#include "common/length.h"
 
 /**
  * @version 05/06/08	Bang2ni - Guild privilege Add related function duration
@@ -12,12 +13,12 @@ class CPrivManager : public singleton<CPrivManager>
 	public:
 		CPrivManager();
 
-		void RequestGiveGuildPriv(DWORD guild_id, BYTE type, int value, uint32_t dur_time_sec);
-		void RequestGiveEmpirePriv(BYTE empire, BYTE type, int value, uint32_t dur_time_sec);
+		void RequestGiveGuildPriv(DWORD guild_id, BYTE type, int value, TimeT64 dur_time_sec);
+		void RequestGiveEmpirePriv(BYTE empire, BYTE type, int value, TimeT64 dur_time_sec);
 		void RequestGiveCharacterPriv(DWORD pid, BYTE type, int value);
 
-		void GiveGuildPriv(DWORD guild_id, BYTE type, int value, BYTE bLog, uint32_t end_time_sec);
-		void GiveEmpirePriv(BYTE empire, BYTE type, int value, BYTE bLog, uint32_t end_time_sec);
+		void GiveGuildPriv(DWORD guild_id, BYTE type, int value, BYTE bLog, TimeT64 end_time_sec);
+		void GiveEmpirePriv(BYTE empire, BYTE type, int value, BYTE bLog, TimeT64 end_time_sec);
 		void GiveCharacterPriv(DWORD pid, BYTE type, int value, BYTE bLog);
 
 		void RemoveGuildPriv(DWORD guild_id, BYTE type);
@@ -33,7 +34,7 @@ class CPrivManager : public singleton<CPrivManager>
 		struct SPrivEmpireData
 		{
 			int m_value;
-			uint32_t m_end_time_sec;
+			TimeT64 m_end_time_sec;
 		};
 
 		SPrivEmpireData* GetPrivByEmpireEx(BYTE bEmpire, BYTE type);
@@ -42,7 +43,7 @@ class CPrivManager : public singleton<CPrivManager>
 		struct SPrivGuildData
 		{
 			int		value;		///< Bonus figures
-			uint32_t	end_time_sec;	///< duration
+			TimeT64	end_time_sec;	///< duration
 		};
 
 		/// Obtain guild bonus data .

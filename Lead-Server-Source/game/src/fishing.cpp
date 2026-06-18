@@ -541,7 +541,7 @@ int GetFishingLevel(LPCHARACTER ch)
 	if (!rod || rod->GetType()!= ITEM_ROD)
 		return 0;
 
-	return rod->GetSocket(2) + rod->GetValue(0);
+	return static_cast<int>(rod->GetSocket(2)) + rod->GetValue(0);
 }
 
 int Compute(DWORD fish_id, DWORD ms, DWORD* item, int level)
@@ -654,7 +654,7 @@ void Take(fishing_event_info* info, LPCHARACTER ch)
 							GetFishingLevel(ch),
 							ms,
 							true,
-							item ? item->GetSocket(0) : 0);
+							item ? static_cast<DWORD>(item->GetSocket(0)) : 0);
 
 				}
 				else

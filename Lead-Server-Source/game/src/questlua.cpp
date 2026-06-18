@@ -78,7 +78,7 @@ namespace quest
 		bool returnBool;
 		if (pPC)
 		{
-			int flagValue = pPC->GetFlag(flagname);
+			TimeT64 flagValue = pPC->GetFlag(flagname);
 			if (value > flagValue)
 				returnBool = true;
 			else

@@ -845,12 +845,12 @@ namespace quest
 			std::string stQuestName	= lua_tostring(L, 1);
 			stQuestName += ".__status";
 
-			int nRet = pPC->GetFlag( stQuestName.c_str() ); 
+			TimeT64 nRet = pPC->GetFlag( stQuestName.c_str() );
 
-			lua_pushnumber(L, nRet );
+			lua_pushnumber(L, static_cast<lua_Number>(nRet) );
 
 			if ( test_server )
-				sys_log(0,"Get_quest_state name %s value %d", stQuestName.c_str(), nRet );
+				sys_log(0,"Get_quest_state name %s value %lld", stQuestName.c_str(), nRet );
 		}
 		else
 		{

@@ -1,5 +1,6 @@
 #ifndef __MARRIAGE_H
 #define __MARRIAGE_H
+#include "common/length.h"
 
 namespace marriage
 {
@@ -14,7 +15,7 @@ namespace marriage
 		DWORD m_pid1;
 		DWORD m_pid2;
 		int   love_point;
-		uint32_t marry_time;
+		TimeT64 marry_time;
 		LPCHARACTER ch1;
 		LPCHARACTER ch2;
 		bool bSave;
@@ -24,7 +25,7 @@ namespace marriage
 
 		TWeddingInfo * pWeddingInfo;
 
-		TMarriage(DWORD pid1, DWORD pid2, int _love_point, uint32_t _marry_time, const char* name1, const char* name2) : 
+		TMarriage(DWORD pid1, DWORD pid2, int _love_point, TimeT64 _marry_time, const char* name1, const char* name2) : 
 			m_pid1(pid1), 
 			m_pid2(pid2), 
 			love_point(_love_point),
@@ -103,7 +104,7 @@ namespace marriage
 			bool	IsEngagedOrMarried(DWORD dwPlayerID);
 
 			void	RequestAdd(DWORD dwPID1, DWORD dwPID2, const char* szName1, const char* szName2);
-			void	Add(DWORD dwPID1, DWORD dwPID2, uint32_t tMarryTime, const char* szName1, const char* szName2);
+			void	Add(DWORD dwPID1, DWORD dwPID2, TimeT64 tMarryTime, const char* szName1, const char* szName2);
 
 			void	RequestUpdate(DWORD dwPID1, DWORD dwPID2, int iUpdatePoint, BYTE byMarried);
 			void	Update(DWORD dwPID1, DWORD dwPID2, long lTotalPoint, BYTE byMarried);

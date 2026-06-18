@@ -112,7 +112,7 @@ namespace quest
 
 		if ( pkAff != NULL )
 		{
-			lua_pushnumber(L, pkAff->lDuration);
+			lua_pushnumber(L, static_cast<lua_Number>(pkAff->lDuration));
 			ch->RemoveAffect( pkAff );
 		}
 		else

@@ -186,14 +186,14 @@ namespace mining
 		return pick.GetValue(2);
 	}
 
-	int Pick_GetCurExp(CItem& pick)
+	TimeT64 Pick_GetCurExp(CItem& pick)
 	{
 		return pick.GetSocket(0);
 	}
 
 	void Pick_IncCurExp(CItem& pick)
 	{
-		int cur = Pick_GetCurExp(pick);
+		TimeT64 cur = Pick_GetCurExp(pick);
 		pick.SetSocket(0, cur + 1);
 	}
 
@@ -292,7 +292,7 @@ namespace mining
 		CItem& pick = *item;
 		Pick_MaxCurExp(pick);
 
-		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Your mining points have reached their maximum. (%d)"), Pick_GetCurExp(pick));
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Your mining points have reached their maximum. (%lld)"), Pick_GetCurExp(pick));
 	}
 
 	void PracticePick(LPCHARACTER ch, LPITEM item)
@@ -319,7 +319,7 @@ namespace mining
 			{
 				Pick_IncCurExp(pick);	
 
-				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Your Mining Points have increased! (%d/%d)"),
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Your Mining Points have increased! (%lld/%d)"),
 						Pick_GetCurExp(pick), Pick_GetMaxExp(pick));
 
 				if (Pick_Refinable(pick))

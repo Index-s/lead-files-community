@@ -420,7 +420,7 @@ void CClientManager::QUERY_QUEST_SAVE(CPeer * pkPeer, TQuestTable * pTable, DWOR
 		else
 		{
 			snprintf(szQuery, sizeof(szQuery),
-					"REPLACE INTO quest%s (dwPID, szName, szState, lValue) VALUES(%d, '%s', '%s', %ld)",
+					"REPLACE INTO quest%s (dwPID, szName, szState, lValue) VALUES(%d, '%s', '%s', %lld)",
 					GetTablePostfix(), pTable->dwPID, pTable->szName, pTable->szState, pTable->lValue);
 		}
 
@@ -623,7 +623,7 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 					TPlayerItem item;
 					memset(&item, 0, sizeof(TPlayerItem));
 
-					DWORD dwSocket2 = 0;
+					TimeT64 dwSocket2 = 0;
 
 					if (pItemTable->bType == ITEM_UNIQUE)
 					{
@@ -719,7 +719,7 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 
 						snprintf(szQuery, sizeof(szQuery), 
 								"INSERT INTO item%s (id, owner_id, window, pos, vnum, count, socket0, socket1, socket2) "
-								"VALUES(%u, %u, '%s', %d, %u, %u, %u, %u, %u)",
+								"VALUES(%u, %u, '%s', %d, %u, %u, %lld, %lld, %lld)",
 								GetTablePostfix(),
 								GainItemID(),
 								pi->account_id,
@@ -1241,7 +1241,7 @@ void CClientManager::QUERY_ITEM_SAVE(CPeer * pkPeer, const char * c_pData)
 			"attrtype4, attrvalue4, "
 			"attrtype5, attrvalue5, "
 			"attrtype6, attrvalue6) "
-			"VALUES(%u, %u, %d, %d, %u, %u, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
+			"VALUES(%u, %u, %d, %d, %u, %u, %lld, %lld, %lld, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
 			GetTablePostfix(),
 			p->id,
 			p->owner,
@@ -1600,12 +1600,12 @@ void CClientManager::QUERY_RELOAD_PROTO()
  */
 void CClientManager::AddGuildPriv(TPacketGiveGuildPriv* p)
 {
-	CPrivManager::instance().AddGuildPriv(p->guild_id, p->type, p->value, p->duration_sec);
+	CPrivManager::instance().AddGuildPriv(p->guild_id, p->type, p->value, static_cast<uint32_t>(p->duration_sec));
 }
 
 void CClientManager::AddEmpirePriv(TPacketGiveEmpirePriv* p)
 {
-	CPrivManager::instance().AddEmpirePriv(p->empire, p->type, p->value, p->duration_sec);
+	CPrivManager::instance().AddEmpirePriv(p->empire, p->type, p->value, static_cast<uint32_t>(p->duration_sec));
 }
 // END_OF_ADD_GUILD_PRIV_TIME
 

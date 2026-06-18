@@ -64,16 +64,16 @@ void CItemCache::OnFlush()
 	}
 	else
 	{
-		long alSockets[ITEM_SOCKET_MAX_NUM];
+		TimeT64 alSockets[ITEM_SOCKET_MAX_NUM];
 		TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 		bool isSocket = false, isAttr = false;
 
-		memset(&alSockets, 0, sizeof(long) * ITEM_SOCKET_MAX_NUM);
+		memset(&alSockets, 0, sizeof(alSockets));
 		memset(&aAttr, 0, sizeof(TPlayerItemAttribute) * ITEM_ATTRIBUTE_MAX_NUM);
 
 		TPlayerItem * p = &m_data;
 
-		if (memcmp(alSockets, p->alSockets, sizeof(long) * ITEM_SOCKET_MAX_NUM))
+		if (memcmp(alSockets, p->alSockets, sizeof(alSockets)))
 			isSocket = true;
 
 		if (memcmp(aAttr, p->aAttr, sizeof(TPlayerItemAttribute) * ITEM_ATTRIBUTE_MAX_NUM))
@@ -95,9 +95,9 @@ void CItemCache::OnFlush()
 		{
 			iLen += snprintf(szColumns + iLen, sizeof(szColumns) - iLen, ", socket0, socket1, socket2");
 			iValueLen += snprintf(szValues + iValueLen, sizeof(szValues) - iValueLen,
-						", %d, %d, %d", p->alSockets[0], p->alSockets[1], p->alSockets[2]);
+						", %lld, %lld, %lld", p->alSockets[0], p->alSockets[1], p->alSockets[2]);
 			iUpdateLen += snprintf(szUpdate + iUpdateLen, sizeof(szUpdate) - iUpdateLen,
-					", socket0=%d, socket1=%d, socket2=%d", p->alSockets[0], p->alSockets[1], p->alSockets[2]);
+					", socket0=%lld, socket1=%lld, socket2=%lld", p->alSockets[0], p->alSockets[1], p->alSockets[2]);
 		}
 
 		if (isAttr)

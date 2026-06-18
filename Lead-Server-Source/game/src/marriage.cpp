@@ -557,7 +557,7 @@ namespace marriage
 		db_clientdesc->DBPacket(HEADER_GD_MARRIAGE_ADD, 0, &p, sizeof(p));
 	}
 
-	void CManager::Add(DWORD dwPID1, DWORD dwPID2, uint32_t tMarryTime, const char* szName1, const char* szName2)
+	void CManager::Add(DWORD dwPID1, DWORD dwPID2, TimeT64 tMarryTime, const char* szName1, const char* szName2)
 	{
 		if (IsEngagedOrMarried(dwPID1) || IsEngagedOrMarried(dwPID2))
 		{

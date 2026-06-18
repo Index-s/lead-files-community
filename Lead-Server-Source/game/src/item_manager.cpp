@@ -193,7 +193,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 				//int globalTime = get_global_time();
 				//int lastTime = item->GetValue(0);
 				//int endTime = get_global_time() + item->GetValue(0);
-				item->SetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME, static_cast<int32_t>(get_global_time() + item->GetValue(0))); // Real-time unique
+				item->SetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME, get_global_time() + item->GetValue(0)); // Real-time unique
 			}
 		}
 	}
@@ -255,11 +255,11 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 		{
 			if (item->GetLimitValue(i))
 			{
-				item->SetSocket(0, static_cast<int32_t>(time(0) + item->GetLimitValue(i)));
+				item->SetSocket(0, time(0) + item->GetLimitValue(i));
 			}
 			else
 			{
-				item->SetSocket(0, static_cast<int32_t>(time(0) + 60*60*24*7));
+				item->SetSocket(0, time(0) + 60*60*24*7);
 			}
 
 			item->StartRealTimeExpireEvent();
@@ -276,7 +276,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 			}
 			else if(0 == id)
 			{
-				long duration = item->GetSocket(0);
+				TimeT64 duration = item->GetSocket(0);
 				if (0 == duration)
 					duration = item->GetLimitValue(i);
 
@@ -1529,7 +1529,7 @@ void ITEM_MANAGER::CopyAllAttrTo(LPITEM pkOldItem, LPITEM pkNewItem)
 
 		for (int i = 0; i < ITEM_SOCKET_MAX_NUM; ++i)
 		{
-			long socket = pkOldItem->GetSocket(i);
+			TimeT64 socket = pkOldItem->GetSocket(i);
 			const int ITEM_BROKEN_METIN_VNUM = 28960; // This is the same constant 3 Are there any places? ... Let’s make it one T_T I’m going to pass Hong.
 			if (socket > 2 && socket != ITEM_BROKEN_METIN_VNUM)
 				pkNewItem->SetSocket(slot++, socket);

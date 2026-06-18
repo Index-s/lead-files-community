@@ -1012,7 +1012,7 @@ namespace quest
 			{
 				return 0;
 			}
-			lua_pushnumber(L,pPC->GetFlag(string(sz)+"."+sz2));
+			lua_pushnumber(L,static_cast<lua_Number>(pPC->GetFlag(string(sz)+"."+sz2)));
 			return 1;
 		}
 	}
@@ -1029,7 +1029,7 @@ namespace quest
 			const char* sz = lua_tostring(L,-1);
 			CQuestManager& q = CQuestManager::Instance();
 			PC* pPC = q.GetCurrentPC();
-			lua_pushnumber(L,pPC->GetFlag(sz));
+			lua_pushnumber(L,static_cast<lua_Number>(pPC->GetFlag(sz)));
 			return 1;
 		}
 	}
@@ -1046,7 +1046,7 @@ namespace quest
 			const char* sz = lua_tostring(L,-1);
 			CQuestManager& q = CQuestManager::Instance();
 			PC* pPC = q.GetCurrentPC();
-			lua_pushnumber(L,pPC->GetFlag(pPC->GetCurrentQuestName() + "."+sz));
+			lua_pushnumber(L,static_cast<lua_Number>(pPC->GetFlag(pPC->GetCurrentQuestName() + "."+sz)));
 			if ( test_server )
 				sys_log( 0 ,"GetQF ( %s . %s )", pPC->GetCurrentQuestName().c_str(), sz );
 		}
@@ -1406,8 +1406,8 @@ namespace quest
 					item->GetSubType() == USE_TALISMAN && 
 					(item->GetValue(0) == 1 || item->GetValue(0) == 2))
 			{
-				int x = item->GetSocket(0);
-				int y = item->GetSocket(1);
+				TimeT64 x = item->GetSocket(0);
+				TimeT64 y = item->GetSocket(1);
 				//if ((x-item_x)*(x-item_x)+(y-item_y)*(y-item_y)<r*r)
 				if (region->sx <=x && region->sy <= y && x <= region->ex && y <= region->ey)
 				{
@@ -1461,8 +1461,8 @@ namespace quest
 					item->GetSubType() == USE_TALISMAN && 
 					(item->GetValue(0) == 1 || item->GetValue(0) == 2))
 			{
-				int item_x = item->GetSocket(0);
-				int item_y = item->GetSocket(1);
+				TimeT64 item_x = item->GetSocket(0);
+				TimeT64 item_y = item->GetSocket(1);
 				if ((x-item_x)*(x-item_x)+(y-item_y)*(y-item_y)<r*r)
 				{
 					bFind = true;
@@ -1548,7 +1548,7 @@ namespace quest
 				int set = 0;
 				for (int i=0; i<ITEM_SOCKET_MAX_NUM; i++)
 				{
-					long socket = item->GetSocket(i);
+					TimeT64 socket = item->GetSocket(i);
 					if (socket > 2 && socket != 28960)
 					{
 						pkNewItem->SetSocket(set++, socket);
@@ -2347,11 +2347,11 @@ teleport_area:
 					int j = 0;
 					for (; j < ITEM_SOCKET_MAX_NUM; j++ )
 					{
-						long socket = pItem->GetSocket(j);
+						TimeT64 socket = pItem->GetSocket(j);
 
 						if ( socket > 2 && socket != ITEM_BROKEN_METIN_VNUM )
 						{
-							TItemTable* pItemInfo = ITEM_MANAGER::instance().GetTable( socket );
+							TItemTable* pItemInfo = ITEM_MANAGER::instance().GetTable( static_cast<DWORD>(socket) );
 							if ( pItemInfo != NULL )
 							{
 								if ( pItemInfo->bType == ITEM_METIN ) break;
@@ -2492,7 +2492,7 @@ teleport_area:
 				if (UNIQUE_GROUP_SPECIAL_RIDE == Unique1->GetSpecialGroup())
 				{
 					lua_pushnumber(L, Unique1->GetVnum());
-					lua_pushnumber(L, Unique1->GetSocket(2));
+					lua_pushnumber(L, static_cast<lua_Number>(Unique1->GetSocket(2)));
 					return 2;
 				}
 			}
@@ -2502,7 +2502,7 @@ teleport_area:
 				if (UNIQUE_GROUP_SPECIAL_RIDE == Unique2->GetSpecialGroup())
 				{
 					lua_pushnumber(L, Unique2->GetVnum());
-					lua_pushnumber(L, Unique2->GetSocket(2));
+					lua_pushnumber(L, static_cast<lua_Number>(Unique2->GetSocket(2)));
 					return 2;
 				}
 			}

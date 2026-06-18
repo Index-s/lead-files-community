@@ -1031,7 +1031,7 @@ int DSManager::LeftTime(LPITEM pItem) const
 	// For now timer based on wear Only the dragon soul stone does not disappear even if time runs out. .
 	if (pItem->GetProto()->cLimitTimerBasedOnWearIndex >= 0)
 	{
-		return pItem->GetSocket(ITEM_SOCKET_REMAIN_SEC);
+		return static_cast<int>(pItem->GetSocket(ITEM_SOCKET_REMAIN_SEC));
 	}
 	// different limit type Since all Dragon Soul Stones disappear over time, the items entered here are judged to have some time left. .
 	else

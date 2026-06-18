@@ -43,7 +43,7 @@ static const DWORD s_adwSubSkillVnums[] =
 	SKILL_RESIST_PENETRATE
 };
 
-uint32_t CHARACTER::GetSkillNextReadTime(DWORD dwVnum) const
+TimeT64 CHARACTER::GetSkillNextReadTime(DWORD dwVnum) const
 {
 	if (dwVnum >= SKILL_MAX_NUM)
 	{
@@ -54,7 +54,7 @@ uint32_t CHARACTER::GetSkillNextReadTime(DWORD dwVnum) const
 	return m_pSkillLevels ? m_pSkillLevels[dwVnum].tNextRead : 0;
 }
 
-void CHARACTER::SetSkillNextReadTime(DWORD dwVnum, uint32_t time)
+void CHARACTER::SetSkillNextReadTime(DWORD dwVnum, TimeT64 time)
 {
 	if (m_pSkillLevels && dwVnum < SKILL_MAX_NUM)
 		m_pSkillLevels[dwVnum].tNextRead = time;
@@ -272,7 +272,7 @@ bool CHARACTER::LearnGrandMasterSkill(DWORD dwSkillVnum)
 		return false;
 	}
 
-	sys_log(0, "learn grand master skill[%d] cur %d, next %d", dwSkillVnum, get_global_time(), GetSkillNextReadTime(dwSkillVnum));
+	sys_log(0, "learn grand master skill[%d] cur %lld, next %lld", dwSkillVnum, get_global_time(), GetSkillNextReadTime(dwSkillVnum));
 
 	/*
 	   if (get_global_time() < GetSkillNextReadTime(dwSkillVnum))
@@ -323,7 +323,7 @@ bool CHARACTER::LearnGrandMasterSkill(DWORD dwSkillVnum)
 
 	sys_log(0, "LearnGrandMasterSkill %s table idx %d value %d", GetName(), idx, aiGrandMasterSkillBookCountForLevelUp[idx]);
 
-	int iTotalReadCount = GetQuestFlag(strTrainSkill) + 1;
+	TimeT64 iTotalReadCount = GetQuestFlag(strTrainSkill) + 1;
 	SetQuestFlag(strTrainSkill, iTotalReadCount);
 
 	int iMinReadCount = aiGrandMasterSkillBookMinCount[idx];
@@ -344,9 +344,9 @@ bool CHARACTER::LearnGrandMasterSkill(DWORD dwSkillVnum)
 	int n = number(1, iBookCount);
 	sys_log(0, "Number(%d)", n);
 
-	DWORD nextTime = static_cast<DWORD>(get_global_time() + number(28800, 43200));
+	TimeT64 nextTime = get_global_time() + number(28800, 43200);
 
-	sys_log(0, "GrandMaster SkillBookCount min %d cur %d max %d (next_time=%d)", iMinReadCount, iTotalReadCount, iMaxReadCount, nextTime);
+	sys_log(0, "GrandMaster SkillBookCount min %d cur %lld max %d (next_time=%lld)", iMinReadCount, iTotalReadCount, iMaxReadCount, nextTime);
 
 	bool bSuccess = n == 2;
 

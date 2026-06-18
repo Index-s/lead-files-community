@@ -1,6 +1,7 @@
 // vim:ts=8 sw=4
 #ifndef __INC_ITEM_AWARD_H
 #define __INC_ITEM_AWARD_H
+#include "common/length.h"
 #include <map>
 #include <set>
 #include "Peer.h"
@@ -11,9 +12,9 @@ typedef struct SItemAward
     char	szLogin[LOGIN_MAX_LEN+1];
     DWORD	dwVnum;
     DWORD	dwCount;
-    DWORD	dwSocket0;
-    DWORD	dwSocket1;
-    DWORD	dwSocket2;
+    TimeT64	dwSocket0;
+    TimeT64	dwSocket1;
+    TimeT64	dwSocket2;
     char	szWhy[ITEM_AWARD_WHY_MAX_LEN+1];
     bool	bTaken;
     bool	bMall;
