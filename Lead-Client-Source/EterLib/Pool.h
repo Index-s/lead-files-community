@@ -245,7 +245,7 @@ class CPooledObject
 		{
 		}
 
-        void * operator new(unsigned int /*mem_size*/)
+        void * operator new(size_t /*mem_size*/)
         {
             return ms_kPool.Alloc();
         }
@@ -436,7 +436,7 @@ class CPooledObject
 		{
 		}
 
-        void * operator new(unsigned int mem_size)
+        void * operator new(size_t mem_size)
         {
             return ms_DynamicSizePool.Alloc();
         }

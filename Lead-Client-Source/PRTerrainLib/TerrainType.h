@@ -65,11 +65,16 @@ typedef struct
 
 /* Converts a floating point number to an integer by truncation, using
    the FISTP instruction */
+#ifdef _WIN64
+// x64 has no inline asm; lrintf matches FISTP's default round-to-nearest.
+#define PR_FLOAT_TO_INTASM	PR_ICNV = lrintf(PR_FCNV);
+#else
 #define PR_FLOAT_TO_INTASM __asm	\
 {									\
 	__asm fld PR_FCNV				\
 	__asm fistp PR_ICNV				\
 }
+#endif
 
 #define PR_FLOAT_TO_FIXED(inreal, outint)	\
 {											\
