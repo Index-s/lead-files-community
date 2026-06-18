@@ -248,7 +248,7 @@ void Initialize()
 
 		do
 		{
-			strlcpy(szCol2, start, MIN(sizeof(szCol2), static_cast<size_t>(tab - start) + 1));
+			strlcpy(szCol2, start, MIN(static_cast<int>(sizeof(szCol2)), static_cast<int>(tab - start) + 1));
 			szCol2[tab-start] = '\0';
 
 			trim_and_lower(szCol2, szCol, sizeof(szCol));

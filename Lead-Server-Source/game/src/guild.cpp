@@ -981,7 +981,7 @@ void CGuild::Disband()
 		LPCHARACTER ch = *it;
 		ch->SetGuild(NULL);
 		SendOnlineRemoveOnePacket(ch->GetPlayerID());
-		ch->SetQuestFlag("guild_manage.new_withdraw_time", get_global_time());
+		ch->SetQuestFlag("guild_manage.new_withdraw_time", static_cast<int>(get_global_time()));
 	}
 
 	for (TGuildMemberContainer::iterator it = m_member.begin(); it != m_member.end(); ++it)

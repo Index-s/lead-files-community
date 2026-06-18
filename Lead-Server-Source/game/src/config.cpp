@@ -936,7 +936,8 @@ static bool __LoadGeneralConfigurations(const char *configName)
 		{
 			str_to_number(g_GuildCreateFee, value_string);
 
-			g_GuildCreateFee = MINMAX(1, g_GuildCreateFee, GOLD_MAX);
+			if (g_GuildCreateFee < 1)
+				g_GuildCreateFee = 1;
 
 			fprintf(stderr, "GUILD_CREATE_FEE: %d\n", g_GuildCreateFee);
 		}

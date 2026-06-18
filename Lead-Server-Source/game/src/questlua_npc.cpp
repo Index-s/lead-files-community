@@ -77,7 +77,7 @@ namespace quest
 			lua_pushnumber(L, 0);
 			return 1;
 		}
-		lua_pushnumber(L, MAX<GoldType>(0, npc->GetPoint(POINT_ATT_GRADE_BONUS)));
+		lua_pushnumber(L, static_cast<lua_Number>(MAX<GoldType>(0, npc->GetPoint(POINT_ATT_GRADE_BONUS))));
 		return 1;
 	}
 
@@ -100,7 +100,7 @@ namespace quest
 			lua_pushnumber(L, 0);
 			return 1;
 		}
-		lua_pushnumber(L, MAX<GoldType>(0, npc->GetPoint(POINT_DEF_GRADE_BONUS)));
+		lua_pushnumber(L, static_cast<lua_Number>(MAX<GoldType>(0, npc->GetPoint(POINT_DEF_GRADE_BONUS))));
 		return 1;
 	}
 

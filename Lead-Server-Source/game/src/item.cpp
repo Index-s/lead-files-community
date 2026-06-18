@@ -1022,7 +1022,7 @@ void CItem::SetSocket(int i, int32_t v, bool bLog)
 		LogManager::instance().ItemLog(i, v, 0, GetID(), "SET_SOCKET", "", "", GetVnum());
 }
 
-int CItem::GetGold()
+GoldType CItem::GetGold()
 {
 	if (IS_SET(GetFlag(), ITEM_FLAG_COUNT_PER_1GOLD))
 	{
@@ -1035,7 +1035,7 @@ int CItem::GetGold()
 		return GetProto()->dwGold;
 }
 
-int CItem::GetShopBuyPrice()
+GoldType CItem::GetShopBuyPrice()
 {
 	return GetProto()->dwShopBuyPrice;
 }
@@ -1380,14 +1380,10 @@ EVENTFUNC(real_time_expire_event)
 
 	if (current > static_cast<uint32_t>(item->GetSocket(0)))
 	{
-		switch (item->GetVnum())
+		if(item->IsNewMountItem())
 		{
-			if(item->IsNewMountItem())
-			{
-				if (item->GetSocket(2) != 0)
-					item->ClearMountAttributeAndAffect();
-			}
-			break;
+			if (item->GetSocket(2) != 0)
+				item->ClearMountAttributeAndAffect();
 		}
 
 		ITEM_MANAGER::instance().RemoveItem(item, "REAL_TIME_EXPIRE");

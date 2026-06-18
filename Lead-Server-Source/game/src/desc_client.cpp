@@ -77,7 +77,7 @@ bool CLIENT_DESC::Connect(int iPhaseWhenSucceed)
 	if (get_global_time() - m_LastTryToConnectTime < 3)	// 3 candle
 		return false;
 
-	m_LastTryToConnectTime = get_global_time();
+	m_LastTryToConnectTime = static_cast<uint32_t>(get_global_time());
 
 	if (m_sock != INVALID_SOCKET)
 		return false;

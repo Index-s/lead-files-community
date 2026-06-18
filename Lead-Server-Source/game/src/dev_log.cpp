@@ -5,9 +5,9 @@
  * description : 
  */
 
+#include "stdafx.h"
 #define _dev_log_cpp_
 
-#include "stdafx.h"
 #include "dev_log.h"
 
 #ifndef IS_SET

@@ -148,7 +148,7 @@ int CStmt::Execute()
 		return 0;
 	}
 
-	iRows = mysql_stmt_num_rows(m_pkStmt);
+	iRows = static_cast<int>(mysql_stmt_num_rows(m_pkStmt));
 	return true;
 }
 

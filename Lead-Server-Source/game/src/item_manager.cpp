@@ -193,7 +193,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 				//int globalTime = get_global_time();
 				//int lastTime = item->GetValue(0);
 				//int endTime = get_global_time() + item->GetValue(0);
-				item->SetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME, get_global_time() + item->GetValue(0)); // Real-time unique
+				item->SetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME, static_cast<int32_t>(get_global_time() + item->GetValue(0))); // Real-time unique
 			}
 		}
 	}
@@ -255,11 +255,11 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 		{
 			if (item->GetLimitValue(i))
 			{
-				item->SetSocket(0, time(0) + item->GetLimitValue(i)); 
+				item->SetSocket(0, static_cast<int32_t>(time(0) + item->GetLimitValue(i)));
 			}
 			else
 			{
-				item->SetSocket(0, time(0) + 60*60*24*7); 
+				item->SetSocket(0, static_cast<int32_t>(time(0) + 60*60*24*7));
 			}
 
 			item->StartRealTimeExpireEvent();

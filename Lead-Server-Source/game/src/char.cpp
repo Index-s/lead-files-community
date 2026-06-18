@@ -2061,7 +2061,7 @@ void CHARACTER::ComputeBattlePoints()
 		// riding a horse , Attack power due to stats ST*2 If it is lower than ST*2 Do it as .
 		// This is to prevent the attack power of those who recorded the stats incorrectly from being lower. .
 		if (GetMountVnum() && iStatAtk < 2 * GetPoint(POINT_ST))
-			iStatAtk = (2 * GetPoint(POINT_ST));
+			iStatAtk = static_cast<int>(2 * GetPoint(POINT_ST));
 
 		iAtk += iStatAtk;
 

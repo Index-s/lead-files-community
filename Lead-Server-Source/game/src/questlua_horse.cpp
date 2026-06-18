@@ -240,7 +240,7 @@ namespace quest
 			{
 				int nHorseNameDuration = test_server != 0 ? 60*5 : 60*60*24*30;
 
-				ch->SetQuestFlag("horse_name.valid_till", get_global_time() + nHorseNameDuration);
+				ch->SetQuestFlag("horse_name.valid_till", static_cast<int>(get_global_time() + nHorseNameDuration));
 				ch->AddAffect(AFFECT_HORSE_NAME, 0, 0, 0, PASSES_PER_SEC(nHorseNameDuration), 0, true);
 
 				CHorseNameManager::instance().UpdateHorseName(ch->GetPlayerID(), lua_tostring(L, -1), true);

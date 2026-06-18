@@ -344,7 +344,7 @@ bool CHARACTER::LearnGrandMasterSkill(DWORD dwSkillVnum)
 	int n = number(1, iBookCount);
 	sys_log(0, "Number(%d)", n);
 
-	DWORD nextTime = get_global_time() + number(28800, 43200);
+	DWORD nextTime = static_cast<DWORD>(get_global_time() + number(28800, 43200));
 
 	sys_log(0, "GrandMaster SkillBookCount min %d cur %d max %d (next_time=%d)", iMinReadCount, iTotalReadCount, iMaxReadCount, nextTime);
 

@@ -431,7 +431,7 @@ void CGuild::StartWar(DWORD dwOppGID)
 		return;
 
 	gw.state = GUILD_WAR_ON_WAR;
-	gw.war_start_time = get_global_time();
+	gw.war_start_time = static_cast<DWORD>(get_global_time());
 
 	GuildWarPacket(dwOppGID, gw.type, GUILD_WAR_ON_WAR);
 

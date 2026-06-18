@@ -1745,7 +1745,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 			if (0 == duration)
 				duration = 60 * 60 * 24 * 7;
 
-			item->SetSocket(0, time(0) + duration);
+			item->SetSocket(0, static_cast<int32_t>(time(0) + duration));
 			item->StartRealTimeExpireEvent();
 		}	
 
@@ -2153,7 +2153,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 
 					int iReadDelay = number(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
 
-					SetSkillNextReadTime(dwVnum, get_global_time() + iReadDelay);
+					SetSkillNextReadTime(dwVnum, static_cast<uint32_t>(get_global_time() + iReadDelay));
 				}
 			}
 			break;
@@ -3007,7 +3007,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										ITEM_MANAGER::instance().RemoveItem(item);
 
 										int iReadDelay = number(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-										SetSkillNextReadTime(SKILL_LEADERSHIP, get_global_time() + iReadDelay);
+										SetSkillNextReadTime(SKILL_LEADERSHIP, static_cast<uint32_t>(get_global_time() + iReadDelay));
 									}
 								}
 								break;
@@ -3047,7 +3047,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										ITEM_MANAGER::instance().RemoveItem(item);
 
 										int iReadDelay = number(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-										SetSkillNextReadTime(SKILL_COMBO, get_global_time() + iReadDelay);
+										SetSkillNextReadTime(SKILL_COMBO, static_cast<uint32_t>(get_global_time() + iReadDelay));
 									}
 								}
 								break;
@@ -3074,7 +3074,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										ITEM_MANAGER::instance().RemoveItem(item);
 
 										int iReadDelay = number(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-										SetSkillNextReadTime(dwSkillVnum, get_global_time() + iReadDelay);
+										SetSkillNextReadTime(dwSkillVnum, static_cast<uint32_t>(get_global_time() + iReadDelay));
 									}
 								}
 								break;
@@ -3101,7 +3101,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										ITEM_MANAGER::instance().RemoveItem(item);
 
 										int iReadDelay = number(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-										SetSkillNextReadTime(dwSkillVnum, get_global_time() + iReadDelay);
+										SetSkillNextReadTime(dwSkillVnum, static_cast<uint32_t>(get_global_time() + iReadDelay));
 									}
 								}
 								break;
@@ -3172,7 +3172,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										ITEM_MANAGER::instance().RemoveItem(item);
 
 										int iReadDelay = number(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-										SetSkillNextReadTime(dwSkillVnum, get_global_time() + iReadDelay);
+										SetSkillNextReadTime(dwSkillVnum, static_cast<uint32_t>(get_global_time() + iReadDelay));
 									}
 								}
 								break;
@@ -3201,7 +3201,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										ITEM_MANAGER::instance().RemoveItem(item);
 
 										int iReadDelay = number(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-										SetSkillNextReadTime(dwSkillVnum, get_global_time() + iReadDelay);
+										SetSkillNextReadTime(dwSkillVnum, static_cast<uint32_t>(get_global_time() + iReadDelay));
 
 										if (test_server) 
 										{
@@ -3241,7 +3241,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										ITEM_MANAGER::instance().RemoveItem(item);
 
 										int iReadDelay = number(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
-										SetSkillNextReadTime(dwSkillVnum, get_global_time() + iReadDelay);
+										SetSkillNextReadTime(dwSkillVnum, static_cast<uint32_t>(get_global_time() + iReadDelay));
 									}
 								}
 								break;
@@ -3296,7 +3296,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										int iReadDelay = number(SKILLBOOK_DELAY_MIN, SKILLBOOK_DELAY_MAX);
 
 										if (!test_server)
-											SetSkillNextReadTime(dwSkillVnum, get_global_time() + iReadDelay);
+											SetSkillNextReadTime(dwSkillVnum, static_cast<uint32_t>(get_global_time() + iReadDelay));
 									}
 									else
 									{
@@ -3364,7 +3364,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 									UpdateAlignment(val*10);
 									
 									item->SetCount(item->GetCount()-1);
-									pPC->SetFlag("mythical_peach.last_use_time", get_global_time());
+									pPC->SetFlag("mythical_peach.last_use_time", static_cast<int>(get_global_time()));
 
 									ChatPacket(CHAT_TYPE_TALKING, LC_TEXT("Your mind is clear. You can concentrate really well now."));
 									ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Your rank has increased by %d points."), val);
@@ -3962,7 +3962,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										return false;
 									}
 
-									pPC->SetFlag("mirror_of_disapper.last_use_time", get_global_time());
+									pPC->SetFlag("mirror_of_disapper.last_use_time", static_cast<int>(get_global_time()));
 								}
 							}
 
@@ -4438,7 +4438,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 
 										if (pPC)
 										{
-											DWORD dwNowMin = get_global_time() / 60;
+											DWORD dwNowMin = static_cast<DWORD>(get_global_time() / 60);
 
 											DWORD dwLastChangeItemAttrMin = pPC->GetFlag(msc_szLastChangeItemAttrFlag);
 
@@ -6012,7 +6012,7 @@ bool CHARACTER::EquipItem(LPITEM item, int iCandidateCell)
 				if (0 == duration)
 					duration = 60 * 60 * 24 * 7;
 
-				item->SetSocket(0, time(0) + duration);
+				item->SetSocket(0, static_cast<int32_t>(time(0) + duration));
 				item->StartRealTimeExpireEvent();
 			}
 

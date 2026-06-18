@@ -60,6 +60,6 @@ class COXEventManager : public singleton<COXEventManager>
 
 		bool LogWinner();
 
-		DWORD GetAttenderCount() { return m_map_attender.size(); }
+		DWORD GetAttenderCount() { return static_cast<DWORD>(m_map_attender.size()); }
 };
 

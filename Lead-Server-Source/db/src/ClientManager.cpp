@@ -699,9 +699,9 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 								if (LIMIT_REAL_TIME == item_table->aLimits[i].bType)
 								{
 									if (0 == item_table->aLimits[i].lValue)
-										pItemAward->dwSocket0 = time(0) + 60 * 60 * 24 * 7;
+										pItemAward->dwSocket0 = static_cast<DWORD>(time(0) + 60 * 60 * 24 * 7);
 									else
-										pItemAward->dwSocket0 = time(0) + item_table->aLimits[i].lValue;
+										pItemAward->dwSocket0 = static_cast<DWORD>(time(0) + item_table->aLimits[i].lValue);
 
 									break;
 								}

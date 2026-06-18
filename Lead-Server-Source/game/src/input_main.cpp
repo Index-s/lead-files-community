@@ -2569,7 +2569,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 						return static_cast<int>(SubPacketLen);
 					}
 
-					member->SetQuestFlag("guild_manage.new_withdraw_time", get_global_time());
+					member->SetQuestFlag("guild_manage.new_withdraw_time", static_cast<int>(get_global_time()));
 					pGuild->RequestRemoveMember(member->GetPlayerID());
 
 				}

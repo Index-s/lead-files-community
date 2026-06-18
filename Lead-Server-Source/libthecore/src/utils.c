@@ -401,8 +401,8 @@ void thecore_msleep(DWORD dwMillisecond)
     thecore_sleep(&tv_sleep);
 }
 
-void core_dump_unix(const char *who, WORD line)
-{   
+void core_dump_unix(const char *who, int line)
+{
     sys_err("*** Dumping Core %s:%d ***", who, line);
 
     fflush(stdout);
@@ -441,8 +441,8 @@ void gettimeofday(struct timeval* t, struct timezone* dummy)
     t->tv_usec = (millisec % 1000) * 1000;
 }
 
-void core_dump_unix(const char *who, WORD line)
-{   
+void core_dump_unix(const char *who, int line)
+{
 }
 
 #endif

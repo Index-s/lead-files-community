@@ -548,7 +548,7 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 
 	TPacketGCTime p;
 	p.bHeader = HEADER_GC_TIME;
-	p.time = get_global_time();
+	p.time = static_cast<uint32_t>(get_global_time());
 	d->Packet(&p, sizeof(p));
 
 	TPacketGCChannel p2;

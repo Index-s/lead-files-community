@@ -307,7 +307,7 @@ static void resize (lua_State *L, Table *t, int nasize, int nhsize) {
       setobjt2t(luaH_set(L, t, gkey(old)), gval(old));
   }
   if (oldhsize)
-    luaM_freearray(L, nold, twoto(oldhsize), Node);  /* free old array */
+    luaM_freearray(L, nold, ((lu_mem)1 << (oldhsize)), Node);  /* free old array */
 }
 
 
@@ -342,7 +342,7 @@ Table *luaH_new (lua_State *L, int narray, int lnhash) {
 
 void luaH_free (lua_State *L, Table *t) {
   if (t->lsizenode)
-    luaM_freearray(L, t->node, sizenode(t), Node);
+    luaM_freearray(L, t->node, ((lu_mem)1 << (t)->lsizenode), Node);
   luaM_freearray(L, t->array, t->sizearray, TObject);
   luaM_freelem(L, t);
 }
