@@ -67,7 +67,7 @@
     <Link>
       <AdditionalDependencies>mysqlclient.lib;ws2_32.lib;shlwapi.lib;secur32.lib;wsock32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)../Lead-Extern/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)../Lead-Extern/lib/win64;$(SolutionDir)../Lead-Extern/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>

@@ -3056,7 +3056,7 @@ Integer::Integer(const byte *encodedInteger, size_t byteCount, Signedness s, Byt
 	else
 	{
 		SecByteBlock block(byteCount);
-#if (CRYPTOPP_MSC_VERSION >= 1500)
+#if 0 // stdext::make_checked_array_iterator removed in modern MSVC STL (>=14.4x); use the portable raw-pointer path below
 		std::reverse_copy(encodedInteger, encodedInteger+byteCount,
 			stdext::make_checked_array_iterator(block.begin(), block.size()));
 #else
