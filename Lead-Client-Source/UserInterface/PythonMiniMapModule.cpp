@@ -295,7 +295,7 @@ PyObject* miniMapGetGuildAreaID(PyObject* poSelf, PyObject* poArgs)
 	if (!PyTuple_GetFloat(poArgs, 1, &fy))
 		return Py_BuildException();
 
-	DWORD dwGuildID = CPythonMiniMap::Instance().GetGuildAreaID(fx, fy);
+	DWORD dwGuildID = CPythonMiniMap::Instance().GetGuildAreaID(static_cast<DWORD>(fx), static_cast<DWORD>(fy));
 	return Py_BuildValue("i", dwGuildID);
 }
 

@@ -236,13 +236,13 @@ void CParticleSystemInstance::CreateParticles(float fElapsedTime)
 				}
 				else
 				{
-					pInstance->m_byFrameIndex = m_pParticleProperty->GetTextureAnimationFrameCount() - 1;
+					pInstance->m_byFrameIndex = static_cast<BYTE>(m_pParticleProperty->GetTextureAnimationFrameCount() - 1);
 					pInstance->m_byTextureAnimationType = CParticleProperty::TEXTURE_ANIMATION_TYPE_CCW;
 				}
 			}
 			if (m_pParticleProperty->m_bTexAniRandomStartFrameFlag)
 			{
-				pInstance->m_byFrameIndex = random_range(0,m_pParticleProperty->GetTextureAnimationFrameCount()-1);
+				pInstance->m_byFrameIndex = static_cast<BYTE>(random_range(0,m_pParticleProperty->GetTextureAnimationFrameCount()-1));
 			}
 		}
 

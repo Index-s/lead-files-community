@@ -34,7 +34,7 @@ BOOL CFileBase::Create(const char* filename, EFileMode mode)
 {
 	Destroy();
 
-	strncpy(m_filename, filename, MAX_PATH);
+	strncpy_s(m_filename, sizeof(m_filename), filename, _TRUNCATE);
 
 	DWORD dwMode, dwShareMode = FILE_SHARE_READ;
 

@@ -184,7 +184,7 @@ void CInstanceBase::ProcessDamage()
 		num = damage%10;
 		damage /= 10;
 		char numBuf[MAX_PATH];
-		sprintf(numBuf,"%d.dds",num);
+		sprintf_s(numBuf,sizeof(numBuf),"%lu.dds",num);
 		textures.push_back("d:/ymir work/effect/affect/damagevalue/"+strDamageType+numBuf);
 		
 		rkEftMgr.SetEffectTextures(ms_adwCRCAffectEffect[rdwCRCEft],textures);
@@ -196,7 +196,7 @@ void CInstanceBase::ProcessDamage()
 		matrix._43 = v3Pos.z;
 		D3DXMatrixTranslation(&matrix,v3Pos.x,v3Pos.y,v3Pos.z);
 		D3DXMatrixMultiply(&matrix,&pCamera->GetInverseViewMatrix(),&matrix);
-		D3DXMatrixTranslation(&matTrans,FONT_WIDTH*index,0,0);
+		D3DXMatrixTranslation(&matTrans,static_cast<FLOAT>(FONT_WIDTH*index),0,0);
 		matTrans._41 = -matTrans._41;
 		matrix = matTrans*matrix;
 		D3DXMatrixMultiply(&matrix,&pCamera->GetViewMatrix(),&matrix);
@@ -661,7 +661,7 @@ void CInstanceBase::UpdateTextTailLevel(DWORD level)
 	m_dwLevel = level;
 
 	char szText[256];
-	sprintf(szText, "Lv. %d ", level);
+	sprintf_s(szText, sizeof(szText), "Lv. %lu ", level);
 	CPythonTextTail::Instance().AttachLevel(GetVirtualID(), szText, s_kLevelColor);
 }
 

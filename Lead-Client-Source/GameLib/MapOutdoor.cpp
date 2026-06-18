@@ -354,7 +354,7 @@ bool CMapOutdoor::IsWireframe()
 //////////////////////////////////////////////////////////////////////////
 void CMapOutdoor::CreateTerrainPatchProxyList()
 {
-	m_wPatchCount = ((m_lViewRadius * 2) / TERRAIN_PATCHSIZE) + 2;
+	m_wPatchCount = static_cast<WORD>(((m_lViewRadius * 2) / TERRAIN_PATCHSIZE) + 2);
 	
 	m_pTerrainPatchProxyList = new CTerrainPatchProxy[m_wPatchCount * m_wPatchCount];
 	
@@ -1589,8 +1589,9 @@ void CMapOutdoor::ConvertToMapCoords(float fx, float fy, int *iCellX, int *iCell
 	fSubcellX = fx * fRatioooscale;
 	fSubcellY = fy * fRatioooscale;
 	
-	PR_FLOAT_TO_INT(fSubcellX, *pucSubCellX);
-	PR_FLOAT_TO_INT(fSubcellY, *pucSubCellY);
-	*pucSubCellX = (*pucSubCellX) % CTerrainImpl::HEIGHT_TILE_XRATIO;
-	*pucSubCellY = (*pucSubCellY) % CTerrainImpl::HEIGHT_TILE_YRATIO;
+	int iSubcellX, iSubcellY;
+	PR_FLOAT_TO_INT(fSubcellX, iSubcellX);
+	PR_FLOAT_TO_INT(fSubcellY, iSubcellY);
+	*pucSubCellX = static_cast<BYTE>(iSubcellX % CTerrainImpl::HEIGHT_TILE_XRATIO);
+	*pucSubCellY = static_cast<BYTE>(iSubcellY % CTerrainImpl::HEIGHT_TILE_YRATIO);
 }

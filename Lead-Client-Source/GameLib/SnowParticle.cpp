@@ -57,8 +57,8 @@ void CSnowParticle::Init(const D3DXVECTOR3 & c_rv3Pos)
 	float fRot = frandom(0.0f, 36000.0f) / 100.0f;
 	float fDistance = frandom(0.0f, c_fSnowDistance) / 10.0f;
 
-	m_v3Position.x = c_rv3Pos.x + fDistance*sin((double)D3DXToRadian(fRot));
-	m_v3Position.y = c_rv3Pos.y + fDistance*cos((double)D3DXToRadian(fRot));
+	m_v3Position.x = c_rv3Pos.x + static_cast<float>(fDistance*sin((double)D3DXToRadian(fRot)));
+	m_v3Position.y = c_rv3Pos.y + static_cast<float>(fDistance*cos((double)D3DXToRadian(fRot)));
 	m_v3Position.z = c_rv3Pos.z + frandom(1500.0f, 2000.0f);
 	m_v3Velocity.x = 0.0f;
 	m_v3Velocity.y = 0.0f;

@@ -120,7 +120,7 @@ bool CItemManager::LoadItemList(const char * c_szFileName)
 		//const std::string & c_rstrType = TokenVector[1];
 		const std::string & c_rstrIcon = TokenVector[2];
 
-		DWORD dwItemVNum=atoi(c_rstrID.c_str());
+		DWORD dwItemVNum=static_cast<DWORD>(atoi(c_rstrID.c_str()));
 
 		CItemData * pItemData = MakeItemData(dwItemVNum);
 
@@ -183,7 +183,7 @@ bool CItemManager::LoadItemDesc(const char* c_szFileName)
 
 		//assert(kTokenVector.size()==ITEMDESC_COL_NUM);
 		
-		DWORD dwVnum=atoi(kTokenVector[ITEMDESC_COL_VNUM].c_str());
+		DWORD dwVnum=static_cast<DWORD>(atoi(kTokenVector[ITEMDESC_COL_VNUM].c_str()));
 		const std::string& c_rstDesc=kTokenVector[ITEMDESC_COL_DESC];
 		const std::string& c_rstSumm=kTokenVector[ITEMDESC_COL_SUMM];
 		TItemMap::iterator f = m_ItemMap.find(dwVnum);
@@ -283,16 +283,16 @@ bool CItemManager::LoadItemTable(const char* c_szFileName)
 		TItemMap::iterator f = m_ItemMap.find(dwVnum);
 		if (m_ItemMap.end() == f)
 		{
-			_snprintf(szName, sizeof(szName), "icon/item/%05d.tga", dwVnum);
+			_snprintf_s(szName, sizeof(szName), _TRUNCATE, "icon/item/%05d.tga", dwVnum);
 
 			if (CResourceManager::Instance().IsFileExist(szName) == false)
 			{
 				std::map<DWORD, DWORD>::iterator itVnum = itemNameMap.find(GetHashCode(table->szName));
 				
 				if (itVnum != itemNameMap.end())
-					_snprintf(szName, sizeof(szName), "icon/item/%05d.tga", itVnum->second);
+					_snprintf_s(szName, sizeof(szName), _TRUNCATE, "icon/item/%05d.tga", itVnum->second);
 				else
-					_snprintf(szName, sizeof(szName), "icon/item/%05d.tga", dwVnum-dwVnum % 10);
+					_snprintf_s(szName, sizeof(szName), _TRUNCATE, "icon/item/%05d.tga", dwVnum-dwVnum % 10);
 
 				if (CResourceManager::Instance().IsFileExist(szName) == false)
 				{
@@ -300,7 +300,7 @@ bool CItemManager::LoadItemTable(const char* c_szFileName)
 					TraceError("%16s(#%-5d) cannot find icon file. setting to default.", table->szName, dwVnum);
 					#endif
 					const DWORD EmptyBowl = 27995;
-					_snprintf(szName, sizeof(szName), "icon/item/%05d.tga", EmptyBowl);
+					_snprintf_s(szName, sizeof(szName), _TRUNCATE, "icon/item/%05d.tga", EmptyBowl);
 				}
 			}
 				

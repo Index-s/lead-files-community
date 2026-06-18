@@ -756,7 +756,7 @@ bool CInstanceBase::Create(const SCreateData& c_rkCreateData)
 
 		c_rkCreateData.m_kAffectFlags.ConvertToPosition(&center_x, &center_y);
 		
-		float center_z = __GetBackgroundHeight(center_x, center_y);
+		float center_z = __GetBackgroundHeight(static_cast<float>(center_x), static_cast<float>(center_y));
 		NEW_SetPixelPosition(TPixelPosition(float(c_rkCreateData.m_lPosX), float(c_rkCreateData.m_lPosY), center_z));
 	}
 	else
@@ -987,8 +987,8 @@ void CInstanceBase::DismountHorse()
 void CInstanceBase::GetInfo(std::string* pstInfo)
 {
 	char szInfo[256];
-	sprintf(szInfo, "Inst - UC %d, RC %d Pool - %d ", 
-		ms_dwUpdateCounter, 
+	sprintf_s(szInfo, sizeof(szInfo), "Inst - UC %d, RC %d Pool - %d ",
+		ms_dwUpdateCounter,
 		ms_dwRenderCounter,
 		ms_kPool.GetCapacity()
 	);
@@ -2867,7 +2867,7 @@ void CInstanceBase::RefreshState(DWORD dwMotIndex, bool isLoop)
 	if (rkItemMgr.GetItemDataPointer(dwPartItemID, &pItemData))
 	{
 		byItemType = pItemData->GetType();
-		bySubType = pItemData->GetWeaponType();
+		bySubType = static_cast<BYTE>(pItemData->GetWeaponType());
 	}
 
 	if (IsPoly())

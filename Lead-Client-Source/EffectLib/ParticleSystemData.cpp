@@ -369,11 +369,11 @@ void CParticleSystemData::BuildDecorator(CParticleInstance * pInstance)
 				break;
 			case CParticleProperty::TEXTURE_ANIMATION_TYPE_CCW:
 				pInstance->m_pDecorator=pInstance->m_pDecorator->AddChainFront(
-					new CTextureAnimationCCWDecorator(m_ParticleProperty.GetTextureAnimationFrameDelay(), m_ParticleProperty.GetTextureAnimationFrameCount(), &pInstance->m_byFrameIndex));
+					new CTextureAnimationCCWDecorator(m_ParticleProperty.GetTextureAnimationFrameDelay(), static_cast<BYTE>(m_ParticleProperty.GetTextureAnimationFrameCount()), &pInstance->m_byFrameIndex));
 				break;
 			case CParticleProperty::TEXTURE_ANIMATION_TYPE_RANDOM_FRAME:
 				pInstance->m_pDecorator=pInstance->m_pDecorator->AddChainFront(
-					new CTextureAnimationRandomDecorator(m_ParticleProperty.GetTextureAnimationFrameDelay(), m_ParticleProperty.GetTextureAnimationFrameCount(), &pInstance->m_byFrameIndex));
+					new CTextureAnimationRandomDecorator(m_ParticleProperty.GetTextureAnimationFrameDelay(), static_cast<BYTE>(m_ParticleProperty.GetTextureAnimationFrameCount()), &pInstance->m_byFrameIndex));
 				break;
 		}
 	}

@@ -58,7 +58,7 @@ bool CTextureSet::Load(const char * c_szTextureSetFileName, float fTerrainTexCoo
 
 	for (long i = 0; i < lCount; ++i)
 	{
-		_snprintf(szTextureName, sizeof(szTextureName), "texture%03d", i + 1);
+		_snprintf_s(szTextureName, sizeof(szTextureName), _TRUNCATE, "texture%03d", i + 1);
 
 		if (stTokenVectorMap.end() == stTokenVectorMap.find(szTextureName))
 			continue;
@@ -78,10 +78,10 @@ bool CTextureSet::Load(const char * c_szTextureSetFileName, float fTerrainTexCoo
 		bool bSplat;
 		unsigned short usBegin, usEnd;
 
-		fuScale	= atof(c_rstrUScale.c_str());
-		fvScale = atof(c_rstrVScale.c_str());
-		fuOffset = atof(c_rstrUOffset.c_str());
-		fvOffset = atof(c_rstrVOffset.c_str());
+		fuScale	= static_cast<float>(atof(c_rstrUScale.c_str()));
+		fvScale = static_cast<float>(atof(c_rstrVScale.c_str()));
+		fuOffset = static_cast<float>(atof(c_rstrUOffset.c_str()));
+		fvOffset = static_cast<float>(atof(c_rstrVOffset.c_str()));
 		bSplat = 0 != atoi(c_rstrbSplat.c_str());
 		usBegin = static_cast<unsigned short>(atoi(c_rstrBegin.c_str()));
 		usEnd = static_cast<unsigned short>(atoi(c_rstrEnd.c_str()));
@@ -243,9 +243,8 @@ bool CTextureSet::RemoveTexture(unsigned long ulIndex)
 
 bool CTextureSet::Save(const char * c_pszFileName)
 {
-	FILE * pFile = fopen(c_pszFileName, "w");
-	
-	if (!pFile)
+	FILE * pFile = NULL;
+	if (0 != fopen_s(&pFile, c_pszFileName, "w") || !pFile)
 		return false;
 	
 	fprintf(pFile, "TextureSet\n");

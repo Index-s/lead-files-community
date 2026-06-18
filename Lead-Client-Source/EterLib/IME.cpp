@@ -312,7 +312,7 @@ bool CIME::Initialize(HWND hWnd)
 	ms_bDisableIMECompletely = false;
     
 	if(GetSystemDirectoryA(szPath, MAX_PATH+1)) {
-		strcat(szPath, "\\imm32.dll");
+		strcat_s(szPath, sizeof(szPath), "\\imm32.dll");
 		ms_hImm32Dll = LoadLibraryA(szPath);
 		if(ms_hImm32Dll)
 		{
@@ -457,10 +457,10 @@ void CIME::SetText(const char* szText, int len)
 
 	int m_wTextLen = sizeof(m_wText)/sizeof(wchar_t);
 
-	ms_lastpos = MultiByteToWideChar(ms_uInputCodePage, 0, begin, iter-begin, m_wText, m_wTextLen);
+	ms_lastpos = MultiByteToWideChar(ms_uInputCodePage, 0, begin, static_cast<int>(iter-begin), m_wText, m_wTextLen);
 
 	if (iter < end)
-		ms_lastpos += MultiByteToWideChar(ReadToken(iter), 0, (iter+5), end-(iter+5), m_wText+ms_lastpos, m_wTextLen-ms_lastpos);
+		ms_lastpos += MultiByteToWideChar(ReadToken(iter), 0, (iter+5), static_cast<int>(end-(iter+5)), m_wText+ms_lastpos, m_wTextLen-ms_lastpos);
 
 	ms_curpos = min(ms_curpos, ms_lastpos);
 }
@@ -516,7 +516,7 @@ const char* CIME::GetCodePageText()
 
 	if (outCodePage != defCodePage)
 	{
-		sprintf(szCodePage, "@%04d", outCodePage);
+		sprintf_s(szCodePage, sizeof(szCodePage), "@%04d", outCodePage);
 	}
 	else
 	{
@@ -643,7 +643,7 @@ void CIME::PasteTextFromClipBoard()
 	const char* begin = strClipboard.c_str();
 	const char* end = begin + strClipboard.length();
 	wchar_t m_wText[IMESTR_MAXLEN];
-	int wstrLen = MultiByteToWideChar(ms_uInputCodePage, 0, begin, end-begin, m_wText, IMESTR_MAXLEN);
+	int wstrLen = MultiByteToWideChar(ms_uInputCodePage, 0, begin, static_cast<int>(end-begin), m_wText, IMESTR_MAXLEN);
 
 	InsertString(m_wText, wstrLen);
 	if(ms_pEvent)
@@ -821,7 +821,7 @@ void CIME::DelCurPos()
 	if (ms_curpos < ms_lastpos)
 	{
 		int eraseCount = FindColorTagEndPosition(m_wText + ms_curpos, ms_lastpos - ms_curpos) + 1;
-		wcscpy(m_wText + ms_curpos, m_wText + ms_curpos + eraseCount);
+		wcscpy_s(m_wText + ms_curpos, IMESTR_MAXLEN - ms_curpos, m_wText + ms_curpos + eraseCount);
 		ms_lastpos -= eraseCount;
 		ms_curpos = min(ms_lastpos, ms_curpos);
 	}
@@ -832,7 +832,7 @@ void CIME::PasteString(const char * str)
 	const char * begin = str;
 	const char * end = str + strlen(str);
 	wchar_t m_wText[IMESTR_MAXLEN];
-	int wstrLen = MultiByteToWideChar(ms_uInputCodePage, 0, begin, end - begin, m_wText, IMESTR_MAXLEN);
+	int wstrLen = MultiByteToWideChar(ms_uInputCodePage, 0, begin, static_cast<int>(end - begin), m_wText, IMESTR_MAXLEN);
 	InsertString(m_wText, wstrLen);
 	if(ms_pEvent)
 		ms_pEvent->OnUpdate();
@@ -1074,7 +1074,7 @@ void CIME::CandidateProcess(HIMC hImc)
 		//printf( "SEL: %d, START: %d, PAGED: %d\n", ms_dwCandidateSelection, iStartOfPage, ms_dwCandidatePageSize );
 	    memset(&ms_wszCandidate, 0, sizeof(ms_wszCandidate));
 	    for(UINT i = iStartOfPage, j = 0; (DWORD)i < lpCandidateList->dwCount && j < ms_dwCandidatePageSize; i++, j++) {
-			wcscpy( ms_wszCandidate[j], (LPWSTR)( (uintptr_t)lpCandidateList + lpCandidateList->dwOffset[i] ) );
+			wcscpy_s( ms_wszCandidate[j], MAX_CANDIDATE_LENGTH, (LPWSTR)( (uintptr_t)lpCandidateList + lpCandidateList->dwOffset[i] ) );
 	    }
 
 		// don't display selection in candidate list in case of Korean and old Chinese IME.
@@ -1344,8 +1344,8 @@ bool CIME::GetReadingWindowOrientation()
         char szRegPath[MAX_PATH];
         HKEY hKey;
         DWORD dwVer = ms_adwId[0] & 0xFFFF0000;
-        strcpy(szRegPath, "software\\microsoft\\windows\\currentversion\\");
-        strcat(szRegPath, (dwVer >= MAKEIMEVERSION(5, 1)) ? "MSTCIPH" : "TINTLGNT");
+        strcpy_s(szRegPath, sizeof(szRegPath), "software\\microsoft\\windows\\currentversion\\");
+        strcat_s(szRegPath, sizeof(szRegPath), (dwVer >= MAKEIMEVERSION(5, 1)) ? "MSTCIPH" : "TINTLGNT");
         LONG lRc = RegOpenKeyExA(HKEY_CURRENT_USER, szRegPath, 0, KEY_READ, &hKey);
         if (lRc == ERROR_SUCCESS)
         {
@@ -1941,7 +1941,7 @@ void CTsfUiLessMode::MakeCandidateStrings(ITfCandidateListUIElement* pcandidate)
 		{
 			if(bstr)
 			{
-				wcscpy( CIME::ms_wszCandidate[j], bstr );
+				wcscpy_s( CIME::ms_wszCandidate[j], CIME::MAX_CANDIDATE_LENGTH, bstr );
 				SysFreeString(bstr);
 			}
 		}

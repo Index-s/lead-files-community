@@ -69,8 +69,8 @@ int TraceFunc(PyObject * obj, PyFrameObject * f, int what, PyObject *arg)
 
 			funcname = PyString_AsString(f->f_code->co_name);
 
-			_snprintf(szTraceBuffer, sizeof(szTraceBuffer), "Call: File \"%s\", line %d, in %s", 
-					  PyString_AsString(f->f_code->co_filename), 
+			_snprintf_s(szTraceBuffer, sizeof(szTraceBuffer), _TRUNCATE, "Call: File \"%s\", line %d, in %s",
+					  PyString_AsString(f->f_code->co_filename),
 					  f->f_lineno,
 					  funcname);
 
@@ -96,8 +96,8 @@ int TraceFunc(PyObject * obj, PyFrameObject * f, int what, PyObject *arg)
 			const char * exc_str;
 			PyObject_AsCharBuffer(exc_type, &exc_str, &len);
 			
-			_snprintf(szTraceBuffer, sizeof(szTraceBuffer), "Exception: File \"%s\", line %d, in %s", 
-					  PyString_AS_STRING(f->f_code->co_filename), 
+			_snprintf_s(szTraceBuffer, sizeof(szTraceBuffer), _TRUNCATE, "Exception: File \"%s\", line %d, in %s",
+					  PyString_AS_STRING(f->f_code->co_filename),
 					  f->f_lineno,
 					  PyString_AS_STRING(f->f_code->co_name));
 
@@ -146,9 +146,8 @@ bool CPythonLauncher::Create(const char* c_szProgramName)
 bool CPythonLauncher::RunCompiledFile(const char* c_szFileName)
 {
 	NANOBEGIN
-	FILE * fp = fopen(c_szFileName, "rb");
-
-	if (!fp)
+	FILE * fp = NULL;
+	if (fopen_s(&fp, c_szFileName, "rb") != 0 || !fp)
 		return false;
 
 	PyCodeObject *co;

@@ -134,7 +134,7 @@ void CPythonChat::UpdateViewMode(DWORD dwID)
 		iHeight += pChatSet->m_iStep;
 		--iLineIndex;
 
-		pChatLine->Instance.SetPosition(pChatSet->m_ix, pChatSet->m_iy + iHeight);
+		pChatLine->Instance.SetPosition(static_cast<float>(pChatSet->m_ix), static_cast<float>(pChatSet->m_iy + iHeight));
 		pChatLine->Instance.SetColor(rColor);
 		pChatLine->Instance.Update();
 	}
@@ -175,7 +175,7 @@ void CPythonChat::UpdateEditMode(DWORD dwID)
 		}
 
 		iHeight += pChatSet->m_iStep;
-		pChatLine->Instance.SetPosition(pChatSet->m_ix, pChatSet->m_iy + iHeight);
+		pChatLine->Instance.SetPosition(static_cast<float>(pChatSet->m_ix), static_cast<float>(pChatSet->m_iy + iHeight));
 		pChatLine->Instance.SetColor(rColor);
 		pChatLine->Instance.Update();
 	}
@@ -195,7 +195,7 @@ void CPythonChat::UpdateLogMode(DWORD dwID)
 		TChatLine * pChatLine = (*itor);
 
 		iHeight -= pChatSet->m_iStep;
-		pChatLine->Instance.SetPosition(pChatSet->m_ix, pChatSet->m_iy + iHeight);
+		pChatLine->Instance.SetPosition(static_cast<float>(pChatSet->m_ix), static_cast<float>(pChatSet->m_iy + iHeight));
 		pChatLine->Instance.SetColor(pChatLine->GetColorRef(dwID));
 		pChatLine->Instance.Update();
 	}

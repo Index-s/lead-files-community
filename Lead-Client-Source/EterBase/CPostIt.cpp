@@ -38,10 +38,10 @@ CPostIt::~CPostIt( void )
 BOOL CPostIt::Init( LPCSTR szAppName )
 {
 	if( szAppName == NULL || !*szAppName ) {
-		strcpy( m_szClipFormatName, "YMCF" );
+		strcpy_s( m_szClipFormatName, sizeof( m_szClipFormatName ), "YMCF" );
 	} else {
-		strcpy( m_szClipFormatName, "YMCF_" );
-		strcat( m_szClipFormatName, szAppName );
+		strcpy_s( m_szClipFormatName, sizeof( m_szClipFormatName ), "YMCF_" );
+		strcat_s( m_szClipFormatName, sizeof( m_szClipFormatName ), szAppName );
 	}
 	return TRUE;
 }
@@ -117,7 +117,7 @@ BOOL CPostIt::Set( LPCSTR lpszKeyName, DWORD dwValue )
 {
 	CHAR szValue[12];
 
-	_snprintf( szValue, 12, "%d", dwValue );
+	_snprintf_s( szValue, sizeof( szValue ), 12, "%d", dwValue );
 	return Set( lpszKeyName, szValue );
 }
 
@@ -294,6 +294,6 @@ BOOL _CPostItMemoryBlock::Get( LPCSTR lpszKeyName, LPSTR lpBuffer, DWORD nSize )
 		return FALSE;
 	lpszText += (strlen( lpszKeyName ) + 1);
 	::ZeroMemory( lpBuffer, nSize );
-	strncpy( lpBuffer, lpszText, (nSize < strlen( lpszText )) ? nSize : strlen( lpszText ) );
+	strncpy_s( lpBuffer, nSize, lpszText, _TRUNCATE );
 	return TRUE;
 }

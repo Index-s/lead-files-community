@@ -14,9 +14,9 @@ void CScreenFilter::Render()
 	STATEMANAGER.SaveRenderState(D3DRS_SRCBLEND, m_bySrcType);
 	STATEMANAGER.SaveRenderState(D3DRS_DESTBLEND, m_byDestType);
 
-	SetOrtho2D(CScreen::ms_iWidth, CScreen::ms_iHeight, 400.0f);
+	SetOrtho2D(static_cast<float>(CScreen::ms_iWidth), static_cast<float>(CScreen::ms_iHeight), 400.0f);
 	SetDiffuseColor(m_Color.r, m_Color.g, m_Color.b, m_Color.a);
-	RenderBar2d(0, 0, CScreen::ms_iWidth, CScreen::ms_iHeight);
+	RenderBar2d(0.0f, 0.0f, static_cast<float>(CScreen::ms_iWidth), static_cast<float>(CScreen::ms_iHeight));
 
 	STATEMANAGER.RestoreRenderState(D3DRS_ALPHABLENDENABLE);
 	STATEMANAGER.RestoreRenderState(D3DRS_SRCBLEND);

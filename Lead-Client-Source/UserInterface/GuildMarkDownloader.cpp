@@ -451,8 +451,8 @@ bool CGuildMarkDownloader::__LoginState_RecvSymbolData()
 
 	std::string strFileName = GetGuildSymbolFileName(dwGuildID);
 
-	FILE * File = fopen(strFileName.c_str(), "wb");
-	if (!File)
+	FILE * File = NULL;
+	if (fopen_s(&File, strFileName.c_str(), "wb") != 0 || !File)
 	{
 		delete[] pbyBuf;
 		return false;

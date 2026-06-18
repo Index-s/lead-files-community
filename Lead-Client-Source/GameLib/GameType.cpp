@@ -62,13 +62,13 @@ bool NRaceData::THitData::Load(CTextFileLoader & rTextFileLoader)
 		{
 			float time;
 			NRaceData::THitTimePosition hp;
-			time = atof(it++->c_str());
-			hp.v3LastPosition.x = atof(it++->c_str());
-			hp.v3LastPosition.y = atof(it++->c_str());
-			hp.v3LastPosition.z = atof(it++->c_str());
-			hp.v3Position.x = atof(it++->c_str());
-			hp.v3Position.y = atof(it++->c_str());
-			hp.v3Position.z = atof(it++->c_str());
+			time = static_cast<float>(atof(it++->c_str()));
+			hp.v3LastPosition.x = static_cast<float>(atof(it++->c_str()));
+			hp.v3LastPosition.y = static_cast<float>(atof(it++->c_str()));
+			hp.v3LastPosition.z = static_cast<float>(atof(it++->c_str()));
+			hp.v3Position.x = static_cast<float>(atof(it++->c_str()));
+			hp.v3Position.y = static_cast<float>(atof(it++->c_str()));
+			hp.v3Position.z = static_cast<float>(atof(it++->c_str()));
 
 			mapHitPosition[time] = hp;
 		}

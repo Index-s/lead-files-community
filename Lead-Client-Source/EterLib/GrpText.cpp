@@ -45,7 +45,7 @@ bool CGraphicText::OnLoad(int /*iSize*/, const void* /*c_pvBuf*/)
 
 	if (p)
 	{
-		strncpy(strName, GetFileName(), MIN(31, p - GetFileName()));
+		strncpy_s(strName, sizeof(strName), GetFileName(), MIN(31, static_cast<int>(p - GetFileName())));
 		++p;
 
 		static char num[8];
@@ -59,7 +59,7 @@ bool CGraphicText::OnLoad(int /*iSize*/, const void* /*c_pvBuf*/)
 		num[i] = '\0';
 		if(*p == 'i')
 			bItalic = true;
-		size = atoi(num);
+		size = static_cast<int>(atoi(num));
 	}
 	else
 	{
@@ -71,8 +71,8 @@ bool CGraphicText::OnLoad(int /*iSize*/, const void* /*c_pvBuf*/)
 			strName[0] = '\0';
 		}
 		else
-			strncpy(strName, GetFileName(), MIN(31, p - GetFileName()));
-		
+			strncpy_s(strName, sizeof(strName), GetFileName(), MIN(31, static_cast<int>(p - GetFileName())));
+
 		size = 12;
 	}
 

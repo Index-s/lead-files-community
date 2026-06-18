@@ -20,8 +20,8 @@ const char* LocaleString_FindChar(const char* base, int len, char test)
 	while (pos < len)
 	{
 		const char* cur = base + pos;
-		const char* next = CharNextExA(codePage, cur, 0);
-		int cur_len = next - cur;
+		const char* next = CharNextExA(static_cast<WORD>(codePage), cur, 0);
+		int cur_len = static_cast<int>(next - cur);
 		if (cur_len > 1)
 		{
 			pos += cur_len;
@@ -50,9 +50,9 @@ int LocaleString_RightTrim(char* base, int len)
 	while (pos > 0)
 	{
 		char* cur = base + pos;
-		char* prev = CharPrevExA(codePage, base, cur , 0);
-		
-		int prev_len = cur - prev;
+		char* prev = CharPrevExA(static_cast<WORD>(codePage), base, cur , 0);
+
+		int prev_len = static_cast<int>(cur - prev);
 		if (prev_len != 1)
 			break;
 		
@@ -92,8 +92,8 @@ void OLD_rtrim(char* base)
 				break;
 			
 			*end = '\0';
-			
-			end = CharPrevExA(codePage, base, end, 0);
+
+			end = CharPrevExA(static_cast<WORD>(codePage), base, end, 0);
 		}
 	}
 	else
@@ -102,9 +102,9 @@ void OLD_rtrim(char* base)
 
 		while (end != base)
 		{
-			char* prev = CharPrevExA(codePage, base, end, 0);
+			char* prev = CharPrevExA(static_cast<WORD>(codePage), base, end, 0);
 
-			int prev_len = end - prev;
+			int prev_len = static_cast<int>(end - prev);
 			if (prev_len != 1)
 				break;
 
@@ -130,8 +130,8 @@ const char* LocaleString_Skip(DWORD codePage, const char* cur)
 			break;
 		}
 
-		const char* next = CharNextExA(codePage, cur, 0);
-		int cur_len = next - cur;
+		const char* next = CharNextExA(static_cast<WORD>(codePage), cur, 0);
+		int cur_len = static_cast<int>(next - cur);
 		if (cur_len > 1)
 		{
 			cur = next;
@@ -167,8 +167,8 @@ bool Group::GetArg(const char *c_arg_base, int arg_len, TArgList & argList)
     while (pos < arg_len)
     {
 		const char* cur = c_arg_base + pos;
-		const char* next = CharNextExA(codePage, cur, 0); 
-		iCharLen = next - cur;
+		const char* next = CharNextExA(static_cast<WORD>(codePage), cur, 0);
+		iCharLen = static_cast<int>(next - cur);
 
 		if (iCharLen > 1)
 		{
@@ -301,9 +301,9 @@ bool Group::Create(const std::string & stSource)
         TCmd cmd;
 
 		const char* word = str_base + str_pos;
-		const char* word_next = CharNextExA(codePage, word, 0);
-		
-		int word_len = word_next - word;
+		const char* word_next = CharNextExA(static_cast<WORD>(codePage), word, 0);
+
+		int word_len = static_cast<int>(word_next - word);
 		
 		if (word_len > 1)
 		{
@@ -334,14 +334,14 @@ bool Group::Create(const std::string & stSource)
 					TraceError(" !! PARSING ERROR - Syntax Error : %s\n", box_begin);
 					return false;
 				}
-				str_pos += box_end - box_begin + 1;
+				str_pos += static_cast<int>(box_end - box_begin + 1);
 				
 
 				int data_len = 0;
 				{
 					const char* data_begin = LocaleString_Skip(codePage, box_begin);
 					const char* data_end = box_end;
-					data_len = data_end - data_begin;
+					data_len = static_cast<int>(data_end - data_begin);
 					if (data_len >= 1024)
 					{
 						TraceError(" !! PARSING ERROR - Buffer Overflow : %d, %s\n", data_len, str_base);
@@ -357,13 +357,13 @@ bool Group::Create(const std::string & stSource)
 					const char* space = LocaleString_FindChar(box_data, data_len, ' ');
 					if (space)  // There is a factor
 					{
-						int name_len = space - box_data;
+						int name_len = static_cast<int>(space - box_data);
 						cmd.name.assign(box_data, name_len);
-						
-						const char* space_next = CharNextExA(codePage, space, 0);
+
+						const char* space_next = CharNextExA(static_cast<WORD>(codePage), space, 0);
 						const char* arg = LocaleString_Skip(codePage, space_next);
 
-						int arg_len = data_len - (arg - box_data);
+						int arg_len = static_cast<int>(data_len - (arg - box_data));
 						
 						if (!GetArg(arg, arg_len, cmd.argList))
 						{

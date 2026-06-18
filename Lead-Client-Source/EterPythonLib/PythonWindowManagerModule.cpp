@@ -2104,7 +2104,7 @@ PyObject * wndImageSetDelay(PyObject * poSelf, PyObject * poArgs)
 	if (!PyTuple_GetFloat(poArgs, 1, &fDelay))
 		return Py_BuildException();
 
-	((UI::CAniImageBox*)pWindow)->SetDelay(fDelay);
+	((UI::CAniImageBox*)pWindow)->SetDelay(static_cast<int>(fDelay));
 
 	return Py_BuildNone();
 }

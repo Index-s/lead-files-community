@@ -159,20 +159,21 @@ void GetFileNameParts(const char* c_szFile, int len, char* pszPath, char* pszNam
 	}
 }
 
-void GetOldIndexingName(char * szName, int Index)
+void GetOldIndexingName(char * szName, size_t szNameSize, int Index)
 {
 	int dec, sign;
 	char Temp[512];
-	
-	strcpy(Temp, _ecvt(Index, 256, &dec, &sign));
+
+	_ecvt_s(Temp, sizeof(Temp), Index, 256, &dec, &sign);
 	Temp[dec] = '\0';
-	
-	strcat(szName, Temp);
+
+	strcat_s(szName, szNameSize, Temp);
 }
 
-void GetIndexingName(char * szName, DWORD Index)
+void GetIndexingName(char * szName, size_t szNameSize, DWORD Index)
 {
-	sprintf(szName + strlen(szName), "%u", Index);
+	size_t len = strlen(szName);
+	sprintf_s(szName + len, szNameSize - len, "%u", Index);
 }
 
 void GetOnlyFileName(const char * sz_Name, std::string & strFileName)
@@ -266,7 +267,7 @@ void GetWorkingFolder(std::string & strFileName)
 {
 	char buf[128+1];
 	_getcwd(buf, 128);
-	strcat(buf, "/");
+	strcat_s(buf, sizeof(buf), "/");
 	strFileName = buf;
 }
 
@@ -447,7 +448,7 @@ void MyCreateDirectory(const char* path)
 		if (*p == '/' || *p == '\\')
 		{
 			memset(dir, 0, len);
-			strncpy(dir, path, p - path);
+			strncpy_s(dir, len, path, p - path);
 			CreateDirectory(dir, NULL);
 		}
 
@@ -589,7 +590,7 @@ const char * _getf(const char* c_szFormat, ...)
 
 	va_list args;
 	va_start(args, c_szFormat);
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	va_end(args);
 
 	return szBuf;

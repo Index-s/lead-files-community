@@ -13,7 +13,7 @@ void CActorInstance::__Push(int x, int y)
 	//Tracenf("VID %d SyncPixelPosition %d %d", dwVID, x, y);		
 
 	const D3DXVECTOR3& c_rv3Src=GetPosition();
-	const D3DXVECTOR3 c_v3Dst=D3DXVECTOR3(x, -y, c_rv3Src.z);
+	const D3DXVECTOR3 c_v3Dst=D3DXVECTOR3(static_cast<float>(x), static_cast<float>(-y), c_rv3Src.z);
 	const D3DXVECTOR3 c_v3Delta=c_v3Dst-c_rv3Src;
 	
 	const int LoopValue = 100;
@@ -42,7 +42,7 @@ void CActorInstance::__Push(int x, int y)
 
 	if (!IsUsingSkill())
 	{
-		int len=sqrt(c_v3Delta.x*c_v3Delta.x+c_v3Delta.y*c_v3Delta.y);
+		float len=sqrt(c_v3Delta.x*c_v3Delta.x+c_v3Delta.y*c_v3Delta.y);
 		if (len>150.0f)
 		{
 			InterceptOnceMotion(CRaceMotionData::NAME_DAMAGE_FLYING);

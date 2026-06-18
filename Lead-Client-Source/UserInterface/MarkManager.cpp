@@ -55,9 +55,8 @@ bool CGuildMarkManager::LoadMarkIndex()
 {
 	char buf[64];
 	snprintf(buf, sizeof(buf), "mark/%s_index", m_pathPrefix.c_str());
-	FILE * fp = fopen(buf, "r");
-
-	if (!fp)
+	FILE * fp = NULL;
+	if (fopen_s(&fp, buf, "r") != 0 || !fp)
 		return false;
 
 	DWORD guildID;
@@ -67,7 +66,7 @@ bool CGuildMarkManager::LoadMarkIndex()
 
 	while (fgets(line, sizeof(line)-1, fp))
 	{
-		sscanf(line, "%lu %lu", &guildID, &markID);
+		sscanf_s(line, "%lu %lu", &guildID, &markID);
 		line[0] = '\0';
 		AddMarkIDByGuildID(guildID, markID);
 	}
@@ -82,9 +81,8 @@ bool CGuildMarkManager::SaveMarkIndex()
 {
 	char buf[64];
 	snprintf(buf, sizeof(buf), "mark/%s_index", m_pathPrefix.c_str());
-	FILE * fp = fopen(buf, "w");
-
-	if (!fp)
+	FILE * fp = NULL;
+	if (fopen_s(&fp, buf, "w") != 0 || !fp)
 	{
 		sys_err("MarkManager::SaveMarkData: cannot open index file.");
 		return false;
@@ -203,8 +201,8 @@ void CGuildMarkManager::CopyMarkIdx(char * pcBuf) const
 
 	for (std::map<DWORD, DWORD>::const_iterator it = m_mapGID_MarkID.begin(); it != m_mapGID_MarkID.end(); ++it)
 	{
-		*(pwBuf++) = it->first; // guild id
-		*(pwBuf++) = it->second; // mark id
+		*(pwBuf++) = static_cast<WORD>(it->first); // guild id
+		*(pwBuf++) = static_cast<WORD>(it->second); // mark id
 	}
 }
 
@@ -324,9 +322,8 @@ const CGuildMarkManager::TGuildSymbol * CGuildMarkManager::GetGuildSymbol(DWORD 
 
 bool CGuildMarkManager::LoadSymbol(const char* filename)
 {
-	FILE* fp = fopen(filename, "rb");
-
-	if (!fp)
+	FILE* fp = NULL;
+	if (fopen_s(&fp, filename, "rb") != 0 || !fp)
 		return true;
 	else
 	{
@@ -354,8 +351,8 @@ bool CGuildMarkManager::LoadSymbol(const char* filename)
 
 void CGuildMarkManager::SaveSymbol(const char* filename)
 {
-	FILE* fp = fopen(filename, "wb");
-	if (!fp)
+	FILE* fp = NULL;
+	if (fopen_s(&fp, filename, "wb") != 0 || !fp)
 	{
 		sys_err("Cannot open Symbol file (name: %s)", filename);
 		return;

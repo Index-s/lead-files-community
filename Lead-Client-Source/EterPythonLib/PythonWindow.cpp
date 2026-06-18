@@ -150,7 +150,7 @@ namespace UI
 		if (g_bOutlineBoxEnable)
 		{
 			CPythonGraphic::Instance().SetDiffuseColor(1.0f, 1.0f, 1.0f);
-			CPythonGraphic::Instance().RenderBox2d(m_rect.left, m_rect.top, m_rect.right, m_rect.bottom);
+			CPythonGraphic::Instance().RenderBox2d(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top), static_cast<float>(m_rect.right), static_cast<float>(m_rect.bottom));
 		}
 
 		std::for_each(m_pChildList.begin(), m_pChildList.end(), std::mem_fn(&CWindow::Render));
@@ -842,7 +842,7 @@ namespace UI
 	void CBox::OnRender()
 	{
 		CPythonGraphic::Instance().SetDiffuseColor(m_dwColor);
-		CPythonGraphic::Instance().RenderBox2d(m_rect.left, m_rect.top, m_rect.right, m_rect.bottom);
+		CPythonGraphic::Instance().RenderBox2d(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top), static_cast<float>(m_rect.right), static_cast<float>(m_rect.bottom));
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -864,7 +864,7 @@ namespace UI
 	void CBar::OnRender()
 	{
 		CPythonGraphic::Instance().SetDiffuseColor(m_dwColor);
-		CPythonGraphic::Instance().RenderBar2d(m_rect.left, m_rect.top, m_rect.right, m_rect.bottom);
+		CPythonGraphic::Instance().RenderBar2d(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top), static_cast<float>(m_rect.right), static_cast<float>(m_rect.bottom));
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -887,7 +887,7 @@ namespace UI
 	{
 		CPythonGraphic & rkpyGraphic = CPythonGraphic::Instance();
 		rkpyGraphic.SetDiffuseColor(m_dwColor);
-		rkpyGraphic.RenderLine2d(m_rect.left, m_rect.top, m_rect.right, m_rect.bottom);
+		rkpyGraphic.RenderLine2d(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top), static_cast<float>(m_rect.right), static_cast<float>(m_rect.bottom));
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -922,15 +922,15 @@ namespace UI
 		CPythonGraphic & rkpyGraphic = CPythonGraphic::Instance();
 
 		rkpyGraphic.SetDiffuseColor(m_dwCenterColor);
-		rkpyGraphic.RenderBar2d(m_rect.left, m_rect.top, m_rect.right, m_rect.bottom);
+		rkpyGraphic.RenderBar2d(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top), static_cast<float>(m_rect.right), static_cast<float>(m_rect.bottom));
 
 		rkpyGraphic.SetDiffuseColor(m_dwLeftColor);
-		rkpyGraphic.RenderLine2d(m_rect.left, m_rect.top, m_rect.right, m_rect.top);
-		rkpyGraphic.RenderLine2d(m_rect.left, m_rect.top, m_rect.left, m_rect.bottom);
+		rkpyGraphic.RenderLine2d(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top), static_cast<float>(m_rect.right), static_cast<float>(m_rect.top));
+		rkpyGraphic.RenderLine2d(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top), static_cast<float>(m_rect.left), static_cast<float>(m_rect.bottom));
 
 		rkpyGraphic.SetDiffuseColor(m_dwRightColor);
-		rkpyGraphic.RenderLine2d(m_rect.left, m_rect.bottom, m_rect.right, m_rect.bottom);
-		rkpyGraphic.RenderLine2d(m_rect.right, m_rect.top, m_rect.right, m_rect.bottom);
+		rkpyGraphic.RenderLine2d(static_cast<float>(m_rect.left), static_cast<float>(m_rect.bottom), static_cast<float>(m_rect.right), static_cast<float>(m_rect.bottom));
+		rkpyGraphic.RenderLine2d(static_cast<float>(m_rect.right), static_cast<float>(m_rect.top), static_cast<float>(m_rect.right), static_cast<float>(m_rect.bottom));
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -1044,11 +1044,11 @@ namespace UI
 		//if (m_TextInstance.GetHorizontalAlign() == CGraphicTextInstance::HORIZONTAL_ALIGN_ARABIC)
 		if( GetDefaultCodePage() == CP_ARABIC )
 		{
-			m_TextInstance.SetPosition(m_rect.right, m_rect.top);
+			m_TextInstance.SetPosition(static_cast<float>(m_rect.right), static_cast<float>(m_rect.top));
 		}
 		else
 		{
-			m_TextInstance.SetPosition(m_rect.left, m_rect.top);
+			m_TextInstance.SetPosition(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top));
 		}
 	}
 
@@ -1191,7 +1191,7 @@ namespace UI
 
 		for (DWORD i = 0; i < m_ImageInstanceVector.size(); ++i)
 		{
-			m_ImageInstanceVector[i]->SetPosition(ix, iy);
+			m_ImageInstanceVector[i]->SetPosition(static_cast<float>(ix), static_cast<float>(iy));
 			ix += m_ImageInstanceVector[i]->GetWidth();
 		}
 	}
@@ -1287,7 +1287,7 @@ namespace UI
 		if (!m_pImageInstance)
 			return;
 
-		m_pImageInstance->SetPosition(m_rect.left, m_rect.top);
+		m_pImageInstance->SetPosition(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top));
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -1371,7 +1371,7 @@ namespace UI
 		if (!m_pMarkInstance)
 			return;
 
-		m_pMarkInstance->SetPosition(m_rect.left, m_rect.top);
+		m_pMarkInstance->SetPosition(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top));
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -1599,8 +1599,8 @@ namespace UI
 	void CAniImageBox::OnChangePosition()
 	{
 		FChangePosition changePosition;
-		changePosition.fx = m_rect.left;
-		changePosition.fy = m_rect.top;
+		changePosition.fx = static_cast<float>(m_rect.left);
+		changePosition.fy = static_cast<float>(m_rect.top);
 		for_each(m_ImageVector.begin(), m_ImageVector.end(), changePosition);
 	}
 
@@ -1772,7 +1772,7 @@ namespace UI
 	void CButton::OnChangePosition()
 	{
 		if (m_pcurVisual)
-			m_pcurVisual->SetPosition(m_rect.left, m_rect.top);
+			m_pcurVisual->SetPosition(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top));
 	}
 
 	BOOL CButton::OnMouseLeftButtonDown()
@@ -1826,7 +1826,7 @@ namespace UI
 	void CButton::SetCurrentVisual(CGraphicImageInstance * pVisual)
 	{
 		m_pcurVisual = pVisual;
-		m_pcurVisual->SetPosition(m_rect.left, m_rect.top);
+		m_pcurVisual->SetPosition(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top));
 	}
 
 	BOOL CButton::IsEnable()
@@ -2002,7 +2002,7 @@ namespace UI
 		std::for_each(m_pChildList.begin(), m_pChildList.end(), std::mem_fn(&CWindow::UpdateRect));
 
 		if (m_pcurVisual)
-			m_pcurVisual->SetPosition(m_rect.left, m_rect.top);
+			m_pcurVisual->SetPosition(static_cast<float>(m_rect.left), static_cast<float>(m_rect.top));
 
 		if (IsPressed())
 			PyCallClassMemberFunc(m_poHandler, "OnMove", BuildEmptyTuple());

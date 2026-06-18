@@ -27,7 +27,7 @@ void CTextBar::__SetFont(int fontSize, bool isBold)
 	logFont.lfClipPrecision		= CLIP_DEFAULT_PRECIS;
 	logFont.lfQuality			= ANTIALIASED_QUALITY;
 	logFont.lfPitchAndFamily	= DEFAULT_PITCH;
-	strcpy(logFont.lfFaceName, GetFontFaceFromCodePage(iCodePage));
+	strcpy_s(logFont.lfFaceName, sizeof(logFont.lfFaceName), GetFontFaceFromCodePage(iCodePage));
 	m_hFont = CreateFontIndirect(&logFont);
 
 		

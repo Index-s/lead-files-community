@@ -687,11 +687,11 @@ PyObject * chrSetPixelPosition(PyObject* poSelf, PyObject* poArgs)
 	int iZ;
 	if (PyTuple_GetInteger(poArgs, 2, &iZ))
 	{
-		pkInst->NEW_SetPixelPosition(TPixelPosition(iX, iY, iZ));
+		pkInst->NEW_SetPixelPosition(TPixelPosition(static_cast<float>(iX), static_cast<float>(iY), static_cast<float>(iZ)));
 	}
 	else
 	{
-		pkInst->SCRIPT_SetPixelPosition(iX, iY);
+		pkInst->SCRIPT_SetPixelPosition(static_cast<float>(iX), static_cast<float>(iY));
 	}
 	return Py_BuildNone();
 }
@@ -1188,7 +1188,7 @@ PyObject * chrMoveToDestPosition(PyObject* poSelf, PyObject* poArgs)
 	if (!pCharacterInstance)
 		return Py_BuildNone();
 
-	pCharacterInstance->NEW_MoveToDestPixelPositionDirection(TPixelPosition(ix, iy, 0.0f));
+	pCharacterInstance->NEW_MoveToDestPixelPositionDirection(TPixelPosition(static_cast<float>(ix), static_cast<float>(iy), 0.0f));
 
 	return Py_BuildNone();
 }

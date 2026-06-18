@@ -131,13 +131,13 @@ void CTerrainPatch::SoftwareTransformPatch_UpdateTerrainLighting(DWORD_PTR dwVer
 	D3DXVECTOR3 kLightDir=c_rkLight.Direction;	
 
 
-	DWORD dwDot;	
-	DWORD dwAmbientR=(c_rkMtrl.Ambient.r*c_rkLight.Ambient.r+c_rkMtrl.Emissive.r)*255.0f;
-	DWORD dwAmbientG=(c_rkMtrl.Ambient.g*c_rkLight.Ambient.g+c_rkMtrl.Emissive.g)*255.0f;
-	DWORD dwAmbientB=(c_rkMtrl.Ambient.b*c_rkLight.Ambient.b+c_rkMtrl.Emissive.b)*255.0f;
-	DWORD dwDiffuseR=(c_rkMtrl.Diffuse.r*c_rkLight.Diffuse.r)*255.0f;
-	DWORD dwDiffuseG=(c_rkMtrl.Diffuse.g*c_rkLight.Diffuse.g)*255.0f;
-	DWORD dwDiffuseB=(c_rkMtrl.Diffuse.b*c_rkLight.Diffuse.b)*255.0f;
+	DWORD dwDot;
+	DWORD dwAmbientR=static_cast<DWORD>((c_rkMtrl.Ambient.r*c_rkLight.Ambient.r+c_rkMtrl.Emissive.r)*255.0f);
+	DWORD dwAmbientG=static_cast<DWORD>((c_rkMtrl.Ambient.g*c_rkLight.Ambient.g+c_rkMtrl.Emissive.g)*255.0f);
+	DWORD dwAmbientB=static_cast<DWORD>((c_rkMtrl.Ambient.b*c_rkLight.Ambient.b+c_rkMtrl.Emissive.b)*255.0f);
+	DWORD dwDiffuseR=static_cast<DWORD>((c_rkMtrl.Diffuse.r*c_rkLight.Diffuse.r)*255.0f);
+	DWORD dwDiffuseG=static_cast<DWORD>((c_rkMtrl.Diffuse.g*c_rkLight.Diffuse.g)*255.0f);
+	DWORD dwDiffuseB=static_cast<DWORD>((c_rkMtrl.Diffuse.b*c_rkLight.Diffuse.b)*255.0f);
 
 	if (dwDiffuseR>255-dwAmbientR)
 		dwDiffuseR=255-dwAmbientR;
@@ -154,10 +154,10 @@ void CTerrainPatch::SoftwareTransformPatch_UpdateTerrainLighting(DWORD_PTR dwVer
 
 		const float N=0xffffff;
 		const int S=24;
-		if (fDot<0.0f) 
-			dwDot=(N*-fDot);
+		if (fDot<0.0f)
+			dwDot=static_cast<DWORD>(N*-fDot);
 		else
-			dwDot=(N*+fDot);
+			dwDot=static_cast<DWORD>(N*+fDot);
 		
 		akSrcVertex[uIndex].dwDiffuse=(0xff000000)|
 			(((dwDiffuseR*dwDot>>S)+dwAmbientR)<<16)|

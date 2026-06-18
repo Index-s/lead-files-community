@@ -9,7 +9,7 @@ void PrintfTabs(FILE * File, int iTabCount, const char * c_szString, ...)
 	va_start(args, c_szString);
 
 	static char szBuf[1024];
-	_vsnprintf(szBuf, sizeof(szBuf), c_szString, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szString, args);
 	va_end(args);
 
 	for (int i = 0; i < iTabCount; ++i)
@@ -118,9 +118,9 @@ D3DXVECTOR3 TokenToVector(CTokenVector & rVector)
 		return D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	}
 
-	return D3DXVECTOR3(atof(rVector[0].c_str()),
-						atof(rVector[1].c_str()),
-						atof(rVector[2].c_str()));
+	return D3DXVECTOR3(static_cast<float>(atof(rVector[0].c_str())),
+						static_cast<float>(atof(rVector[1].c_str())),
+						static_cast<float>(atof(rVector[2].c_str())));
 }
 
 D3DXCOLOR TokenToColor(CTokenVector & rVector)
@@ -131,10 +131,10 @@ D3DXCOLOR TokenToColor(CTokenVector & rVector)
 		return D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
-	return D3DXCOLOR(atof(rVector[0].c_str()),
-						atof(rVector[1].c_str()),
-						atof(rVector[2].c_str()),
-						atof(rVector[3].c_str()));
+	return D3DXCOLOR(static_cast<float>(atof(rVector[0].c_str())),
+						static_cast<float>(atof(rVector[1].c_str())),
+						static_cast<float>(atof(rVector[2].c_str())),
+						static_cast<float>(atof(rVector[3].c_str())));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -288,7 +288,7 @@ bool SetDefaultCodePage(DWORD codePage)
 {
 	gs_codePage=codePage;
 
-	std::string fontFace=GetFontFaceFromCodePage(codePage);
+	std::string fontFace=GetFontFaceFromCodePage(static_cast<WORD>(codePage));
 	if (fontFace.empty())
 		return false;
 
@@ -317,10 +317,11 @@ int __base64_get( const int c )
 
 void __strcat1(char * str,int i)
 {
-	char result[2];
-	result[0] = i;
-	result[1] = NULL;
-	strcat(str,result);
+	// Append a single character without the deprecated strcat; identical semantics
+	// (the caller owns the buffer, exactly as before).
+	size_t len = strlen(str);
+	str[len] = (char)i;
+	str[len + 1] = '\0';
 }
 
 void base64_decode(const char * str,char * resultStr)
@@ -329,11 +330,11 @@ void base64_decode(const char * str,char * resultStr)
 	size_t length = strlen(str);
 	char szDest[5]="";
 
-	strcpy(resultStr,"");
+	resultStr[0] = '\0';
 	while(nCount < length)
 	{
 		i=0;
-		strcpy(szDest, "");
+		strcpy_s(szDest, sizeof(szDest), "");
 		while(nCount<length && i<4)	// You get 4 bytes.
 		{			
 			r = str[nCount++];

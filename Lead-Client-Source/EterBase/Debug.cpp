@@ -31,7 +31,8 @@ class CLogFile : public CSingleton<CLogFile>
 
 		void Initialize()
 		{
-			m_fp = fopen("log.txt", "w");
+			if (fopen_s(&m_fp, "log.txt", "w") != 0)
+				m_fp = NULL;
 		}
 
 		void Write(const char * c_pszMsg)
@@ -91,10 +92,10 @@ void Logf(UINT uLevel, const char* c_szFormat, ...)
 
 	va_list args;
 	va_start(args, c_szFormat);
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	va_end(args);
 #ifdef _DEBUG
-	OutputDebugString(szBuf);	
+	OutputDebugString(szBuf);
 	fputs(szBuf, stdout);
 #endif
 
@@ -111,7 +112,7 @@ void Lognf(UINT uLevel, const char* c_szFormat, ...)
 	va_start(args, c_szFormat);
 
 	char szBuf[DEBUG_STRING_MAX_LEN+2];
-	int len = _vsnprintf(szBuf, sizeof(szBuf)-1, c_szFormat, args);
+	int len = _vsnprintf_s(szBuf, sizeof(szBuf)-1, _TRUNCATE, c_szFormat, args);
 
 	if (len > 0)
 	{
@@ -120,7 +121,7 @@ void Lognf(UINT uLevel, const char* c_szFormat, ...)
 	}
 	va_end(args);
 #ifdef _DEBUG
-	OutputDebugString(szBuf);	
+	OutputDebugString(szBuf);
 	puts(szBuf);
 #endif
 
@@ -144,7 +145,7 @@ void Tracen(const char* c_szMsg)
 {
 #ifdef _DEBUG
 	char szBuf[DEBUG_STRING_MAX_LEN+1];
-	_snprintf(szBuf, sizeof(szBuf), "%s\n", c_szMsg);
+	_snprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, "%s\n", c_szMsg);
 	OutputDebugString(szBuf);
 	puts(c_szMsg);
 
@@ -168,7 +169,7 @@ void Tracenf(const char* c_szFormat, ...)
 	va_start(args, c_szFormat);
 
 	char szBuf[DEBUG_STRING_MAX_LEN+2];
-	int len = _vsnprintf(szBuf, sizeof(szBuf)-1, c_szFormat, args);
+	int len = _vsnprintf_s(szBuf, sizeof(szBuf)-1, _TRUNCATE, c_szFormat, args);
 
 	if (len > 0)
 	{
@@ -177,7 +178,7 @@ void Tracenf(const char* c_szFormat, ...)
 	}
 	va_end(args);
 #ifdef _DEBUG
-	OutputDebugString(szBuf);	
+	OutputDebugString(szBuf);
 	printf("%s", szBuf);
 #endif
 
@@ -191,11 +192,11 @@ void Tracef(const char* c_szFormat, ...)
 
 	va_list args;
 	va_start(args, c_szFormat);
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	va_end(args);
 
 #ifdef _DEBUG
-	OutputDebugString(szBuf);	
+	OutputDebugString(szBuf);
 	fputs(szBuf, stdout);
 #endif
 
@@ -209,12 +210,12 @@ void TraceError(const char* c_szFormat, ...)
 
 	char szBuf[DEBUG_STRING_MAX_LEN+2];
 
-	strncpy(szBuf, "SYSERR: ", DEBUG_STRING_MAX_LEN);
+	strncpy_s(szBuf, sizeof(szBuf), "SYSERR: ", _TRUNCATE);
 	int len = static_cast<int>(strlen(szBuf));
 
 	va_list args;
 	va_start(args, c_szFormat);
-	len = _vsnprintf(szBuf + len, sizeof(szBuf) - (len + 1), c_szFormat, args) + len;
+	len = _vsnprintf_s(szBuf + len, sizeof(szBuf) - len, sizeof(szBuf) - (len + 1), c_szFormat, args) + len;
 	va_end(args);
 
 	szBuf[len] = '\n';
@@ -255,7 +256,7 @@ void TraceErrorWithoutEnter(const char* c_szFormat, ...)
 
 	va_list args;
 	va_start(args, c_szFormat);
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	va_end(args);
 
 	using clock = std::chrono::system_clock;
@@ -265,8 +266,8 @@ void TraceErrorWithoutEnter(const char* c_szFormat, ...)
 	if (localtime_s(&ctm, &seconds) != 0)
 		return;
 
-	fprintf(stderr, "%02d%02d %02d:%02d:%05d :: %s", 
-					ctm.tm_mon + 1, 
+	fprintf(stderr, "%02d%02d %02d:%02d:%05d :: %s",
+					ctm.tm_mon + 1,
 					ctm.tm_mday,
 					ctm.tm_hour,
 					ctm.tm_min,
@@ -290,7 +291,7 @@ void LogBoxf(const char* c_szFormat, ...)
 	va_start(args, c_szFormat);
 
 	char szBuf[2048];
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 
 	LogBox(szBuf);
 }
@@ -314,15 +315,16 @@ void LogFilef(const char * c_szMessage, ...)
 	va_list args;
 	va_start(args, c_szMessage);
 	char szBuf[DEBUG_STRING_MAX_LEN+1];
-	_vsnprintf(szBuf, sizeof(szBuf), c_szMessage, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szMessage, args);
 
 	CLogFile::Instance().Write(szBuf);
 }
 
 void OpenLogFile(bool bUseLogFIle)
 {
-#ifndef _DISTRIBUTE 
-	freopen("syserr.txt", "w", stderr);
+#ifndef _DISTRIBUTE
+	FILE * fpStdErr = NULL;
+	freopen_s(&fpStdErr, "syserr.txt", "w", stderr);
 
 	if (bUseLogFIle)
 	{
@@ -336,6 +338,8 @@ void OpenConsoleWindow()
 {
 	AllocConsole();
 
-	freopen("CONOUT$", "a", stdout);
-	freopen("CONIN$", "r", stdin);
+	FILE * fpStdOut = NULL;
+	FILE * fpStdIn = NULL;
+	freopen_s(&fpStdOut, "CONOUT$", "a", stdout);
+	freopen_s(&fpStdIn, "CONIN$", "r", stdin);
 }

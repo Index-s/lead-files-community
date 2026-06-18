@@ -427,7 +427,7 @@ bool CPythonPlayer::__ProcessEnemySkillTargetRange(CInstanceBase& rkInstMain, CI
 	rkInstTarget.NEW_GetPixelPosition(&kPPosTarget);
 
 	IBackground& rkBG=IBackground::Instance();
-	if (rkBG.IsBlock(kPPosTarget.x, kPPosTarget.y))
+	if (rkBG.IsBlock(static_cast<int>(kPPosTarget.x), static_cast<int>(kPPosTarget.y)))
 	{
 		PyCallClassMemberFunc(m_ppyGameWindow, "OnCannotUseSkill", Py_BuildValue("(is)", GetMainCharacterIndex(), "CANNOT_APPROACH"));
 		return false;
@@ -806,7 +806,7 @@ void CPythonPlayer::__RunCoolTime(DWORD dwSkillSlotIndex)
 
 	CPythonSkill::TSkillData& rkSkillData=*pkSkillData;
 
-	rkSkillInst.fCoolTime = rkSkillData.GetSkillCoolTime(rkSkillInst.fcurEfficientPercentage);
+	rkSkillInst.fCoolTime = static_cast<float>(rkSkillData.GetSkillCoolTime(rkSkillInst.fcurEfficientPercentage));
 	rkSkillInst.fLastUsedTime = CTimer::Instance().GetCurrentSecond();
 
 	int iSpd = 100 - GetStatus(POINT_CASTING_SPEED);

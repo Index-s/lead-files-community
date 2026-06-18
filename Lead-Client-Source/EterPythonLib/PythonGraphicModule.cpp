@@ -653,7 +653,7 @@ PyObject* grpRenderBar3d(PyObject* poSelf, PyObject* poArgs)
 	if (!PyTuple_GetInteger(poArgs, 5, &ez))
 		return Py_BuildException();
 
-	CPythonGraphic::Instance().RenderBar3d(sx, sy, sz, ex, ey, ez);
+	CPythonGraphic::Instance().RenderBar3d(static_cast<float>(sx), static_cast<float>(sy), static_cast<float>(sz), static_cast<float>(ex), static_cast<float>(ey), static_cast<float>(ez));
 	return Py_BuildNone();
 }
 
@@ -853,7 +853,7 @@ PyObject * grpSaveScreenShot(PyObject * poSelf, PyObject * poArgs)
 	char szPath[MAX_PATH + 256];
 	SHGetSpecialFolderPath(NULL, szPath, CSIDL_PERSONAL, TRUE);
 	//GetTempPath();
-	strcat(szPath, "\\METIN2\\");
+	strcat_s(szPath, sizeof(szPath), "\\METIN2\\");
 
 	if (-1 == _access(szPath, 0))
 		if (!CreateDirectory(szPath, NULL))
@@ -862,7 +862,8 @@ PyObject * grpSaveScreenShot(PyObject * poSelf, PyObject * poArgs)
 			return Py_BuildValue("(is)", FALSE, "");
 		}
 
-	sprintf(szPath + strlen(szPath), "%02d%02d_%02d%02d%02d.jpg", 
+	size_t uiPathLen = strlen(szPath);
+	sprintf_s(szPath + uiPathLen, sizeof(szPath) - uiPathLen, "%02d%02d_%02d%02d%02d.jpg",
 			tmNow.tm_mon + 1,
 			tmNow.tm_mday,
 			tmNow.tm_hour,

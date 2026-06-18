@@ -41,7 +41,7 @@ void CFrameController::SetCurrentFrame(DWORD dwFrame)
 	m_dwcurFrame = dwFrame;
 }
 
-BYTE CFrameController::GetCurrentFrame()
+DWORD CFrameController::GetCurrentFrame()
 {
 	return m_dwcurFrame;
 }

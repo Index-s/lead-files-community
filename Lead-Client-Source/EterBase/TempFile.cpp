@@ -11,7 +11,7 @@ CTempFile::~CTempFile()
 
 CTempFile::CTempFile(const char * c_pszPrefix)
 {
-	strncpy(m_szFileName, CreateTempFileName(c_pszPrefix), MAX_PATH);
+	strncpy_s(m_szFileName, sizeof(m_szFileName), CreateTempFileName(c_pszPrefix), _TRUNCATE);
 
 	if (!Create(m_szFileName, CFileBase::FILEMODE_WRITE))
 	{

@@ -359,7 +359,9 @@ void CPythonApplication::SaveCameraSetting(const char * c_szFileName)
 	SCameraSetting CameraSetting;
 	GetCameraSetting(&CameraSetting);
 
-	FILE * File = fopen(c_szFileName, "w");
+	FILE * File = NULL;
+	if (fopen_s(&File, c_szFileName, "w") != 0 || !File)
+		return;
 	SetFileAttributes(c_szFileName, FILE_ATTRIBUTE_NORMAL);
 
 	PrintfTabs(File, 0, "CenterPos %f %f %f\n", CameraSetting.v3CenterPosition.x, CameraSetting.v3CenterPosition.y, CameraSetting.v3CenterPosition.z);
@@ -399,13 +401,13 @@ bool CPythonApplication::LoadCameraSetting(const char * c_szFileName)
 		SCameraSetting CameraSetting;
 		CameraSetting.v3CenterPosition = v3CenterPosition;
 
-		CameraSetting.fZoom					= atof(pCameraSetting->at(0).c_str());
-		CameraSetting.fPitch				= atof(pCameraSetting->at(1).c_str());
-		CameraSetting.fRotation				= atof(pCameraSetting->at(2).c_str());
+		CameraSetting.fZoom					= static_cast<float>(atof(pCameraSetting->at(0).c_str()));
+		CameraSetting.fPitch				= static_cast<float>(atof(pCameraSetting->at(1).c_str()));
+		CameraSetting.fRotation				= static_cast<float>(atof(pCameraSetting->at(2).c_str()));
 
-		CameraSetting.kCmrPos.m_fUpDir		= atof(pCmrPos->at(0).c_str());
-		CameraSetting.kCmrPos.m_fViewDir	= atof(pCmrPos->at(1).c_str());
-		CameraSetting.kCmrPos.m_fCrossDir	= atof(pCmrPos->at(2).c_str());
+		CameraSetting.kCmrPos.m_fUpDir		= static_cast<float>(atof(pCmrPos->at(0).c_str()));
+		CameraSetting.kCmrPos.m_fViewDir	= static_cast<float>(atof(pCmrPos->at(1).c_str()));
+		CameraSetting.kCmrPos.m_fCrossDir	= static_cast<float>(atof(pCmrPos->at(2).c_str()));
 
 		SetEventCamera(CameraSetting);
 		return true;

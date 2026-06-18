@@ -145,9 +145,9 @@ bool CAttributeData::OnLoad(int /*iSize*/, const void * c_pvBuf)
 		// Getting Maximize Radius
 		for (DWORD k = 0; k < rHeightData.v3VertexVector.size(); ++k)
 		{
-			m_fMaximizeRadius = fMAX(m_fMaximizeRadius, fabs(rHeightData.v3VertexVector[k].x)+50.0f);
-			m_fMaximizeRadius = fMAX(m_fMaximizeRadius, fabs(rHeightData.v3VertexVector[k].y)+50.0f);
-			m_fMaximizeRadius = fMAX(m_fMaximizeRadius, fabs(rHeightData.v3VertexVector[k].z)+50.0f);
+			m_fMaximizeRadius = fMAX(m_fMaximizeRadius, fabsf(rHeightData.v3VertexVector[k].x)+50.0f);
+			m_fMaximizeRadius = fMAX(m_fMaximizeRadius, fabsf(rHeightData.v3VertexVector[k].y)+50.0f);
+			m_fMaximizeRadius = fMAX(m_fMaximizeRadius, fabsf(rHeightData.v3VertexVector[k].z)+50.0f);
 		}
 		// Getting Maximize Radius
 	}

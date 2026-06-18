@@ -32,7 +32,8 @@ int		MULTI_LOCALE_REPORT_PORT	= 10000;
 void LocaleService_LoadConfig(const char* fileName)
 {
 	NANOBEGIN
-	FILE* fp = fopen(fileName, "rt");
+	FILE* fp = NULL;
+	fopen_s(&fp, fileName, "rt");
 
 	if (fp)
 	{		
@@ -43,12 +44,12 @@ void LocaleService_LoadConfig(const char* fileName)
 		if (fgets(line, sizeof(line)-1, fp))
 		{
 			line[sizeof(line)-1] = '\0';
-			sscanf(line, "%d %d %s", &id, &code, name);
+			sscanf_s(line, "%d %d %s", &id, &code, name, (unsigned)sizeof(name));
 
 			MULTI_LOCALE_REPORT_PORT		= id;
 			MULTI_LOCALE_CODE				= code;
-			strcpy(MULTI_LOCALE_NAME, name);
-			sprintf(MULTI_LOCALE_PATH, "locale/%s", MULTI_LOCALE_NAME);
+			strcpy_s(MULTI_LOCALE_NAME, sizeof(MULTI_LOCALE_NAME), name);
+			sprintf_s(MULTI_LOCALE_PATH, sizeof(MULTI_LOCALE_PATH), "locale/%s", MULTI_LOCALE_NAME);
 		}			
 		fclose(fp);
 	}
@@ -235,8 +236,8 @@ const char*	LocaleService_GetLocalePath()		{ return _LSS_SERVICE_LOCALE_PATH; }
 
 void LocaleService_ForceSetLocale(const char* name, const char* localePath)
 {
-	strcpy(MULTI_LOCALE_NAME, name);
-	strcpy(MULTI_LOCALE_PATH, localePath);
+	strcpy_s(MULTI_LOCALE_NAME, sizeof(MULTI_LOCALE_NAME), name);
+	strcpy_s(MULTI_LOCALE_PATH, sizeof(MULTI_LOCALE_PATH), localePath);
 
 	// When connecting to an existing Cheonma server, change the security key (to access the WE version Claro Cheonma server)
 	if (0 == _stricmp(name, "ymir"))

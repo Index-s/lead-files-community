@@ -220,7 +220,7 @@ void CPythonSwitchbot::GetAttributesBySet(int iAttributeSet, std::vector<TPlayer
 	{
 		TPlayerItemAttribute attr;
 		attr.bType = it2.first;
-		attr.sValue = it2.second;
+		attr.sValue = static_cast<short>(it2.second);
 
 		vec_attributes.emplace_back(attr);
 	}

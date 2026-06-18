@@ -79,7 +79,7 @@ bool CDecal::AddPolygon(DWORD dwAddCount, const D3DXVECTOR3 *c_pv3Vertex, const 
 		return false;
 
 	TTRIANGLEFANSTRUCT aTriangleFanStruct;
-	aTriangleFanStruct.m_wMinIndex = m_dwVertexCount;
+	aTriangleFanStruct.m_wMinIndex = static_cast<WORD>(m_dwVertexCount);
 	aTriangleFanStruct.m_dwVertexCount = dwAddCount;
 	aTriangleFanStruct.m_dwPrimitiveCount = dwAddCount - 2;
 	aTriangleFanStruct.m_dwVBOffset = m_dwVertexCount;

@@ -44,7 +44,7 @@ LONG __stdcall EterExceptionFilter(_EXCEPTION_POINTERS* pExceptionInfo)
 	HANDLE		hProcess	= GetCurrentProcess();
 	HANDLE		hThread		= GetCurrentThread();
 	
-	fException = fopen("ErrorLog.txt", "wt");
+	fopen_s(&fException, "ErrorLog.txt", "wt");
 	if (fException)
 	{
 		char module_name[256];
@@ -55,8 +55,11 @@ LONG __stdcall EterExceptionFilter(_EXCEPTION_POINTERS* pExceptionInfo)
 		GetModuleFileName(hModule, module_name, sizeof(module_name));
 		module_time = (time_t)GetTimestampForLoadedLibrary(hModule);
 		
+		char module_time_str[26];
+		ctime_s(module_time_str, sizeof(module_time_str), &module_time);
+
 		fprintf(fException, "Module Name: %s\n", module_name);
-		fprintf(fException, "Time Stamp: 0x%08x - %s\n", (unsigned int)module_time, ctime(&module_time));
+		fprintf(fException, "Time Stamp: 0x%08x - %s\n", (unsigned int)module_time, module_time_str);
 		fprintf(fException, "\n");
 		fprintf(fException, "Exception Type: 0x%08x\n", pExceptionInfo->ExceptionRecord->ExceptionCode);
 		fprintf(fException, "\n");

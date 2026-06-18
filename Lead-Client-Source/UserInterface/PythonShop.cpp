@@ -56,7 +56,7 @@ const char* CPythonShop::GetTabName(BYTE tabIdx)
 
 void CPythonShop::SetItemData(DWORD dwIndex, const TShopItemData & c_rShopItemData)
 {
-	BYTE tabIdx = dwIndex / SHOP_HOST_ITEM_MAX_NUM;
+	BYTE tabIdx = static_cast<BYTE>(dwIndex / SHOP_HOST_ITEM_MAX_NUM);
 	DWORD dwSlotPos = dwIndex % SHOP_HOST_ITEM_MAX_NUM;
 	
 	SetItemData(tabIdx, dwSlotPos, c_rShopItemData);
@@ -64,7 +64,7 @@ void CPythonShop::SetItemData(DWORD dwIndex, const TShopItemData & c_rShopItemDa
 
 BOOL CPythonShop::GetItemData(DWORD dwIndex, const TShopItemData ** c_ppItemData)
 {
-	BYTE tabIdx = dwIndex / SHOP_HOST_ITEM_MAX_NUM;
+	BYTE tabIdx = static_cast<BYTE>(dwIndex / SHOP_HOST_ITEM_MAX_NUM);
 	DWORD dwSlotPos = dwIndex % SHOP_HOST_ITEM_MAX_NUM;
 
 	return GetItemData(tabIdx, dwSlotPos, c_ppItemData);

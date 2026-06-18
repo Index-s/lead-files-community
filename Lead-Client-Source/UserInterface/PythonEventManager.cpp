@@ -47,15 +47,15 @@ const char * GetArgument(const char * c_szName, script::TArgList & rArgumentList
 
 void GetCameraSettingFromArgList(script::TArgList & rArgList, IAbstractApplication::SCameraSetting * pCameraSetting)
 {
-	int ix = atoi(GetArgument("x", rArgList));
-	int iy = atoi(GetArgument("y", rArgList));
-	int iz = atoi(GetArgument("z", rArgList));
-	int iUpDir = atoi(GetArgument("up", rArgList));
-	int iViewDir = atoi(GetArgument("view", rArgList));
-	int iCrossDir = atoi(GetArgument("cross", rArgList));
-	int iDistance = atoi(GetArgument("distance", rArgList));
-	int iRot = atoi(GetArgument("rot", rArgList));
-	int iPitch = atoi(GetArgument("pitch", rArgList));
+	int ix = static_cast<int>(atoi(GetArgument("x", rArgList)));
+	int iy = static_cast<int>(atoi(GetArgument("y", rArgList)));
+	int iz = static_cast<int>(atoi(GetArgument("z", rArgList)));
+	int iUpDir = static_cast<int>(atoi(GetArgument("up", rArgList)));
+	int iViewDir = static_cast<int>(atoi(GetArgument("view", rArgList)));
+	int iCrossDir = static_cast<int>(atoi(GetArgument("cross", rArgList)));
+	int iDistance = static_cast<int>(atoi(GetArgument("distance", rArgList)));
+	int iRot = static_cast<int>(atoi(GetArgument("rot", rArgList)));
+	int iPitch = static_cast<int>(atoi(GetArgument("pitch", rArgList)));
 
 	ZeroMemory(pCameraSetting, sizeof(IAbstractApplication::SCameraSetting));
 	pCameraSetting->v3CenterPosition.x = float(ix);
@@ -127,7 +127,7 @@ int CPythonEventManager::RegisterEventSet(const char * c_szFileName)
 		return -1;
 	}
 
-	strncpy(pEventSet->szFileName, c_szFileName, 32);
+	strncpy_s(pEventSet->szFileName, sizeof(pEventSet->szFileName), c_szFileName, _TRUNCATE);
 
 	pEventSet->pCurrentTextLine = NULL;
 	pEventSet->poEventHandler = NULL;
@@ -416,7 +416,7 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 		case EVENT_TYPE_DELAY:
 		{
 			if (EVENT_POSITION_START == pEventPosition)
-				pEventSet->lWaitingTime = atoi(GetArgument("value", ScriptCommand.argList));
+				pEventSet->lWaitingTime = static_cast<long>(atoi(GetArgument("value", ScriptCommand.argList)));
 			else
 				pEventSet->lWaitingTime = c_lNormal_Waiting_Time;
 			break;
@@ -521,8 +521,8 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 
 		case EVENT_TYPE_IMAGE:
 		{
-			int x = atoi(GetArgument("x", ScriptCommand.argList));
-			int y = atoi(GetArgument("y", ScriptCommand.argList));
+			int x = static_cast<int>(atoi(GetArgument("x", ScriptCommand.argList)));
+			int y = static_cast<int>(atoi(GetArgument("y", ScriptCommand.argList)));
 			const char * src = GetArgument("src", ScriptCommand.argList);
 
 			PyCallClassMemberFunc(pEventSet->poEventHandler, "OnImage", Py_BuildValue("(iis)", x, y, src));
@@ -534,13 +534,13 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 			const std::string & imageFile = GetArgumentString("image_name", ScriptCommand.argList);
 			const char * title = GetArgument("title", ScriptCommand.argList);
 			const char * desc = GetArgument("desc", ScriptCommand.argList);
-			int index = atoi(GetArgument("index", ScriptCommand.argList));
-			int total = atoi(GetArgument("total", ScriptCommand.argList));
+			int index = static_cast<int>(atoi(GetArgument("index", ScriptCommand.argList)));
+			int total = static_cast<int>(atoi(GetArgument("total", ScriptCommand.argList)));
 
 			if (imageFile.empty())
 			{
 				const char * imageType = GetArgument("image_type", ScriptCommand.argList);
-				int iItemIndex = atoi(GetArgument("idx", ScriptCommand.argList));
+				int iItemIndex = static_cast<int>(atoi(GetArgument("idx", ScriptCommand.argList)));
 				PyCallClassMemberFunc(pEventSet->poEventHandler, "OnInsertItemIcon", Py_BuildValue("(sissii)", imageType, iItemIndex, title, desc, index, total));
 			}
 			else
@@ -581,7 +581,7 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 			const std::string& c_rstType = GetArgumentString("icon_type", ScriptCommand.argList);
 			const std::string& c_rstFile = GetArgumentString("icon_name", ScriptCommand.argList);
 
-			int idx = atoi(GetArgument("idx", ScriptCommand.argList));
+			int idx = static_cast<int>(atoi(GetArgument("idx", ScriptCommand.argList)));
 			const char * name = GetArgument("name", ScriptCommand.argList);
 			
 			// This will be resolved when the quest UI is renewed, so just use the Dragon Soul Stone for now by chrislee
@@ -611,11 +611,11 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 		}
 		case EVENT_TYPE_SET_CENTER_MAP_POSITION:
 		{
-			CPythonMiniMap::Instance().SetAtlasCenterPosition(atoi(GetArgument("x", ScriptCommand.argList)),atoi(GetArgument("y", ScriptCommand.argList)));
+			CPythonMiniMap::Instance().SetAtlasCenterPosition(static_cast<int>(atoi(GetArgument("x", ScriptCommand.argList))),static_cast<int>(atoi(GetArgument("y", ScriptCommand.argList))));
 			break;
 		}
 		case EVENT_TYPE_SLEEP:
-			pEventSet->lLastDelayTime = atoi(GetArgument("value", ScriptCommand.argList));
+			pEventSet->lLastDelayTime = static_cast<long>(atoi(GetArgument("value", ScriptCommand.argList)));
 			break;
 		case EVENT_TYPE_SET_CAMERA:
 		{
@@ -629,7 +629,7 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 			IAbstractApplication::SCameraSetting CameraSetting;
 			GetCameraSettingFromArgList(ScriptCommand.argList, &CameraSetting);
 
-			float fBlendTime = atoi(GetArgument("blendtime", ScriptCommand.argList));
+			float fBlendTime = static_cast<float>(atoi(GetArgument("blendtime", ScriptCommand.argList)));
 
 			rApp.BlendEventCamera(CameraSetting, fBlendTime);
 			break;
@@ -683,15 +683,15 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 		}
 		case EVENT_TYPE_DUNGEON_RESULT:
 		{
-			int killstone_count = atoi(GetArgument("killstone_count", ScriptCommand.argList));
-			int killmob_count = atoi(GetArgument("killmob_count", ScriptCommand.argList));
-			int find_hidden = atoi(GetArgument("find_hidden", ScriptCommand.argList));
-			int hidden_total = atoi(GetArgument("hidden_total", ScriptCommand.argList));
-			int use_potion = atoi(GetArgument("use_potion", ScriptCommand.argList));
-			int is_revived = atoi(GetArgument("is_revived", ScriptCommand.argList));
-			int killallmob = atoi(GetArgument("killallmob", ScriptCommand.argList));
-			int total_time = atoi(GetArgument("total_time", ScriptCommand.argList));
-			int bonus_exp = atoi(GetArgument("bonus_exp", ScriptCommand.argList));
+			int killstone_count = static_cast<int>(atoi(GetArgument("killstone_count", ScriptCommand.argList)));
+			int killmob_count = static_cast<int>(atoi(GetArgument("killmob_count", ScriptCommand.argList)));
+			int find_hidden = static_cast<int>(atoi(GetArgument("find_hidden", ScriptCommand.argList)));
+			int hidden_total = static_cast<int>(atoi(GetArgument("hidden_total", ScriptCommand.argList)));
+			int use_potion = static_cast<int>(atoi(GetArgument("use_potion", ScriptCommand.argList)));
+			int is_revived = static_cast<int>(atoi(GetArgument("is_revived", ScriptCommand.argList)));
+			int killallmob = static_cast<int>(atoi(GetArgument("killallmob", ScriptCommand.argList)));
+			int total_time = static_cast<int>(atoi(GetArgument("total_time", ScriptCommand.argList)));
+			int bonus_exp = static_cast<int>(atoi(GetArgument("bonus_exp", ScriptCommand.argList)));
 
 			PyCallClassMemberFunc(m_poInterface, "ShowDungeonResult", 
 								  Py_BuildValue("(iiiiiiiii)",
@@ -708,7 +708,7 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 		}
 		case EVENT_TYPE_ITEM_NAME:
 		{
-			int iIndex = atoi(GetArgument("value", ScriptCommand.argList));
+			int iIndex = static_cast<int>(atoi(GetArgument("value", ScriptCommand.argList)));
 			CItemData * pItemData;
 			if (CItemManager::Instance().GetItemDataPointer(iIndex, &pItemData))
 			{
@@ -727,7 +727,7 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 		}
 		case EVENT_TYPE_MONSTER_NAME:
 		{
-			int iIndex = atoi(GetArgument("value", ScriptCommand.argList));
+			int iIndex = static_cast<int>(atoi(GetArgument("value", ScriptCommand.argList)));
 			const char * c_szName;
 
 			CPythonNonPlayer& rkNonPlayer=CPythonNonPlayer::Instance();
@@ -747,8 +747,8 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 		}
 		case EVENT_TYPE_WINDOW_SIZE:
 		{
-			int iWidth = atoi(GetArgument("width", ScriptCommand.argList));
-			int iHeight = atoi(GetArgument("height", ScriptCommand.argList));
+			int iWidth = static_cast<int>(atoi(GetArgument("width", ScriptCommand.argList)));
+			int iHeight = static_cast<int>(atoi(GetArgument("height", ScriptCommand.argList)));
 			PyCallClassMemberFunc(pEventSet->poEventHandler, "OnSize", Py_BuildValue("(ii)", iWidth, iHeight));
 			break;
 		}
@@ -760,7 +760,7 @@ void CPythonEventManager::ProcessEventSet(TEventSet * pEventSet)
 		}
 		case EVENT_TYPE_CONFIRM_WAIT:
 		{
-			int iTimeOut = atoi(GetArgument("timeout", ScriptCommand.argList));
+			int iTimeOut = static_cast<int>(atoi(GetArgument("timeout", ScriptCommand.argList)));
 			pEventSet->isConfirmWait = TRUE;
 			pEventSet->pConfirmTimeTextLine = pEventSet->pCurrentTextLine;
 			pEventSet->iConfirmEndTime = timeGetTime()/1000 + iTimeOut;
@@ -1040,19 +1040,19 @@ void CPythonEventManager::__InsertLine(TEventSet& rEventSet, BOOL isCenter, int 
 	if (rEventSet.isTextCenterMode || isCenter)
 	{
 		rEventSet.pCurrentTextLine->SetHorizonalAlign(CGraphicTextInstance::HORIZONTAL_ALIGN_CENTER);
-		rEventSet.pCurrentTextLine->SetPosition(rEventSet.ix+rEventSet.iWidth/2, rEventSet.iy + rEventSet.iyLocal);
+		rEventSet.pCurrentTextLine->SetPosition(static_cast<float>(rEventSet.ix+rEventSet.iWidth/2), static_cast<float>(rEventSet.iy + rEventSet.iyLocal));
 	}
 	else
 	{
 		if (GetDefaultCodePage() == CP_1256)
 		{
 			rEventSet.pCurrentTextLine->SetHorizonalAlign(CGraphicTextInstance::HORIZONTAL_ALIGN_LEFT);
-			rEventSet.pCurrentTextLine->SetPosition(rEventSet.ix + rEventSet.iWidth, rEventSet.iy + rEventSet.iyLocal);
+			rEventSet.pCurrentTextLine->SetPosition(static_cast<float>(rEventSet.ix + rEventSet.iWidth), static_cast<float>(rEventSet.iy + rEventSet.iyLocal));
 		}
 		else
 		{
 			rEventSet.pCurrentTextLine->SetHorizonalAlign(CGraphicTextInstance::HORIZONTAL_ALIGN_LEFT);
-			rEventSet.pCurrentTextLine->SetPosition(rEventSet.ix, rEventSet.iy + rEventSet.iyLocal);
+			rEventSet.pCurrentTextLine->SetPosition(static_cast<float>(rEventSet.ix), static_cast<float>(rEventSet.iy + rEventSet.iyLocal));
 		}		
 	}
 
@@ -1067,7 +1067,7 @@ void CPythonEventManager::RefreshLinePosition(TEventSet * pEventSet)
 	{
 		TTextLine & rkLine = *itor;
 		CGraphicTextInstance * pInstance = rkLine.pInstance;
-		pInstance->SetPosition(pEventSet->ix + rkLine.ixLocal, pEventSet->iy + rkLine.iyLocal);
+		pInstance->SetPosition(static_cast<float>(pEventSet->ix + rkLine.ixLocal), static_cast<float>(pEventSet->iy + rkLine.iyLocal));
 	}
 
 	int ixTextPos;
@@ -1082,7 +1082,7 @@ void CPythonEventManager::RefreshLinePosition(TEventSet * pEventSet)
 		else
 			ixTextPos = pEventSet->ix;
 	}
-	pEventSet->pCurrentTextLine->SetPosition(ixTextPos, pEventSet->iy + pEventSet->iyLocal);
+	pEventSet->pCurrentTextLine->SetPosition(static_cast<float>(ixTextPos), static_cast<float>(pEventSet->iy + pEventSet->iyLocal));
 }
 
 void CPythonEventManager::__AddSpace(TEventSet& rEventSet, int iSpace)

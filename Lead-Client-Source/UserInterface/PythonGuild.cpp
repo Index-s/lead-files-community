@@ -161,7 +161,7 @@ CPythonGuild::TGuildInfo & CPythonGuild::GetGuildInfoRef()
 
 BOOL CPythonGuild::GetGradeDataPtr(DWORD dwGradeNumber, TGuildGradeData ** ppData)
 {
-	TGradeDataMap::iterator itor = m_GradeDataMap.find(dwGradeNumber);
+	TGradeDataMap::iterator itor = m_GradeDataMap.find(static_cast<BYTE>(dwGradeNumber));
 	if (m_GradeDataMap.end() == itor)
 		return FALSE;
 

@@ -582,7 +582,7 @@ float CEffectMeshScript::GetMeshAnimationFrameDelay()
 BOOL CEffectMeshScript::isTextureAnimationLoop(DWORD dwMeshIndex)
 {
 	if (!CheckMeshIndex(dwMeshIndex))
-		return 0.0f;
+		return FALSE;
 
 	return m_MeshDataVector[dwMeshIndex].bTextureAnimationLoopEnable;
 }

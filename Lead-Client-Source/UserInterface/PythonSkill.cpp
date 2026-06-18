@@ -117,7 +117,7 @@ bool CPythonSkill::RegisterSkillTable(const char * c_szFileName)
 			continue;
 		}
 
-		int iVnum = atoi(TokenVector[TABLE_TOKEN_TYPE_VNUM].c_str());
+		int iVnum = static_cast<int>(atoi(TokenVector[TABLE_TOKEN_TYPE_VNUM].c_str()));
 
 		TSkillDataMap::iterator itor = m_SkillDataMap.find(iVnum);
 		if (m_SkillDataMap.end() == itor)
@@ -149,7 +149,7 @@ bool CPythonSkill::RegisterSkillTable(const char * c_szFileName)
 		const std::string & c_strTargetRange = TokenVector[TABLE_TOKEN_TYPE_TARGET_RANGE];
 		if (!c_strTargetRange.empty())
 		{
-			rSkillData.dwTargetRange = atoi(c_strTargetRange.c_str());
+			rSkillData.dwTargetRange = static_cast<DWORD>(atoi(c_strTargetRange.c_str()));
 		}
 
 		rSkillData.strDuration = TokenVector[TABLE_TOKEN_TYPE_DURATION_POLY];
@@ -160,7 +160,7 @@ bool CPythonSkill::RegisterSkillTable(const char * c_szFileName)
 		const std::string & c_strMaxLevel = TokenVector[TABLE_TOKEN_TYPE_MAX_LEVEL];
 		if (!c_strMaxLevel.empty())
 		{
-			int maxLevel = atoi(c_strMaxLevel.c_str());
+			int maxLevel = static_cast<int>(atoi(c_strMaxLevel.c_str()));
 			if(maxLevel > LevelEmpty)
 				rSkillData.byMaxLevel = maxLevel;
 		}
@@ -168,7 +168,7 @@ bool CPythonSkill::RegisterSkillTable(const char * c_szFileName)
 		const std::string & c_strLevelLimit = TokenVector[TABLE_TOKEN_TYPE_LEVEL_LIMIT];		
 		if (!c_strLevelLimit.empty())
 		{
-			int levelLimit = atoi(c_strLevelLimit.c_str());
+			int levelLimit = static_cast<int>(atoi(c_strLevelLimit.c_str()));
 			if(rSkillData.byLevelLimit > LevelEmpty)
 				rSkillData.byLevelLimit = levelLimit;
 		}
@@ -252,7 +252,7 @@ void CPythonSkill::__RegisterGradeIconImage(TSkillData & rData, const char * c_s
 		TGradeData & rGradeData = rData.GradeData[j];
 
 		char szCount[8+1];
-		_snprintf(szCount, sizeof(szCount), "_%02d", j+1);
+		_snprintf_s(szCount, sizeof(szCount), _TRUNCATE, "_%02d", j+1);
 
 		std::string strFileName = "";
 		strFileName += c_szHeader;
@@ -299,7 +299,7 @@ bool CPythonSkill::RegisterSkillDesc(const char * c_szFileName)
 			continue;
 		}
 		
-		DWORD iSkillIndex = atoi(TokenVector[DESC_TOKEN_TYPE_VNUM].c_str());
+		DWORD iSkillIndex = static_cast<DWORD>(atoi(TokenVector[DESC_TOKEN_TYPE_VNUM].c_str()));
 		if (iSkillIndex == 0)
 		{
 			TraceError("SkillDesc.line(%d).NO_INDEX_ERROR\n", i + 1);
@@ -409,14 +409,14 @@ bool CPythonSkill::RegisterSkillDesc(const char * c_szFileName)
 			if (c_iSkillIndex_Riding == iSkillIndex)
 			{
 				char szIconFileNameHeader[64+1];
-				_snprintf(szIconFileNameHeader, sizeof(szIconFileNameHeader), "%sskill/common/support/", g_strImagePath.c_str());
+				_snprintf_s(szIconFileNameHeader, sizeof(szIconFileNameHeader), _TRUNCATE, "%sskill/common/support/", g_strImagePath.c_str());
 
 				__RegisterGradeIconImage(rSkillData, szIconFileNameHeader, c_rstrIconName.c_str());
 			}
 			else if (m_PathNameMap.end() != m_PathNameMap.find(c_rstrJob))
 			{
 				char szIconFileNameHeader[64+1];
-				_snprintf(szIconFileNameHeader, sizeof(szIconFileNameHeader), "%sskill/%s/", g_strImagePath.c_str(), m_PathNameMap[c_rstrJob].c_str());
+				_snprintf_s(szIconFileNameHeader, sizeof(szIconFileNameHeader), _TRUNCATE, "%sskill/%s/", g_strImagePath.c_str(), m_PathNameMap[c_rstrJob].c_str());
 
 				switch (rSkillData.byType)
 				{
@@ -493,7 +493,7 @@ bool CPythonSkill::RegisterSkillDesc(const char * c_szFileName)
 
 		if (TokenVector.size() > DESC_TOKEN_TYPE_MOTION_INDEX_GRADE_NUM)
 		{
-			int numGrade = atoi(TokenVector[DESC_TOKEN_TYPE_MOTION_INDEX_GRADE_NUM].c_str());
+			int numGrade = static_cast<int>(atoi(TokenVector[DESC_TOKEN_TYPE_MOTION_INDEX_GRADE_NUM].c_str()));
 			if (SKILL_EFFECT_COUNT < numGrade)
 			{
 				TraceError("%s[%s] has exceeded the level limit [%d].el limit [%d].el limit [%d].el limit [%d].el limit [%d].",rSkillData.strName.c_str(), TokenVector[DESC_TOKEN_TYPE_MOTION_INDEX_GRADE_NUM].c_str(), SKILL_EFFECT_COUNT);
@@ -517,7 +517,7 @@ bool CPythonSkill::RegisterSkillDesc(const char * c_szFileName)
 			if (c_rstrLevelLimit.empty())
 				rSkillData.byLevelLimit = 0;
 			else
-				rSkillData.byLevelLimit = (WORD)atoi(c_rstrLevelLimit.c_str());
+				rSkillData.byLevelLimit = static_cast<BYTE>(atoi(c_rstrLevelLimit.c_str()));
 		}
 
 		if (TokenVector.size() > DESC_TOKEN_TYPE_MAX_LEVEL)
@@ -611,7 +611,7 @@ bool CPythonSkill::RegisterSkill(DWORD dwSkillIndex, const char * c_szFileName)
 
 	{
 		char szName[256];
-		sprintf(szName, "%dname", LocaleService_GetCodePage());
+		sprintf_s(szName, sizeof(szName), "%dname", LocaleService_GetCodePage());
 		if (!TextFileLoader.GetTokenString(szName, &SkillData.strName))
 			if (!TextFileLoader.GetTokenString("name", &SkillData.strName))
 			{
@@ -622,7 +622,7 @@ bool CPythonSkill::RegisterSkill(DWORD dwSkillIndex, const char * c_szFileName)
 
 	{
 		char szName[256];
-		sprintf(szName, "%ddescription", LocaleService_GetCodePage());
+		sprintf_s(szName, sizeof(szName), "%ddescription", LocaleService_GetCodePage());
 		if (!TextFileLoader.GetTokenString(szName, &SkillData.strDescription))
 			TextFileLoader.GetTokenString("description", &SkillData.strDescription);
 	}
@@ -637,7 +637,7 @@ bool CPythonSkill::RegisterSkill(DWORD dwSkillIndex, const char * c_szFileName)
 		CTokenVector * pConditionDataVector;
 
 		char szConditionData[256];
-		sprintf(szConditionData, "%dconditiondata", LocaleService_GetCodePage());
+		sprintf_s(szConditionData, sizeof(szConditionData), "%dconditiondata", LocaleService_GetCodePage());
 
 		bool isConditionData=true;
 		if (!TextFileLoader.GetTokenVector(szConditionData, &pConditionDataVector))
@@ -660,7 +660,7 @@ bool CPythonSkill::RegisterSkill(DWORD dwSkillIndex, const char * c_szFileName)
 		CTokenVector * pAffectDataVector;
 
 		char szAffectData[256];
-		sprintf(szAffectData, "%daffectdata", LocaleService_GetCodePage());
+		sprintf_s(szAffectData, sizeof(szAffectData), "%daffectdata", LocaleService_GetCodePage());
 
 		bool isAffectData=true;
 		if (!TextFileLoader.GetTokenVector(szAffectData, &pAffectDataVector))
@@ -685,7 +685,7 @@ bool CPythonSkill::RegisterSkill(DWORD dwSkillIndex, const char * c_szFileName)
 		CTokenVector * pGradeDataVector;
 
 		char szGradeData[256];
-		sprintf(szGradeData, "%dgradedata", LocaleService_GetCodePage());
+		sprintf_s(szGradeData, sizeof(szGradeData), "%dgradedata", LocaleService_GetCodePage());
 
 		if (TextFileLoader.GetTokenVector(szGradeData, &pGradeDataVector))
 		{
@@ -786,7 +786,9 @@ void CPythonSkill::TEST()
 	BOOL isFirst;
 	std::map<std::string, DWORD>::iterator itorSub;
 
-	FILE * File = fopen("test.txt", "w");
+	FILE * File = NULL;
+	if (fopen_s(&File, "test.txt", "w") != 0 || !File)
+		return;
 
 	for (TSkillDataMap::iterator itor = m_SkillDataMap.begin(); itor != m_SkillDataMap.end(); ++itor)
 	{
@@ -858,14 +860,14 @@ void CPythonSkill::TEST()
 
 		strLine += "\t";
 		char szMotionIndex[32+1];
-		_snprintf(szMotionIndex, sizeof(szMotionIndex), "%d", rSkillData.wMotionIndex);
+		_snprintf_s(szMotionIndex, sizeof(szMotionIndex), _TRUNCATE, "%d", rSkillData.wMotionIndex);
 		strLine += szMotionIndex;
 
 		strLine += "\t";
 		if (rSkillData.wMotionIndexForMe > 1)
 		{
 			char szMotionIndexForMe[32+1];
-			_snprintf(szMotionIndexForMe, sizeof(szMotionIndexForMe), "%d", rSkillData.wMotionIndexForMe);
+			_snprintf_s(szMotionIndexForMe, sizeof(szMotionIndexForMe), _TRUNCATE, "%d", rSkillData.wMotionIndexForMe);
 			strLine += szMotionIndexForMe;
 		}
 
@@ -1316,7 +1318,7 @@ const char * CPythonSkill::SSkillData::GetAffectDescription(DWORD dwIndex, float
 			fMinValue = floorf(fMinValue);
 
 			char szMinValue[256];
-			_snprintf(szMinValue, sizeof(szMinValue), "%.0f", fMinValue);
+			_snprintf_s(szMinValue, sizeof(szMinValue), _TRUNCATE, "%.0f", fMinValue);
 			strDescription.replace(first, 4, szMinValue);
 
 			int second = static_cast<int>(strDescription.find("%.0f", first));
@@ -1325,7 +1327,7 @@ const char * CPythonSkill::SSkillData::GetAffectDescription(DWORD dwIndex, float
 				fMaxValue = floorf(fMaxValue);
 
 				char szMaxValue[256];
-				_snprintf(szMaxValue, sizeof(szMaxValue), "%.0f", fMaxValue);
+				_snprintf_s(szMaxValue, sizeof(szMaxValue), _TRUNCATE, "%.0f", fMaxValue);
 				strDescription.replace(second, 4, szMaxValue);
 			}
 		}
@@ -1340,7 +1342,7 @@ const char * CPythonSkill::SSkillData::GetAffectDescription(DWORD dwIndex, float
 		}
 
 		static char szDescription[64+1];
-		_snprintf(szDescription, sizeof(szDescription), c_rstrAffectDescription.c_str(), fMinValue, fMaxValue);
+		_snprintf_s(szDescription, sizeof(szDescription), _TRUNCATE, c_rstrAffectDescription.c_str(), fMinValue, fMaxValue);
 		
 		return szDescription;
 	}

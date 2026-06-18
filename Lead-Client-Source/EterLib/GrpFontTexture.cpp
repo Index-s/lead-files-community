@@ -70,7 +70,7 @@ bool CGraphicFontTexture::Create(const char* c_szFontName, int fontSize, bool bI
 {
 	Destroy();
 	
-	strncpy(m_fontName, c_szFontName, sizeof(m_fontName)-1);
+	strncpy_s(m_fontName, sizeof(m_fontName), c_szFontName, _TRUNCATE);
 	m_fontSize	= fontSize;
 	m_bItalic	= bItalic;
 
@@ -89,7 +89,7 @@ bool CGraphicFontTexture::Create(const char* c_szFontName, int fontSize, bool bI
 
 	HDC hDC = m_dib.GetDCHandle();
 
-	m_hFont = GetFont(GetDefaultCodePage());
+	m_hFont = GetFont(static_cast<WORD>(GetDefaultCodePage()));
 
 	m_hFontOld=(HFONT)SelectObject(hDC, m_hFont);
 	SetTextColor(hDC, RGB(255, 255, 255));
@@ -131,7 +131,7 @@ HFONT CGraphicFontTexture::GetFont(WORD codePage)
 		logFont.lfQuality			= ANTIALIASED_QUALITY;
 		logFont.lfPitchAndFamily	= DEFAULT_PITCH;
 		//Tracenf("font: %s", GetFontFaceFromCodePage(codePage));
-		strcpy(logFont.lfFaceName, m_fontName); //GetFontFaceFromCodePage(codePage));
+		strcpy_s(logFont.lfFaceName, sizeof(logFont.lfFaceName), m_fontName); //GetFontFaceFromCodePage(codePage));
 		//strcpy(logFont.lfFaceName, GetFontFaceFromCodePage(codePage));
 
 		hFont = CreateFontIndirect(&logFont);
@@ -183,7 +183,7 @@ bool CGraphicFontTexture::UpdateTexture()
 
 	for (int y = 0; y < height; ++y, pwDst += pitch, pdwSrc += width)
 		for (int x = 0; x < width; ++x)
-			pwDst[x]=pdwSrc[x];
+			pwDst[x]=static_cast<WORD>(pdwSrc[x]);
 	
 	pFontTexture->Unlock();
 	return true;
@@ -221,14 +221,14 @@ CGraphicFontTexture::TCharacterInfomation* CGraphicFontTexture::UpdateCharacterI
 	if (!GetTextExtentPoint32W(hDC, &keyValue, 1, &size) || !GetCharABCWidthsFloatW(hDC, keyValue, keyValue, &stABC))
 		return NULL;
 
-	size.cx = stABC.abcfB;
+	size.cx = static_cast<LONG>(stABC.abcfB);
 	if( stABC.abcfA > 0.0f )
-		size.cx += ceilf(stABC.abcfA);
+		size.cx += static_cast<LONG>(ceilf(stABC.abcfA));
 	if( stABC.abcfC > 0.0f )
-		size.cx += ceilf(stABC.abcfC);
+		size.cx += static_cast<LONG>(ceilf(stABC.abcfC));
 	size.cx++;
 
-	LONG lAdvance = ceilf( stABC.abcfA + stABC.abcfB + stABC.abcfC );
+	LONG lAdvance = static_cast<LONG>(ceilf( stABC.abcfA + stABC.abcfB + stABC.abcfC ));
 
 	int width = m_dib.GetWidth();
 	int height = m_dib.GetHeight();
@@ -281,8 +281,8 @@ CGraphicFontTexture::TCharacterInfomation* CGraphicFontTexture::UpdateCharacterI
 	TCharacterInfomation& rNewCharInfo = m_charInfoMap[code];
 
 	rNewCharInfo.index = (short)(m_pFontTextureVector.size() - 1);
-	rNewCharInfo.width = size.cx;
-	rNewCharInfo.height = size.cy;
+	rNewCharInfo.width = static_cast<short>(size.cx);
+	rNewCharInfo.height = static_cast<short>(size.cy);
 	rNewCharInfo.left = float(m_x) * rhwidth;
 	rNewCharInfo.top = float(m_y) * rhheight;
 	rNewCharInfo.right = float(m_x+size.cx) * rhwidth;

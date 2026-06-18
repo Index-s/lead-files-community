@@ -155,7 +155,7 @@ VOID D3D_SModeInfo::GetString(std::string* pstEnumList)
 	};
 
 	char szText[1024+1];
-	_snprintf(szText, sizeof(szText), "%dx%dx%d %s\r\n", m_uScrWidth, m_uScrHeight, uScrDepthBits, szVP[iVP]);
+	_snprintf_s(szText, sizeof(szText), _TRUNCATE, "%dx%dx%d %s\r\n", m_uScrWidth, m_uScrHeight, uScrDepthBits, szVP[iVP]);
 	pstEnumList->append(szText);
 }
 
@@ -440,12 +440,12 @@ BOOL D3D_CDeviceInfo::Find(UINT uScrWidth, UINT uScrHeight, UINT uScrDepthBits, 
 VOID D3D_CDeviceInfo::GetString(std::string* pstEnumList)
 {
 	char szText[1024+1];
-	_snprintf(szText, sizeof(szText), "%s\r\n========================================\r\n", m_szDevDesc);
+	_snprintf_s(szText, sizeof(szText), _TRUNCATE, "%s\r\n========================================\r\n", m_szDevDesc);
 	pstEnumList->append(szText);
 	
 	for (UINT iD3D_SModeInfo=0; iD3D_SModeInfo<m_uD3DModeInfoNum; ++iD3D_SModeInfo)
 	{
-		_snprintf(szText, sizeof(szText), "%d. ", iD3D_SModeInfo);
+		_snprintf_s(szText, sizeof(szText), _TRUNCATE, "%d. ", iD3D_SModeInfo);
 		pstEnumList->append(szText);
 
 		D3D_SModeInfo& rkModeInfo=m_akD3DModeInfo[iD3D_SModeInfo];
@@ -534,7 +534,7 @@ VOID D3D_CAdapterInfo::GetString(std::string* pstEnumList)
 	for (UINT iDevInfo=0; iDevInfo<m_uD3DDevInfoNum; ++iDevInfo)
 	{		
 		char szText[1024+1];
-		_snprintf(szText, sizeof(szText), "Device %d\r\n", iDevInfo);
+		_snprintf_s(szText, sizeof(szText), _TRUNCATE, "Device %d\r\n", iDevInfo);
 		pstEnumList->append(szText);
 
         D3D_CDeviceInfo& rkD3DDevInfo=m_akD3DDevInfo[iDevInfo];
@@ -616,7 +616,7 @@ VOID D3D_CDisplayModeAutoDetector::GetString(std::string* pstEnumList)
 	for (UINT iD3DAdapterInfo=0; iD3DAdapterInfo<m_uD3DAdapterInfoCount; ++iD3DAdapterInfo)
 	{
 		char szText[1024+1];
-		_snprintf(szText, sizeof(szText), "Adapter %d\r\n", iD3DAdapterInfo);
+		_snprintf_s(szText, sizeof(szText), _TRUNCATE, "Adapter %d\r\n", iD3DAdapterInfo);
 		pstEnumList->append(szText);
 
 		D3D_CAdapterInfo& rkAdapterInfo=m_akD3DAdapterInfo[iD3DAdapterInfo];	

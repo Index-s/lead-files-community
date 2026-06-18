@@ -39,7 +39,7 @@ BOOL CRaceData::LoadRaceData(const char * c_szFileName)
 
 		for (size_t uLine=0; uLine<uLineCount; ++uLine)
 		{
-			int eSmoke=atoi(pSmokeTokenVector->at(uLine*2+0).c_str());
+			int eSmoke=static_cast<int>(atoi(pSmokeTokenVector->at(uLine*2+0).c_str()));
 			if (eSmoke<0 || eSmoke>=SMOKE_NUM)
 			{
 				TraceError("SmokeFileName SmokeNum[%d] OUT OF RANGE", eSmoke);

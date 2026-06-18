@@ -185,8 +185,8 @@ bool CPythonNetworkStream::SendLoginPacket(const char* c_szName, const char* c_s
 	TPacketCGLogin LoginPacket;
 	LoginPacket.header = HEADER_CG_LOGIN;
 
-	strncpy(LoginPacket.login, c_szName, sizeof(LoginPacket.login)-1);
-	strncpy(LoginPacket.passwd, c_szPassword, sizeof(LoginPacket.passwd)-1);
+	strncpy_s(LoginPacket.login, sizeof(LoginPacket.login), c_szName, _TRUNCATE);
+	strncpy_s(LoginPacket.passwd, sizeof(LoginPacket.passwd), c_szPassword, _TRUNCATE);
 
 	LoginPacket.login[LOGIN_MAX_LEN]='\0';
 	LoginPacket.passwd[PASSWD_MAX_LEN]='\0';
@@ -206,7 +206,7 @@ bool CPythonNetworkStream::SendLoginPacketNew(const char * c_szName, const char 
 	LoginPacket.header = HEADER_CG_LOGIN2;
 	LoginPacket.dwLoginKey = m_dwLoginKey;
 
-	strncpy(LoginPacket.login, c_szName, sizeof(LoginPacket.login)-1);
+	strncpy_s(LoginPacket.login, sizeof(LoginPacket.login), c_szName, _TRUNCATE);
 	LoginPacket.login[LOGIN_MAX_LEN]='\0';
 
 	extern DWORD g_adwEncryptKey[4];

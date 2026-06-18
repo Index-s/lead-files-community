@@ -284,8 +284,8 @@ bool CFlyingData::LoadScriptFile(const char* c_szFilename)
 
 bool CFlyingData::SaveScriptFile(const char* c_szFilename)
 {
-	FILE* fp = fopen(c_szFilename,"w");
-	if (!fp) return false;
+	FILE* fp = NULL;
+	if (fopen_s(&fp, c_szFilename, "w") != 0 || !fp) return false;
 
 	PrintfTabs(fp, 0, "SpreadingFlag           %d\n", m_bSpreading?1:0);
 	PrintfTabs(fp, 0, "MaintainParallelFlag    %d\n", m_bMaintainParallel?1:0);

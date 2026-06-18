@@ -252,7 +252,7 @@ CResource * CResourceManager::GetTypeResourcePointer(const char * c_szFileName, 
 		if (pcFileExt)
 		{
 			static char s_szFileExt[8 + 1];
-			strncpy(s_szFileExt, pcFileExt + 1, 8);
+			strncpy_s(s_szFileExt, sizeof(s_szFileExt), pcFileExt + 1, _TRUNCATE);
 
 			TResourceNewFunctionPointerMap::iterator f = m_pResNewFuncMap.find(s_szFileExt);
 
@@ -302,7 +302,7 @@ CResource * CResourceManager::GetResourcePointer(const char * c_szFileName)
 	if (pcFileExt)
 	{
 		static char s_szFileExt[8 + 1];
-		strncpy(s_szFileExt, pcFileExt + 1, 8);
+		strncpy_s(s_szFileExt, sizeof(s_szFileExt), pcFileExt + 1, _TRUNCATE);
 
 		TResourceNewFunctionPointerMap::iterator f = m_pResNewFuncMap.find(s_szFileExt);
 
@@ -428,7 +428,8 @@ void CResourceManager::DumpFileListToTextFile(const char* c_szFileName)
 			filesize = ((CGraphicImage*) pResource)->GetWidth() * ((CGraphicImage*) pResource)->GetHeight() * 4;
 		else
 		{
-			FILE * fp2 = fopen(data.filename, "rb");
+			FILE * fp2 = NULL;
+			fopen_s(&fp2, data.filename, "rb");
 
 			if (fp2)
 			{
@@ -446,7 +447,8 @@ void CResourceManager::DumpFileListToTextFile(const char* c_szFileName)
 		dumpVector.push_back(data);
 	}
 
-	FILE * fp = fopen(c_szFileName, "w");
+	FILE * fp = NULL;
+	fopen_s(&fp, c_szFileName, "w");
 
 	if (fp)
 	{

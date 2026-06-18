@@ -83,8 +83,7 @@ int jpeg_save(unsigned char*data, int width, int height, int quality, const char
   int t;
 
   if(filename) {
-    fi = fopen(filename, "wb");
-	if(fi == NULL)
+    if(fopen_s(&fi, filename, "wb") != 0 || fi == NULL)
 		return 0;
   } else
     fi = NULL;
@@ -299,8 +298,8 @@ int jpeg_load(const char*filename, unsigned char**dest, int*_width, int*_height)
     struct jpeg_error_mgr jerr;
     //struct jpeg_source_mgr mgr;
 
-    FILE*fi = fopen(filename, "rb");
-    if(!fi) {
+    FILE*fi = NULL;
+    if(fopen_s(&fi, filename, "rb") != 0 || !fi) {
         fprintf(stderr, "Couldn't open file %s\n", filename);
 	return 0;
     }

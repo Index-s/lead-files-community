@@ -790,8 +790,8 @@ void CPythonPlayer::NEW_GetMouseDirRotation(float fScrX, float fScrY, float* pfD
 {
 	long lWidth = UI::CWindowManager::Instance().GetScreenWidth();
 	long lHeight = UI::CWindowManager::Instance().GetScreenHeight();
-	int nScrPosX=lWidth*fScrX;
-	int nScrPosY=lHeight*fScrY;
+	int nScrPosX=static_cast<int>(lWidth*fScrX);
+	int nScrPosY=static_cast<int>(lHeight*fScrY);
 	int nScrWidth=lWidth;
 	int nScrHeight=lHeight;
 	int nScrCenterX=nScrWidth/2;

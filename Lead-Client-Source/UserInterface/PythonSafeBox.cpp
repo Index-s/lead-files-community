@@ -213,7 +213,7 @@ PyObject * safeboxGetItemMetinSocket(PyObject * poSelf, PyObject * poArgs)
 	if (!CPythonSafeBox::Instance().GetItemDataPtr(iSlotIndex, &pItemData))
 		return Py_BuildException();
 
-	return Py_BuildValue("i", pItemData->alSockets[iSocketIndex]);
+	return Py_BuildValue("i", (int)pItemData->alSockets[iSocketIndex]);
 }
 
 PyObject * safeboxGetItemAttribute(PyObject * poSelf, PyObject * poArgs)
@@ -282,7 +282,7 @@ PyObject * safeboxGetMallItemMetinSocket(PyObject * poSelf, PyObject * poArgs)
 	if (!CPythonSafeBox::Instance().GetMallItemDataPtr(iSlotIndex, &pItemData))
 		return Py_BuildException();
 
-	return Py_BuildValue("i", pItemData->alSockets[iSocketIndex]);
+	return Py_BuildValue("i", (int)pItemData->alSockets[iSocketIndex]);
 }
 
 PyObject * safeboxGetMallItemAttribute(PyObject * poSelf, PyObject * poArgs)

@@ -11,7 +11,7 @@ class CFrameController
 		void Update(float fElapsedTime);
 
 		void SetCurrentFrame(DWORD dwFrame);
-		BYTE GetCurrentFrame();
+		DWORD GetCurrentFrame();
 
 		void SetMaxFrame(DWORD dwMaxFrame);
 		void SetFrameTime(float fTime);

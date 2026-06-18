@@ -200,7 +200,7 @@ void CPythonApplication::OnLogoRender()
 		STATEMANAGER.SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 		STATEMANAGER.SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		m_pLogoTex->SetTextureStage(0);
-		CPythonGraphic::instance().RenderTextureBox(m_nLeft, m_nTop, m_nRight, m_nBottom, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+		CPythonGraphic::instance().RenderTextureBox(static_cast<float>(m_nLeft), static_cast<float>(m_nTop), static_cast<float>(m_nRight), static_cast<float>(m_nBottom), 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
 	}
 }
 

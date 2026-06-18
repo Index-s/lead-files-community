@@ -11,7 +11,7 @@ void CMapOutdoor::LoadWaterTexture()
 	char buf[256];
 	for (int i = 0; i < 30; ++i)
 	{
-		sprintf(buf, "d:/ymir Work/special/water/%02d.dds", i+1);
+		sprintf_s(buf, sizeof(buf), "d:/ymir Work/special/water/%02d.dds", i+1);
 		m_WaterInstances[i].SetImagePointer((CGraphicImage *) CResourceManager::Instance().GetResourcePointer(buf));
 	}
 }
@@ -82,7 +82,7 @@ void CMapOutdoor::RenderWater()
 		s_dwBlendtime = random_range(1000, 3000);
 
 		if (s_fWaterHeightEnd == 0)
-			s_fWaterHeightEnd = -random_range(0, 15);
+			s_fWaterHeightEnd = -static_cast<float>(random_range(0, 15));
 		else
 			s_fWaterHeightEnd = 0;
 

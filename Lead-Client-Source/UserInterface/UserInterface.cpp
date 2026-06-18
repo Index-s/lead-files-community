@@ -71,7 +71,7 @@ char gs_szErrorString[512] = "";
 
 void ApplicationSetErrorString(const char* szErrorString)
 {
-	strcpy(gs_szErrorString, szErrorString);
+	strcpy_s(gs_szErrorString, sizeof(gs_szErrorString), szErrorString);
 }
 
 bool CheckPythonLibraryFilenames()
@@ -111,19 +111,19 @@ const std::string& ApplicationStringTable_GetString(DWORD dwID, LPCSTR szKey)
 
 	::GetCurrentDirectory(sizeof(szIniFileName), szIniFileName);
 	if(szIniFileName[lstrlen(szIniFileName)-1] != '\\')
-		strcat(szIniFileName, "\\");
-	strcat(szIniFileName, "metin2client.dat");
+		strcat_s(szIniFileName, sizeof(szIniFileName), "\\");
+	strcat_s(szIniFileName, sizeof(szIniFileName), "metin2client.dat");
 
-	strcpy(szLocale, LocaleService_GetLocalePath());
+	strcpy_s(szLocale, sizeof(szLocale), LocaleService_GetLocalePath());
 	if(strnicmp(szLocale, "locale/", strlen("locale/")) == 0)
-		strcpy(szLocale, LocaleService_GetLocalePath() + strlen("locale/"));
+		strcpy_s(szLocale, sizeof(szLocale), LocaleService_GetLocalePath() + strlen("locale/"));
 	::GetPrivateProfileString(szLocale, szKey, NULL, szBuffer, sizeof(szBuffer)-1, szIniFileName);
 	if(szBuffer[0] == '\0')
 		LoadString(gs_kAppStrTable.m_hInstance, dwID, szBuffer, sizeof(szBuffer)-1);
 	if(szBuffer[0] == '\0')
 		::GetPrivateProfileString("en", szKey, NULL, szBuffer, sizeof(szBuffer)-1, szIniFileName);
 	if(szBuffer[0] == '\0')
-		strcpy(szBuffer, szKey);
+		strcpy_s(szBuffer, sizeof(szBuffer), szKey);
 
 	std::string& rstLocale=gs_kAppStrTable.m_kMap_dwID_stLocale[dwID];
 	rstLocale=szBuffer;
@@ -499,8 +499,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			char szModuleName[MAX_PATH];
 			char szVersionPath[MAX_PATH];
 			GetModuleFileName(NULL, szModuleName, sizeof(szModuleName));
-			sprintf(szVersionPath, "%s.version", szModuleName);
-			FILE* fp = fopen(szVersionPath, "wt");
+			sprintf_s(szVersionPath, sizeof(szVersionPath), "%s.version", szModuleName);
+			FILE* fp = NULL;
+			fopen_s(&fp, szVersionPath, "wt");
 			if (fp)
 			{
 				extern int METIN2_GET_VERSION();
@@ -510,8 +511,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			bQuit = true;
 		} else if (__IsLocaleOption(szArgv[i]))
 		{
-			FILE* fp=fopen("locale.txt", "wt");
-			fprintf(fp, "service[%s] code_page[%d]", 
+			FILE* fp=NULL;
+			fopen_s(&fp, "locale.txt", "wt");
+			fprintf(fp, "service[%s] code_page[%d]",
 				LocaleService_GetName(), LocaleService_GetCodePage());
 			fclose(fp);
 			bQuit = true;

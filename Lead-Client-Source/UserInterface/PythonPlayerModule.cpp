@@ -1025,9 +1025,9 @@ PyObject * playerGetItemLink(PyObject * poSelf, PyObject * poArgs)
 		int len;
 		bool isAttr = false;
 
-		len = snprintf(itemlink, sizeof(itemlink), "item:%x:%x:%x:%x:%x", 
+		len = snprintf(itemlink, sizeof(itemlink), "item:%x:%x:%x:%x:%x",
 				pPlayerItem->vnum, pPlayerItem->flags,
-				pPlayerItem->alSockets[0], pPlayerItem->alSockets[1], pPlayerItem->alSockets[2]);
+				(DWORD)pPlayerItem->alSockets[0], (DWORD)pPlayerItem->alSockets[1], (DWORD)pPlayerItem->alSockets[2]);
 
 		for (int i = 0; i < ITEM_ATTRIBUTE_SLOT_MAX_NUM; ++i)
 			if (pPlayerItem->aAttr[i].bType != 0)
@@ -1348,7 +1348,7 @@ PyObject * playerIsValuableItem(PyObject* poSelf, PyObject* poArgs)
 		if (CPythonPlayer::METIN_SOCKET_TYPE_NONE != CPythonPlayer::Instance().GetItemMetinSocket(SlotIndex, i))
 			hasMetinSocket = TRUE;
 
-	DWORD dwValue = pItemData->GetISellItemPrice();
+	GoldType dwValue = pItemData->GetISellItemPrice();
 	if (dwValue > 5000)
 		isHighPrice = TRUE;
 
@@ -2090,7 +2090,7 @@ PyObject * playerIsAvailableBeltInventoryCell(PyObject* poSelf, PyObject* poArgs
 		return Py_BadArgument();
 
 	//return Py_BuildValue("b", CBeltInventoryHelper::IsAvailableCell(pos - c_Belt_Inventory_Slot_Start, GetItemGrade(pItem->GetName())));
-	return Py_BuildValue("b", CBeltInventoryHelper::IsAvailableCell(pos - c_Belt_Inventory_Slot_Start, beltGrade));
+	return Py_BuildValue("b", CBeltInventoryHelper::IsAvailableCell(static_cast<WORD>(pos - c_Belt_Inventory_Slot_Start), beltGrade));
 }
 #endif
 
@@ -2115,7 +2115,7 @@ PyObject* playerSendDragonSoulRefine(PyObject* poSelf, PyObject* poArgs)
 				return Py_BuildException();
 			Py_ssize_t pos = 0;
 			PyObject* key, *value;
-			int size = PyDict_Size(pDic);
+			Py_ssize_t size = PyDict_Size(pDic);
 
 			while (PyDict_Next(pDic, &pos, &key, &value))
 			{

@@ -125,7 +125,7 @@ bool CPythonNetworkStream::SendSelectEmpirePacket(DWORD dwEmpireID)
 {
 	TPacketCGEmpire kPacketEmpire;
 	kPacketEmpire.bHeader=HEADER_CG_EMPIRE;
-	kPacketEmpire.bEmpire=dwEmpireID;
+	kPacketEmpire.bEmpire=static_cast<BYTE>(dwEmpireID);
 
 	if (!Send(sizeof(kPacketEmpire), &kPacketEmpire))
 	{
@@ -159,7 +159,7 @@ bool CPythonNetworkStream::SendDestroyCharacterPacket(BYTE index, const char * s
 
 	DestroyCharacterPacket.header = HEADER_CG_CHARACTER_DELETE;
 	DestroyCharacterPacket.index = index;
-	strncpy(DestroyCharacterPacket.private_code, szPrivateCode, PRIVATE_CODE_LENGTH);
+	strncpy_s(DestroyCharacterPacket.private_code, sizeof(DestroyCharacterPacket.private_code), szPrivateCode, _TRUNCATE);
 
 	if (!Send(sizeof(TPacketCGCharacterDelete), &DestroyCharacterPacket))
 	{
@@ -176,7 +176,7 @@ bool CPythonNetworkStream::SendCreateCharacterPacket(BYTE index, const char *nam
 
 	createCharacterPacket.header = HEADER_CG_CHARACTER_CREATE;
 	createCharacterPacket.index = index;
-	strncpy(createCharacterPacket.name, name, CHARACTER_NAME_MAX_LEN);
+	strncpy_s(createCharacterPacket.name, sizeof(createCharacterPacket.name), name, _TRUNCATE);
 	createCharacterPacket.job = job;
 	createCharacterPacket.shape = shape;
 	createCharacterPacket.Con = byCON;
@@ -198,7 +198,7 @@ bool CPythonNetworkStream::SendChangeNamePacket(BYTE index, const char *name)
 	TPacketCGChangeName ChangeNamePacket;
 	ChangeNamePacket.header = HEADER_CG_CHANGE_NAME;
 	ChangeNamePacket.index = index;
-	strncpy(ChangeNamePacket.name, name, CHARACTER_NAME_MAX_LEN);
+	strncpy_s(ChangeNamePacket.name, sizeof(ChangeNamePacket.name), name, _TRUNCATE);
 
 	if (!Send(sizeof(TPacketCGChangeName), &ChangeNamePacket))
 	{
@@ -275,7 +275,7 @@ bool CPythonNetworkStream::__RecvChangeName()
 		if (ChangeNamePacket.pid == m_akSimplePlayerInfo[i].dwID)
 		{
 			m_akSimplePlayerInfo[i].bChangeName = FALSE;
-			strncpy(m_akSimplePlayerInfo[i].szName, ChangeNamePacket.name, CHARACTER_NAME_MAX_LEN);
+			strncpy_s(m_akSimplePlayerInfo[i].szName, sizeof(m_akSimplePlayerInfo[i].szName), ChangeNamePacket.name, _TRUNCATE);
 
 			PyCallClassMemberFunc(m_apoPhaseWnd[PHASE_WINDOW_SELECT], "OnChangeName", Py_BuildValue("(is)", i, ChangeNamePacket.name));
 			return true;

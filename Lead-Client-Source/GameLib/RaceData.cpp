@@ -425,7 +425,7 @@ BOOL CRaceData::GetNormalAttackIndex(WORD wMotionModeIndex, WORD * pwMotionIndex
 	if (m_NormalAttackIndexMap.end() == itor)
 		return FALSE;
 
-	*pwMotionIndex = itor->second;
+	*pwMotionIndex = static_cast<WORD>(itor->second);
 
 	return TRUE;
 }

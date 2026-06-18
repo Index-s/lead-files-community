@@ -151,7 +151,7 @@ LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePNTStreamVertexShader()
 	if (ms_lpd3dDevice->CreateVertexDeclaration(pShaderDecl, &dwShader) != D3D_OK)
 	{
 		char szError[1024];
-		sprintf(szError, "Failed to create CreatePNTStreamVertexShader");
+		sprintf_s(szError, sizeof(szError), "Failed to create CreatePNTStreamVertexShader");
 		MessageBox(NULL, szError, "Vertex Shader Error", MB_ICONSTOP);
 	}
 
@@ -175,7 +175,7 @@ LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePNT2StreamVertexShader()
 	if (ms_lpd3dDevice->CreateVertexDeclaration(pShaderDecl, &dwShader) != D3D_OK)
 	{
 		char szError[1024];
-		sprintf(szError, "Failed to create CreatePNT2StreamVertexShader");
+		sprintf_s(szError, sizeof(szError), "Failed to create CreatePNT2StreamVertexShader");
 		MessageBox(NULL, szError, "Vertex Shader Error", MB_ICONSTOP);
 	}
 
@@ -197,7 +197,7 @@ LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePTStreamVertexShader()
 	if (ms_lpd3dDevice->CreateVertexDeclaration(pShaderDecl, &dwShader) != D3D_OK)
 	{
 		char szError[1024];
-		sprintf(szError, "Failed to create CreatePTStreamVertexShader");
+		sprintf_s(szError, sizeof(szError), "Failed to create CreatePTStreamVertexShader");
 		MessageBox(NULL, szError, "Vertex Shader Error", MB_ICONSTOP);
 	}
 
@@ -224,7 +224,7 @@ LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreateDoublePNTStreamVertexShader()
 	if (ms_lpd3dDevice->CreateVertexDeclaration(pShaderDecl, &dwShader) != D3D_OK)
 	{
 		char szError[1024];
-		sprintf(szError, "Failed to create CreateDoublePNTStreamVertexShader");
+		sprintf_s(szError, sizeof(szError), "Failed to create CreateDoublePNTStreamVertexShader");
 		MessageBox(NULL, szError, "Vertex Shader Error", MB_ICONSTOP);
 	}
 
@@ -296,13 +296,14 @@ bool CGraphicDevice::__IsInDriverBlackList(D3D_CAdapterInfo& rkD3DAdapterInfo)
 	D3DADAPTER_IDENTIFIER9& d3dAdapterIdentifier=rkD3DAdapterInfo.GetIdentifier();
 
 	char szSrcDriver[256];
-	strncpy(szSrcDriver, d3dAdapterIdentifier.Driver, sizeof(szSrcDriver)-1);
+	strncpy_s(szSrcDriver, sizeof(szSrcDriver), d3dAdapterIdentifier.Driver, _TRUNCATE);
 	DWORD dwSrcHighVersion=d3dAdapterIdentifier.DriverVersion.QuadPart>>32;
 	DWORD dwSrcLowVersion=d3dAdapterIdentifier.DriverVersion.QuadPart&0xffffffff;
 
 	bool ret=false;
 		
-	FILE* fp=fopen("grpblk.txt", "r");
+	FILE* fp=NULL;
+	fopen_s(&fp, "grpblk.txt", "r");
 	if (fp)
 	{
 		DWORD dwChkHighVersion;
@@ -313,7 +314,7 @@ bool CGraphicDevice::__IsInDriverBlackList(D3D_CAdapterInfo& rkD3DAdapterInfo)
 		char szLine[256];
 		while (fgets(szLine, sizeof(szLine)-1, fp))
 		{			
-			sscanf(szLine, "%s %x %x", szChkDriver, &dwChkHighVersion, &dwChkLowVersion);
+			sscanf_s(szLine, "%s %x %x", szChkDriver, (unsigned)sizeof(szChkDriver), &dwChkHighVersion, &dwChkLowVersion);
 			
 			if (strcmp(szSrcDriver, szChkDriver)==0)
 				if (dwSrcHighVersion==dwChkHighVersion)

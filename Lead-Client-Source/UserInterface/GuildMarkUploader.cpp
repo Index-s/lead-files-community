@@ -95,8 +95,8 @@ bool CGuildMarkUploader::__LoadSymbol(const char* c_szFileName, UINT* peError)
 
 	/////
 
-	FILE * file = fopen(c_szFileName, "rb");
-	if (!file)
+	FILE * file = NULL;
+	if (fopen_s(&file, c_szFileName, "rb") != 0 || !file)
 	{
 		*peError=ERROR_LOAD;
 	}

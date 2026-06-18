@@ -77,7 +77,7 @@ bool CPropertyManager::BuildPack()
 			continue;
 
 		char szSourceFileName[256 + 1];
-		_snprintf(szSourceFileName, sizeof(szSourceFileName), "property\\%s", fdata.cFileName);
+		_snprintf_s(szSourceFileName, sizeof(szSourceFileName), _TRUNCATE, "property\\%s", fdata.cFileName);
 
 		m_pack.Put(fdata.cFileName, szSourceFileName,COMPRESSED_TYPE_NONE,"");
 	}
@@ -105,7 +105,7 @@ bool CPropertyManager::LoadReservedCRC(const char * c_pszFileName)
 		if (!pszLine || !*pszLine)
 			continue;
 
-		ReserveCRC(atoi(pszLine));
+		ReserveCRC(static_cast<DWORD>(atoi(pszLine)));
 	}
 
 	return true;
@@ -129,7 +129,7 @@ DWORD CPropertyManager::GetUniqueCRC(const char * c_szSeed)
 			return dwCRC;
 
 		char szAdd[2];
-		_snprintf(szAdd, sizeof(szAdd), "%d", random() % 10);
+		_snprintf_s(szAdd, sizeof(szAdd), _TRUNCATE, "%d", random() % 10);
 		stTmp += szAdd;
 	}
 }
@@ -222,14 +222,14 @@ bool CPropertyManager::Erase(DWORD dwCRC)
 	if (!m_isFileMode)	// If not in file mode, erase from pack
 		m_pack.Delete(pProperty->GetFileName());
 
-	FILE * fp = fopen("property/reserve", "a+");
+	FILE * fp = NULL;
 
-	if (!fp)
+	if (fopen_s(&fp, "property/reserve", "a+") != 0 || !fp)
 		LogBox("Cannot open reservation CRC file.ion CRC file.ion CRC file.ion CRC file.ion CRC file.");
 	else
 	{
 		char szCRC[64 + 1];
-		_snprintf(szCRC, sizeof(szCRC), "%u\r\n", pProperty->GetCRC());
+		_snprintf_s(szCRC, sizeof(szCRC), _TRUNCATE, "%u\r\n", pProperty->GetCRC());
 
 		fputs(szCRC, fp);
 		fclose(fp);

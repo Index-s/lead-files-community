@@ -172,7 +172,7 @@ typedef struct packet_item
     ItemStackType        count;
 	DWORD		flags;
 	DWORD		anti_flags;
-	long		alSockets[ITEM_SOCKET_SLOT_MAX_NUM];
+	TimeT64		alSockets[ITEM_SOCKET_SLOT_MAX_NUM];
     TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_SLOT_MAX_NUM];
 } TItemData;
 

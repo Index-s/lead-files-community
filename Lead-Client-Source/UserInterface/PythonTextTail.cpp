@@ -221,7 +221,7 @@ void CPythonTextTail::ArrangeTextTail()
 		if (pMarkInstance && pGuildNameInstance)
 		{
 			int iWidth, iHeight;
-			int iImageHalfSize = pMarkInstance->GetWidth()/2 + c_fxMarkPosition;
+			float iImageHalfSize = pMarkInstance->GetWidth()/2 + c_fxMarkPosition;
 			pGuildNameInstance->GetTextSize(&iWidth, &iHeight);
 
 			pMarkInstance->SetPosition(pTextTail->x - iWidth/2 - iImageHalfSize, pTextTail->y - c_fyMarkPosition);

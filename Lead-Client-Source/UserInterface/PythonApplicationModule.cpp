@@ -76,7 +76,7 @@ PyObject* appSetTextTailLivingTime(PyObject* poSelf, PyObject* poArgs)
 	if (!PyTuple_GetFloat(poArgs, 0, &livingTime))
 		return Py_BuildException();
 
-	TextTail_SetLivingTime(livingTime*1000);
+	TextTail_SetLivingTime(static_cast<long>(livingTime*1000));
 
 	return Py_BuildNone();
 }
@@ -160,7 +160,8 @@ PyObject* appSetCameraMaxDistance(PyObject* poSelf, PyObject* poArgs)
 
 PyObject* appSetControlFP(PyObject* poSelf, PyObject* poArgs)
 {
-	_controlfp( _PC_24, _MCW_PC );
+	unsigned int currentControl;
+	_controlfp_s( &currentControl, _PC_24, _MCW_PC );
 	return Py_BuildNone();
 }
 
@@ -243,8 +244,8 @@ PyObject* appLoadLocaleAddr(PyObject* poSelf, PyObject* poArgs)
 	if (!PyTuple_GetString(poArgs, 0, &addrPath))
 		return Py_BuildException();
 
-	FILE* fp = fopen(addrPath, "rb");
-	if (!fp)
+	FILE* fp = NULL;
+	if (fopen_s(&fp, addrPath, "rb") != 0 || !fp)
 		return Py_BuildException();
 
 	fseek(fp, 0, SEEK_END);
@@ -1087,12 +1088,12 @@ PyObject * appSetGuildMarkPath(PyObject * poSelf, PyObject * poArgs)
 
     if (ext)
     {
-		int extPos = ext - path;
-        strncpy(newPath, path, extPos);
+		size_t extPos = ext - path;
+        strncpy_s(newPath, sizeof(newPath), path, extPos);
         newPath[extPos] = '\0';
     }
     else
-        strncpy(newPath, path, sizeof(newPath)-1);
+        strncpy_s(newPath, sizeof(newPath), path, _TRUNCATE);
 	
 	CGuildMarkManager::Instance().SetMarkPathPrefix(newPath);
 	return Py_BuildNone();

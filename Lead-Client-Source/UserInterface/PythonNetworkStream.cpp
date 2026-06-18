@@ -419,7 +419,7 @@ const char* CPythonNetworkStream::GetAccountCharacterSlotDataz(UINT iSlot, UINT 
 
 
 				static char s_szAddr[256];
-				sprintf(s_szAddr, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+				sprintf_s(s_szAddr, sizeof(s_szAddr), "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
 				return s_szAddr;
 			}
 			break;

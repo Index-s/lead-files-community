@@ -1423,7 +1423,7 @@ bool CEterPack::__Encrypt_Panama(const char* filename, const BYTE* data, SIZE_T 
 	Encryptor.SetKeyWithIV(key, sizeof(key), (const BYTE*) m_stIV_Panama.c_str(), 32);
 
 	// Divide it into MandatoryBlockSize and only have a maximum of 2048 bytes.
-	DWORD cryptSize = dataSize - (dataSize % Encryptor.MandatoryBlockSize());
+	DWORD cryptSize = static_cast<DWORD>(dataSize - (dataSize % Encryptor.MandatoryBlockSize()));
 	cryptSize = cryptSize > 2048 ? 2048 : cryptSize;
 
 	std::string tmp;
@@ -1444,7 +1444,7 @@ bool CEterPack::__Encrypt_Panama(const char* filename, const BYTE* data, SIZE_T 
 		return false;
 	}
 
-	zObj.AllocBuffer(dataSize);
+	zObj.AllocBuffer(static_cast<DWORD>(dataSize));
 	memcpy(zObj.GetBuffer(), tmp.c_str(), cryptSize);
 
 	if (dataSize - cryptSize > 0)
@@ -1472,7 +1472,7 @@ bool CEterPack::__Decrypt_Panama(const char* filename, const BYTE* data, SIZE_T 
 	Decryptor.SetKeyWithIV(key, sizeof(key), (const BYTE*) m_stIV_Panama.c_str(), 32);
 
 	// Divide it into MandatoryBlockSize and only have a maximum of 2048 bytes.
-	DWORD cryptSize = dataSize - (dataSize % Decryptor.MandatoryBlockSize());
+	DWORD cryptSize = static_cast<DWORD>(dataSize - (dataSize % Decryptor.MandatoryBlockSize()));
 	cryptSize = cryptSize > 2048 ? 2048 : cryptSize;
 
 	std::string tmp;
@@ -1493,7 +1493,7 @@ bool CEterPack::__Decrypt_Panama(const char* filename, const BYTE* data, SIZE_T 
 		return false;
 	}
 
-	zObj.AllocBuffer(dataSize);
+	zObj.AllocBuffer(static_cast<DWORD>(dataSize));
 	memcpy(zObj.GetBuffer(), tmp.c_str(), cryptSize);
 
 	if (dataSize - cryptSize > 0)

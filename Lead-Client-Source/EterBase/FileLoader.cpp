@@ -252,7 +252,8 @@ bool CDiskFileLoader::Open(const char* c_szFileName)
 	if (!c_szFileName[0])
 		return false;
 
-	m_fp = fopen(c_szFileName, "rb");
+	if (fopen_s(&m_fp, c_szFileName, "rb") != 0)
+		m_fp = NULL;
 
 	if (!m_fp)
 		return false;

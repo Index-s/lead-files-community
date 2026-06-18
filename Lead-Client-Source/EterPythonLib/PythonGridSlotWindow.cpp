@@ -32,10 +32,10 @@ void CGridSlotWindow::OnRenderPickingSlot()
 				else
 					CPythonGraphic::Instance().SetDiffuseColor(1.0f, 0.0f, 0.0f, 0.5f);
 
-				CPythonGraphic::Instance().RenderBar2d(	m_rect.left + pCenterSlot->ixPosition,
-														m_rect.top + pCenterSlot->iyPosition,
-														m_rect.left + pCenterSlot->ixPosition + pCenterSlot->byxPlacedItemSize * ITEM_WIDTH,
-														m_rect.top + pCenterSlot->iyPosition + pCenterSlot->byyPlacedItemSize * ITEM_HEIGHT);
+				CPythonGraphic::Instance().RenderBar2d(	static_cast<float>(m_rect.left + pCenterSlot->ixPosition),
+														static_cast<float>(m_rect.top + pCenterSlot->iyPosition),
+														static_cast<float>(m_rect.left + pCenterSlot->ixPosition + pCenterSlot->byxPlacedItemSize * ITEM_WIDTH),
+														static_cast<float>(m_rect.top + pCenterSlot->iyPosition + pCenterSlot->byyPlacedItemSize * ITEM_HEIGHT));
 				return;
 			}
 		}
@@ -61,7 +61,7 @@ void CGridSlotWindow::OnRenderPickingSlot()
 			Rect.bottom = max(Rect.bottom, m_rect.top + pSlot->iyPosition + pSlot->byxPlacedItemSize*ITEM_HEIGHT);
 		}
 
-		CPythonGraphic::Instance().RenderBar2d(Rect.left, Rect.top, Rect.right, Rect.bottom);
+		CPythonGraphic::Instance().RenderBar2d(static_cast<float>(Rect.left), static_cast<float>(Rect.top), static_cast<float>(Rect.right), static_cast<float>(Rect.bottom));
 	}
 }
 

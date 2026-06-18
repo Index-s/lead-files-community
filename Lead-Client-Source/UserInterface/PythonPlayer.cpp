@@ -447,7 +447,7 @@ void CPythonPlayer::SetStatus(DWORD dwType, GoldType lValue)
 		CInstanceBase* pkPlayer = NEW_GetMainActorPtr();
 
 		if (pkPlayer)
-			pkPlayer->UpdateTextTailLevel(lValue);
+			pkPlayer->UpdateTextTailLevel(static_cast<DWORD>(lValue));
 	}
 
 	switch (dwType)
@@ -661,7 +661,7 @@ DWORD CPythonPlayer::GetItemMetinSocket(TItemPos Cell, DWORD dwMetinSocketIndex)
 	if (dwMetinSocketIndex >= ITEM_SOCKET_SLOT_MAX_NUM)
 		return 0;
 
-	return GetItemData(Cell)->alSockets[dwMetinSocketIndex];
+	return static_cast<DWORD>(GetItemData(Cell)->alSockets[dwMetinSocketIndex]);
 }
 
 void CPythonPlayer::GetItemAttribute(TItemPos Cell, DWORD dwAttrSlotIndex, BYTE * pbyType, short * psValue)

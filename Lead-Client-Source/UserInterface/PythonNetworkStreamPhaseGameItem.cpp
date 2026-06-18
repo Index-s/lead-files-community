@@ -273,7 +273,7 @@ bool CPythonNetworkStream::RecvItemUpdatePacket()
 	IAbstractPlayer& rkPlayer=IAbstractPlayer::GetSingleton();
 	rkPlayer.SetItemCount(packet_item_update.Cell, packet_item_update.count);
 	for (int i = 0; i < ITEM_SOCKET_SLOT_MAX_NUM; ++i)
-		rkPlayer.SetItemMetinSocket(packet_item_update.Cell, i, packet_item_update.alSockets[i]);
+		rkPlayer.SetItemMetinSocket(packet_item_update.Cell, i, static_cast<DWORD>(packet_item_update.alSockets[i]));
 	for (int j = 0; j < ITEM_ATTRIBUTE_SLOT_MAX_NUM; ++j)
 		rkPlayer.SetItemAttribute(packet_item_update.Cell, j, packet_item_update.aAttr[j].bType, packet_item_update.aAttr[j].sValue);
 
@@ -290,11 +290,11 @@ bool CPythonNetworkStream::RecvItemGroundAddPacket()
 
 	__GlobalPositionToLocalPosition(packet_item_ground_add.x, packet_item_ground_add.y);
 
-	CPythonItem::Instance().CreateItem(packet_item_ground_add.dwVID, 
+	CPythonItem::Instance().CreateItem(packet_item_ground_add.dwVID,
 									   packet_item_ground_add.dwVnum,
-									   packet_item_ground_add.x,
-									   packet_item_ground_add.y,
-									   packet_item_ground_add.z);
+									   static_cast<float>(packet_item_ground_add.x),
+									   static_cast<float>(packet_item_ground_add.y),
+									   static_cast<float>(packet_item_ground_add.z));
 	return true;
 }
 
@@ -518,7 +518,7 @@ bool CPythonNetworkStream::SendItemDropPacket(TItemPos pos, GoldType elk, DWORD 
 	itemDropPacket.header = HEADER_CG_ITEM_DROP;
 	itemDropPacket.Cell = pos;
 	itemDropPacket.gold = elk;
-	itemDropPacket.count = count;
+	itemDropPacket.count = static_cast<ItemStackType>(count);
 
 	if (!Send(sizeof(itemDropPacket), &itemDropPacket))
 	{
