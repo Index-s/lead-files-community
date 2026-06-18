@@ -792,7 +792,7 @@ bool is_valid_regen(LPREGEN currRegen)
 
 void regen_free_map(long lMapIndex)
 {
-	LPREGEN		regen, prev, next, next_regen;
+	LPREGEN		regen, next_regen;
 
 	for (regen = regen_list; regen; regen = next_regen)
 	{

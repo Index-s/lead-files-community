@@ -177,7 +177,7 @@ class CGuild
 		void		SaveMember(DWORD pid);
 
 		int		GetMaxMemberCount(); 
-		int		GetMemberCount() { return m_member.size(); }
+		int		GetMemberCount() { return static_cast<int>(m_member.size()); }
 		int		GetTotalLevel() const;
 
 		// GUILD_MEMBER_COUNT_BONUS

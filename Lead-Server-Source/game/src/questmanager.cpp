@@ -107,7 +107,7 @@ namespace quest
 
 				string s;
 				getline(inf, s);
-				unsigned int li = 0, ri = s.size()-1;
+				unsigned int li = 0, ri = static_cast<unsigned int>(s.size()-1);
 				while (li < s.size() && isspace(s[li])) li++;
 				while (ri > 0 && isspace(s[ri])) ri--;
 
@@ -912,12 +912,12 @@ namespace quest
 			packet_script.header = HEADER_GC_SCRIPT;
 			packet_script.skin = QUEST_SKIN_NOWINDOW;
 			string data = "[DESTROY_ALL]";
-			packet_script.src_size = data.size();
+			packet_script.src_size = static_cast<WORD>(data.size());
 			packet_script.size = packet_script.src_size + sizeof(struct packet_script);
 
 			TEMP_BUFFER buf;
 			buf.write(&packet_script, sizeof(struct packet_script));
-			buf.write(&data[0], data.size());
+			buf.write(&data[0], static_cast<int>(data.size()));
 
 			pkChr->GetDesc()->Packet(buf.read_peek(), buf.size());
 		}
@@ -988,12 +988,12 @@ namespace quest
 
 		packet_script.header = HEADER_GC_SCRIPT;
 		packet_script.skin = m_iCurrentSkin;
-		packet_script.src_size = m_strScript.size();
+		packet_script.src_size = static_cast<WORD>(m_strScript.size());
 		packet_script.size = packet_script.src_size + sizeof(struct packet_script);
 
 		TEMP_BUFFER buf;
 		buf.write(&packet_script, sizeof(struct packet_script));
-		buf.write(&m_strScript[0], m_strScript.size());
+		buf.write(&m_strScript[0], static_cast<int>(m_strScript.size()));
 
 		GetCurrentCharacterPtr()->GetDesc()->Packet(buf.read_peek(), buf.size());
 
@@ -1060,7 +1060,7 @@ namespace quest
 		}
 		else
 		{
-			unsigned int new_id = UINT_MAX - m_mapTimerID.size();
+			unsigned int new_id = UINT_MAX - static_cast<unsigned int>(m_mapTimerID.size());
 
 			m_mapNPC[new_id].Set(new_id, name);
 			m_mapTimerID.insert(make_pair(name, new_id));
@@ -1187,7 +1187,7 @@ namespace quest
 	void CQuestManager::SetEventFlag(const string& name, int value)
 	{
 		static const char*	DROPEVENT_CHARTONE_NAME		= "drop_char_stone";
-		static const int	DROPEVENT_CHARTONE_NAME_LEN = strlen(DROPEVENT_CHARTONE_NAME);
+		static const int	DROPEVENT_CHARTONE_NAME_LEN = static_cast<int>(strlen(DROPEVENT_CHARTONE_NAME));
 
 		int prev_value = m_mapEventFlag[name];
 
@@ -1583,7 +1583,7 @@ namespace quest
 		{
 			lua_getglobal(qs.co, "__codecache");
 			// stack : __codecache
-			lua_pushnumber(qs.co, (long)code);
+			lua_pushnumber(qs.co, (lua_Number)(uintptr_t)code);
 			// stack : __codecache (codeptr)
 			lua_rawget(qs.co, -2);
 			// stack : __codecache (compiled-code)
@@ -1598,7 +1598,7 @@ namespace quest
 				// stack : __codecache
 				luaL_loadbuffer(qs.co, code, code_size, quest_name.c_str());
 				// stack : __codecache (compiled-code)
-				lua_pushnumber(qs.co, (long)code);
+				lua_pushnumber(qs.co, (lua_Number)(uintptr_t)code);
 				// stack : __codecache (compiled-code) (codeptr)
 				lua_pushvalue(qs.co, -2);
 				// stack : __codecache (compiled-code) (codeptr) (compiled_code)

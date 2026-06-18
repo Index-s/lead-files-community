@@ -249,11 +249,11 @@ SQLMsg * CAsyncSQL::DirectQuery(const char * c_pszQuery)
 	p->iID = ++m_iMsgCount;
 	p->stQuery = c_pszQuery;
 
-	if (mysql_real_query(&m_hDB, p->stQuery.c_str(), p->stQuery.length()))
+	if (mysql_real_query(&m_hDB, p->stQuery.c_str(), static_cast<unsigned long>(p->stQuery.length())))
 	{
 		char buf[1024];
 
-		snprintf(buf, sizeof(buf),
+		_snprintf_s(buf, sizeof(buf), _TRUNCATE,
 				"AsyncSQL::DirectQuery : mysql_query error: %s\nquery: %s",
 				mysql_error(&m_hDB), p->stQuery.c_str());
 
@@ -386,7 +386,7 @@ int CAsyncSQL::CopyQuery()
 
 	//m_map_kSQLMsgUnfinished.erase(iID);
 
-	int count = m_queue_query_copy.size();	
+	int count = static_cast<int>(m_queue_query_copy.size());
 
 	MUTEX_UNLOCK(m_mtxQuery);
 	return count;
@@ -422,12 +422,12 @@ void	CAsyncSQL::AddCopiedQueryCount(int iCopiedQuery)
 
 DWORD CAsyncSQL::CountQuery()
 {
-	return m_queue_query.size();
+	return static_cast<DWORD>(m_queue_query.size());
 }
 
 DWORD CAsyncSQL::CountResult()
 {
-	return m_queue_result.size();
+	return static_cast<DWORD>(m_queue_result.size());
 }
 
 void __timediff(struct timeval *a, struct timeval *b, struct timeval *rslt)
@@ -547,7 +547,7 @@ void CAsyncSQL::ChildLoop()
 				m_ulThreadID = mysql_thread_id(&m_hDB);
 			}
 
-			if (mysql_real_query(&m_hDB, p->stQuery.c_str(), p->stQuery.length()))
+			if (mysql_real_query(&m_hDB, p->stQuery.c_str(), static_cast<unsigned long>(p->stQuery.length())))
 			{
 				p->uiSQLErrno = mysql_errno(&m_hDB);
 
@@ -609,7 +609,7 @@ void CAsyncSQL::ChildLoop()
 			m_ulThreadID = mysql_thread_id(&m_hDB);
 		}
 
-		if (mysql_real_query(&m_hDB, p->stQuery.c_str(), p->stQuery.length()))
+		if (mysql_real_query(&m_hDB, p->stQuery.c_str(), static_cast<unsigned long>(p->stQuery.length())))
 		{
 			p->uiSQLErrno = mysql_errno(&m_hDB);
 
@@ -693,7 +693,7 @@ size_t CAsyncSQL::EscapeString(char* dst, size_t dstSize, const char *src, size_
 		return 0;
 	}
 
-	return mysql_real_escape_string(GetSQLHandle(), dst, src, srcSize);
+	return mysql_real_escape_string(GetSQLHandle(), dst, src, static_cast<unsigned long>(srcSize));
 }
 
 void CAsyncSQL2::SetLocale(const std::string & stLocale)

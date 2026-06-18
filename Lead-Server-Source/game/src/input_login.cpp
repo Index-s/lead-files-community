@@ -413,7 +413,7 @@ void CInputLogin::CharacterCreate(LPDESC d, const char * data)
 
 	memset(&player_create_packet, 0, sizeof(TPlayerCreatePacket));
 
-	if (!NewPlayerTable2(&player_create_packet.player_table, pinfo->name, pinfo->job, pinfo->shape, d->GetEmpire()))
+	if (!NewPlayerTable2(&player_create_packet.player_table, pinfo->name, static_cast<BYTE>(pinfo->job), pinfo->shape, d->GetEmpire()))
 	{
 		sys_err("player_prototype error: job %d face %d ", pinfo->job);
 		d->Packet(&packFailure, sizeof(packFailure));
@@ -569,7 +569,7 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 		sys_log(0, "PREMIUM: %s type %d %dmin", ch->GetName(), i, remain);
 	}
 
-	if (ch->IsGM() == true)
+	if (ch->IsGM())
 		ch->ChatPacket(CHAT_TYPE_COMMAND, "ConsoleEnable");
 
 	if (ch->GetMapIndex() >= 10000)
@@ -755,11 +755,11 @@ void CInputLogin::GuildSymbolCRC(LPDESC d, const char* c_pData)
 		TPacketGCSymbolData GCPacket;
 
 		GCPacket.header = HEADER_GC_SYMBOL_DATA;
-		GCPacket.size = sizeof(GCPacket) + pkGS->raw.size();
+		GCPacket.size = static_cast<WORD>(sizeof(GCPacket) + pkGS->raw.size());
 		GCPacket.guild_id = CGPacket.guild_id;
 
 		d->BufferedPacket(&GCPacket, sizeof(GCPacket));
-		d->Packet(&pkGS->raw[0], pkGS->raw.size());
+		d->Packet(&pkGS->raw[0], static_cast<int>(pkGS->raw.size()));
 
 		sys_log(0, "SendGuildSymbolHead %02X%02X%02X%02X Size %d", 
 				pkGS->raw[0], pkGS->raw[1], pkGS->raw[2], pkGS->raw[3], pkGS->raw.size());
@@ -816,7 +816,7 @@ void CInputLogin::GuildMarkIDXList(LPDESC d, const char* c_pData)
 	TPacketGCMarkIdxlist p;
 	p.header = HEADER_GC_MARK_IDXLIST;
 	p.bufSize = sizeof(p) + bufSize;
-	p.count = rkMarkMgr.GetMarkCount();
+	p.count = static_cast<WORD>(rkMarkMgr.GetMarkCount());
 
 	if (buf)
 	{
@@ -847,7 +847,7 @@ void CInputLogin::GuildMarkCRCList(LPDESC d, const char* c_pData)
 
 		buf.write(&posBlock, sizeof(BYTE));
 		buf.write(&rkBlock.m_sizeCompBuf, sizeof(DWORD));
-		buf.write(rkBlock.m_abCompBuf, rkBlock.m_sizeCompBuf);
+		buf.write(rkBlock.m_abCompBuf, static_cast<int>(rkBlock.m_sizeCompBuf));
 
 		++blockCount;
 	}

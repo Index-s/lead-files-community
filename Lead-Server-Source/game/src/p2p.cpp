@@ -253,7 +253,7 @@ int P2P_MANAGER::GetEmpireUserCount(int idx)
 
 int P2P_MANAGER::GetDescCount()
 {
-	return m_set_pkPeers.size();
+	return static_cast<int>(m_set_pkPeers.size());
 }
 
 void P2P_MANAGER::GetP2PHostNames(std::string& hostNames)

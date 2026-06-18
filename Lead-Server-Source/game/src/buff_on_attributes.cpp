@@ -137,7 +137,7 @@ bool CBuffOnAttributes::On(BYTE bValue)
 	if (0 != m_bBuffValue || 0 == bValue)
 		return false;
 	
-	int n = m_p_vec_buff_wear_targets->size();
+	int n = static_cast<int>(m_p_vec_buff_wear_targets->size());
 	m_map_additional_attrs.clear();
 	for (int i = 0; i < n; i++)
 	{

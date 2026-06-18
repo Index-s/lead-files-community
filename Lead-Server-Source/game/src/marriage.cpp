@@ -95,7 +95,7 @@ namespace marriage
 			}
 		}
 
-		int days = (get_global_time() - marry_time);
+		int days = static_cast<int>(get_global_time() - marry_time);
 		if (test_server)
 			days /= 60;
 		else

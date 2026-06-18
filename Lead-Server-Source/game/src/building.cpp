@@ -110,7 +110,7 @@ void CObject::EncodeInsertPacket(LPENTITY entity)
 	pack.x              = GetX();
 	pack.y              = GetY();
 	pack.z              = GetZ();
-	pack.wRaceNum       = m_data.dwVnum;
+	pack.wRaceNum       = static_cast<WORD>(m_data.dwVnum);
 
 	// Building Rotation Information ( Door location when on a wall ) convert
 	pack.dwAffectFlag[0] = unsigned(m_data.xRot);
@@ -276,7 +276,7 @@ void CObject::RegenNPC()
 	int y = m_pProto->lNPCY;
 	int newX, newY;
 
-	float rot = m_data.zRot * 2.0f * M_PI / 360.0f;
+	float rot = static_cast<float>(m_data.zRot * 2.0f * M_PI / 360.0f);
 
 	newX = (int)(( x * cosf(rot)) + ( y * sinf(rot)));
 	newY = (int)(( y * cosf(rot)) - ( x * sinf(rot)));
@@ -529,7 +529,7 @@ bool CLand::RequestCreateObject(DWORD dwVnum, long lMapIndex, long x, long y, fl
 	int oex = x + pkProto->lRegion[2];
 	int oey = y + pkProto->lRegion[3];
 
-	float rad = zRot * 2.0f * M_PI / 360.0f;
+	float rad = static_cast<float>(zRot * 2.0f * M_PI / 360.0f);
 
 	int tsx = (int)(pkProto->lRegion[0] * cosf(rad) + pkProto->lRegion[1] * sinf(rad) + x);
 	int tsy = (int)(pkProto->lRegion[0] * -sinf(rad) + pkProto->lRegion[1] * cosf(rad) + y);
@@ -985,7 +985,7 @@ void CManager::SendLandList(LPDESC d, long lMapIndex)
 		TPacketGCLandList p;
 
 		p.header = HEADER_GC_LAND_LIST;
-		p.size = sizeof(TPacketGCLandList) + buf.size();
+		p.size = static_cast<WORD>(sizeof(TPacketGCLandList) + buf.size());
 
 		d->BufferedPacket(&p, sizeof(TPacketGCLandList));
 		d->Packet(buf.read_peek(), buf.size());
@@ -1075,7 +1075,7 @@ void CLand::DrawWall(DWORD dwVnum, long nMapIndex, long& x, long& y, char length
 
 	for ( int i=0; i < length; i++ )
 	{
-		this->RequestCreateObject(dwVnum, nMapIndex, x, y, 0, 0, rot, false);
+		this->RequestCreateObject(dwVnum, nMapIndex, x, y, 0, 0, static_cast<float>(rot), false);
 		x += dx;
 		y += dy;
 	}
@@ -1100,37 +1100,37 @@ bool CLand::RequestCreateWall(long nMapIndex, float rot)
 	{
 		int door_x = wall_x;
 		int door_y = wall_y + wall_half_h;
-		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x, wall_y + wall_half_h, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x, wall_y - wall_half_h, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x - wall_half_w, wall_y, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x + wall_half_w, wall_y, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-	}	
+		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x, wall_y + wall_half_h, static_cast<float>(door_x), static_cast<float>(door_y),   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x, wall_y - wall_half_h, static_cast<float>(door_x), static_cast<float>(door_y),   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x - wall_half_w, wall_y, static_cast<float>(door_x), static_cast<float>(door_y),   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x + wall_half_w, wall_y, static_cast<float>(door_x), static_cast<float>(door_y),   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+	}
 	else if (rot == 180.0f)		// north gate
 	{
 		int door_x = wall_x;
 		int door_y = wall_y - wall_half_h;
-		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x, wall_y - wall_half_h, door_x, door_y, 180.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x, wall_y + wall_half_h, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x - wall_half_w, wall_y, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x + wall_half_w, wall_y, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x, wall_y - wall_half_h, static_cast<float>(door_x), static_cast<float>(door_y), 180.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x, wall_y + wall_half_h, static_cast<float>(door_x), static_cast<float>(door_y),   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x - wall_half_w, wall_y, static_cast<float>(door_x), static_cast<float>(door_y),   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x + wall_half_w, wall_y, static_cast<float>(door_x), static_cast<float>(door_y),   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
 	}
-	else if (rot == 90.0f)		// east gate 
+	else if (rot == 90.0f)		// east gate
 	{
 		int door_x = wall_x + wall_half_h;
 		int door_y = wall_y;
-		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x + wall_half_h, wall_y, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x - wall_half_h, wall_y, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x, wall_y - wall_half_w, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x, wall_y + wall_half_w, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x + wall_half_h, wall_y, static_cast<float>(door_x), static_cast<float>(door_y),  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x - wall_half_h, wall_y, static_cast<float>(door_x), static_cast<float>(door_y),  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x, wall_y - wall_half_w, static_cast<float>(door_x), static_cast<float>(door_y),  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x, wall_y + wall_half_w, static_cast<float>(door_x), static_cast<float>(door_y),  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
 	}
-	else if (rot == 270.0f)		// west gate 
+	else if (rot == 270.0f)		// west gate
 	{
 		int door_x = wall_x - wall_half_h;
 		int door_y = wall_y;
-		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x - wall_half_h, wall_y, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x + wall_half_h, wall_y, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x, wall_y - wall_half_w, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x, wall_y + wall_half_w, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x - wall_half_h, wall_y, static_cast<float>(door_x), static_cast<float>(door_y),  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x + wall_half_h, wall_y, static_cast<float>(door_x), static_cast<float>(door_y),  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x, wall_y - wall_half_w, static_cast<float>(door_x), static_cast<float>(door_y),  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x, wall_y + wall_half_w, static_cast<float>(door_x), static_cast<float>(door_y),  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
 	}
 
 	if (test_server)
@@ -1221,25 +1221,25 @@ bool CLand::RequestCreateWallBlocks(DWORD dwVnum, long nMapIndex, char wallSize,
 				break;
 		}
 
-		this->RequestCreateObject(corner, nMapIndex, startX, startY, 0, 0, rot, checkAnother);
+		this->RequestCreateObject(corner, nMapIndex, startX, startY, 0, 0, static_cast<float>(rot), checkAnother);
 
 		*ptr = *ptr + ( 700 * delta );
 
 		if ( doorOpen[i] )
 		{
-			this->DrawWall(wall, nMapIndex, startX, startY, wallSize, rot);
+			this->DrawWall(wall, nMapIndex, startX, startY, wallSize, static_cast<float>(rot));
 
 			*ptr = *ptr + ( 700 * delta );
 
-			this->RequestCreateObject(door, nMapIndex, startX, startY, 0, 0, rot, checkAnother);
+			this->RequestCreateObject(door, nMapIndex, startX, startY, 0, 0, static_cast<float>(rot), checkAnother);
 
 			*ptr = *ptr + ( 1300 * delta );
 
-			this->DrawWall(wall, nMapIndex, startX, startY, wallSize, rot);
+			this->DrawWall(wall, nMapIndex, startX, startY, wallSize, static_cast<float>(rot));
 		}
 		else
 		{
-			this->DrawWall(wall, nMapIndex, startX, startY, wallSize*2 + 4, rot);
+			this->DrawWall(wall, nMapIndex, startX, startY, wallSize*2 + 4, static_cast<float>(rot));
 		}
 
 		*ptr = *ptr + ( 100 * delta );

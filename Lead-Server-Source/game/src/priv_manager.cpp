@@ -93,7 +93,7 @@ void CPrivManager::GiveGuildPriv(DWORD guild_id, BYTE type, int value, BYTE bLog
 	sys_log(0,"Set Guild Priv: guild_id(%u) type(%d) value(%d) duration_sec(%d)", guild_id, type, value, end_time_sec - get_global_time());
 
 	value = MINMAX(0, value, 50);
-	end_time_sec = MINMAX(0, end_time_sec, get_global_time()+60*60*24*7);
+	end_time_sec = MINMAX(0, static_cast<int>(end_time_sec), static_cast<int>(get_global_time()+60*60*24*7));
 
 	m_aPrivGuild[type][guild_id].value = value;
 	m_aPrivGuild[type][guild_id].end_time_sec = end_time_sec;
@@ -151,7 +151,7 @@ void CPrivManager::GiveEmpirePriv(BYTE empire, BYTE type, int value, BYTE bLog, 
 	sys_log(0, "Set Empire Priv: empire(%d) type(%d) value(%d) duration_sec(%d)", empire, type, value, end_time_sec-get_global_time());
 
 	value = MINMAX(0, value, 200);
-	end_time_sec = MINMAX(0, end_time_sec, get_global_time()+60*60*24*7);
+	end_time_sec = MINMAX(0, static_cast<int>(end_time_sec), static_cast<int>(get_global_time()+60*60*24*7));
 
 	SPrivEmpireData& rkPrivEmpireData=m_aakPrivEmpireData[type][empire];
 	rkPrivEmpireData.m_value = value;

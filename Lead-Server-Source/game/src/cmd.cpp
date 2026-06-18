@@ -501,7 +501,7 @@ void interpreter_set_privilege(const char *cmd, int lvl)
 
 	for (i = 0; *cmd_info[i].command != '\n'; ++i)
 	{
-		if (!str_cmp(cmd, cmd_info[i].command))
+		if (!_stricmp(cmd, cmd_info[i].command))
 		{
 			cmd_info[i].gm_level = lvl;
 			sys_log(0, "Setting command privilege: %s -> %d", cmd, lvl);

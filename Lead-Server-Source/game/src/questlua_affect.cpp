@@ -135,7 +135,7 @@ namespace quest
 			return 0;
 		}
 
-		DWORD affectType = lua_tonumber(L, 1);
+		DWORD affectType = (DWORD) lua_tonumber(L, 1);
 
 		CAffect* pkAff = ch->FindAffect(affectType);
 

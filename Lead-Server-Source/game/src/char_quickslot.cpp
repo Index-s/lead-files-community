@@ -145,7 +145,7 @@ void CHARACTER::ChainQuickslotItem(LPITEM pItem, BYTE bType, BYTE bOldPos)
 		{
 			TQuickslot slot;
 			slot.type = bType;
-			slot.pos = pItem->GetCell();
+			slot.pos = static_cast<BYTE>(pItem->GetCell());
 
 			SetQuickslot(i, slot);
 

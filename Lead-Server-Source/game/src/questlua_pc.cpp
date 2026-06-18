@@ -854,7 +854,7 @@ namespace quest
 		}
 		else
 		{
-			int newLevel = lua_tonumber(L, 1);
+			int newLevel = static_cast<int>(lua_tonumber(L, 1));
 			LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 
@@ -933,7 +933,7 @@ namespace quest
 
 	int pc_get_money(lua_State * L)
 	{ 
-		lua_pushnumber(L, CQuestManager::instance().GetCurrentCharacterPtr()->GetGold());
+		lua_pushnumber(L, static_cast<lua_Number>(CQuestManager::instance().GetCurrentCharacterPtr()->GetGold()));
 		return 1;
 	}
 
@@ -1944,7 +1944,7 @@ teleport_area:
 
 	int pc_give_polymorph_book(lua_State* L)
 	{
-		if ( lua_isnumber(L, 1) != true && lua_isnumber(L, 2) != true && lua_isnumber(L, 3) != true && lua_isnumber(L, 4) != true )
+		if ( !lua_isnumber(L, 1) && !lua_isnumber(L, 2) && !lua_isnumber(L, 3) && !lua_isnumber(L, 4) )
 		{
 			sys_err("Wrong Quest Function Arguments: pc_give_polymorph_book");
 			return 0;
@@ -2058,7 +2058,7 @@ teleport_area:
 			return 1;
 		}
 
-		if ( lua_isstring(L, 1) != true )
+		if ( !lua_isstring(L, 1) )
 		{
 			lua_pushnumber(L, 1);
 			return 1;
@@ -2127,7 +2127,7 @@ teleport_area:
 
 	int pc_reset_status( lua_State* L )
 	{
-		if ( lua_isnumber(L, 1) == true )
+		if ( lua_isnumber(L, 1) )
 		{
 			int idx = (int)lua_tonumber(L, 1);
 
@@ -2302,7 +2302,7 @@ teleport_area:
 
 	int pc_is_near_vid( lua_State* L )
 	{
-		if ( lua_isnumber(L, 1) != true || lua_isnumber(L, 2) != true )
+		if ( !lua_isnumber(L, 1) || !lua_isnumber(L, 2) )
 		{
 			lua_pushboolean(L, false);
 		}
@@ -2548,7 +2548,7 @@ teleport_area:
 
 		if (NULL != pChar)
 		{
-			lua_pushnumber(L, pChar->GetPoint(POINT_SKILL));
+			lua_pushnumber(L, static_cast<lua_Number>(pChar->GetPoint(POINT_SKILL)));
 		}
 		else
 		{
@@ -2567,7 +2567,7 @@ teleport_area:
 
 	int pc_give_poly_marble(lua_State* L)
 	{
-		const int dwVnum = lua_tonumber(L, 1);
+		const int dwVnum = static_cast<int>(lua_tonumber(L, 1));
 
 		const CMob* MobInfo = CMobManager::instance().Get(dwVnum);
 

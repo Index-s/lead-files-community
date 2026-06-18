@@ -534,9 +534,9 @@ namespace quest
 
 			++it;
 
-			int iPos = stComp.find(".");
+			size_t iPos = stComp.find(".");
 
-			if (iPos < 0)
+			if (iPos == std::string::npos)
 			{
 				sys_err("quest::PC::Save : cannot find . in FlagMap");
 				continue;

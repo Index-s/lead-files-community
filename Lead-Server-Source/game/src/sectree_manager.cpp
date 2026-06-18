@@ -187,15 +187,15 @@ int SECTREE_MANAGER::LoadSettingFile(long lMapIndex, const char * c_pszSettingFi
 	{
 		sscanf(buf, " %s ", cmd);
 
-		if (!strcasecmp(cmd, "MapSize"))
+		if (!_stricmp(cmd, "MapSize"))
 		{
 			sscanf(buf, " %s %d %d ", cmd, &iWidth, &iHeight);
 		}
-		else if (!strcasecmp(cmd, "BasePosition"))
+		else if (!_stricmp(cmd, "BasePosition"))
 		{
 			sscanf(buf, " %s %d %d", cmd, &r_setting.iBaseX, &r_setting.iBaseY);
 		}
-		else if (!strcasecmp(cmd, "CellScale"))
+		else if (!_stricmp(cmd, "CellScale"))
 		{
 			sscanf(buf, " %s %d ", cmd, &r_setting.iCellScale);
 		}
@@ -398,7 +398,7 @@ bool SECTREE_MANAGER::LoadAttribute(LPSECTREE_MAP pkMapSectree, const char * c_p
 	fread(&iWidth, sizeof(int), 1, fp);
 	fread(&iHeight, sizeof(int), 1, fp);
 
-	int maxMemSize = LZOManager::instance().GetMaxCompressedSize(sizeof(DWORD) * (SECTREE_SIZE / CELL_SIZE) * (SECTREE_SIZE / CELL_SIZE));
+	int maxMemSize = static_cast<int>(LZOManager::instance().GetMaxCompressedSize(sizeof(DWORD) * (SECTREE_SIZE / CELL_SIZE) * (SECTREE_SIZE / CELL_SIZE)));
 
 	unsigned int uiSize;
 	lzo_uint uiDestSize;
@@ -669,7 +669,7 @@ int SECTREE_MANAGER::GetMapIndex(int32_t x, int32_t y)
 
 int SECTREE_MANAGER::Build(const char * c_pszListFileName, const char* c_pszMapBasePath)
 {
-	if (true == test_server)
+	if (0 != test_server)
 	{
 		sys_log ( 0, "[BUILD] Build %s %s ", c_pszListFileName, c_pszMapBasePath );
 	}
@@ -714,7 +714,7 @@ int SECTREE_MANAGER::Build(const char * c_pszListFileName, const char* c_pszMapB
 			return 0;
 		}
 
-		if (true == test_server)
+		if (0 != test_server)
 			sys_log ( 0,"[BUILD] Build %s %s %d ",c_pszMapBasePath, szMapName, iIndex );
 
 		// First, check whether the monsters for this map need to be spawned on this server. .
@@ -879,7 +879,7 @@ bool SECTREE_MANAGER::GetRandomLocation(long lMapIndex, PIXEL_POSITION & r_pos, 
 			{
 				int d;
 
-				d = abs((float)dwCurrentX - x);
+				d = static_cast<int>(abs((float)dwCurrentX - x));
 
 				if (d > iMaxDistance)
 				{
@@ -889,7 +889,7 @@ bool SECTREE_MANAGER::GetRandomLocation(long lMapIndex, PIXEL_POSITION & r_pos, 
 						x = dwCurrentX + iMaxDistance;
 				}
 
-				d = abs((float)dwCurrentY - y);
+				d = static_cast<int>(abs((float)dwCurrentY - y));
 
 				if (d > iMaxDistance)
 				{
@@ -1077,7 +1077,7 @@ void SECTREE_MANAGER::SendNPCPosition(LPCHARACTER ch)
 	TEMP_BUFFER buf;
 	TPacketGCNpcPosition p;
 	p.header = HEADER_GC_NPC_POSITION;
-	p.count = m_mapNPCPosition[lMapIndex].size();
+	p.count = static_cast<WORD>(m_mapNPCPosition[lMapIndex].size());
 
 	TNPCPosition np;
 
@@ -1093,7 +1093,7 @@ void SECTREE_MANAGER::SendNPCPosition(LPCHARACTER ch)
 		buf.write(&np, sizeof(np));
 	}
 
-	p.size = sizeof(p) + buf.size();
+	p.size = static_cast<WORD>(sizeof(p) + buf.size());
 
 	if (buf.size())
 	{
@@ -1241,6 +1241,8 @@ bool SECTREE_MANAGER::ForAttrRegionRightAngle( long lMapIndex, long lCX, long lC
 	return mode == ATTR_REGION_MODE_CHECK ? false : true;
 }
 
+#undef min
+#undef max
 #define min( l, r )	((l) < (r) ? (l) : (r))
 #define max( l, r )	((l) < (r) ? (r) : (l))
 

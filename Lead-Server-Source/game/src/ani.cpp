@@ -5,9 +5,10 @@
  * description : 
  */
 
+#include "stdafx.h"
+
 #define _ani_cpp_
 
-#include "stdafx.h"
 #include "char.h"
 #include "item.h"
 #include "ani.h"
@@ -95,7 +96,7 @@ DWORD FN_attack_speed_from_file(const char *file)
 
 		if (field && value)
 		{
-			if (0 == strcasecmp(field, key))
+			if (0 == _stricmp(field, key))
 			{
 				float f_speed = strtof(value, NULL);
 				speed = (int) (f_speed * 1000.0);

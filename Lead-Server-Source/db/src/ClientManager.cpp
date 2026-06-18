@@ -237,7 +237,7 @@ void CClientManager::QUERY_BOOT(CPeer* peer, TPacketGDBoot * p)
 
 	sys_log(0, "QUERY_BOOT : AdminInfo (Request ServerIp %s) ", p->szIP);
 
-	DWORD dwPacketSize = 
+	DWORD dwPacketSize = static_cast<DWORD>(
 		sizeof(DWORD) +
 		sizeof(BYTE) +
 		sizeof(WORD) + sizeof(WORD) + sizeof(TMobTable) * m_vec_mobTable.size() +
@@ -257,7 +257,7 @@ void CClientManager::QUERY_BOOT(CPeer* peer, TPacketGDBoot * p)
 		sizeof(WORD) + sizeof(WORD) + 16 * vHost.size() +
 		sizeof(WORD) + sizeof(WORD) +  sizeof(tAdminInfo) *  vAdmin.size() +
 		//END_ADMIN_MANAGER
-		sizeof(WORD); 
+		sizeof(WORD));
 
 	peer->EncodeHeader(HEADER_DG_BOOT, 0, dwPacketSize);
 	peer->Encode(&dwPacketSize, sizeof(DWORD));
@@ -282,54 +282,54 @@ void CClientManager::QUERY_BOOT(CPeer* peer, TPacketGDBoot * p)
 	//END_ADMIN_MANAGER
 
 	peer->EncodeWORD(sizeof(TMobTable));
-	peer->EncodeWORD(m_vec_mobTable.size());
-	peer->Encode(m_vec_mobTable.data(), sizeof(TMobTable) * m_vec_mobTable.size());
+	peer->EncodeWORD(static_cast<WORD>(m_vec_mobTable.size()));
+	peer->Encode(m_vec_mobTable.data(), static_cast<DWORD>(sizeof(TMobTable) * m_vec_mobTable.size()));
 
 	peer->EncodeWORD(sizeof(TItemTable));
-	peer->EncodeWORD(m_vec_itemTable.size());
-	peer->Encode(m_vec_itemTable.data(), sizeof(TItemTable) * m_vec_itemTable.size());
+	peer->EncodeWORD(static_cast<WORD>(m_vec_itemTable.size()));
+	peer->Encode(m_vec_itemTable.data(), static_cast<DWORD>(sizeof(TItemTable) * m_vec_itemTable.size()));
 
 	peer->EncodeWORD(sizeof(TShopTable));
 	peer->EncodeWORD(m_iShopTableSize);
 	peer->Encode(m_pShopTable, sizeof(TShopTable) * m_iShopTableSize);
 
 	peer->EncodeWORD(sizeof(TSkillTable));
-	peer->EncodeWORD(m_vec_skillTable.size());
-	peer->Encode(m_vec_skillTable.data(), sizeof(TSkillTable) * m_vec_skillTable.size());
+	peer->EncodeWORD(static_cast<WORD>(m_vec_skillTable.size()));
+	peer->Encode(m_vec_skillTable.data(), static_cast<DWORD>(sizeof(TSkillTable) * m_vec_skillTable.size()));
 
 	peer->EncodeWORD(sizeof(TRefineTable));
 	peer->EncodeWORD(m_iRefineTableSize);
 	peer->Encode(m_pRefineTable, sizeof(TRefineTable) * m_iRefineTableSize);
 
 	peer->EncodeWORD(sizeof(TItemAttrTable));
-	peer->EncodeWORD(m_vec_itemAttrTable.size());
-	peer->Encode(m_vec_itemAttrTable.data(), sizeof(TItemAttrTable) * m_vec_itemAttrTable.size());
+	peer->EncodeWORD(static_cast<WORD>(m_vec_itemAttrTable.size()));
+	peer->Encode(m_vec_itemAttrTable.data(), static_cast<DWORD>(sizeof(TItemAttrTable) * m_vec_itemAttrTable.size()));
 
 	peer->EncodeWORD(sizeof(TItemAttrTable));
-	peer->EncodeWORD(m_vec_itemRareTable.size());
-	peer->Encode(m_vec_itemRareTable.data(), sizeof(TItemAttrTable) * m_vec_itemRareTable.size());
+	peer->EncodeWORD(static_cast<WORD>(m_vec_itemRareTable.size()));
+	peer->Encode(m_vec_itemRareTable.data(), static_cast<DWORD>(sizeof(TItemAttrTable) * m_vec_itemRareTable.size()));
 
 	peer->EncodeWORD(sizeof(TBanwordTable));
-	peer->EncodeWORD(m_vec_banwordTable.size());
-	peer->Encode(m_vec_banwordTable.data(), sizeof(TBanwordTable) * m_vec_banwordTable.size());
+	peer->EncodeWORD(static_cast<WORD>(m_vec_banwordTable.size()));
+	peer->Encode(m_vec_banwordTable.data(), static_cast<DWORD>(sizeof(TBanwordTable) * m_vec_banwordTable.size()));
 
 	peer->EncodeWORD(sizeof(building::TLand));
-	peer->EncodeWORD(m_vec_kLandTable.size());
-	peer->Encode(m_vec_kLandTable.data(), sizeof(building::TLand) * m_vec_kLandTable.size());
+	peer->EncodeWORD(static_cast<WORD>(m_vec_kLandTable.size()));
+	peer->Encode(m_vec_kLandTable.data(), static_cast<DWORD>(sizeof(building::TLand) * m_vec_kLandTable.size()));
 
 	peer->EncodeWORD(sizeof(building::TObjectProto));
-	peer->EncodeWORD(m_vec_kObjectProto.size());
-	peer->Encode(m_vec_kObjectProto.data(), sizeof(building::TObjectProto) * m_vec_kObjectProto.size());
+	peer->EncodeWORD(static_cast<WORD>(m_vec_kObjectProto.size()));
+	peer->Encode(m_vec_kObjectProto.data(), static_cast<DWORD>(sizeof(building::TObjectProto) * m_vec_kObjectProto.size()));
 
 	peer->EncodeWORD(sizeof(building::TObject));
-	peer->EncodeWORD(m_map_pkObjectTable.size());
+	peer->EncodeWORD(static_cast<WORD>(m_map_pkObjectTable.size()));
 
 	itertype(m_map_pkObjectTable) it = m_map_pkObjectTable.begin();
 
 	while (it != m_map_pkObjectTable.end())
 		peer->Encode((it++)->second, sizeof(building::TObject));
 
-	uint32_t now = time(0);
+	uint32_t now = static_cast<uint32_t>(time(0));
 	peer->Encode(&now, sizeof(uint32_t));
 
 	TItemIDRangeTable itemRange = CItemIDRangeManager::instance().GetRange();
@@ -345,7 +345,7 @@ void CClientManager::QUERY_BOOT(CPeer* peer, TPacketGDBoot * p)
 
 	//ADMIN_MANAGER
 	peer->EncodeWORD(16);
-	peer->EncodeWORD(vHost.size());
+	peer->EncodeWORD(static_cast<WORD>(vHost.size()));
 
 	for (size_t n = 0; n < vHost.size(); ++n)
 	{
@@ -354,7 +354,7 @@ void CClientManager::QUERY_BOOT(CPeer* peer, TPacketGDBoot * p)
 	}
 
 	peer->EncodeWORD(sizeof(tAdminInfo));
-	peer->EncodeWORD(vAdmin.size());
+	peer->EncodeWORD(static_cast<WORD>(vAdmin.size()));
 
 	for (size_t n = 0; n < vAdmin.size(); ++n)
 	{
@@ -639,7 +639,7 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 
 						do
 						{
-							dwSkillIdx = number(0, m_vec_skillTable.size()-1);
+							dwSkillIdx = number(0, static_cast<int>(m_vec_skillTable.size()) - 1);
 
 							dwSkillVnum = m_vec_skillTable[dwSkillIdx].dwVnum;
 
@@ -754,14 +754,14 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 			}
 		}
 
-		pi->pSafebox->wItemCount = s_items.size();
+		pi->pSafebox->wItemCount = static_cast<WORD>(s_items.size());
 
-		pkPeer->EncodeHeader(pi->ip[0] == 0 ? HEADER_DG_SAFEBOX_LOAD : HEADER_DG_MALL_LOAD, dwHandle, sizeof(TSafeboxTable) + sizeof(TPlayerItem) * s_items.size());
+		pkPeer->EncodeHeader(pi->ip[0] == 0 ? HEADER_DG_SAFEBOX_LOAD : HEADER_DG_MALL_LOAD, dwHandle, static_cast<DWORD>(sizeof(TSafeboxTable) + sizeof(TPlayerItem) * s_items.size()));
 
 		pkPeer->Encode(pi->pSafebox, sizeof(TSafeboxTable));
 
 		if (!s_items.empty())
-			pkPeer->Encode(&s_items[0], sizeof(TPlayerItem) * s_items.size());
+			pkPeer->Encode(&s_items[0], static_cast<DWORD>(sizeof(TPlayerItem) * s_items.size()));
 
 		delete pi;
 	}
@@ -821,11 +821,11 @@ void CClientManager::RESULT_SAFEBOX_CHANGE_PASSWORD(CPeer * pkPeer, SQLMsg * msg
 	{
 		MYSQL_ROW row = mysql_fetch_row(msg->Get()->pSQLResult);
 
-		if (row[0] && *row[0] && !strcasecmp(row[0], p->login) || (!row[0] || !*row[0]) && !strcmp("000000", p->login))
+		if (row[0] && *row[0] && !_stricmp(row[0], p->login) || (!row[0] || !*row[0]) && !strcmp("000000", p->login))
 		{
 			char szQuery[QUERY_MAX_LEN];
 			char escape_pwd[64];
-			CDBManager::instance().EscapeString(escape_pwd, p->safebox_password, strlen(p->safebox_password));
+			CDBManager::instance().EscapeString(escape_pwd, p->safebox_password, static_cast<unsigned long>(strlen(p->safebox_password)));
 
 			snprintf(szQuery, sizeof(szQuery), "UPDATE safebox%s SET password='%s' WHERE account_id=%u", GetTablePostfix(), escape_pwd, p->account_id);
 
@@ -887,9 +887,9 @@ void CClientManager::RESULT_PRICELIST_LOAD(CPeer* peer, SQLMsg* pMsg)
 
 	size_t sizePriceListSize = sizeof(TItemPriceInfo) * header.byCount;
 
-	peer->EncodeHeader(HEADER_DG_MYSHOP_PRICELIST_RES, pReqInfo->first, sizeof(header) + sizePriceListSize);
+	peer->EncodeHeader(HEADER_DG_MYSHOP_PRICELIST_RES, pReqInfo->first, static_cast<DWORD>(sizeof(header) + sizePriceListSize));
 	peer->Encode(&header, sizeof(header));
-	peer->Encode(table.aPriceInfo, sizePriceListSize);
+	peer->Encode(table.aPriceInfo, static_cast<DWORD>(sizePriceListSize));
 
 	sys_log(0, "Load MyShopPricelist handle[%d] pid[%d] count[%d]", pReqInfo->first, pReqInfo->second, header.byCount);
 
@@ -931,7 +931,7 @@ void CClientManager::QUERY_SAFEBOX_SAVE(CPeer * pkPeer, TSafeboxTable * pTable)
 	char szQuery[QUERY_MAX_LEN];
 
 	snprintf(szQuery, sizeof(szQuery),
-			"UPDATE safebox%s SET gold='%u' WHERE account_id=%u", 
+			"UPDATE safebox%s SET gold='%lld' WHERE account_id=%u",
 			GetTablePostfix(), pTable->dwGold, pTable->dwID);
 
 	CDBManager::instance().ReturnQuery(szQuery, QID_SAFEBOX_SAVE, pkPeer->GetHandle(), NULL);
@@ -1125,10 +1125,10 @@ void CClientManager::QUERY_SETUP(CPeer * peer, DWORD dwHandle, const char * c_pD
 
 	vec_kMapLocations.push_back(kMapLocations);
 
-	peer->EncodeHeader(HEADER_DG_MAP_LOCATIONS, 0, sizeof(BYTE) + sizeof(TMapLocation) * vec_kMapLocations.size());
-	bMapCount = vec_kMapLocations.size();
+	peer->EncodeHeader(HEADER_DG_MAP_LOCATIONS, 0, static_cast<DWORD>(sizeof(BYTE) + sizeof(TMapLocation) * vec_kMapLocations.size()));
+	bMapCount = static_cast<BYTE>(vec_kMapLocations.size());
 	peer->EncodeBYTE(bMapCount);
-	peer->Encode(&vec_kMapLocations[0], sizeof(TMapLocation) * vec_kMapLocations.size());
+	peer->Encode(&vec_kMapLocations[0], static_cast<DWORD>(sizeof(TMapLocation) * vec_kMapLocations.size()));
 
 	//
 	// Setup : Allows other peers to connect to the connected peer. . (P2P Create connection )
@@ -1558,7 +1558,7 @@ void CClientManager::QUERY_RELOAD_PROTO()
 		if (!tmp->GetChannel())
 			continue;
 
-		tmp->EncodeHeader(HEADER_DG_RELOAD_PROTO, 0, 
+		tmp->EncodeHeader(HEADER_DG_RELOAD_PROTO, 0, static_cast<DWORD>(
 				sizeof(WORD) + sizeof(TSkillTable) * m_vec_skillTable.size() +
 				sizeof(WORD) + sizeof(TBanwordTable) * m_vec_banwordTable.size() +
 				sizeof(WORD) + sizeof(TItemTable) * m_vec_itemTable.size() +
@@ -1566,19 +1566,19 @@ void CClientManager::QUERY_RELOAD_PROTO()
 				sizeof(WORD) + sizeof(TShopTable) * m_iShopTableSize +
 				sizeof(WORD) + sizeof(TRefineTable)* m_iRefineTableSize +
 				sizeof(WORD) + sizeof(TItemAttrTable)*m_vec_itemAttrTable.size() +
-				sizeof(WORD) + sizeof(TItemAttrTable)*m_vec_itemRareTable.size());
+				sizeof(WORD) + sizeof(TItemAttrTable)*m_vec_itemRareTable.size()));
 
-		tmp->EncodeWORD(m_vec_skillTable.size());
-		tmp->Encode(&m_vec_skillTable[0], sizeof(TSkillTable) * m_vec_skillTable.size());
+		tmp->EncodeWORD(static_cast<WORD>(m_vec_skillTable.size()));
+		tmp->Encode(&m_vec_skillTable[0], static_cast<DWORD>(sizeof(TSkillTable) * m_vec_skillTable.size()));
 
-		tmp->EncodeWORD(m_vec_banwordTable.size());
-		tmp->Encode(&m_vec_banwordTable[0], sizeof(TBanwordTable) * m_vec_banwordTable.size());
+		tmp->EncodeWORD(static_cast<WORD>(m_vec_banwordTable.size()));
+		tmp->Encode(&m_vec_banwordTable[0], static_cast<DWORD>(sizeof(TBanwordTable) * m_vec_banwordTable.size()));
 
-		tmp->EncodeWORD(m_vec_itemTable.size());
-		tmp->Encode(&m_vec_itemTable[0], sizeof(TItemTable) * m_vec_itemTable.size());
+		tmp->EncodeWORD(static_cast<WORD>(m_vec_itemTable.size()));
+		tmp->Encode(&m_vec_itemTable[0], static_cast<DWORD>(sizeof(TItemTable) * m_vec_itemTable.size()));
 
-		tmp->EncodeWORD(m_vec_mobTable.size());
-		tmp->Encode(&m_vec_mobTable[0], sizeof(TMobTable) * m_vec_mobTable.size());
+		tmp->EncodeWORD(static_cast<WORD>(m_vec_mobTable.size()));
+		tmp->Encode(&m_vec_mobTable[0], static_cast<DWORD>(sizeof(TMobTable) * m_vec_mobTable.size()));
 
 		tmp->EncodeWORD(m_iShopTableSize);
 		tmp->Encode(m_pShopTable, sizeof(TShopTable) * m_iShopTableSize);
@@ -1586,11 +1586,11 @@ void CClientManager::QUERY_RELOAD_PROTO()
 		tmp->EncodeWORD(m_iRefineTableSize);
 		tmp->Encode(m_pRefineTable, sizeof(TRefineTable) * m_iRefineTableSize);
 
-		tmp->EncodeWORD(m_vec_itemAttrTable.size());
-		tmp->Encode(&m_vec_itemAttrTable[0], sizeof(TItemAttrTable) * m_vec_itemAttrTable.size());
+		tmp->EncodeWORD(static_cast<WORD>(m_vec_itemAttrTable.size()));
+		tmp->Encode(&m_vec_itemAttrTable[0], static_cast<DWORD>(sizeof(TItemAttrTable) * m_vec_itemAttrTable.size()));
 
-		tmp->EncodeWORD(m_vec_itemRareTable.size());
-		tmp->Encode(&m_vec_itemRareTable[0], sizeof(TItemAttrTable) * m_vec_itemRareTable.size());
+		tmp->EncodeWORD(static_cast<WORD>(m_vec_itemRareTable.size()));
+		tmp->Encode(&m_vec_itemRareTable[0], static_cast<DWORD>(sizeof(TItemAttrTable) * m_vec_itemRareTable.size()));
 	}
 }
 
@@ -1947,9 +1947,9 @@ void CClientManager::MyshopPricelistRequest(CPeer* peer, DWORD dwHandle, DWORD d
 
 		size_t sizePriceListSize = sizeof(TItemPriceInfo) * pTable->byCount;
 
-		peer->EncodeHeader(HEADER_DG_MYSHOP_PRICELIST_RES, dwHandle, sizeof(header) + sizePriceListSize);
+		peer->EncodeHeader(HEADER_DG_MYSHOP_PRICELIST_RES, dwHandle, static_cast<DWORD>(sizeof(header) + sizePriceListSize));
 		peer->Encode(&header, sizeof(header));
-		peer->Encode(pTable->aPriceInfo, sizePriceListSize);
+		peer->Encode(pTable->aPriceInfo, static_cast<DWORD>(sizePriceListSize));
 
 	}
 	else
@@ -2789,7 +2789,7 @@ int CClientManager::Process()
 DWORD CClientManager::GetUserCount()
 {
 	// Simply count the login count .. --;
-	return m_map_kLogonAccount.size();
+	return static_cast<DWORD>(m_map_kLogonAccount.size());
 }
 
 void CClientManager::SendAllGuildSkillRechargePacket()
@@ -2840,7 +2840,7 @@ void CClientManager::SendNotice(const char * c_pszFormat, ...)
 
 uint32_t CClientManager::GetCurrentTime()
 {
-	return time(0);
+	return static_cast<uint32_t>(time(0));
 }
 
 // ITEM_UNIQUE_ID
@@ -3351,8 +3351,8 @@ void CClientManager::ReloadAdmin(CPeer*, TPacketReloadAdmin* p)
 	__GetHostInfo(vHost);
 	__GetAdminInfo(p->szIP, vAdmin);
 
-	DWORD dwPacketSize = sizeof(WORD) + sizeof (WORD) + sizeof(tAdminInfo) * vAdmin.size() + 
-		  sizeof(WORD) + sizeof(WORD) + 16 * vHost.size();	
+	DWORD dwPacketSize = static_cast<DWORD>(sizeof(WORD) + sizeof (WORD) + sizeof(tAdminInfo) * vAdmin.size() +
+		  sizeof(WORD) + sizeof(WORD) + 16 * vHost.size());
 
 	for (itertype(m_peerList) it = m_peerList.begin(); it != m_peerList.end(); ++it)
 	{
@@ -3364,13 +3364,13 @@ void CClientManager::ReloadAdmin(CPeer*, TPacketReloadAdmin* p)
 		peer->EncodeHeader(HEADER_DG_RELOAD_ADMIN, 0, dwPacketSize);
 
 		peer->EncodeWORD(16);
-		peer->EncodeWORD(vHost.size());
+		peer->EncodeWORD(static_cast<WORD>(vHost.size()));
 
 		for (size_t n = 0; n < vHost.size(); ++n)
 			peer->Encode(vHost[n].c_str(), 16);
 
 		peer->EncodeWORD(sizeof(tAdminInfo));
-		peer->EncodeWORD(vAdmin.size());
+		peer->EncodeWORD(static_cast<WORD>(vAdmin.size()));
 
 		for (size_t n = 0; n < vAdmin.size(); ++n)
 			peer->Encode(&vAdmin[n], sizeof(tAdminInfo));
@@ -3476,7 +3476,7 @@ void CClientManager::UpdateChannelStatus(TChannelStatus* pData)
 
 void CClientManager::RequestChannelStatus(CPeer* peer, DWORD dwHandle)
 {
-	const int nSize = m_mChannelStatus.size();
+	const int nSize = static_cast<int>(m_mChannelStatus.size());
 	peer->EncodeHeader(HEADER_DG_RESPOND_CHANNELSTATUS, dwHandle, sizeof(TChannelStatus)*nSize+sizeof(int));
 	peer->Encode(&nSize, sizeof(int));
 	for (TChannelStatusMap::iterator it = m_mChannelStatus.begin(); it != m_mChannelStatus.end(); it++) {

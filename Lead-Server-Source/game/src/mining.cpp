@@ -253,9 +253,9 @@ namespace mining
 			LPITEM pkNewPick = ITEM_MANAGER::instance().CreateItem(rkOldPick.GetRefinedVnum(), 1);
 			if (pkNewPick)
 			{
-				BYTE bCell = rkOldPick.GetCell();
+				WORD wCell = rkOldPick.GetCell();
 				rkItemMgr.RemoveItem(item, "REMOVE (REFINE PICK)");
-				pkNewPick->AddToCharacter(ch, TItemPos(INVENTORY, bCell));
+				pkNewPick->AddToCharacter(ch, TItemPos(INVENTORY, wCell));
 				LogManager::instance().ItemLog(ch, pkNewPick, "REFINE PICK SUCCESS", pkNewPick->GetName());
 				return 1;
 			}
@@ -270,9 +270,9 @@ namespace mining
 
 			if (pkNewPick)
 			{
-				BYTE bCell = rkOldPick.GetCell();
+				WORD wCell = rkOldPick.GetCell();
 				rkItemMgr.RemoveItem(item, "REMOVE (REFINE PICK)");
-				pkNewPick->AddToCharacter(ch, TItemPos(INVENTORY, bCell));
+				pkNewPick->AddToCharacter(ch, TItemPos(INVENTORY, wCell));
 				rkLogMgr.ItemLog(ch, pkNewPick, "REFINE PICK FAIL", pkNewPick->GetName());
 				return 0;
 			}

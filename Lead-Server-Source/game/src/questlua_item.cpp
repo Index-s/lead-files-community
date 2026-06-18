@@ -41,7 +41,7 @@ namespace quest
 		DWORD cell = (DWORD) lua_tonumber(L, 1);
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		LPITEM item = ch ? ch->GetInventoryItem(cell) : NULL;
+		LPITEM item = ch ? ch->GetInventoryItem(static_cast<ItemCellType>(cell)) : NULL;
 
 		if (!item)
 		{
@@ -222,9 +222,9 @@ namespace quest
 		}
 
 		item->SetForceAttribute(
-			lua_tonumber(L, 1),		// index
-			lua_tonumber(L, 2),		// apply type
-			lua_tonumber(L, 3)		// apply value
+			static_cast<int>(lua_tonumber(L, 1)),		// index
+			static_cast<BYTE>(lua_tonumber(L, 2)),		// apply type
+			static_cast<short>(lua_tonumber(L, 3))		// apply value
 		);
 
 		return 0;
@@ -390,7 +390,7 @@ namespace quest
 			ITEM_MANAGER::CopyAllAttrTo(pItem, pkNewItem);
 			LogManager::instance().ItemLog(pChar, pkNewItem, "COPY SUCCESS", pkNewItem->GetName());
 
-			BYTE bCell = pItem->GetCell();
+			WORD bCell = pItem->GetCell();
 
 			ITEM_MANAGER::instance().RemoveItem(pItem, "REMOVE (COPY SUCCESS)");
 

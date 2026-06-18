@@ -131,8 +131,8 @@ void dev_log(const char *file, int line, const char *function, int level, const 
 	buf[nlen++] = '\n';
 	buf[nlen] = 0;
 
-	::write(fd, buf, nlen);
-	::close(fd);
+	::_write(fd, buf, nlen);
+	::_close(fd);
 }
 
 void dev_log_add_level(int level)

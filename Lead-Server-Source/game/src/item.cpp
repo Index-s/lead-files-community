@@ -46,7 +46,8 @@ void CItem::Initialize()
 	m_pOwner = NULL;
 	m_dwID = 0;
 	m_bEquipped = false;
-	m_dwVID = m_wCell = m_dwCount = m_lFlag = 0;
+	m_wCell = 0;
+	m_dwVID = m_dwCount = m_lFlag = 0;
 	m_pProto = NULL;
 	m_bExchanging = false;
 	memset(&m_alSockets, 0, sizeof(m_alSockets));
@@ -202,7 +203,7 @@ void CItem::UpdatePacket()
 
 	pack.header = HEADER_GC_ITEM_UPDATE;
 	pack.Cell = TItemPos(GetWindow(), m_wCell);
-	pack.count	= m_dwCount;
+	pack.count	= static_cast<ItemStackType>(m_dwCount);
 
 	for (int i = 0; i < ITEM_SOCKET_MAX_NUM; ++i)
 		pack.alSockets[i] = m_alSockets[i];
@@ -248,11 +249,11 @@ bool CItem::SetCount(DWORD count)
 
 				if (NULL != pItem)
 				{
-					pOwner->ChainQuickslotItem(pItem, QUICKSLOT_TYPE_ITEM, wCell);
+					pOwner->ChainQuickslotItem(pItem, QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(wCell));
 				}
 				else
 				{
-					pOwner->SyncQuickslot(QUICKSLOT_TYPE_ITEM, wCell, 255);
+					pOwner->SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(wCell), 255);
 				}
 			}
 
@@ -262,7 +263,7 @@ bool CItem::SetCount(DWORD count)
 		{
 			if (!IsDragonSoul())
 			{
-				m_pOwner->SyncQuickslot(QUICKSLOT_TYPE_ITEM, m_wCell, 255);
+				m_pOwner->SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(m_wCell), 255);
 			}
 			M2_DESTROY_ITEM(RemoveFromCharacter());
 		}
@@ -699,7 +700,7 @@ void CItem::ModifyPoints(bool bAdd)
 				if (bAdd)
 				{
 					if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
-						m_pOwner->SetPart(PART_WEAPON, GetVnum());
+						m_pOwner->SetPart(PART_WEAPON, static_cast<WORD>(GetVnum()));
 				}
 				else
 				{
@@ -714,7 +715,7 @@ void CItem::ModifyPoints(bool bAdd)
 				if (bAdd)
 				{
 					if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
-						m_pOwner->SetPart(PART_WEAPON, GetVnum());
+						m_pOwner->SetPart(PART_WEAPON, static_cast<WORD>(GetVnum()));
 				}
 				else
 				{
@@ -735,7 +736,7 @@ void CItem::ModifyPoints(bool bAdd)
 					if (bAdd)
 					{
 						if (GetProto()->bSubType == ARMOR_BODY)
-							m_pOwner->SetPart(PART_MAIN, GetVnum());
+							m_pOwner->SetPart(PART_MAIN, static_cast<WORD>(GetVnum()));
 					}
 					else
 					{
@@ -778,7 +779,7 @@ void CItem::ModifyPoints(bool bAdd)
 
 				if (PART_MAX_NUM != toSetPart)
 				{
-					m_pOwner->SetPart((BYTE)toSetPart, toSetValue);
+					m_pOwner->SetPart((BYTE)toSetPart, static_cast<WORD>(toSetValue));
 					m_pOwner->UpdatePacket();
 				}
 			}
@@ -796,7 +797,7 @@ void CItem::ModifyPoints(bool bAdd)
 						break;
 					for (itertype (pAttrGroup->m_vecAttrs) it = pAttrGroup->m_vecAttrs.begin(); it != pAttrGroup->m_vecAttrs.end(); it++)
 					{
-						m_pOwner->ApplyPoint(it->apply_type, bAdd ? it->apply_value : -it->apply_value);
+						m_pOwner->ApplyPoint(static_cast<BYTE>(it->apply_type), bAdd ? static_cast<int>(it->apply_value) : -static_cast<int>(it->apply_value));
 					}
 				}
 			}
@@ -1296,9 +1297,9 @@ EVENTFUNC(unique_expire_event)
 	}
 	else
 	{
-		uint32_t cur = get_global_time();
-		
-		if (pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME) <= cur)
+		uint32_t cur = static_cast<uint32_t>(get_global_time());
+
+		if (static_cast<uint32_t>(pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME)) <= cur)
 		{
 			pkItem->SetUniqueExpireEvent(NULL);
 			ITEM_MANAGER::instance().RemoveItem(pkItem, "UNIQUE_EXPIRE");
@@ -1375,9 +1376,9 @@ EVENTFUNC(real_time_expire_event)
 	if (NULL == item)
 		return 0;
 
-	const uint32_t current = get_global_time();
+	const uint32_t current = static_cast<uint32_t>(get_global_time());
 
-	if (current > item->GetSocket(0))
+	if (current > static_cast<uint32_t>(item->GetSocket(0)))
 	{
 		switch (item->GetVnum())
 		{
@@ -1962,10 +1963,10 @@ int CItem::GiveMoreTime_Per(float fPercent)
 	{
 		DWORD duration = DSManager::instance().GetDuration(this);
 		int remain_sec = GetSocket(ITEM_SOCKET_REMAIN_SEC);
-		int given_time = fPercent * duration / 100;
+		int given_time = static_cast<int>(fPercent * duration / 100);
 		if (remain_sec == duration)
 			return false;
-		if ((given_time + remain_sec) >= duration)
+		if ((given_time + remain_sec) >= static_cast<int>(duration))
 		{
 			SetSocket(ITEM_SOCKET_REMAIN_SEC, duration);
 			return duration - remain_sec;

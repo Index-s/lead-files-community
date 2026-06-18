@@ -82,7 +82,7 @@ void CGuild::SendEnemyGuild(LPCHARACTER ch)
 
 		pack2.dwGuildOpp = it->first;
 		pack2.bType = it->second.type;
-		pack2.bWarState = it->second.state;
+		pack2.bWarState = static_cast<BYTE>(it->second.state);
 
 		d->BufferedPacket(&pack, sizeof(pack));
 		d->Packet(&pack2, sizeof(pack2));

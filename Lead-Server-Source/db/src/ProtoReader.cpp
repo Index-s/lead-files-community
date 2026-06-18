@@ -30,7 +30,7 @@ static string* StringSplit(string strOrigin, string strTok)
     string* strResult = new string[30];		  // result return variable to do
 
     //strTok Repeat until you find
-    while ((cutAt = strOrigin.find_first_of(strTok)) != strOrigin.npos)
+    while ((cutAt = static_cast<int>(strOrigin.find_first_of(strTok))) != strOrigin.npos)
     {
        if (cutAt > 0)  // Cutting location 0 If it is bigger than ( When successful )
        {
@@ -252,7 +252,7 @@ int get_Item_AntiFlag_Value(string inputString)
 		{
 			string tempString2 = arInputString[j];
 			if (tempString2.compare(tempString)==0) {				// Check if they match .
-				retValue = retValue + pow((float)2,(float)i);
+				retValue = retValue + static_cast<int>(pow((float)2,(float)i));
 			}
 			
 			if(tempString2.compare("") == 0)
@@ -281,7 +281,7 @@ int get_Item_Flag_Value(string inputString)
 		{
 			string tempString2 = arInputString[j];
 			if (tempString2.compare(tempString)==0) {				// Check if they match .
-				retValue = retValue + pow((float)2,(float)i);
+				retValue = retValue + static_cast<int>(pow((float)2,(float)i));
 			}
 			
 			if(tempString2.compare("") == 0)
@@ -309,7 +309,7 @@ int get_Item_WearFlag_Value(string inputString)
 		{
 			string tempString2 = arInputString[j];
 			if (tempString2.compare(tempString)==0) {				// Check if they match .
-				retValue = retValue + pow((float)2,(float)i);
+				retValue = retValue + static_cast<int>(pow((float)2,(float)i));
 			}
 			
 			if(tempString2.compare("") == 0)
@@ -335,7 +335,7 @@ int get_Item_Immune_Value(string inputString)
 		{
 			string tempString2 = arInputString[j];
 			if (tempString2.compare(tempString)==0) {				// Check if they match .
-				retValue = retValue + pow((float)2,(float)i);
+				retValue = retValue + static_cast<int>(pow((float)2,(float)i));
 			}
 			
 			if(tempString2.compare("") == 0)
@@ -514,7 +514,7 @@ int get_Mob_AIFlag_Value(string inputString)
 		{
 			string tempString2 = arInputString[j];
 			if (tempString2.compare(tempString)==0) {				// Check if they match .
-				retValue = retValue + pow((float)2,(float)i);
+				retValue = retValue + static_cast<int>(pow((float)2,(float)i));
 			}
 			
 			if(tempString2.compare("") == 0)
@@ -539,7 +539,7 @@ int get_Mob_RaceFlag_Value(string inputString)
 		{
 			string tempString2 = arInputString[j];
 			if (tempString2.compare(tempString)==0) {				// Check if they match .
-				retValue = retValue + pow((float)2,(float)i);
+				retValue = retValue + static_cast<int>(pow((float)2,(float)i));
 			}
 			
 			if(tempString2.compare("") == 0)
@@ -563,7 +563,7 @@ int get_Mob_ImmuneFlag_Value(string inputString)
 		{
 			string tempString2 = arInputString[j];
 			if (tempString2.compare(tempString)==0) {				// Check if they match .
-				retValue = retValue + pow((float)2,(float)i);
+				retValue = retValue + static_cast<int>(pow((float)2,(float)i));
 			}
 			
 			if(tempString2.compare("") == 0)
@@ -751,7 +751,7 @@ bool Set_Proto_Item_Table(TItemTable *itemTable, cCsvTable &csvTable,std::map<in
 	// vnum and vnum range read .
 	{
 		std::string s(csvTable.AsStringByIndex(0));
-		int pos = s.find("~");
+		int pos = static_cast<int>(s.find("~"));
 		// vnum in the field '~' If not, pass
 		if (std::string::npos == pos)
 		{

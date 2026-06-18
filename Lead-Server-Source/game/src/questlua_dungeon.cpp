@@ -629,10 +629,10 @@ namespace quest
 			return 0;
 		sys_log(0,"QUEST_DUNGEON_PURGE_AREA");
 
-		int x1 = lua_tonumber(L, 1);
-		int y1 = lua_tonumber(L, 2);
-		int x2 = lua_tonumber(L, 3);
-		int y2 = lua_tonumber(L, 4);
+		int x1 = (int) lua_tonumber(L, 1);
+		int y1 = (int) lua_tonumber(L, 2);
+		int x2 = (int) lua_tonumber(L, 3);
+		int y2 = (int) lua_tonumber(L, 4);
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
@@ -834,7 +834,7 @@ namespace quest
 				}
 				else
 				{
-					float angle = number(0, 999) * M_PI * 2 / 1000;
+					float angle = static_cast<float>(number(0, 999) * M_PI * 2 / 1000);
 					float r = number(0, 999) * radius / 1000;
 
 					long nx = x + (long)(r * cos(angle));
@@ -1040,11 +1040,11 @@ namespace quest
 						{
 							packet_script.header = HEADER_GC_SCRIPT;
 							packet_script.skin = quest::CQuestManager::QUEST_SKIN_NORMAL;
-							packet_script.src_size = can_enter_ment.size();
+							packet_script.src_size = static_cast<WORD>(can_enter_ment.size());
 							packet_script.size = packet_script.src_size + sizeof(struct packet_script);
 
 							buf.write(&packet_script, sizeof(struct packet_script));
-							buf.write(&can_enter_ment[0], can_enter_ment.size());
+							buf.write(&can_enter_ment[0], static_cast<int>(can_enter_ment.size()));
 							ch->GetDesc()->Packet(buf.read_peek(), buf.size());
 							return;
 						}
@@ -1052,11 +1052,11 @@ namespace quest
 
 					packet_script.header = HEADER_GC_SCRIPT;
 					packet_script.skin = quest::CQuestManager::QUEST_SKIN_NORMAL;
-					packet_script.src_size = cant_enter_ment.size();
+					packet_script.src_size = static_cast<WORD>(cant_enter_ment.size());
 					packet_script.size = packet_script.src_size + sizeof(struct packet_script);
 
 					buf.write(&packet_script, sizeof(struct packet_script));
-					buf.write(&cant_enter_ment[0], cant_enter_ment.size());
+					buf.write(&cant_enter_ment[0], static_cast<int>(cant_enter_ment.size()));
 					ch->GetDesc()->Packet(buf.read_peek(), buf.size());
 				}
 			}
@@ -1380,7 +1380,7 @@ namespace quest
 			return 0;
 		}
 		std::string group_name (lua_tostring (L, 1));
-		int size = lua_tonumber (L, 2);
+		int size = (int) lua_tonumber (L, 2);
 
 		CDungeon::ItemGroup item_group;
 		

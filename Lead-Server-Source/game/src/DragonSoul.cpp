@@ -34,8 +34,8 @@ int Gamble(std::vector<float>& vec_probs)
 // weight table (prob_lst) take it random_set.size() doggy index By selecting random_set second return
 bool MakeDistinctRandomNumberSet(std::list <float> prob_lst, OUT std::vector<int>& random_set)
 {
-	int size = prob_lst.size();
-	int n = random_set.size();
+	int size = static_cast<int>(prob_lst.size());
+	int n = static_cast<int>(random_set.size());
 	if (size < n)
 		return false;
 
@@ -76,7 +76,7 @@ bool MakeDistinctRandomNumberSet(std::list <float> prob_lst, OUT std::vector<int
 
 BYTE GetType(DWORD dwVnum)
 {
-	return (dwVnum / 10000);
+	return static_cast<BYTE>(dwVnum / 10000);
 }
 
 BYTE GetGradeIdx(DWORD dwVnum)
@@ -184,7 +184,7 @@ bool DSManager::RefreshItemAttributes(LPITEM pDS)
 	}
 	fWeight /= 100.f;
 
-	int n = MIN(basic_apply_num, vec_basic_applys.size());
+	int n = MIN(basic_apply_num, static_cast<int>(vec_basic_applys.size()));
 	for (int i = 0; i < n; i++)
 	{	
 		const SApply& basic_apply = vec_basic_applys[i];
@@ -253,7 +253,7 @@ bool DSManager::PutAttributes(LPITEM pDS)
 	}
 	fWeight /= 100.f;
 
-	int n = MIN(basic_apply_num, vec_basic_applys.size());
+	int n = MIN(basic_apply_num, static_cast<int>(vec_basic_applys.size()));
 	for (int i = 0; i < n; i++)
 	{	
 		const SApply& basic_apply = vec_basic_applys[i];
@@ -548,11 +548,10 @@ bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL
 		return false;
 	}
 
-	int count = set_items.size();
+	int count = static_cast<int>(set_items.size());
 	int need_count = 0;
 	int fee = 0;
 	std::vector <float> vec_probs;
-	float prob_sum;
 
 	BYTE ds_type, grade_idx, step_idx, strength_idx;
 	int result_grade;
@@ -705,7 +704,7 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 	}
 
 	std::string stGroupName;
-	int count = set_items.size();
+	int count = static_cast<int>(set_items.size());
 	int need_count = 0;
 	int fee = 0;
 	std::vector <float> vec_probs;

@@ -457,7 +457,7 @@ ACMD(do_fishing)
 	if (!*arg1)
 		return;
 
-	ch->SetRotation(atof(arg1));
+	ch->SetRotation(static_cast<float>(atof(arg1)));
 	ch->fishing();
 }
 
@@ -1542,7 +1542,7 @@ static bool FN_hair_affect_string(LPCHARACTER ch, char *buf, size_t bufsiz)
 	offset = snprintf(buf, bufsiz, cszPointString, aff->lApplyValue);
 
 	if (offset < 0 || offset >= (int) bufsiz)
-		offset = bufsiz - 1;
+		offset = static_cast<int>(bufsiz - 1);
 
 	localtime_r(&expire, &ltm);
 

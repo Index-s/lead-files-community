@@ -60,7 +60,7 @@ namespace quest
             pack.header = HEADER_GC_SCRIPT;
             pack.skin = CQuestManager::QUEST_SKIN_CINEMATIC;
             //pack.skin = CQuestManager::QUEST_SKIN_NOWINDOW;
-            pack.src_size = data.size();
+            pack.src_size = static_cast<WORD>(data.size());
             pack.size = pack.src_size + sizeof(struct packet_script);
         }
 
@@ -72,7 +72,7 @@ namespace quest
             {
                 sys_log(0, "CINEMASEND %s", ch->GetName());
                 ch->GetDesc()->BufferedPacket(&pack, sizeof(struct packet_script));
-                ch->GetDesc()->Packet(data.c_str(),data.size());
+                ch->GetDesc()->Packet(data.c_str(),static_cast<int>(data.size()));
             }
         }
     };
@@ -105,7 +105,7 @@ namespace quest
 		FCinematicSender(const char* str)
 			: str(str)
 		{
-			len = strlen(str);
+			len = static_cast<int>(strlen(str));
 
 			packet_script.header = HEADER_GC_SCRIPT;
 			packet_script.skin = CQuestManager::QUEST_SKIN_CINEMATIC;
@@ -343,12 +343,12 @@ namespace quest
 			lua_pushboolean (L, false);
 			return 1;
 		}
-		DWORD dwType = lua_tonumber(L, 1);
-		BYTE bApplyOn = lua_tonumber(L, 2);
-		long lApplyValue = lua_tonumber(L, 3);
-		DWORD dwFlag = lua_tonumber(L, 4);
-		long lDuration = lua_tonumber(L, 5);
-		long lSPCost = lua_tonumber(L, 6);
+		DWORD dwType = static_cast<DWORD>(lua_tonumber(L, 1));
+		BYTE bApplyOn = static_cast<BYTE>(lua_tonumber(L, 2));
+		long lApplyValue = static_cast<long>(lua_tonumber(L, 3));
+		DWORD dwFlag = static_cast<DWORD>(lua_tonumber(L, 4));
+		long lDuration = static_cast<long>(lua_tonumber(L, 5));
+		long lSPCost = static_cast<long>(lua_tonumber(L, 6));
 		bool bOverride = lua_toboolean(L, 7);
 		bool IsCube = lua_toboolean(L, 8);
 
@@ -389,7 +389,7 @@ namespace quest
 		{
 			lua_pushnumber(L, *it);
 		}
-		return f.vecPIDs.size();
+		return static_cast<int>(f.vecPIDs.size());
 	}
 
 	void RegisterPartyFunctionTable()

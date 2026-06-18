@@ -206,7 +206,7 @@ bool CClientManager::InitializeMobTableFromTxt()
 		test_data.Next();
 
 		TMobTable * test_mob_table = NULL;
-		int test_MobTableSize = test_data.m_File.GetRowCount()-1;
+		int test_MobTableSize = static_cast<int>(test_data.m_File.GetRowCount()-1);
 		test_mob_table = new TMobTable[test_MobTableSize];
 		memset(test_mob_table, 0, sizeof(TMobTable) * test_MobTableSize);
 
@@ -446,7 +446,7 @@ bool CClientManager::InitializeShopTable()
 	}
 
 	m_pShopTable = new TShopTable[map_shop.size()];
-	m_iShopTableSize = map_shop.size();
+	m_iShopTableSize = static_cast<int>(map_shop.size());
 
 	typeof(map_shop.begin()) it = map_shop.begin();
 
@@ -542,7 +542,7 @@ bool CClientManager::InitializeItemTableFromTxt()
 		test_data.Next();
 
 		TItemTable * test_item_table = NULL;
-		int test_itemTableSize = test_data.m_File.GetRowCount()-1;
+		int test_itemTableSize = static_cast<int>(test_data.m_File.GetRowCount()-1);
 		test_item_table = new TItemTable[test_itemTableSize];
 		memset(test_item_table, 0, sizeof(TItemTable) * test_itemTableSize);
 
@@ -596,7 +596,7 @@ bool CClientManager::InitializeItemTableFromTxt()
 
 	m_vec_itemTable.resize(data.m_File.GetRowCount() - 1 + addNumber);
 	memset(&m_vec_itemTable[0], 0, sizeof(TItemTable) * m_vec_itemTable.size());
-	int testValue =  m_vec_itemTable.size();
+	int testValue =  static_cast<int>(m_vec_itemTable.size());
 
 	TItemTable * item_table = &m_vec_itemTable[0];
 
@@ -1068,7 +1068,7 @@ void parse_pair_number_string(const char * c_pszString, std::vector<std::pair<in
 	{
 		if (isnhdigit(*t))
 		{
-			strlcpy(szNum, t, MIN(sizeof(szNum), (p-t)+1));
+			strlcpy(szNum, t, MIN(sizeof(szNum), static_cast<int>((p-t)+1)));
 
 			comma = strchr(szNum, ',');
 
@@ -1253,10 +1253,10 @@ bool CClientManager::MirrorMobTableIntoDatabase()
 				") "
 				"values ("
 
-				"%d, \"%s\", %d, %d, %d, %d, %d, %u, %u, %u, " 
+				"%d, \"%s\", %d, %d, %d, %d, %d, %u, %u, %u, "
 				"%d, %d, %d, %d, '%s', "
 				"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, "
-				"%d, %d, %d, %d, %d, %d, %d, %d, %d, "
+				"%lld, %lld, %d, %d, %d, %d, %d, %d, %d, "
 
 				"%d, %d, %d, %d, %d, %d, "
 				"%d, %d, %d, %d, %d, %d, "
@@ -1305,10 +1305,10 @@ bool CClientManager::MirrorMobTableIntoDatabase()
 				") "
 				"values ("
 
-				"%d, \"%s\", \"%s\", %d, %d, %d, %d, %d, %u, %u, %u, " 
+				"%d, \"%s\", \"%s\", %d, %d, %d, %d, %d, %u, %u, %u, "
 				"%d, %d, %d, %d, '%s', "
 				"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, "
-				"%d, %d, %d, %d, %d, %d, %d, %d, %d, "
+				"%lld, %lld, %d, %d, %d, %d, %d, %d, %d, "
 
 				"%d, %d, %d, %d, %d, %d, "
 				"%d, %d, %d, %d, %d, %d, "
@@ -1359,13 +1359,13 @@ bool CClientManager::MirrorItemTableIntoDatabase()
 				"applytype0, applyvalue0, applytype1, applyvalue1, applytype2, applyvalue2, "
 				"value0, value1, value2, value3, value4, value5 ) "
 				"values ("
-				"%d, %d, %d, \"%s\", \"%s\", %d, %d, %d, %d, "
+				"%d, %d, %d, \"%s\", \"%s\", %lld, %lld, %d, %d, "
 				"%d, %d, %d, %d, "
 				"%d, %d, %d, %d, %d, "
 				"%d, %ld, %d, %ld, "
 				"%d, %ld, %d, %ld, %d, %ld, "
 				"%d, %d, %d, %d, %d, %d )",
-				GetTablePostfix(), g_stLocaleNameColumn.c_str(), 
+				GetTablePostfix(), g_stLocaleNameColumn.c_str(),
 				t.dwVnum, t.bType, t.bSubType, t.szName, t.szLocaleName, t.dwGold, t.dwShopBuyPrice, t.bWeight, t.bSize,
 				t.dwFlags, t.dwWearFlags, t.dwAntiFlags, t.dwImmuneFlag, 
 				t.dwRefinedVnum, t.wRefineSet, t.bAlterToMagicItemPct, t.bGainSocketPct, t.sAddonType,
@@ -1387,13 +1387,13 @@ bool CClientManager::MirrorItemTableIntoDatabase()
 				"applytype0, applyvalue0, applytype1, applyvalue1, applytype2, applyvalue2, "
 				"value0, value1, value2, value3, value4, value5 ) "
 				"values ("
-				"%d, %d, %d, \"%s\", %d, %d, %d, %d, "
+				"%d, %d, %d, \"%s\", %lld, %lld, %d, %d, "
 				"%d, %d, %d, %d, "
 				"%d, %d, %d, %d, %d, "
 				"%d, %ld, %d, %ld, "
 				"%d, %ld, %d, %ld, %d, %ld, "
 				"%d, %d, %d, %d, %d, %d )",
-				GetTablePostfix(), 
+				GetTablePostfix(),
 				t.dwVnum, t.bType, t.bSubType, t.szName, t.dwGold, t.dwShopBuyPrice, t.bWeight, t.bSize,
 				t.dwFlags, t.dwWearFlags, t.dwAntiFlags, t.dwImmuneFlag, 
 				t.dwRefinedVnum, t.wRefineSet, t.bAlterToMagicItemPct, t.bGainSocketPct, t.sAddonType,

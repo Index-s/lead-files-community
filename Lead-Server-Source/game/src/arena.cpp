@@ -152,9 +152,9 @@ void CArenaMap::SendArenaMapListTo(LPCHARACTER pChar, DWORD mapIdx)
 
 	for (; iter != m_listArena.end(); iter++)
 	{
-		pChar->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("MapInfo"), mapIdx, 
-				(CArena*)(*iter)->GetStartPointA().x, (CArena*)(*iter)->GetStartPointA().y,
-				(CArena*)(*iter)->GetStartPointB().x, (CArena*)(*iter)->GetStartPointB().y);
+		pChar->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("MapInfo"), mapIdx,
+				(*iter)->GetStartPointA().x, (*iter)->GetStartPointA().y,
+				(*iter)->GetStartPointB().x, (*iter)->GetStartPointB().y);
 	}
 }
 

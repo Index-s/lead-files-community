@@ -325,7 +325,7 @@ void CGuildManager::GetHighRankString(DWORD dwMyGuild, char * buffer, size_t buf
 	}
 
 	std::sort(v.begin(), v.end(), FGuildCompare());
-	int n = v.size();
+	int n = static_cast<int>(v.size());
 	int len = 0, len2;
 	*buffer = '\0';
 
@@ -347,7 +347,7 @@ void CGuildManager::GetHighRankString(DWORD dwMyGuild, char * buffer, size_t buf
 			len2 = snprintf(buffer + len, buflen - len, "[COLOR r;255|g;255|b;0]");
 
 			if (len2 < 0 || len2 >= (int) buflen - len)
-				len += (buflen - len) - 1;
+				len += static_cast<int>((buflen - len) - 1);
 			else
 				len += len2;
 		}
@@ -357,7 +357,7 @@ void CGuildManager::GetHighRankString(DWORD dwMyGuild, char * buffer, size_t buf
 			len2 = snprintf(buffer + len, buflen - len, "[ENTER]");
 
 			if (len2 < 0 || len2 >= (int) buflen - len)
-				len += (buflen - len) - 1;
+				len += static_cast<int>((buflen - len) - 1);
 			else
 				len += len2;
 		}
@@ -371,7 +371,7 @@ void CGuildManager::GetHighRankString(DWORD dwMyGuild, char * buffer, size_t buf
 				g->GetGuildWarLossCount());
 
 		if (len2 < 0 || len2 >= (int) buflen - len)
-			len += (buflen - len) - 1;
+			len += static_cast<int>((buflen - len) - 1);
 		else
 			len += len2;
 
@@ -380,7 +380,7 @@ void CGuildManager::GetHighRankString(DWORD dwMyGuild, char * buffer, size_t buf
 			len2 = snprintf(buffer + len, buflen - len, "[/COLOR]");
 
 			if (len2 < 0 || len2 >= (int) buflen - len)
-				len += (buflen - len) - 1;
+				len += static_cast<int>((buflen - len) - 1);
 			else
 				len += len2;
 		}
@@ -399,7 +399,7 @@ void CGuildManager::GetAroundRankString(DWORD dwMyGuild, char * buffer, size_t b
 	}
 
 	std::sort(v.begin(), v.end(), FGuildCompare());
-	int n = v.size();
+	int n = static_cast<int>(v.size());
 	int idx;
 
 	for (idx = 0; idx < (int) v.size(); ++idx)
@@ -428,7 +428,7 @@ void CGuildManager::GetAroundRankString(DWORD dwMyGuild, char * buffer, size_t b
 			len2 = snprintf(buffer + len, buflen - len, "[COLOR r;255|g;255|b;0]");
 
 			if (len2 < 0 || len2 >= (int) buflen - len)
-				len += (buflen - len) - 1;
+				len += static_cast<int>((buflen - len) - 1);
 			else
 				len += len2;
 		}
@@ -438,7 +438,7 @@ void CGuildManager::GetAroundRankString(DWORD dwMyGuild, char * buffer, size_t b
 			len2 = snprintf(buffer + len, buflen - len, "[ENTER]");
 
 			if (len2 < 0 || len2 >= (int) buflen - len)
-				len += (buflen - len) - 1;
+				len += static_cast<int>((buflen - len) - 1);
 			else
 				len += len2;
 		}
@@ -452,7 +452,7 @@ void CGuildManager::GetAroundRankString(DWORD dwMyGuild, char * buffer, size_t b
 				g->GetGuildWarLossCount());
 
 		if (len2 < 0 || len2 >= (int) buflen - len)
-			len += (buflen - len) - 1;
+			len += static_cast<int>((buflen - len) - 1);
 		else
 			len += len2;
 
@@ -463,7 +463,7 @@ void CGuildManager::GetAroundRankString(DWORD dwMyGuild, char * buffer, size_t b
 			len2 = snprintf(buffer + len, buflen - len, "[/COLOR]");
 
 			if (len2 < 0 || len2 >= (int) buflen - len)
-				len += (buflen - len) - 1;
+				len += static_cast<int>((buflen - len) - 1);
 			else
 				len += len2;
 		}
@@ -801,7 +801,7 @@ void CGuildManager::SendGuildWar(LPCHARACTER ch)
 	TPacketGCGuild p;
 	p.header= HEADER_GC_GUILD;
 	p.subheader = GUILD_SUBHEADER_GC_GUILD_WAR_LIST;
-	p.size = sizeof(p) + (sizeof(DWORD) * 2) * m_GuildWar.size();
+	p.size = static_cast<WORD>(sizeof(p) + (sizeof(DWORD) * 2) * m_GuildWar.size());
 	buf.write(&p, sizeof(p));
 
 	itertype(m_GuildWar) it;

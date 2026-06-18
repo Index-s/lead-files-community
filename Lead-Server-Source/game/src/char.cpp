@@ -606,7 +606,7 @@ void CHARACTER::OpenMyShop(const char * c_pszSign, TShopItemTable * pTable, BYTE
 	}
 
 	// MYSHOP_PRICE_LIST
-	std::map<DWORD, DWORD> itemkind;  // Price by item type , first: vnum, second: single quantity pricing
+	std::map<DWORD, GoldType> itemkind;  // Price by item type , first: vnum, second: single quantity pricing
 	// END_OF_MYSHOP_PRICE_LIST	
 
 	std::set<TItemPos> cont;
@@ -662,7 +662,7 @@ void CHARACTER::OpenMyShop(const char * c_pszSign, TShopItemTable * pTable, BYTE
 		TItemPriceInfo info;
 		
 		header.dwOwnerID = GetPlayerID();
-		header.byCount = itemkind.size();
+		header.byCount = static_cast<BYTE>(itemkind.size());
 
 		TEMP_BUFFER buf;
 		buf.write(&header, sizeof(header));
@@ -1061,7 +1061,7 @@ LPCHARACTER CHARACTER::FindCharacterInView(const char * c_pszName, bool bFindPCO
 		if (bFindPCOnly && tch->IsNPC())
 			continue;
 
-		if (!strcasecmp(tch->GetName(), c_pszName))
+		if (!_stricmp(tch->GetName(), c_pszName))
 			return (tch);
 	}
 
@@ -1126,9 +1126,9 @@ void CHARACTER::CreatePlayerProto(TPlayerTable & tab)
 	strlcpy(tab.ip, GetDesc()->GetHostName(), sizeof(tab.ip));
 
 	tab.id			= m_dwPlayerID;
-	tab.voice		= GetPoint(POINT_VOICE);
+	tab.voice		= static_cast<BYTE>(GetPoint(POINT_VOICE));
 	tab.level		= GetLevel();
-	tab.level_step	= GetPoint(POINT_LEVEL_STEP);
+	tab.level_step	= static_cast<BYTE>(GetPoint(POINT_LEVEL_STEP));
 	tab.exp			= GetExp();
 	tab.gold		= GetGold();
 	tab.job			= m_points.job;
@@ -1194,12 +1194,12 @@ void CHARACTER::CreatePlayerProto(TPlayerTable & tab)
 	tab.dx = GetRealPoint(POINT_DX);
 	tab.iq = GetRealPoint(POINT_IQ);
 
-	tab.stat_point = GetPoint(POINT_STAT);
-	tab.skill_point = GetPoint(POINT_SKILL);
-	tab.sub_skill_point = GetPoint(POINT_SUB_SKILL);
-	tab.horse_skill_point = GetPoint(POINT_HORSE_SKILL);
+	tab.stat_point = static_cast<short>(GetPoint(POINT_STAT));
+	tab.skill_point = static_cast<short>(GetPoint(POINT_SKILL));
+	tab.sub_skill_point = static_cast<short>(GetPoint(POINT_SUB_SKILL));
+	tab.horse_skill_point = static_cast<short>(GetPoint(POINT_HORSE_SKILL));
 
-	tab.stat_reset_count = GetPoint(POINT_STAT_RESET_COUNT);
+	tab.stat_reset_count = static_cast<short>(GetPoint(POINT_STAT_RESET_COUNT));
 
 	tab.hp = GetHP();
 	tab.sp = GetSP();
@@ -1292,8 +1292,12 @@ void CHARACTER::Disconnect(const char * c_pszReason)
 	strlcpy(p.szName, GetName(), sizeof(p.szName));
 	P2P_MANAGER::instance().Send(&p, sizeof(TPacketGGLogout));
 	char buf[51];
-	snprintf(buf, sizeof(buf), "%s %d %d %d %d", 
-		inet_ntoa(GetDesc()->GetAddr().sin_addr), GetGold(), g_bChannel, GetMapIndex(), GetAlignment());
+	char szLogoutIP[INET_ADDRSTRLEN];
+	struct sockaddr_in saLogoutAddr = GetDesc()->GetAddr();
+	if (NULL == inet_ntop(AF_INET, &saLogoutAddr.sin_addr, szLogoutIP, sizeof(szLogoutIP)))
+		szLogoutIP[0] = '\0';
+	snprintf(buf, sizeof(buf), "%s %lld %d %d %d",
+		szLogoutIP, static_cast<long long>(GetGold()), g_bChannel, GetMapIndex(), GetAlignment());
 
 	LogManager::instance().CharLog(this, 0, "LOGOUT", buf);
 
@@ -1610,10 +1614,10 @@ bool CHARACTER::ChangeSex()
 WORD CHARACTER::GetRaceNum() const
 {
 	if (m_dwPolymorphRace)
-		return m_dwPolymorphRace;
+		return static_cast<WORD>(m_dwPolymorphRace);
 
 	if (m_pkMobData)
-		return m_pkMobData->m_table.dwVnum;
+		return static_cast<WORD>(m_pkMobData->m_table.dwVnum);
 
 	return m_points.job;
 }
@@ -1722,7 +1726,7 @@ void CHARACTER::SetPlayerProto(const TPlayerTable * t)
 	SetPoint(POINT_LEVEL_STEP, t->level_step);
 	SetRealPoint(POINT_LEVEL_STEP, t->level_step);
 
-	SetRace(t->job);
+	SetRace(static_cast<BYTE>(t->job));
 
 	SetLevel(t->level);
 	SetExp(t->exp);
@@ -1984,7 +1988,7 @@ WORD CHARACTER::GetMobAttackRange() const
 	{
 		case BATTLE_TYPE_RANGE:
 		case BATTLE_TYPE_MAGIC:
-			return m_pkMobData->m_table.wAttackRange + GetPoint(POINT_BOW_DISTANCE);  
+			return static_cast<WORD>(m_pkMobData->m_table.wAttackRange + GetPoint(POINT_BOW_DISTANCE));
 		default:
 			return m_pkMobData->m_table.wAttackRange; 
 	}
@@ -2037,20 +2041,20 @@ void CHARACTER::ComputeBattlePoints()
 		{
 			case JOB_WARRIOR:
 			case JOB_SURA:
-				iStatAtk = (2 * GetPoint(POINT_ST));
+				iStatAtk = static_cast<int>(2 * GetPoint(POINT_ST));
 				break;
 
 			case JOB_ASSASSIN:
-				iStatAtk = (4 * GetPoint(POINT_ST) + 2 * GetPoint(POINT_DX)) / 3;
+				iStatAtk = static_cast<int>((4 * GetPoint(POINT_ST) + 2 * GetPoint(POINT_DX)) / 3);
 				break;
 
 			case JOB_SHAMAN:
-				iStatAtk = (4 * GetPoint(POINT_ST) + 2 * GetPoint(POINT_IQ)) / 3;
+				iStatAtk = static_cast<int>((4 * GetPoint(POINT_ST) + 2 * GetPoint(POINT_IQ)) / 3);
 				break;
 
 			default:
 				sys_err("invalid job %d", GetJob());
-				iStatAtk = (2 * GetPoint(POINT_ST));
+				iStatAtk = static_cast<int>(2 * GetPoint(POINT_ST));
 				break;
 		}
 
@@ -2077,12 +2081,12 @@ void CHARACTER::ComputeBattlePoints()
 		//
 		// ATK Setting
 		//
-		iAtk += GetPoint(POINT_ATT_GRADE_BONUS);
+		iAtk += static_cast<int>(GetPoint(POINT_ATT_GRADE_BONUS));
 
 		PointChange(POINT_ATT_GRADE, iAtk);
 
 		// DEF = LEV + CON + ARMOR
-		int iShowDef = GetLevel() + GetPoint(POINT_HT); // For Ymir( Cheonma )
+		int iShowDef = static_cast<int>(GetLevel() + GetPoint(POINT_HT)); // For Ymir( Cheonma )
 		int iDef = GetLevel() + (int) (GetPoint(POINT_HT) / 1.25); // For Other
 		int iArmor = 0;
 
@@ -2112,8 +2116,8 @@ void CHARACTER::ComputeBattlePoints()
 			}
 		}
 
-		iArmor += GetPoint(POINT_DEF_GRADE_BONUS);
-		iArmor += GetPoint(POINT_PARTY_DEFENDER_BONUS);
+		iArmor += static_cast<int>(GetPoint(POINT_DEF_GRADE_BONUS));
+		iArmor += static_cast<int>(GetPoint(POINT_PARTY_DEFENDER_BONUS));
 
 		PointChange(POINT_DEF_GRADE, iDef + iArmor);
 		PointChange(POINT_CLIENT_DEF_GRADE, (iShowDef + iArmor) - GetPoint(POINT_DEF_GRADE));
@@ -2124,9 +2128,9 @@ void CHARACTER::ComputeBattlePoints()
 	else
 	{
 		// 2lev + str * 2
-		int iAtt = GetLevel() * 2 + GetPoint(POINT_ST) * 2;
+		int iAtt = static_cast<int>(GetLevel() * 2 + GetPoint(POINT_ST) * 2);
 		// lev + con
-		int iDef = GetLevel() + GetPoint(POINT_HT) + GetMobTable().wDef;
+		int iDef = static_cast<int>(GetLevel() + GetPoint(POINT_HT) + GetMobTable().wDef);
 
 		SetPoint(POINT_ATT_GRADE, iAtt);
 		SetPoint(POINT_DEF_GRADE, iDef);
@@ -2137,22 +2141,22 @@ void CHARACTER::ComputeBattlePoints()
 
 void CHARACTER::ComputePoints()
 {
-	long lStat = GetPoint(POINT_STAT);
-	long lStatResetCount = GetPoint(POINT_STAT_RESET_COUNT);
-	long lSkillActive = GetPoint(POINT_SKILL);
-	long lSkillSub = GetPoint(POINT_SUB_SKILL);
-	long lSkillHorse = GetPoint(POINT_HORSE_SKILL);
-	long lLevelStep = GetPoint(POINT_LEVEL_STEP);
+	GoldType lStat = GetPoint(POINT_STAT);
+	GoldType lStatResetCount = GetPoint(POINT_STAT_RESET_COUNT);
+	GoldType lSkillActive = GetPoint(POINT_SKILL);
+	GoldType lSkillSub = GetPoint(POINT_SUB_SKILL);
+	GoldType lSkillHorse = GetPoint(POINT_HORSE_SKILL);
+	GoldType lLevelStep = GetPoint(POINT_LEVEL_STEP);
 
-	long lAttackerBonus = GetPoint(POINT_PARTY_ATTACKER_BONUS);
-	long lTankerBonus = GetPoint(POINT_PARTY_TANKER_BONUS);
-	long lBufferBonus = GetPoint(POINT_PARTY_BUFFER_BONUS);
-	long lSkillMasterBonus = GetPoint(POINT_PARTY_SKILL_MASTER_BONUS);
-	long lHasteBonus = GetPoint(POINT_PARTY_HASTE_BONUS);
-	long lDefenderBonus = GetPoint(POINT_PARTY_DEFENDER_BONUS);
+	GoldType lAttackerBonus = GetPoint(POINT_PARTY_ATTACKER_BONUS);
+	GoldType lTankerBonus = GetPoint(POINT_PARTY_TANKER_BONUS);
+	GoldType lBufferBonus = GetPoint(POINT_PARTY_BUFFER_BONUS);
+	GoldType lSkillMasterBonus = GetPoint(POINT_PARTY_SKILL_MASTER_BONUS);
+	GoldType lHasteBonus = GetPoint(POINT_PARTY_HASTE_BONUS);
+	GoldType lDefenderBonus = GetPoint(POINT_PARTY_DEFENDER_BONUS);
 
-	long lHPRecovery = GetPoint(POINT_HP_RECOVERY);
-	long lSPRecovery = GetPoint(POINT_SP_RECOVERY);
+	GoldType lHPRecovery = GetPoint(POINT_HP_RECOVERY);
+	GoldType lSPRecovery = GetPoint(POINT_SP_RECOVERY);
 
 	memset(m_pointsInstant.points, 0, sizeof(m_pointsInstant.points));
 	BuffOnAttr_ClearAll();
@@ -2191,9 +2195,9 @@ void CHARACTER::ComputePoints()
 	if (IsPC())
 	{
 		// maximum vitality / mentality
-		iMaxHP = JobInitialPoints[GetJob()].max_hp + m_points.iRandomHP + GetPoint(POINT_HT) * JobInitialPoints[GetJob()].hp_per_ht;
-		iMaxSP = JobInitialPoints[GetJob()].max_sp + m_points.iRandomSP + GetPoint(POINT_IQ) * JobInitialPoints[GetJob()].sp_per_iq;
-		iMaxStamina = JobInitialPoints[GetJob()].max_stamina + GetPoint(POINT_HT) * JobInitialPoints[GetJob()].stamina_per_con;
+		iMaxHP = static_cast<int>(JobInitialPoints[GetJob()].max_hp + m_points.iRandomHP + GetPoint(POINT_HT) * JobInitialPoints[GetJob()].hp_per_ht);
+		iMaxSP = static_cast<int>(JobInitialPoints[GetJob()].max_sp + m_points.iRandomSP + GetPoint(POINT_IQ) * JobInitialPoints[GetJob()].sp_per_iq);
+		iMaxStamina = static_cast<int>(JobInitialPoints[GetJob()].max_stamina + GetPoint(POINT_HT) * JobInitialPoints[GetJob()].stamina_per_con);
 
 		{
 			CSkillProto* pkSk = CSkillManager::instance().Get(SKILL_ADD_HP);
@@ -2363,7 +2367,7 @@ EVENTFUNC(recovery_event)
 					size_t val = BlueDragon_GetIndexFactor("DragonStone", i, "val");
 					size_t cnt = SECTREE_MANAGER::instance().GetMonsterCountInMap( ch->GetMapIndex(), dwDragonStoneID );
 
-					regenPct += (val*cnt);
+					regenPct += static_cast<int>(val*cnt);
 
 					break;
 				}
@@ -2393,7 +2397,7 @@ EVENTFUNC(recovery_event)
 					size_t val = BlueDragon_GetIndexFactor("DragonStone", i, "val");
 					size_t cnt = SECTREE_MANAGER::instance().GetMonsterCountInMap( ch->GetMapIndex(), dwDragonStoneID );
 
-					return PASSES_PER_SEC(MAX(1, (ch->GetMobTable().bRegenCycle - (val*cnt))));
+					return PASSES_PER_SEC(MAX(1, (ch->GetMobTable().bRegenCycle - static_cast<int>(val*cnt))));
 				}
 			}
 		}
@@ -2433,7 +2437,7 @@ EVENTFUNC(recovery_event)
 			iAmount = 15 + (ch->GetMaxHP() * iPercent) / 100;
 		}
 		
-		iAmount += (iAmount * ch->GetPoint(POINT_HP_REGEN)) / 100;
+		iAmount += static_cast<int>((iAmount * ch->GetPoint(POINT_HP_REGEN)) / 100);
 
 		sys_log(1, "RECOVERY_EVENT: %s %d HP_REGEN %d HP +%d", ch->GetName(), iPercent, ch->GetPoint(POINT_HP_REGEN), iAmount);
 
@@ -2776,7 +2780,7 @@ void CHARACTER::SendMovePacket(BYTE bFunc, BYTE bArg, DWORD x, DWORD y, DWORD dw
 
 int CHARACTER::GetRealPoint(BYTE type) const
 {
-	return m_points.points[type];
+	return static_cast<int>(m_points.points[type]);
 }
 
 void CHARACTER::SetRealPoint(BYTE type, int val)
@@ -2798,22 +2802,22 @@ int CHARACTER::GetPolymorphPoint(BYTE type) const
 			{
 				case POINT_ST:
 					if (GetJob() == JOB_SHAMAN || GetJob() == JOB_SURA && GetSkillGroup() == 2)
-						return pMob->m_table.bStr * iPower / 100 + GetPoint(POINT_IQ);
-					return pMob->m_table.bStr * iPower / 100 + GetPoint(POINT_ST);
+						return static_cast<int>(pMob->m_table.bStr * iPower / 100 + GetPoint(POINT_IQ));
+					return static_cast<int>(pMob->m_table.bStr * iPower / 100 + GetPoint(POINT_ST));
 
 				case POINT_HT:
-					return pMob->m_table.bCon * iPower / 100 + GetPoint(POINT_HT);
+					return static_cast<int>(pMob->m_table.bCon * iPower / 100 + GetPoint(POINT_HT));
 
 				case POINT_IQ:
-					return pMob->m_table.bInt * iPower / 100 + GetPoint(POINT_IQ);
+					return static_cast<int>(pMob->m_table.bInt * iPower / 100 + GetPoint(POINT_IQ));
 
 				case POINT_DX:
-					return pMob->m_table.bDex * iPower / 100 + GetPoint(POINT_DX);
+					return static_cast<int>(pMob->m_table.bDex * iPower / 100 + GetPoint(POINT_DX));
 			}
 		}
 	}
 
-	return GetPoint(type);
+	return static_cast<int>(GetPoint(type));
 }
 
 GoldType CHARACTER::GetPoint(BYTE type) const
@@ -2849,7 +2853,7 @@ int CHARACTER::GetLimitPoint(BYTE type) const
 		return 0;
 	}
 
-	int val = m_pointsInstant.points[type];
+	int val = static_cast<int>(m_pointsInstant.points[type]);
 	int max_val = INT_MAX;
 	int limit = INT_MAX;
 	int min_limit = -INT_MAX;
@@ -2945,7 +2949,7 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 			if ((GetLevel() + amount) > gPlayerMaxLevel)
 				return;
 
-			SetLevel(GetLevel() + amount);
+			SetLevel(static_cast<BYTE>(GetLevel() + amount));
 			val = GetLevel();
 
 			sys_log(0, "LEVELUP: %s %d NEXT EXP %d", GetName(), GetLevel(), GetNextExp());
@@ -2956,7 +2960,7 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 			{
 				quest::CQuestManager::instance().LevelUp(GetPlayerID());
 
-				LogManager::instance().LevelLog(this, val, GetRealPoint(POINT_PLAYTIME) + (get_dword_time() - m_dwPlayStartTime) / 60000);
+				LogManager::instance().LevelLog(this, static_cast<unsigned int>(val), GetRealPoint(POINT_PLAYTIME) + (get_dword_time() - m_dwPlayStartTime) / 60000);
 
 				if (GetGuild())
 				{
@@ -2984,9 +2988,9 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 				if (amount < 0 && exp < -amount)
 				{
 					sys_log(1, "%s AMOUNT < 0 %d, CUR EXP: %d", GetName(), -amount, exp);
-					amount = -exp;
+					amount = -static_cast<GoldType>(exp);
 
-					SetExp(exp + amount);
+					SetExp(static_cast<DWORD>(exp + amount));
 					val = GetExp();
 				}
 				else
@@ -3002,7 +3006,7 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 					// level up !
 					if (exp + amount >= next_exp)
 					{
-						iExpBalance = (exp + amount) - next_exp;
+						iExpBalance = static_cast<DWORD>((exp + amount) - next_exp);
 						amount = next_exp - exp;
 
 						SetExp(0);
@@ -3010,7 +3014,7 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 					}
 					else
 					{
-						SetExp(exp + amount);
+						SetExp(static_cast<DWORD>(exp + amount));
 						exp = GetExp();
 					}
 
@@ -3107,7 +3111,7 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 				PointChange(POINT_STAMINA, GetMaxStamina() - GetStamina());
 
 				SetPoint(POINT_LEVEL_STEP, val);
-				SetRealPoint(POINT_LEVEL_STEP, val);
+				SetRealPoint(POINT_LEVEL_STEP, static_cast<int>(val));
 
 				Save();
 			}
@@ -3123,8 +3127,8 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 
 				int prev_hp = GetHP();
 
-				amount = MIN(GetMaxHP() - GetHP(), amount);
-				SetHP(GetHP() + amount);
+				amount = MIN(GetMaxHP() - GetHP(), static_cast<int>(amount));
+				SetHP(static_cast<int>(GetHP() + amount));
 				val = GetHP();
 
 				BroadcastTargetPacket();
@@ -3139,8 +3143,8 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 				if (IsDead() || IsStun())
 					return;
 
-				amount = MIN(GetMaxSP() - GetSP(), amount);
-				SetSP(GetSP() + amount);
+				amount = MIN(GetMaxSP() - GetSP(), static_cast<int>(amount));
+				SetSP(static_cast<int>(GetSP() + amount));
 				val = GetSP();
 			}
 			break;
@@ -3151,8 +3155,8 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 					return;
 
 				int prev_val = GetStamina();
-				amount = MIN(GetMaxStamina() - GetStamina(), amount);
-				SetStamina(GetStamina() + amount);
+				amount = MIN(GetMaxStamina() - GetStamina(), static_cast<int>(amount));
+				SetStamina(static_cast<int>(GetStamina() + amount));
 				val = GetStamina();
 				
 				if (val == 0)
@@ -3178,9 +3182,9 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 				//SetMaxHP(GetMaxHP() + amount);
 				// maximum vitality = ( Base maximum vitality + addition ) * maximum vitality %
 				int hp = GetRealPoint(POINT_MAX_HP);
-				int add_hp = MIN(3500, hp * GetPoint(POINT_MAX_HP_PCT) / 100);
-				add_hp += GetPoint(POINT_MAX_HP);
-				add_hp += GetPoint(POINT_PARTY_TANKER_BONUS);
+				int add_hp = MIN(3500, static_cast<int>(hp * GetPoint(POINT_MAX_HP_PCT) / 100));
+				add_hp += static_cast<int>(GetPoint(POINT_MAX_HP));
+				add_hp += static_cast<int>(GetPoint(POINT_PARTY_TANKER_BONUS));
 
 				SetMaxHP(hp + add_hp);
 
@@ -3195,9 +3199,9 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 				//SetMaxSP(GetMaxSP() + amount);
 				// max spirit = ( Base maximum mental power + addition ) * maximum mental strength %
 				int sp = GetRealPoint(POINT_MAX_SP);
-				int add_sp = MIN(800, sp * GetPoint(POINT_MAX_SP_PCT) / 100);
-				add_sp += GetPoint(POINT_MAX_SP);
-				add_sp += GetPoint(POINT_PARTY_SKILL_MASTER_BONUS);
+				int add_sp = MIN(800, static_cast<int>(sp * GetPoint(POINT_MAX_SP_PCT) / 100));
+				add_sp += static_cast<int>(GetPoint(POINT_MAX_SP));
+				add_sp += static_cast<int>(GetPoint(POINT_PARTY_SKILL_MASTER_BONUS));
 
 				SetMaxSP(sp + add_sp);
 
@@ -3220,7 +3224,7 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 			break;
 
 		case POINT_MAX_STAMINA:
-			SetMaxStamina(GetMaxStamina() + amount);
+			SetMaxStamina(static_cast<int>(GetMaxStamina() + amount));
 			val = GetMaxStamina();
 			break;
 
@@ -3248,7 +3252,7 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 			SetPoint(type, GetPoint(type) + amount);
 			val = GetPoint(type);
 
-			SetRealPoint(type, val);
+			SetRealPoint(type, static_cast<int>(val));
 			break;
 
 		case POINT_DEF_GRADE:
@@ -3468,22 +3472,22 @@ void CHARACTER::PointChange(BYTE type, GoldType amount, bool bAmount, bool bBroa
 		case POINT_POLYMORPH:
 			SetPoint(type, GetPoint(type) + amount);
 			val = GetPoint(type);
-			SetPolymorph(val);
+			SetPolymorph(static_cast<DWORD>(val));
 			break;
 
 		case POINT_MOUNT:
 			SetPoint(type, GetPoint(type) + amount);
 			val = GetPoint(type);
-			MountVnum(val);
+			MountVnum(static_cast<DWORD>(val));
 			break;
 
 		case POINT_ENERGY:
 		case POINT_COSTUME_ATTR_BONUS:
 			{
-				int old_val = GetPoint(type);
+				int old_val = static_cast<int>(GetPoint(type));
 				SetPoint(type, old_val + amount);
 				val = GetPoint(type);
-				BuffOnAttr_ValueChange(type, old_val, val);
+				BuffOnAttr_ValueChange(type, static_cast<BYTE>(old_val), static_cast<BYTE>(val));
 			}
 			break;
 
@@ -3756,7 +3760,7 @@ void CHARACTER::MonsterLog(const char* format, ...)
 	TPacketGCChat pack_chat;
 
 	pack_chat.header    = HEADER_GC_CHAT;
-	pack_chat.size		= sizeof(TPacketGCChat) + len;
+	pack_chat.size		= static_cast<WORD>(sizeof(TPacketGCChat) + len);
 	pack_chat.type      = CHAT_TYPE_TALKING;
 	pack_chat.id        = (DWORD)GetVID();
 	pack_chat.bEmpire	= 0;
@@ -3785,7 +3789,7 @@ void CHARACTER::ChatPacket(BYTE type, const char * format, ...)
 	struct packet_chat pack_chat;
 
 	pack_chat.header    = HEADER_GC_CHAT;
-	pack_chat.size      = sizeof(struct packet_chat) + len;
+	pack_chat.size      = static_cast<WORD>(sizeof(struct packet_chat) + len);
 	pack_chat.type      = type;
 	pack_chat.id        = 0;
 	pack_chat.bEmpire   = d->GetEmpire();
@@ -5280,7 +5284,7 @@ bool CHARACTER::Follow(LPCHARACTER pkChr, float fMinDistance)
 		float mySpeed = GetMoveSpeed();
 
 		float fDist = DISTANCE_SQRT(x - GetX(), y - GetY());
-		float fFollowSpeed = mySpeed - yourSpeed * cos(rot_delta * M_PI / 180);
+		float fFollowSpeed = static_cast<float>(mySpeed - yourSpeed * cos(rot_delta * M_PI / 180));
 
 		if (fFollowSpeed >= 0.1f)
 		{
@@ -5294,7 +5298,7 @@ bool CHARACTER::Follow(LPCHARACTER pkChr, float fMinDistance)
 				x += (long) fYourMoveEstimateX;
 				y += (long) fYourMoveEstimateY;
 
-				float fDistNew = sqrt(((double)x - GetX())*(x-GetX())+((double)y - GetY())*(y-GetY()));
+				float fDistNew = static_cast<float>(sqrt(((double)x - GetX())*(x-GetX())+((double)y - GetY())*(y-GetY())));
 				if (fDist < fDistNew)
 				{
 					x = (long)(GetX() + (x - GetX()) * fDist / fDistNew);
@@ -5326,9 +5330,9 @@ bool CHARACTER::Follow(LPCHARACTER pkChr, float fMinDistance)
 		while (--retry)
 		{
 			if (fDist < 500.0f)
-				GetDeltaByDegree((rot + number(-90, 90) + number(-90, 90)) % 360, fMinDistance, &fx, &fy);
+				GetDeltaByDegree(static_cast<float>((rot + number(-90, 90) + number(-90, 90)) % 360), fMinDistance, &fx, &fy);
 			else
-				GetDeltaByDegree(number(0, 359), fMinDistance, &fx, &fy);
+				GetDeltaByDegree(static_cast<float>(number(0, 359)), fMinDistance, &fx, &fy);
 
 			dx = x + (int) fx;
 			dy = y + (int) fy;
@@ -5363,7 +5367,7 @@ bool CHARACTER::Follow(LPCHARACTER pkChr, float fMinDistance)
 
 float CHARACTER::GetDistanceFromSafeboxOpen() const
 {
-	return DISTANCE_APPROX(GetX() - m_posSafeboxOpen.x, GetY() - m_posSafeboxOpen.y);
+	return static_cast<float>(DISTANCE_APPROX(GetX() - m_posSafeboxOpen.x, GetY() - m_posSafeboxOpen.y));
 }
 
 void CHARACTER::SetSafeboxOpenPosition()
@@ -5600,12 +5604,12 @@ bool CHARACTER::BuildUpdatePartyPacket(TPacketGCPartyUpdate & out)
 			out.affects[0] = GetParty()->GetPartyBonusExpPercent();
 		else
 			out.affects[0] = GetParty()->GetExpBonusPercent();
-		out.affects[1] = GetPoint(POINT_PARTY_ATTACKER_BONUS);
-		out.affects[2] = GetPoint(POINT_PARTY_TANKER_BONUS);
-		out.affects[3] = GetPoint(POINT_PARTY_BUFFER_BONUS);
-		out.affects[4] = GetPoint(POINT_PARTY_SKILL_MASTER_BONUS);
-		out.affects[5] = GetPoint(POINT_PARTY_HASTE_BONUS);
-		out.affects[6] = GetPoint(POINT_PARTY_DEFENDER_BONUS);
+		out.affects[1] = static_cast<short>(GetPoint(POINT_PARTY_ATTACKER_BONUS));
+		out.affects[2] = static_cast<short>(GetPoint(POINT_PARTY_TANKER_BONUS));
+		out.affects[3] = static_cast<short>(GetPoint(POINT_PARTY_BUFFER_BONUS));
+		out.affects[4] = static_cast<short>(GetPoint(POINT_PARTY_SKILL_MASTER_BONUS));
+		out.affects[5] = static_cast<short>(GetPoint(POINT_PARTY_HASTE_BONUS));
+		out.affects[6] = static_cast<short>(GetPoint(POINT_PARTY_DEFENDER_BONUS));
 	}
 
 	return true;
@@ -5898,14 +5902,14 @@ void CHARACTER::MonsterChat(BYTE bMonsterChatType)
 	struct packet_chat pack_chat;
 
 	pack_chat.header    = HEADER_GC_CHAT;
-	pack_chat.size	= sizeof(struct packet_chat) + text.size() + 1;
+	pack_chat.size	= static_cast<WORD>(sizeof(struct packet_chat) + text.size() + 1);
 	pack_chat.type      = CHAT_TYPE_TALKING;
 	pack_chat.id        = GetVID();
 	pack_chat.bEmpire	= 0;
 
 	TEMP_BUFFER buf;
 	buf.write(&pack_chat, sizeof(struct packet_chat));
-	buf.write(text.c_str(), text.size() + 1);
+	buf.write(text.c_str(), static_cast<int>(text.size() + 1));
 
 	PacketAround(buf.read_peek(), buf.size());
 }
@@ -6067,7 +6071,7 @@ void CHARACTER::DetermineDropMetinStone()
 		28043,
 	};
 	DWORD stone_num = GetRaceNum();
-	int idx = std::lower_bound(aStoneDrop, aStoneDrop+STONE_INFO_MAX_NUM, stone_num) - aStoneDrop;
+	int idx = static_cast<int>(std::lower_bound(aStoneDrop, aStoneDrop+STONE_INFO_MAX_NUM, stone_num) - aStoneDrop);
 	if (idx >= STONE_INFO_MAX_NUM || aStoneDrop[idx].dwMobVnum != stone_num)
 	{
 		m_dwDropMetinStone = 0;
@@ -6107,7 +6111,7 @@ void CHARACTER::SendEquipment(LPCHARACTER ch)
 		if (item)
 		{
 			p.equips[i].vnum = item->GetVnum();
-			p.equips[i].count = item->GetCount();
+			p.equips[i].count = static_cast<ItemStackType>(item->GetCount());
 
 			thecore_memcpy(p.equips[i].alSockets, item->GetSockets(), sizeof(p.equips[i].alSockets));
 			thecore_memcpy(p.equips[i].aAttr, item->GetAttributes(), sizeof(p.equips[i].aAttr));
@@ -6368,7 +6372,7 @@ int CHARACTER::GetPremiumRemainSeconds(BYTE bType) const
 	if (bType >= PREMIUM_MAX_NUM)
 		return 0;
 
-	return m_aiPremiumTimes[bType] - get_global_time();
+	return static_cast<int>(m_aiPremiumTimes[bType] - get_global_time());
 }
 
 bool CHARACTER::WarpToPID(DWORD dwPID)
@@ -6554,13 +6558,13 @@ void CHARACTER::Say(const std::string & s)
 
 	packet_script.header = HEADER_GC_SCRIPT;
 	packet_script.skin = 1;
-	packet_script.src_size = s.size();
+	packet_script.src_size = static_cast<WORD>(s.size());
 	packet_script.size = packet_script.src_size + sizeof(struct packet_script);
-	
+
 	TEMP_BUFFER buf;
 
 	buf.write(&packet_script, sizeof(struct packet_script));
-	buf.write(&s[0], s.size());
+	buf.write(&s[0], static_cast<int>(s.size()));
 
 	if (IsPC())
 	{

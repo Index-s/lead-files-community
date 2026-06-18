@@ -179,7 +179,7 @@ EVENTFUNC(switchbot_event)
 
 	info->pkSwitchbot->SwitchItems();
 
-	return PASSES_PER_SEC(c_fSpeed);
+	return static_cast<long>(PASSES_PER_SEC(c_fSpeed));
 }
 
 void CSwitchbot::Start()
@@ -187,7 +187,7 @@ void CSwitchbot::Start()
 	TSwitchbotEventInfo* info = AllocEventInfo<TSwitchbotEventInfo>();
 	info->pkSwitchbot = this;
 
-	m_pkSwitchEvent = event_create(switchbot_event, info, c_fSpeed);
+	m_pkSwitchEvent = event_create(switchbot_event, info, static_cast<long>(c_fSpeed));
 
 	CSwitchbotManager::Instance().SendSwitchbotUpdate(m_table.player_id);
 }
@@ -306,7 +306,7 @@ void CSwitchbot::SwitchItems()
 				TPacketGCWhisper pack;
 				pack.bHeader = HEADER_GC_WHISPER;
 				pack.bType = WHISPER_TYPE_SYSTEM;
-				pack.wSize = sizeof(TPacketGCWhisper) + len;
+				pack.wSize = static_cast<WORD>(sizeof(TPacketGCWhisper) + len);
 				strlcpy(pack.szNameFrom, "[Switchbot]", sizeof(pack.szNameFrom));
 				pkOwner->GetDesc()->BufferedPacket(&pack, sizeof(pack));
 				pkOwner->GetDesc()->Packet(buf, len);

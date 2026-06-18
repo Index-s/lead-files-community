@@ -224,12 +224,12 @@ void CItemPriceListTableCache::UpdateList(const TItemPriceListTable* pUpdateList
 			sizeAddOldDataSize = tmpvec.size();
 
 		thecore_memcpy(m_data.aPriceInfo + pUpdateList->byCount, &tmpvec[0], sizeof(TItemPriceInfo) * sizeAddOldDataSize);
-		m_data.byCount += sizeAddOldDataSize;
+		m_data.byCount += static_cast<BYTE>(sizeAddOldDataSize);
 
-		nDeletedNum = tmpvec.size() - sizeAddOldDataSize;
+		nDeletedNum = static_cast<int>(tmpvec.size() - sizeAddOldDataSize);
 	}
 	else
-		nDeletedNum = tmpvec.size();
+		nDeletedNum = static_cast<int>(tmpvec.size());
 
 	m_bNeedQuery = true;
 
@@ -256,8 +256,8 @@ void CItemPriceListTableCache::OnFlush()
 	for (int idx = 0; idx < m_data.byCount; ++idx)
 	{
 		snprintf(szQuery, sizeof(szQuery),
-				"INSERT INTO myshop_pricelist%s(owner_id, item_vnum, price) VALUES(%u, %u, %u)", 
-				GetTablePostfix(), m_data.dwOwnerID, m_data.aPriceInfo[idx].dwVnum, m_data.aPriceInfo[idx].dwPrice);
+				"INSERT INTO myshop_pricelist%s(owner_id, item_vnum, price) VALUES(%u, %u, %lld)",
+				GetTablePostfix(), m_data.dwOwnerID, m_data.aPriceInfo[idx].dwVnum, static_cast<long long>(m_data.aPriceInfo[idx].dwPrice));
 		CDBManager::instance().ReturnQuery(szQuery, QID_ITEMPRICE_SAVE, 0, NULL);
 	}
 

@@ -288,7 +288,7 @@ void CWarMap::UsePotion(LPCHARACTER ch, LPITEM item)
 
 int CWarMap::STeamData::GetAccumulatedJoinerCount()
 {
-	return set_pidJoiner.size();
+	return static_cast<int>(set_pidJoiner.size());
 }
 
 int CWarMap::STeamData::GetCurJointerCount()

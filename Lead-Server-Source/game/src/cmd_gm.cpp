@@ -201,16 +201,16 @@ bool FindInString(const char * c_pszFind, const char * c_pszIn)
 	p = strchr(c, '|');
 
 	if (!p)
-		return (0 == strncasecmp(c_pszFind, c_pszIn, strlen(c_pszFind)));
+		return (0 == _strnicmp(c_pszFind, c_pszIn, strlen(c_pszFind)));
 	else
 	{
 		char sz[64 + 1];
 
 		do
 		{
-			strlcpy(sz, c, MIN(sizeof(sz), (p - c) + 1));
+			strlcpy(sz, c, MIN(sizeof(sz), static_cast<size_t>((p - c) + 1)));
 
-			if (!strncasecmp(c_pszFind, sz, strlen(c_pszFind)))
+			if (!_strnicmp(c_pszFind, sz, strlen(c_pszFind)))
 				return true;
 
 			c = p + 1;
@@ -218,7 +218,7 @@ bool FindInString(const char * c_pszFind, const char * c_pszIn)
 
 		strlcpy(sz, c, sizeof(sz));
 
-		if (!strncasecmp(c_pszFind, sz, strlen(c_pszFind)))
+		if (!_strnicmp(c_pszFind, sz, strlen(c_pszFind)))
 			return true;
 	}
 
@@ -1208,7 +1208,7 @@ void BroadcastNotice(const char * c_pszBuf)
 {
 	TPacketGGNotice p;
 	p.bHeader = HEADER_GG_NOTICE;
-	p.lSize = strlen(c_pszBuf) + 1;
+	p.lSize = static_cast<long>(strlen(c_pszBuf) + 1);
 
 	TEMP_BUFFER buf;
 	buf.write(&p, sizeof(p));
@@ -1406,7 +1406,7 @@ ACMD(do_set)
 		return;
 	}
 
-	len = strlen(arg2);
+	len = static_cast<int>(strlen(arg2));
 
 	for (i = 0; *(set_fields[i].cmd) != '\n'; i++)
 		if (!strncmp(arg2, set_fields[i].cmd, len))
@@ -1531,7 +1531,7 @@ ACMD(do_respawn)
 	char arg1[256];
 	one_argument(argument, arg1, sizeof(arg1));
 
-	if (*arg1 && !strcasecmp(arg1, "all"))
+	if (*arg1 && !_stricmp(arg1, "all"))
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Respaw everywhere"));
 		regen_reset(0, 0);
@@ -1798,7 +1798,7 @@ ACMD(do_b1)
 	{
 		int rot = number(0, 359);
 		float fx, fy;
-		GetDeltaByDegree(rot, 800, &fx, &fy);
+		GetDeltaByDegree(static_cast<float>(rot), 800.f, &fx, &fy);
 
 		LPCHARACTER tch = CHARACTER_MANAGER::instance().SpawnMobRange(number(701, 706), 
 				ch->GetMapIndex(),
@@ -1815,7 +1815,7 @@ ACMD(do_b1)
 	{
 		int rot = number(0, 359);
 		float fx, fy;
-		GetDeltaByDegree(rot, 800, &fx, &fy);
+		GetDeltaByDegree(static_cast<float>(rot), 800.f, &fx, &fy);
 
 		LPCHARACTER tch = CHARACTER_MANAGER::instance().SpawnMobRange(8009, 
 				ch->GetMapIndex(),
@@ -1867,7 +1867,7 @@ ACMD(do_b4)
 	{
 		int rot = number(0, 359);
 		float fx, fy;
-		GetDeltaByDegree(rot, 1200, &fx, &fy);
+		GetDeltaByDegree(static_cast<float>(rot), 1200.f, &fx, &fy);
 
 		LPCHARACTER tch = CHARACTER_MANAGER::instance().SpawnMobRange(number(701, 706), 
 				ch->GetMapIndex(),
@@ -1884,7 +1884,7 @@ ACMD(do_b4)
 	{
 		int rot = number(0, 359);
 		float fx, fy;
-		GetDeltaByDegree(rot, 1200, &fx, &fy);
+		GetDeltaByDegree(static_cast<float>(rot), 1200.f, &fx, &fy);
 
 		LPCHARACTER tch = CHARACTER_MANAGER::instance().SpawnMobRange(8009, 
 				ch->GetMapIndex(),
@@ -2972,9 +2972,9 @@ ACMD(do_build)
 					}
 				}
 
-				float x_rot = atof(arg4);
-				float y_rot = atof(arg5);
-				float z_rot = atof(arg6);
+				float x_rot = static_cast<float>(atof(arg4));
+				float y_rot = static_cast<float>(atof(arg5));
+				float z_rot = static_cast<float>(atof(arg6));
 				// 20050811.myevan. Unseal building rotation function
 				/*
 				   if (x_rot != 0.0f || y_rot != 0.0f || z_rot != 0.0f)
@@ -3008,7 +3008,7 @@ ACMD(do_build)
 					// Consuming construction materials ( In Tesup GM also consumed )
 				{
 					// Consumption of construction costs
-					ch->PointChange(POINT_GOLD, -t->dwPrice);
+					ch->PointChange(POINT_GOLD, -static_cast<GoldType>(t->dwPrice));
 
 					// Using item materials 
 					{
@@ -3473,7 +3473,7 @@ ACMD(do_stat_plus_amount)
 		return;
 	}
 
-	int nRemainPoint = ch->GetPoint(POINT_STAT);
+	int nRemainPoint = static_cast<int>(ch->GetPoint(POINT_STAT));
 
 	if (nRemainPoint <= 0)
 	{
@@ -3501,28 +3501,28 @@ ACMD(do_stat_plus_amount)
 		case POINT_HT : // stamina
 			if (nPoint + ch->GetPoint(POINT_HT) > 90)
 			{
-				nPoint = 90 - ch->GetPoint(POINT_HT);
+				nPoint = static_cast<int>(90 - ch->GetPoint(POINT_HT));
 			}
 			break;
 
 		case POINT_IQ : // intelligence
 			if (nPoint + ch->GetPoint(POINT_IQ) > 90)
 			{
-				nPoint = 90 - ch->GetPoint(POINT_IQ);
+				nPoint = static_cast<int>(90 - ch->GetPoint(POINT_IQ));
 			}
 			break;
 			
 		case POINT_ST : // muscular strength
 			if (nPoint + ch->GetPoint(POINT_ST) > 90)
 			{
-				nPoint = 90 - ch->GetPoint(POINT_ST);
+				nPoint = static_cast<int>(90 - ch->GetPoint(POINT_ST));
 			}
 			break;
 			
 		case POINT_DX : // agility
 			if (nPoint + ch->GetPoint(POINT_DX) > 90)
 			{
-				nPoint = 90 - ch->GetPoint(POINT_DX);
+				nPoint = static_cast<int>(90 - ch->GetPoint(POINT_DX));
 			}
 			break;
 
@@ -3805,7 +3805,7 @@ ACMD(do_set_stat)
 			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("The subcommand of the command is incorrect."));
 			return;
 		}
-		int nRemainPoint = tch->GetPoint(POINT_STAT);
+		int nRemainPoint = static_cast<int>(tch->GetPoint(POINT_STAT));
 		int nCurPoint = tch->GetRealPoint(subcmd);
 		int nChangeAmount = 0;
 		str_to_number(nChangeAmount, szChangeAmount);

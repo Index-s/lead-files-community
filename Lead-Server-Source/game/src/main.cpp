@@ -202,7 +202,7 @@ void heartbeat(LPHEART ht, int pulse)
 			int count = 0;
 			if (save_idx < g_vec_save.size())
 			{
-				count = MIN(100, g_vec_save.size() - save_idx);
+				count = static_cast<int>(MIN(100, g_vec_save.size() - save_idx));
 
 				for (int i = 0; i < count; ++i, ++save_idx)
 					db_clientdesc->DBPacket(HEADER_GD_PLAYER_SAVE, 0, &g_vec_save[save_idx], sizeof(TPlayerTable));
@@ -423,7 +423,7 @@ int start(int argc, char **argv)
 				break;
 
 			case 'p': // port
-				mother_port = strtol(argv[optind], &ep, 10);
+				mother_port = static_cast<WORD>(strtol(argv[optind], &ep, 10));
 
 				if (mother_port <= 1024)
 				{

@@ -30,7 +30,7 @@ bool CreateItemTableFromRes(MYSQL_RES * res, std::vector<TPlayerItem> * pVec, DW
 
 	int rows;
 
-	if ((rows = mysql_num_rows(res)) <= 0)	// no data
+	if ((rows = static_cast<int>(mysql_num_rows(res))) <= 0)	// no data
 	{
 		pVec->clear();
 		return true;
@@ -641,7 +641,7 @@ void CClientManager::RESULT_ITEM_LOAD(CPeer * peer, MYSQL_RES * pRes, DWORD dwHa
 	static std::vector<TPlayerItem> s_items;
 	//DB Read item information from .
 	CreateItemTableFromRes(pRes, &s_items, dwPID);
-	DWORD dwCount = s_items.size();
+	DWORD dwCount = static_cast<DWORD>(s_items.size());
 
 	peer->EncodeHeader(HEADER_DG_ITEM_LOAD, dwHandle, sizeof(DWORD) + sizeof(TPlayerItem) * dwCount);
 	peer->EncodeDWORD(dwCount);
@@ -666,7 +666,7 @@ void CClientManager::RESULT_AFFECT_LOAD(CPeer * peer, MYSQL_RES * pRes, DWORD dw
 {
 	int iNumRows;
 
-	if ((iNumRows = mysql_num_rows(pRes)) == 0) // no data
+	if ((iNumRows = static_cast<int>(mysql_num_rows(pRes))) == 0) // no data
 		return;
 
 	static std::vector<TPacketAffectElement> s_elements;
@@ -694,7 +694,7 @@ void CClientManager::RESULT_AFFECT_LOAD(CPeer * peer, MYSQL_RES * pRes, DWORD dw
 
 	sys_log(0, "AFFECT_LOAD: count %d PID %u", s_elements.size(), dwPID);
 
-	DWORD dwCount = s_elements.size();
+	DWORD dwCount = static_cast<DWORD>(s_elements.size());
 
 	peer->EncodeHeader(HEADER_DG_AFFECT_LOAD, dwHandle, sizeof(DWORD) + sizeof(DWORD) + sizeof(TPacketAffectElement) * dwCount);
 	peer->Encode(&dwPID, sizeof(DWORD));
@@ -706,9 +706,9 @@ void CClientManager::RESULT_QUEST_LOAD(CPeer * peer, MYSQL_RES * pRes, DWORD dwH
 {
 	int iNumRows;
 
-	if ((iNumRows = mysql_num_rows(pRes)) == 0)
+	if ((iNumRows = static_cast<int>(mysql_num_rows(pRes))) == 0)
 	{
-		DWORD dwCount = 0; 
+		DWORD dwCount = 0;
 		peer->EncodeHeader(HEADER_DG_QUEST_LOAD, dwHandle, sizeof(DWORD));
 		peer->Encode(&dwCount, sizeof(DWORD));
 		return;
@@ -733,7 +733,7 @@ void CClientManager::RESULT_QUEST_LOAD(CPeer * peer, MYSQL_RES * pRes, DWORD dwH
 
 	sys_log(0, "QUEST_LOAD: count %d PID %u", s_table.size(), s_table[0].dwPID);
 
-	DWORD dwCount = s_table.size();
+	DWORD dwCount = static_cast<DWORD>(s_table.size());
 
 	peer->EncodeHeader(HEADER_DG_QUEST_LOAD, dwHandle, sizeof(DWORD) + sizeof(TQuestTable) * dwCount);
 	peer->Encode(&dwCount, sizeof(DWORD));
@@ -768,7 +768,7 @@ void CClientManager::__QUERY_PLAYER_CREATE(CPeer *peer, DWORD dwHandle, TPlayerC
 
 	if (it != s_createTimeByAccountID.end())
 	{
-		uint32_t curtime = time(0);
+		uint32_t curtime = static_cast<uint32_t>(time(0));
 
 		if (curtime - it->second < 30)
 		{
@@ -902,13 +902,13 @@ void CClientManager::__QUERY_PLAYER_CREATE(CPeer *peer, DWORD dwHandle, TPlayerC
 
 	pack.player.dwID			= player_id;
 	strlcpy(pack.player.szName, packet->player_table.name, sizeof(pack.player.szName));
-	pack.player.byJob			= packet->player_table.job;
+	pack.player.byJob			= static_cast<BYTE>(packet->player_table.job);
 	pack.player.byLevel			= 1;
 	pack.player.dwPlayMinutes	= 0;
-	pack.player.byST			= packet->player_table.st;
-	pack.player.byHT			= packet->player_table.ht;
-	pack.player.byDX 			= packet->player_table.dx;
-	pack.player.byIQ			= packet->player_table.iq;
+	pack.player.byST			= static_cast<BYTE>(packet->player_table.st);
+	pack.player.byHT			= static_cast<BYTE>(packet->player_table.ht);
+	pack.player.byDX 			= static_cast<BYTE>(packet->player_table.dx);
+	pack.player.byIQ			= static_cast<BYTE>(packet->player_table.iq);
 	pack.player.wMainPart		= packet->player_table.part_base;
 	pack.player.x			= packet->player_table.x;
 	pack.player.y			= packet->player_table.y;
@@ -918,7 +918,7 @@ void CClientManager::__QUERY_PLAYER_CREATE(CPeer *peer, DWORD dwHandle, TPlayerC
 
 	sys_log(0, "7 name %s job %d", pack.player.szName, pack.player.byJob);
 
-	s_createTimeByAccountID[packet->account_id] = time(0);
+	s_createTimeByAccountID[packet->account_id] = static_cast<uint32_t>(time(0));
 }
 
 /*
@@ -940,7 +940,7 @@ void CClientManager::__QUERY_PLAYER_DELETE(CPeer* peer, DWORD dwHandle, TPlayerD
 
 	TAccountTable & r = ld->GetAccountRef();
 
-	const uint8_t length = strlen(r.social_id);
+	const uint8_t length = static_cast<uint8_t>(strlen(r.social_id));
 
 	if (length < 7 || strncmp(packet->private_code, r.social_id + length - 7, 7))
 	{
@@ -1176,13 +1176,13 @@ void CClientManager::InsertLogoutPlayer(DWORD pid)
 		if (g_log)
 			sys_log(0, "LOGOUT: Update player time pid(%d)", pid);
 
-		it->second->time = time(0);
+		it->second->time = static_cast<uint32_t>(time(0));
 		return;
 	}
 		
 	TLogoutPlayer * pLogout = new TLogoutPlayer;
 	pLogout->pid = pid;
-	pLogout->time = time(0);
+	pLogout->time = static_cast<uint32_t>(time(0));
 	m_map_logout.insert(std::make_pair(pid, pLogout));
 
 	if (g_log)
@@ -1204,7 +1204,7 @@ extern int g_iLogoutSeconds;
 
 void CClientManager::UpdateLogoutPlayer()
 {
-	uint32_t now = time(0);
+	uint32_t now = static_cast<uint32_t>(time(0));
 
 	TLogoutPlayerMap::iterator it = m_map_logout.begin();
 

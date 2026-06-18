@@ -147,7 +147,7 @@ int BlueDragon_Damage (LPCHARACTER me, LPCHARACTER pAttacker, int dam)
 				size_t val = BlueDragon_GetIndexFactor("DragonStone", i, "val");
 				size_t cnt = SECTREE_MANAGER::instance().GetMonsterCountInMap( pAttacker->GetMapIndex(), dwDragonStoneID );
 
-				dam += (dam * (val*cnt))/100;
+				dam += static_cast<int>((dam * (val*cnt))/100);
 
 				break;
 			}
@@ -164,7 +164,7 @@ int BlueDragon_Damage (LPCHARACTER me, LPCHARACTER pAttacker, int dam)
 				size_t val = BlueDragon_GetIndexFactor("DragonStone", i, "val");
 				size_t cnt = SECTREE_MANAGER::instance().GetMonsterCountInMap( me->GetMapIndex(), dwDragonStoneID );
 
-				dam -= (dam * (val*cnt))/100;
+				dam -= static_cast<int>((dam * (val*cnt))/100);
 
 				if (dam <= 0)
 					dam = 1;
@@ -184,7 +184,7 @@ int BlueDragon_Damage (LPCHARACTER me, LPCHARACTER pAttacker, int dam)
 				{
 					size_t val = BlueDragon_GetIndexFactor("DragonStone", i, "enemy_val");
 
-					dam *= val;
+					dam *= static_cast<int>(val);
 
 					break;
 				}

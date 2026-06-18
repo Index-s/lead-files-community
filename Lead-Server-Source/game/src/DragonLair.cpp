@@ -132,7 +132,7 @@ EVENTFUNC( DragonLair_Collapse_Event )
 CDragonLair::CDragonLair(DWORD guildID, long BaseMapID, long PrivateMapID)
 	: GuildID_(guildID), BaseMapIndex_(BaseMapID), PrivateMapIndex_(PrivateMapID)
 {
-	StartTime_ = get_global_time();
+	StartTime_ = static_cast<DWORD>(get_global_time());
 }
 
 CDragonLair::~CDragonLair()
@@ -141,14 +141,14 @@ CDragonLair::~CDragonLair()
 
 DWORD CDragonLair::GetEstimatedTime() const
 {
-	return get_global_time() - StartTime_;
+	return static_cast<DWORD>(get_global_time()) - StartTime_;
 }
 
 void CDragonLair::OnDragonDead(LPCHARACTER pDragon)
 {
 	sys_log(0, "DragonLair: Dragon is dead");
 
-	LogManager::instance().DragonSlayLog(  GuildID_, pDragon->GetMobTable().dwVnum, StartTime_, get_global_time() );
+	LogManager::instance().DragonSlayLog(  GuildID_, pDragon->GetMobTable().dwVnum, StartTime_, static_cast<DWORD>(get_global_time()) );
 }
 
 

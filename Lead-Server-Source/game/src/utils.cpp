@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-static int global_time_gap = 0;
+static time_t global_time_gap = 0;
 
 time_t get_global_time()
 {
@@ -14,7 +14,7 @@ void set_global_time(time_t t)
 	char time_str_buf[32];
 	snprintf(time_str_buf, sizeof(time_str_buf), "%s", time_str(get_global_time()));
 
-	sys_log(0, "GLOBAL_TIME: %s time_gap %d", time_str_buf, global_time_gap);
+	sys_log(0, "GLOBAL_TIME: %s time_gap %lld", time_str_buf, (long long)global_time_gap);
 }
 
 int dice(int number, int size)
@@ -171,10 +171,10 @@ float gauss_random(float avg, float sigma)
 			v2 = uniform_random(-1.f, 1.f);
 			s = v1 * v1 + v2 * v2;
 		} while (s >= 1.f || fabs(s) < FLT_EPSILON);
-		double multiplier = sqrtf(-2 * logf(s)/s);
-		nextGaussian = v2 * multiplier;
+		double multiplier = sqrt(-2 * log(s)/s);
+		nextGaussian = static_cast<float>(v2 * multiplier);
 		haveNextGaussian = true;
-		return v1 * multiplier * sigma + avg;
+		return static_cast<float>(v1 * multiplier * sigma + avg);
 	}
 }
 

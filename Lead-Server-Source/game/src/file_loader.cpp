@@ -20,7 +20,7 @@ bool CMemoryTextFileLoader::SplitLine(DWORD dwLine, std::vector<std::string>* ps
 
 	do
 	{
-		int beginPos = c_rstLine.find_first_not_of(c_szDelimeter, basePos);
+		int beginPos = static_cast<int>(c_rstLine.find_first_not_of(c_szDelimeter, basePos));
 		if (beginPos < 0)
 			return false;
 
@@ -33,7 +33,7 @@ bool CMemoryTextFileLoader::SplitLine(DWORD dwLine, std::vector<std::string>* ps
 		else if (c_rstLine[beginPos] == '"')
 		{
 			++beginPos;
-			endPos = c_rstLine.find_first_of("\"", beginPos);
+			endPos = static_cast<int>(c_rstLine.find_first_of("\"", beginPos));
 
 			if (endPos < 0)
 				return false;
@@ -42,7 +42,7 @@ bool CMemoryTextFileLoader::SplitLine(DWORD dwLine, std::vector<std::string>* ps
 		}
 		else
 		{
-			endPos = c_rstLine.find_first_of(c_szDelimeter, beginPos);
+			endPos = static_cast<int>(c_rstLine.find_first_of(c_szDelimeter, beginPos));
 			basePos = endPos;
 		}
 
@@ -58,7 +58,7 @@ bool CMemoryTextFileLoader::SplitLine(DWORD dwLine, std::vector<std::string>* ps
 
 DWORD CMemoryTextFileLoader::GetLineCount()
 {
-	return m_stLineVector.size();
+	return static_cast<DWORD>(m_stLineVector.size());
 }
 
 bool CMemoryTextFileLoader::CheckLineIndex(DWORD dwLine)

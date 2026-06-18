@@ -94,7 +94,7 @@ unsigned int BlueDragon_GetRangeFactor(const char* key, const int val)
 
 	for( size_t i=1 ; i <= cnt ; ++i )
 	{
-		lua_rawgeti( L, -1, i );
+		lua_rawgeti( L, -1, static_cast<int>(i) );
 
 		if (false == lua_istable(L, -1))
 		{
@@ -188,7 +188,7 @@ unsigned int BlueDragon_GetIndexFactor(const char* container, const size_t idx, 
 		return 0;
 	}
 
-	lua_rawgeti( L, -1, idx );
+	lua_rawgeti( L, -1, static_cast<int>(idx) );
 
 	if (false == lua_istable(L, -1))
 	{

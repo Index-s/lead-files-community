@@ -89,7 +89,10 @@ bool GetServerLocation(TAccountTable & rTab, BYTE bEmpire)
 
 		struct in_addr in;
 		in.s_addr = rTab.players[i].lAddr;
-		sys_log(0, "success to %s:%d", inet_ntoa(in), rTab.players[i].wPort);
+		char szAddr[INET_ADDRSTRLEN];
+		if (NULL == inet_ntop(AF_INET, &in, szAddr, sizeof(szAddr)))
+			szAddr[0] = '\0';
+		sys_log(0, "success to %s:%d", szAddr, rTab.players[i].wPort);
 	}
 
 	return bFound;
@@ -350,8 +353,12 @@ void CInputDB::PlayerLoad(LPDESC d, const char * data)
 		P2P_MANAGER::instance().Send(&p, sizeof(TPacketGGLogin));
 
 		char buf[51];
-		snprintf(buf, sizeof(buf), "%s %d %d %d %d", 
-				inet_ntoa(ch->GetDesc()->GetAddr().sin_addr), ch->GetGold(), g_bChannel, ch->GetMapIndex(), ch->GetAlignment());
+		char szAddr[INET_ADDRSTRLEN];
+		struct sockaddr_in saAddr = ch->GetDesc()->GetAddr();
+		if (NULL == inet_ntop(AF_INET, &saAddr.sin_addr, szAddr, sizeof(szAddr)))
+			szAddr[0] = '\0';
+		snprintf(buf, sizeof(buf), "%s %lld %d %d %d",
+				szAddr, static_cast<long long>(ch->GetGold()), g_bChannel, ch->GetMapIndex(), ch->GetAlignment());
 		LogManager::instance().CharLog(ch, 0, "LOGIN", buf);
 	}
 
@@ -1363,7 +1370,7 @@ void CInputDB::ItemLoad(LPDESC d, const char * c_pData)
 				case EQUIPMENT:
 					if (item->CheckItemUseLevel(ch->GetLevel()) == true )
 					{
-						if (item->EquipTo(ch, p->pos) == false )
+						if (item->EquipTo(ch, static_cast<BYTE>(p->pos)) == false )
 						{
 							v.push_back(item);
 						}
@@ -1686,7 +1693,7 @@ void CInputDB::MoneyLog(const char* c_pData)
 	if (p->type == 4) // QUEST_MONEY_LOG_SKIP
 		return;
 
-	if (g_bAuthServer ==true )
+	if (g_bAuthServer != 0)
 		return;
 
 	LogManager::instance().MoneyLog(p->type, p->vnum, p->gold);

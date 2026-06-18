@@ -124,7 +124,7 @@ void CHARACTER::DistributeSP(LPCHARACTER pkKiller, int iMethod)
 
 			if (iAmount != 0)
 			{
-				iAmount += (iAmount * pkKiller->GetPoint(POINT_SP_REGEN)) / 100;
+				iAmount += static_cast<int>((iAmount * pkKiller->GetPoint(POINT_SP_REGEN)) / 100);
 
 				if (iAmount >= 11)
 					CreateFly(FLY_SP_BIG, pkKiller);
@@ -150,7 +150,7 @@ void CHARACTER::DistributeSP(LPCHARACTER pkKiller, int iMethod)
 			else
 				iAmount = 10 + GetMaxSP() * 3 / 100; // usual times
 
-			iAmount += (iAmount * pkKiller->GetPoint(POINT_SP_REGEN)) / 100;
+			iAmount += static_cast<int>((iAmount * pkKiller->GetPoint(POINT_SP_REGEN)) / 100);
 			pkKiller->PointChange(POINT_SP, iAmount);
 		}
 		else
@@ -170,7 +170,7 @@ void CHARACTER::DistributeSP(LPCHARACTER pkKiller, int iMethod)
 					iAmount = 9 + (pkKiller->GetMaxSP() / 100); // basic
 			}
 
-			iAmount += (iAmount * pkKiller->GetPoint(POINT_SP_REGEN)) / 100;
+			iAmount += static_cast<int>((iAmount * pkKiller->GetPoint(POINT_SP_REGEN)) / 100);
 			pkKiller->PointChange(POINT_SP, iAmount);
 		}
 	}
@@ -527,7 +527,7 @@ void CHARACTER::RewardGold(LPCHARACTER pkAttacker)
 		iGoldPercent = iGoldPercent * (100 + CPrivManager::instance().GetPriv(pkAttacker, PRIV_GOLD_DROP)) / 100;
 
 	if (pkAttacker->GetPoint(POINT_MALL_GOLDBONUS))
-		iGoldPercent += (iGoldPercent * pkAttacker->GetPoint(POINT_MALL_GOLDBONUS) / 100);
+		iGoldPercent += static_cast<int>(iGoldPercent * pkAttacker->GetPoint(POINT_MALL_GOLDBONUS) / 100);
 
 	iGoldPercent = iGoldPercent * CHARACTER_MANAGER::instance().GetMobGoldDropRate(pkAttacker) / 100;
 
@@ -763,14 +763,14 @@ void CHARACTER::Reward(bool bItemDrop)
 		{
 			if (pkAttacker->GetPoint(POINT_KILL_HP_RECOVERY))
 			{
-				int iHP = pkAttacker->GetMaxHP() * pkAttacker->GetPoint(POINT_KILL_HP_RECOVERY) / 100;
+				GoldType iHP = pkAttacker->GetMaxHP() * pkAttacker->GetPoint(POINT_KILL_HP_RECOVERY) / 100;
 				pkAttacker->PointChange(POINT_HP, iHP);
 				CreateFly(FLY_HP_SMALL, pkAttacker);
 			}
 
 			if (pkAttacker->GetPoint(POINT_KILL_SP_RECOVER))
 			{
-				int iSP = pkAttacker->GetMaxSP() * pkAttacker->GetPoint(POINT_KILL_SP_RECOVER) / 100;
+				GoldType iSP = pkAttacker->GetMaxSP() * pkAttacker->GetPoint(POINT_KILL_SP_RECOVER) / 100;
 				pkAttacker->PointChange(POINT_SP, iSP);
 				CreateFly(FLY_SP_SMALL, pkAttacker);
 			}
@@ -828,7 +828,7 @@ void CHARACTER::Reward(bool bItemDrop)
 		}
 		else
 		{
-			int iItemIdx = s_vec_item.size() - 1;
+			int iItemIdx = static_cast<int>(s_vec_item.size()) - 1;
 
 			std::priority_queue<std::pair<int, LPCHARACTER> > pq;
 
@@ -1024,7 +1024,7 @@ void CHARACTER::ItemDropPenalty(LPCHARACTER pkKiller)
 			std::mt19937 g(rd());
 			std::shuffle(vec_bSlots.begin(), vec_bSlots.end(), g);
 
-			int iQty = MIN(vec_bSlots.size(), r.iInventoryQty);
+			int iQty = MIN(static_cast<int>(vec_bSlots.size()), r.iInventoryQty);
 
 			if (iQty)
 				iQty = number(1, iQty);
@@ -1061,9 +1061,9 @@ void CHARACTER::ItemDropPenalty(LPCHARACTER pkKiller)
 			int iQty;
 
 			if (isDropAllEquipments)
-				iQty = vec_bSlots.size();
+				iQty = static_cast<int>(vec_bSlots.size());
 			else
-				iQty = MIN(vec_bSlots.size(), number(1, r.iEquipmentQty));
+				iQty = MIN(static_cast<int>(vec_bSlots.size()), number(1, r.iEquipmentQty));
 
 			if (iQty)
 				iQty = number(1, iQty);
@@ -1248,7 +1248,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 			if (GetEmpire() != pkKiller->GetEmpire())
 			{
-				int iEP = MIN(GetPoint(POINT_EMPIRE_POINT), pkKiller->GetPoint(POINT_EMPIRE_POINT));
+				GoldType iEP = MIN(GetPoint(POINT_EMPIRE_POINT), pkKiller->GetPoint(POINT_EMPIRE_POINT));
 
 				PointChange(POINT_EMPIRE_POINT, -(iEP / 10));
 				pkKiller->PointChange(POINT_EMPIRE_POINT, iEP / 5);
@@ -1653,7 +1653,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 			if (pAttacker)
 			{
 				// Critical
-				int iCriticalPct = pAttacker->GetPoint(POINT_CRITICAL_PCT);
+				int iCriticalPct = static_cast<int>(pAttacker->GetPoint(POINT_CRITICAL_PCT));
 
 				if (!IsPC())
 					iCriticalPct += pAttacker->GetMarriageBonus(UNIQUE_ITEM_MARRIAGE_CRITICAL_BONUS);
@@ -1666,7 +1666,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 						iCriticalPct /= 2;
 
 					// Apply critical resistance value .
-					iCriticalPct -= GetPoint(POINT_RESIST_CRITICAL);
+					iCriticalPct -= static_cast<int>(GetPoint(POINT_RESIST_CRITICAL));
 
 					if (number(1, 100) <= iCriticalPct)
 					{
@@ -1682,7 +1682,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 				}
 
 				// Penetrating attack
-				int iPenetratePct = pAttacker->GetPoint(POINT_PENETRATE_PCT);
+				int iPenetratePct = static_cast<int>(pAttacker->GetPoint(POINT_PENETRATE_PCT));
 
 				if (!IsPC())
 					iPenetratePct += pAttacker->GetMarriageBonus(UNIQUE_ITEM_MARRIAGE_PENETRATE_BONUS);
@@ -1713,7 +1713,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 					}
 
 					// Penetrating hit resistance value applied .
-					iPenetratePct -= GetPoint(POINT_RESIST_PENETRATE);
+					iPenetratePct -= static_cast<int>(GetPoint(POINT_RESIST_PENETRATE));
 
 					if (number(1, 100) <= iPenetratePct)
 					{
@@ -1722,7 +1722,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 						if (test_server)
 							ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Additional Stabbing Weapon Damage %d"), GetPoint(POINT_DEF_GRADE) * (100 + GetPoint(POINT_DEF_BONUS)) / 100);
 
-						dam += GetPoint(POINT_DEF_GRADE) * (100 + GetPoint(POINT_DEF_BONUS)) / 100;
+						dam += static_cast<int>(GetPoint(POINT_DEF_GRADE) * (100 + GetPoint(POINT_DEF_BONUS)) / 100);
 
 						if (IsAffectFlag(AFF_MANASHIELD))
 						{
@@ -1775,7 +1775,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 				dam = (int) (dam * (95 - GetSkillPower(SKILL_TERROR) / 5) / 100);
 
 			if (IsAffectFlag(AFF_HOSIN))
-				dam = dam * (100 - GetPoint(POINT_RESIST_NORMAL_DAMAGE)) / 100;
+				dam = static_cast<int>(dam * (100 - GetPoint(POINT_RESIST_NORMAL_DAMAGE)) / 100);
 
 			//
 			// Apply attacker properties
@@ -1787,7 +1787,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 					// reflection
 					if (GetPoint(POINT_REFLECT_MELEE))
 					{
-						int reflectDamage = dam * GetPoint(POINT_REFLECT_MELEE) / 100;
+						int reflectDamage = static_cast<int>(dam * GetPoint(POINT_REFLECT_MELEE) / 100);
 
 						// NOTE: the attacker IMMUNE_REFLECT If it has a property, it doesn't reflect.
 						// not 1/3 Planning requested that it be fixed as damage. .
@@ -1799,7 +1799,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 				}
 
 				// Critical
-				int iCriticalPct = pAttacker->GetPoint(POINT_CRITICAL_PCT);
+				int iCriticalPct = static_cast<int>(pAttacker->GetPoint(POINT_CRITICAL_PCT));
 
 				if (!IsPC())
 					iCriticalPct += pAttacker->GetMarriageBonus(UNIQUE_ITEM_MARRIAGE_CRITICAL_BONUS);
@@ -1807,7 +1807,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 				if (iCriticalPct)
 				{
 					// Apply critical resistance value .
-					iCriticalPct -= GetPoint(POINT_RESIST_CRITICAL);
+					iCriticalPct -= static_cast<int>(GetPoint(POINT_RESIST_CRITICAL));
 
 					if (number(1, 100) <= iCriticalPct)
 					{
@@ -1818,7 +1818,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 				}
 
 				// Penetrating attack
-				int iPenetratePct = pAttacker->GetPoint(POINT_PENETRATE_PCT);
+				int iPenetratePct = static_cast<int>(pAttacker->GetPoint(POINT_PENETRATE_PCT));
 
 				if (!IsPC())
 					iPenetratePct += pAttacker->GetMarriageBonus(UNIQUE_ITEM_MARRIAGE_PENETRATE_BONUS);
@@ -1839,7 +1839,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 				{
 
 					// Penetrating hit resistance value applied .
-					iPenetratePct -= GetPoint(POINT_RESIST_PENETRATE);
+					iPenetratePct -= static_cast<int>(GetPoint(POINT_RESIST_PENETRATE));
 
 					if (number(1, 100) <= iPenetratePct)
 					{
@@ -1847,7 +1847,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 						if (test_server)
 							ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Additional Stabbing Weapon Damage %d"), GetPoint(POINT_DEF_GRADE) * (100 + GetPoint(POINT_DEF_BONUS)) / 100);
-						dam += GetPoint(POINT_DEF_GRADE) * (100 + GetPoint(POINT_DEF_BONUS)) / 100;
+						dam += static_cast<int>(GetPoint(POINT_DEF_GRADE) * (100 + GetPoint(POINT_DEF_BONUS)) / 100);
 					}
 				}
 
@@ -1858,7 +1858,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 					if (number(1, 10) <= pct)
 					{
-						int iHP = MIN(dam, MAX(0, iCurHP)) * pAttacker->GetPoint(POINT_STEAL_HP) / 100;
+						int iHP = static_cast<int>(MIN(dam, MAX(0, iCurHP)) * pAttacker->GetPoint(POINT_STEAL_HP) / 100);
 
 						if (iHP > 0 && GetHP() >= iHP)
 						{
@@ -1883,7 +1883,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 						else
 							iCur = iCurHP;
 
-						int iSP = MIN(dam, MAX(0, iCur)) * pAttacker->GetPoint(POINT_STEAL_SP) / 100;
+						int iSP = static_cast<int>(MIN(dam, MAX(0, iCur)) * pAttacker->GetPoint(POINT_STEAL_SP) / 100);
 
 						if (iSP > 0 && iCur >= iSP)
 						{
@@ -1910,7 +1910,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 				// Every time I hit it HP recovery
 				if (pAttacker->GetPoint(POINT_HIT_HP_RECOVERY) && number(0, 4) > 0) // 80% probability
 				{
-					int i = MIN(dam, iCurHP) * pAttacker->GetPoint(POINT_HIT_HP_RECOVERY) / 100;
+					int i = static_cast<int>(MIN(dam, iCurHP) * pAttacker->GetPoint(POINT_HIT_HP_RECOVERY) / 100);
 
 					if (i)
 					{
@@ -1922,7 +1922,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 				// Every time I hit it SP recovery
 				if (pAttacker->GetPoint(POINT_HIT_SP_RECOVERY) && number(0, 4) > 0) // 80% probability
 				{
-					int i = MIN(dam, iCurHP) * pAttacker->GetPoint(POINT_HIT_SP_RECOVERY) / 100;
+					int i = static_cast<int>(MIN(dam, iCurHP) * pAttacker->GetPoint(POINT_HIT_SP_RECOVERY) / 100);
 
 					if (i)
 					{
@@ -1949,9 +1949,9 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 			case DAMAGE_TYPE_NORMAL_RANGE:
 				if (pAttacker)
 					if (pAttacker->GetPoint(POINT_NORMAL_HIT_DAMAGE_BONUS))
-						dam = dam * (100 + pAttacker->GetPoint(POINT_NORMAL_HIT_DAMAGE_BONUS)) / 100;
+						dam = static_cast<int>(dam * (100 + pAttacker->GetPoint(POINT_NORMAL_HIT_DAMAGE_BONUS)) / 100);
 
-				dam = dam * (100 - MIN(99, GetPoint(POINT_NORMAL_HIT_DEFEND_BONUS))) / 100;
+				dam = dam * (100 - MIN(99, static_cast<int>(GetPoint(POINT_NORMAL_HIT_DEFEND_BONUS)))) / 100;
 				break;
 
 			case DAMAGE_TYPE_MELEE:
@@ -1962,9 +1962,9 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 			case DAMAGE_TYPE_MAGIC:
 				if (pAttacker)
 					if (pAttacker->GetPoint(POINT_SKILL_DAMAGE_BONUS))
-						dam = dam * (100 + pAttacker->GetPoint(POINT_SKILL_DAMAGE_BONUS)) / 100;
+						dam = static_cast<int>(dam * (100 + pAttacker->GetPoint(POINT_SKILL_DAMAGE_BONUS)) / 100);
 
-				dam = dam * (100 - MIN(99, GetPoint(POINT_SKILL_DEFEND_BONUS))) / 100;
+				dam = dam * (100 - MIN(99, static_cast<int>(GetPoint(POINT_SKILL_DEFEND_BONUS)))) / 100;
 				break;
 
 			default:
@@ -1978,7 +1978,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 		{
 			// POINT_MANASHIELD The smaller the better
 			int iDamageSPPart = dam / 3;
-			int iDamageToSP = iDamageSPPart * GetPoint(POINT_MANASHIELD) / 100;
+			int iDamageToSP = static_cast<int>(iDamageSPPart * GetPoint(POINT_MANASHIELD) / 100);
 			int iSP = GetSP();
 
 			// SP If present, damage is reduced by half.
@@ -1991,7 +1991,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 			{
 				// When I need to lose more blood because I lack mental strength
 				PointChange(POINT_SP, -GetSP());
-				dam -= iSP * 100 / MAX(GetPoint(POINT_MANASHIELD), 1);
+				dam -= iSP * 100 / MAX(static_cast<int>(GetPoint(POINT_MANASHIELD)), 1);
 			}
 		}
 
@@ -2000,7 +2000,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 		//
 		if (GetPoint(POINT_MALL_DEFBONUS) > 0)
 		{
-			int dec_dam = MIN(200, dam * GetPoint(POINT_MALL_DEFBONUS) / 100);
+			int dec_dam = MIN(200, static_cast<int>(dam * GetPoint(POINT_MALL_DEFBONUS) / 100));
 			dam -= dec_dam;
 		}
 
@@ -2137,8 +2137,8 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 			// Final damage correction
 			float damMul = this->GetDamMul();
-			float tempDam = dam;
-			dam = tempDam * damMul + 0.5f;
+			float tempDam = static_cast<float>(dam);
+			dam = static_cast<int>(tempDam * damMul + 0.5f);
 
 
 			if (pAttacker)
@@ -2298,9 +2298,9 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 		}
 
 		iExp += (iExp * to->GetMarriageBonus(UNIQUE_ITEM_MARRIAGE_EXP_BONUS) / 100);
-		iExp += (iExp * to->GetPoint(POINT_RAMADAN_CANDY_BONUS_EXP)/100);
-		iExp += (iExp * to->GetPoint(POINT_MALL_EXPBONUS)/100);
-		iExp += (iExp * to->GetPoint(POINT_EXP)/100);
+		iExp += static_cast<int>(iExp * to->GetPoint(POINT_RAMADAN_CANDY_BONUS_EXP)/100);
+		iExp += static_cast<int>(iExp * to->GetPoint(POINT_MALL_EXPBONUS)/100);
+		iExp += static_cast<int>(iExp * to->GetPoint(POINT_EXP)/100);
 
 		if (test_server)
 		{
@@ -2749,7 +2749,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 							NormalAttackAffect(m_me, pkVictim);
 
 							// Damage Calculation
-							iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BOW)) / 100;
+							iDam = static_cast<int>(iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BOW)) / 100);
 
 							//sys_log(0, "%s arrow %s dam %d", m_me->GetName(), pkVictim->GetName(), iDam);
 
@@ -2776,7 +2776,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 							NormalAttackAffect(m_me, pkVictim);
 
 							// Damage Calculation
-							iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_MAGIC)) / 100;
+							iDam = static_cast<int>(iDam * (100 - pkVictim->GetPoint(POINT_RESIST_MAGIC)) / 100);
 
 							//sys_log(0, "%s arrow %s dam %d", m_me->GetName(), pkVictim->GetName(), iDam);
 
@@ -3041,7 +3041,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 					pAttacker->IsAffectFlag(AFF_REVIVE_INVISIBLE))
 				continue;
 
-			float fDist = DISTANCE_APPROX(pAttacker->GetX() - pkChr->GetX(), pAttacker->GetY() - pkChr->GetY());
+			float fDist = static_cast<float>(DISTANCE_APPROX(pAttacker->GetX() - pkChr->GetX(), pAttacker->GetY() - pkChr->GetY()));
 
 			if (fDist < fMinDist)
 			{
@@ -3291,7 +3291,7 @@ struct FuncPullMonster
 				return;
 			//if (ch->GetVictim() && ch->GetVictim() != m_ch)
 			//return;
-			float fDist = DISTANCE_APPROX(m_ch->GetX() - ch->GetX(), m_ch->GetY() - ch->GetY());
+			float fDist = static_cast<float>(DISTANCE_APPROX(m_ch->GetX() - ch->GetX(), m_ch->GetY() - ch->GetY()));
 			if (fDist > 3000 || fDist < 100)
 				return;
 

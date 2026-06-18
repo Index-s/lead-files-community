@@ -23,7 +23,7 @@ static float MSA_GetNormalAttackDuration(const char* msaPath)
 		sscanf(line, "%s %s", key, val);
 		if (strcmp(key, "MotionDuration") == 0)
 		{
-			duration = atof(val);
+			duration = static_cast<float>(atof(val));
 			break;
 		}
 	}
@@ -106,7 +106,7 @@ static const char* GetMotionFileName(TMobTable* mobTable, EPublicMotion motion)
 			v[2] = strtok(NULL, " \t\r\n");
 			v[3] = strtok(NULL, " \t\r\n");
 
-			if (NULL != v[0] && NULL != v[1] && NULL != v[2] && NULL != v[3] && !strcasecmp(v[1], field))
+			if (NULL != v[0] && NULL != v[1] && NULL != v[2] && NULL != v[3] && !_stricmp(v[1], field))
 			{
 				fclose(fp);
 
@@ -507,7 +507,7 @@ bool CMotion::LoadMobSkillFromFile(const char * c_pszFileName, CMob* pMob, int i
 					return false;
 				}
 
-				pMob->AddSkillSplash(iSkillIndex, 100 + DWORD(fStartingTime * 1000), -(DWORD)(v3Position.y));
+				pMob->AddSkillSplash(iSkillIndex, 100 + DWORD(fStartingTime * 1000), -static_cast<int>(v3Position.y));
 
 				rkTextFileLoader.SetParentNode();
 			}

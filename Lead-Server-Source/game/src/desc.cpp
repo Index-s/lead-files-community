@@ -202,7 +202,9 @@ bool DESC::Setup(LPFDWATCH _fdw, socket_t _fd, const struct sockaddr_in & c_rSoc
 	m_lpFdw		= _fdw;
 	m_sock		= _fd;
 
-	m_stHost		= inet_ntoa(c_rSockAddr.sin_addr);
+	char szHostAddr[INET_ADDRSTRLEN] = { 0 };
+	inet_ntop(AF_INET, (PVOID) &c_rSockAddr.sin_addr, szHostAddr, sizeof(szHostAddr));
+	m_stHost		= szHostAddr;
 	m_wPort			= c_rSockAddr.sin_port;
 	m_dwHandle		= _handle;
 
@@ -240,7 +242,7 @@ bool DESC::Setup(LPFDWATCH _fdw, socket_t _fd, const struct sockaddr_in & c_rSoc
 
 int DESC::ProcessInput()
 {
-	ssize_t bytes_read;
+	int bytes_read;
 
 	if (!m_lpInputBuffer)
 	{
@@ -923,7 +925,7 @@ void DESC::ChatPacket(BYTE type, const char * format, ...)
 	struct packet_chat pack_chat;
 
 	pack_chat.header    = HEADER_GC_CHAT;
-	pack_chat.size      = sizeof(struct packet_chat) + len;
+	pack_chat.size      = static_cast<WORD>(sizeof(struct packet_chat) + len);
 	pack_chat.type      = type;
 	pack_chat.id        = 0;
 	pack_chat.bEmpire   = GetEmpire();

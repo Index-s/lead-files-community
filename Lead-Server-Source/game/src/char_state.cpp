@@ -147,7 +147,7 @@ namespace
 							{
 								BYTE idx_opp = idx == 0 ? 1 : 0;
 
-								SendGuildWarScore(m_pkChr->GetPoint(POINT_STAT), pkAff->lApplyValue, 1);
+								SendGuildWarScore(static_cast<DWORD>(m_pkChr->GetPoint(POINT_STAT)), pkAff->lApplyValue, 1);
 								//SendGuildWarScore(pkAff->lApplyValue, m_pkChr->GetPoint(POINT_STAT), -1);
 
 								pMap->ResetFlag();
@@ -285,10 +285,10 @@ void CHARACTER::CowardEscape()
 	for (int iDistIdx = 2; iDistIdx >= 0; --iDistIdx)
 		for (int iTryCount = 0; iTryCount < 8; ++iTryCount)
 		{
-			SetRotation(number(0, 359));        // Direction is set randomly
+			SetRotation(static_cast<float>(number(0, 359)));        // Direction is set randomly
 
 			float fx, fy;
-			float fDist = number(iDist[iDistIdx], iDist[iDistIdx+1]);
+			float fDist = static_cast<float>(number(iDist[iDistIdx], iDist[iDistIdx+1]));
 
 			GetDeltaByDegree(GetRotation(), fDist, &fx, &fy);
 
@@ -583,22 +583,22 @@ void CHARACTER::__StateIdle_NPC()
 			{
 				if (DISTANCE_APPROX(GetX() - pkChrProtege->GetX(), GetY() - pkChrProtege->GetY()) > 500)
 				{
-					if (Follow(pkChrProtege, number(100, 300)))
+					if (Follow(pkChrProtege, static_cast<float>(number(100, 300))))
 						return;
 				}
 			}
 
 			if (!number(0, 6))
 			{
-				SetRotation(number(0, 359));        // Direction is set randomly
+				SetRotation(static_cast<float>(number(0, 359)));        // Direction is set randomly
 
 				float fx, fy;
-				float fDist = number(200, 400);
+				float fDist = static_cast<float>(number(200, 400));
 
 				GetDeltaByDegree(GetRotation(), fDist, &fx, &fy);
 
 				// Check loose nail properties ; If the final position and the intermediate position cannot be reached, do not go. .
-				if (!(SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int) fx, GetY() + (int) fy) 
+				if (!(SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int) fx, GetY() + (int) fy)
 					&& SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int) fx / 2, GetY() + (int) fy / 2)))
 					return;
 
@@ -684,7 +684,7 @@ void CHARACTER::__StateIdle_Monster()
 	{
 		if (DISTANCE_APPROX(GetX() - pkChrProtege->GetX(), GetY() - pkChrProtege->GetY()) > 1000)
 		{
-			if (Follow(pkChrProtege, number(150, 400)))
+			if (Follow(pkChrProtege, static_cast<float>(number(150, 400))))
 			{
 				MonsterLog("[IDLE] Leader is too far away! Returning.");
 				return;
@@ -699,10 +699,10 @@ void CHARACTER::__StateIdle_Monster()
 	{
 		if (!number(0, 6))
 		{
-			SetRotation(number(0, 359));        // Direction is set randomly
+			SetRotation(static_cast<float>(number(0, 359)));        // Direction is set randomly
 
 			float fx, fy;
-			float fDist = number(300, 700);
+			float fDist = static_cast<float>(number(300, 700));
 
 			GetDeltaByDegree(GetRotation(), fDist, &fx, &fy);
 
@@ -742,13 +742,13 @@ bool __CHARACTER_GotoNearTarget(LPCHARACTER self, LPCHARACTER victim)
 		case BATTLE_TYPE_RANGE:
 		case BATTLE_TYPE_MAGIC:
 			// Wizards and archers have an attack range of 80% Go all the way and start attacking. .
-			if (self->Follow(victim, self->GetMobAttackRange() * 8 / 10))
+			if (self->Follow(victim, static_cast<float>(self->GetMobAttackRange() * 8 / 10)))
 				return true;
 			break;
 
 		default:
 			// the rest 90%?
-			if (self->Follow(victim, self->GetMobAttackRange() * 9 / 10))
+			if (self->Follow(victim, static_cast<float>(self->GetMobAttackRange() * 9 / 10)))
 				return true;
 	}
 
@@ -963,9 +963,9 @@ void CHARACTER::StateBattle()
 					case BATTLE_TYPE_TANKER:
 						{
 							float fx, fy;
-							float fDist = number(400, 1500);
+							float fDist = static_cast<float>(number(400, 1500));
 
-							GetDeltaByDegree(number(0, 359), fDist, &fx, &fy);
+							GetDeltaByDegree(static_cast<float>(number(0, 359)), fDist, &fx, &fy);
 
 							if (SECTREE_MANAGER::instance().IsMovablePosition(victim->GetMapIndex(),
 										victim->GetX() + (int) fx, 
@@ -1032,7 +1032,7 @@ void CHARACTER::StateBattle()
 
 	LPCHARACTER pkChrProtege = GetProtege();
 
-	float fDist = DISTANCE_APPROX(GetX() - victim->GetX(), GetY() - victim->GetY());
+	float fDist = static_cast<float>(DISTANCE_APPROX(GetX() - victim->GetX(), GetY() - victim->GetY()));
 
 	if (fDist >= 4000.0f)
 	{
@@ -1041,7 +1041,7 @@ void CHARACTER::StateBattle()
 
 		if (pkChrProtege)
 			if (DISTANCE_APPROX(GetX() - pkChrProtege->GetX(), GetY() - pkChrProtege->GetY()) > 1000)
-				Follow(pkChrProtege, number(150, 400));
+				Follow(pkChrProtege, static_cast<float>(number(150, 400)));
 
 		return;
 	}
@@ -1143,11 +1143,11 @@ void CHARACTER::StateFlag()
 	char buf[256];
 	BYTE idx;
 
-	if (!pMap->GetTeamIndex(GetPoint(POINT_STAT), idx))
+	if (!pMap->GetTeamIndex(static_cast<DWORD>(GetPoint(POINT_STAT)), idx))
 		return;
 
-	f.m_pkChrFind->AddAffect(AFFECT_WAR_FLAG, POINT_NONE, GetPoint(POINT_STAT), idx == 0 ? AFF_WAR_FLAG1 : AFF_WAR_FLAG2, INFINITE_AFFECT_DURATION, 0, false);
-	f.m_pkChrFind->AddAffect(AFFECT_WAR_FLAG, POINT_MOV_SPEED, 50 - f.m_pkChrFind->GetPoint(POINT_MOV_SPEED), 0, INFINITE_AFFECT_DURATION, 0, false);
+	f.m_pkChrFind->AddAffect(AFFECT_WAR_FLAG, POINT_NONE, static_cast<long>(GetPoint(POINT_STAT)), idx == 0 ? AFF_WAR_FLAG1 : AFF_WAR_FLAG2, INFINITE_AFFECT_DURATION, 0, false);
+	f.m_pkChrFind->AddAffect(AFFECT_WAR_FLAG, POINT_MOV_SPEED, static_cast<long>(50 - f.m_pkChrFind->GetPoint(POINT_MOV_SPEED)), 0, INFINITE_AFFECT_DURATION, 0, false);
 
 	pMap->RemoveFlag(idx);
 
@@ -1191,14 +1191,14 @@ void CHARACTER::StateHorse()
 
 	m_pkMobInst->m_posLastAttacked = GetXYZ();
 
-	float fDist = DISTANCE_APPROX(GetX() - victim->GetX(), GetY() - victim->GetY());
+	float fDist = static_cast<float>(DISTANCE_APPROX(GetX() - victim->GetX(), GetY() - victim->GetY()));
 
 	if (fDist >= START_FOLLOW_DISTANCE)
 	{
 		if (fDist > START_RUN_DISTANCE)
 			SetNowWalking(!bRun);		// NOTE: I thought it was stopping when I saw the function name. SetNowWalking(false) If you do that, you run. .. -_-;
 
-		Follow(victim, number(MIN_APPROACH, MAX_APPROACH));
+		Follow(victim, static_cast<float>(number(MIN_APPROACH, MAX_APPROACH)));
 
 		m_dwStateDuration = STATE_DURATION;
 	}
@@ -1207,10 +1207,10 @@ void CHARACTER::StateHorse()
 		// wondering-.-
 		m_dwLastAttackTime = get_dword_time() + number(5000, 12000);
 
-		SetRotation(number(0, 359));        // Direction is set randomly
+		SetRotation(static_cast<float>(number(0, 359)));        // Direction is set randomly
 
 		float fx, fy;
-		float fDist = number(200, 400);
+		float fDist = static_cast<float>(number(200, 400));
 
 		GetDeltaByDegree(GetRotation(), fDist, &fx, &fy);
 

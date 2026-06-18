@@ -5,9 +5,10 @@
  * description : 
  */
 
+#include "stdafx.h"
+
 #define _blend_item_cpp_
 
-#include "stdafx.h"
 #include "constants.h"
 #include "log.h"
 #include "dev_log.h"

@@ -286,8 +286,8 @@ struct FSkillEarthQuake
 
 					const int nFlyDistance = 1000;
 
-					long tx = ch->GetX() + vec.x * nFlyDistance;
-					long ty = ch->GetY() + vec.y * nFlyDistance;
+					long tx = ch->GetX() + static_cast<long>(vec.x * nFlyDistance);
+					long ty = ch->GetY() + static_cast<long>(vec.y * nFlyDistance);
 
 					for (int i=0 ; i < 5 ; ++i)
 					{
@@ -299,24 +299,24 @@ struct FSkillEarthQuake
 						switch( i )
 						{
 							case 0:
-								tx = ch->GetX() + vec.x * nFlyDistance * -1;
-								ty = ch->GetY() + vec.y * nFlyDistance * -1;
+								tx = ch->GetX() + static_cast<long>(vec.x * nFlyDistance * -1);
+								ty = ch->GetY() + static_cast<long>(vec.y * nFlyDistance * -1);
 								break;
 							case 1:
-								tx = ch->GetX() + vec.x * nFlyDistance * -1;
-								ty = ch->GetY() + vec.y * nFlyDistance;
+								tx = ch->GetX() + static_cast<long>(vec.x * nFlyDistance * -1);
+								ty = ch->GetY() + static_cast<long>(vec.y * nFlyDistance);
 								break;
 							case 2:
-								tx = ch->GetX() + vec.x * nFlyDistance;
-								ty = ch->GetY() + vec.y * nFlyDistance * -1;
+								tx = ch->GetX() + static_cast<long>(vec.x * nFlyDistance);
+								ty = ch->GetY() + static_cast<long>(vec.y * nFlyDistance * -1);
 								break;
 							case 3:
-								tx = ch->GetX() + vec.x * number(1,100);
-								ty = ch->GetY() + vec.y * number(1,100);
+								tx = ch->GetX() + static_cast<long>(vec.x * number(1,100));
+								ty = ch->GetY() + static_cast<long>(vec.y * number(1,100));
 								break;
 							case 4:
-								tx = ch->GetX() + vec.x * number(1,10);
-								ty = ch->GetY() + vec.y * number(1,10);
+								tx = ch->GetX() + static_cast<long>(vec.x * number(1,10));
+								ty = ch->GetY() + static_cast<long>(vec.y * number(1,10));
 								break;
 						}
 					}

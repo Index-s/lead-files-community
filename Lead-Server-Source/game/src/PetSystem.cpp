@@ -192,7 +192,7 @@ DWORD CPetActor::Summon(const char* petName, LPITEM pSummonItem, bool bSpawnFar)
 
 bool CPetActor::_UpdatAloneActionAI(float fMinDist, float fMaxDist)
 {
-	float fDist = number(fMinDist, fMaxDist);
+	float fDist = static_cast<float>(number(static_cast<int>(fMinDist), static_cast<int>(fMaxDist)));
 	float r = (float)number (0, 359);
 	float dest_x = GetOwner()->GetX() + fDist * cos(r);
 	float dest_y = GetOwner()->GetY() + fDist * sin(r);
@@ -210,7 +210,7 @@ bool CPetActor::_UpdatAloneActionAI(float fMinDist, float fMaxDist)
 
 	//if (m_pkChar->Goto(m_pkChar->GetX() + (int) fx, m_pkChar->GetY() + (int) fy))
 	//	m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
-	if (!m_pkChar->IsStateMove() && m_pkChar->Goto(dest_x, dest_y))
+	if (!m_pkChar->IsStateMove() && m_pkChar->Goto(static_cast<long>(dest_x), static_cast<long>(dest_y)))
 		m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
 
 	m_dwLastActionTime = get_dword_time();
@@ -251,14 +251,14 @@ bool CPetActor::_UpdateFollowAI()
 	long ownerX = m_pkOwner->GetX();		long ownerY = m_pkOwner->GetY();
 	long charX = m_pkChar->GetX();			long charY = m_pkChar->GetY();
 
-	float fDist = DISTANCE_APPROX(charX - ownerX, charY - ownerY);
+	float fDist = static_cast<float>(DISTANCE_APPROX(charX - ownerX, charY - ownerY));
 
 	if (fDist >= RESPAWN_DISTANCE)
 	{
 		float fOwnerRot = m_pkOwner->GetRotation() * 3.141592f / 180.f;
 		float fx = -APPROACH * cos(fOwnerRot);
 		float fy = -APPROACH * sin(fOwnerRot);
-		if (m_pkChar->Show(m_pkOwner->GetMapIndex(), ownerX + fx, ownerY + fy))
+		if (m_pkChar->Show(m_pkOwner->GetMapIndex(), static_cast<long>(ownerX + fx), static_cast<long>(ownerY + fy)))
 		{
 			return true;
 		}
@@ -274,7 +274,7 @@ bool CPetActor::_UpdateFollowAI()
 
 		m_pkChar->SetNowWalking(!bRun);		// NOTE: I thought it was stopping when I saw the function name. SetNowWalking(false) If you do that, you run. .. -_-;
 		
-		Follow(APPROACH);
+		Follow(static_cast<float>(APPROACH));
 
 		m_pkChar->SetLastAttacked(currentTime);
 		m_dwLastActionTime = currentTime;
@@ -327,17 +327,17 @@ bool CPetActor::Follow(float fMinDistance)
 	if( !m_pkOwner || !m_pkChar) 
 		return false;
 
-	float fOwnerX = m_pkOwner->GetX();
-	float fOwnerY = m_pkOwner->GetY();
+	float fOwnerX = static_cast<float>(m_pkOwner->GetX());
+	float fOwnerY = static_cast<float>(m_pkOwner->GetY());
 
-	float fPetX = m_pkChar->GetX();
-	float fPetY = m_pkChar->GetY();
+	float fPetX = static_cast<float>(m_pkChar->GetX());
+	float fPetY = static_cast<float>(m_pkChar->GetY());
 
-	float fDist = DISTANCE_SQRT(fOwnerX - fPetX, fOwnerY - fPetY);
+	float fDist = DISTANCE_SQRT(static_cast<long>(fOwnerX - fPetX), static_cast<long>(fOwnerY - fPetY));
 	if (fDist <= fMinDistance)
 		return false;
 
-	m_pkChar->SetRotationToXY(fOwnerX, fOwnerY);
+	m_pkChar->SetRotationToXY(static_cast<long>(fOwnerX), static_cast<long>(fOwnerY));
 
 	float fx, fy;
 

@@ -103,7 +103,7 @@ void CClientManager::QUERY_LOGIN_BY_KEY(CPeer * pkPeer, DWORD dwHandle, TPacketG
 		return;
 	}
 
-	if (strcasecmp(r.login, szLogin))
+	if (_stricmp(r.login, szLogin))
 	{
 		sys_log(0, "LOGIN_BY_KEY login differ %s %lu input %s", r.login, p->dwLoginKey, szLogin);
 		pkPeer->EncodeReturn(HEADER_DG_LOGIN_NOT_EXIST, dwHandle);
@@ -281,13 +281,13 @@ void CreateAccountPlayerDataFromRes(MYSQL_RES * pRes, TAccountTable * pkTab)
 				{
 					strlcpy(pkTab->players[j].szName, pt->name, sizeof(pkTab->players[j].szName));
 
-					pkTab->players[j].byJob			= pt->job;
+					pkTab->players[j].byJob			= static_cast<BYTE>(pt->job);
 					pkTab->players[j].byLevel			= pt->level;
 					pkTab->players[j].dwPlayMinutes		= pt->playtime;
-					pkTab->players[j].byST			= pt->st;
-					pkTab->players[j].byHT			= pt->ht;
-					pkTab->players[j].byDX			= pt->dx;
-					pkTab->players[j].byIQ			= pt->iq;
+					pkTab->players[j].byST			= static_cast<BYTE>(pt->st);
+					pkTab->players[j].byHT			= static_cast<BYTE>(pt->ht);
+					pkTab->players[j].byDX			= static_cast<BYTE>(pt->dx);
+					pkTab->players[j].byIQ			= static_cast<BYTE>(pt->iq);
 					pkTab->players[j].wMainPart			= pt->parts[PART_MAIN];
 					pkTab->players[j].wHairPart			= pt->parts[PART_HAIR];
 					pkTab->players[j].x				= pt->x;
