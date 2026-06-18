@@ -34,7 +34,6 @@
 #include "xgetopt.h"
 
 #define S_ISDIR(m)      (m & _S_IFDIR)
-#define snprintf _snprintf
 
 #define __USE_SELECT__
 
@@ -50,6 +49,23 @@
 #define localtime_r(timet, result) localtime_s(result, timet)
 #define strtok_r(s, delim, ptrptr) strtok_s(s, delim, ptrptr)
 #define strdup(str) _strdup(str)
+
+// Portable file-open wrappers: route the standard (POSIX) signatures to the
+// bounded MSVC *_s variants on Windows. Defined after <stdio.h> so the system
+// prototypes are already parsed; POSIX builds use the native functions.
+static INLINE FILE * __thecore_fopen(const char * filename, const char * mode)
+{
+	FILE * fp = NULL;
+	return (fopen_s(&fp, filename, mode) == 0) ? fp : NULL;
+}
+#define fopen(filename, mode) __thecore_fopen((filename), (mode))
+
+static INLINE FILE * __thecore_freopen(const char * filename, const char * mode, FILE * stream)
+{
+	FILE * fp = NULL;
+	return (freopen_s(&fp, filename, mode, stream) == 0) ? fp : NULL;
+}
+#define freopen(filename, mode, stream) __thecore_freopen((filename), (mode), (stream))
 
 #include <boost/typeof/typeof.hpp>
 #define typeof(t) BOOST_TYPEOF(t)
