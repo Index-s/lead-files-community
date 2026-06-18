@@ -1725,7 +1725,7 @@ void CClientManager::QUERY_AUTH_LOGIN(CPeer * pkPeer, DWORD dwHandle, TPacketGDA
 
 void CClientManager::GuildWarBet(TPacketGDGuildWarBet * p)
 {
-	CGuildManager::instance().Bet(p->dwWarID, p->szLogin, p->dwGold, p->dwGuild);
+	CGuildManager::instance().Bet(p->dwWarID, p->szLogin, static_cast<DWORD>(p->dwGold), p->dwGuild);
 }
 
 void CClientManager::CreateObject(TPacketGDCreateObject * p)

@@ -2801,7 +2801,7 @@ bool CHARACTER::UseMobSkill(unsigned int idx)
 				m_mapMobSkillEvent.erase(it);
 			}
 
-			m_mapMobSkillEvent.insert(std::make_pair(i, event_create(mob_skill_hit_event, info, PASSES_PER_SEC(rInfo.dwTiming) / 1000)));
+			m_mapMobSkillEvent.insert(std::make_pair(static_cast<int>(i), event_create(mob_skill_hit_event, info, PASSES_PER_SEC(rInfo.dwTiming) / 1000)));
 		}
 		else
 		{

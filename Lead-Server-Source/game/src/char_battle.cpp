@@ -587,7 +587,7 @@ void CHARACTER::RewardGold(LPCHARACTER pkAttacker)
 
 		for (int i = 0; i < iSplitCount; ++i)
 		{
-			int iGold = number(GetMobTable().dwGoldMin, GetMobTable().dwGoldMax) / iSplitCount;
+			int iGold = number(static_cast<int>(GetMobTable().dwGoldMin), static_cast<int>(GetMobTable().dwGoldMax)) / iSplitCount;
 			if (test_server)
 				sys_log(0, "iGold %d", iGold);
 			iGold = iGold * CHARACTER_MANAGER::instance().GetMobGoldAmountRate(pkAttacker) / 100;
@@ -625,7 +625,7 @@ void CHARACTER::RewardGold(LPCHARACTER pkAttacker)
 		//
 		for (int i = 0; i < 10; ++i)
 		{
-			int iGold = number(GetMobTable().dwGoldMin, GetMobTable().dwGoldMax);
+			int iGold = number(static_cast<int>(GetMobTable().dwGoldMin), static_cast<int>(GetMobTable().dwGoldMax));
 			iGold = iGold * CHARACTER_MANAGER::instance().GetMobGoldAmountRate(pkAttacker) / 100;
 			iGold *= iGoldMultipler;
 
@@ -650,7 +650,7 @@ void CHARACTER::RewardGold(LPCHARACTER pkAttacker)
 	else
 	{
 		// YANG BOMB START
-		int iGold = number(GetMobTable().dwGoldMin, GetMobTable().dwGoldMax);
+		int iGold = number(static_cast<int>(GetMobTable().dwGoldMin), static_cast<int>(GetMobTable().dwGoldMax));
 		iGold = iGold * CHARACTER_MANAGER::instance().GetMobGoldAmountRate(pkAttacker) / 100;
 		iGold *= iGoldMultipler;
 
@@ -703,7 +703,7 @@ void CHARACTER::Reward(bool bItemDrop)
 			return;
 
 		LPITEM item;
-		int iGold = number(GetMobTable().dwGoldMin, GetMobTable().dwGoldMax);
+		int iGold = number(static_cast<int>(GetMobTable().dwGoldMin), static_cast<int>(GetMobTable().dwGoldMax));
 		iGold = iGold * CHARACTER_MANAGER::instance().GetMobGoldAmountRate(NULL) / 100;
 		int iSplitCount = number(25, 35);
 
@@ -1248,7 +1248,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 			if (GetEmpire() != pkKiller->GetEmpire())
 			{
-				GoldType iEP = MIN(GetPoint(POINT_EMPIRE_POINT), pkKiller->GetPoint(POINT_EMPIRE_POINT));
+				GoldType iEP = MIN(static_cast<int>(GetPoint(POINT_EMPIRE_POINT)), static_cast<int>(pkKiller->GetPoint(POINT_EMPIRE_POINT)));
 
 				PointChange(POINT_EMPIRE_POINT, -(iEP / 10));
 				pkKiller->PointChange(POINT_EMPIRE_POINT, iEP / 5);

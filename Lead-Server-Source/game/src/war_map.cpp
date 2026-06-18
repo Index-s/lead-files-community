@@ -276,7 +276,7 @@ void CWarMap::UsePotion(LPCHARACTER ch, LPITEM item)
 	if (!item->GetProto())
 		return;
 
-	int iPrice = item->GetProto()->dwGold;
+	int iPrice = static_cast<int>(item->GetProto()->dwGold);
 
 	DWORD gid = ch->GetGuild()->GetID();
 

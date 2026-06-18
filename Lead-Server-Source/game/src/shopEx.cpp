@@ -194,7 +194,7 @@ int CShopEx::Buy(LPCHARACTER ch, BYTE pos)
 		ch->PointChange(POINT_GOLD, -dwPrice, false);
 		break;
 	case SHOP_COIN_TYPE_SECONDARY_COIN:
-		ch->RemoveSpecifyTypeItem(ITEM_SECONDARY_COIN, dwPrice);
+		ch->RemoveSpecifyTypeItem(ITEM_SECONDARY_COIN, static_cast<DWORD>(dwPrice));
 		break;
 	}
 

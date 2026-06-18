@@ -5321,7 +5321,7 @@ bool CHARACTER::DropGold(GoldType gold)
 
 	m_dwLastGoldDropTime = get_dword_time();
 
-	LPITEM item = ITEM_MANAGER::instance().CreateItem(1, gold);
+	LPITEM item = ITEM_MANAGER::instance().CreateItem(1, static_cast<DWORD>(gold));
 
 	if (item)
 	{

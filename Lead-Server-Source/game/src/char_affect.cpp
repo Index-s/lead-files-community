@@ -99,7 +99,7 @@ bool CHARACTER::UpdateAffect()
 		}
 		else
 		{
-			int iVal = static_cast<int>(MIN(GetPoint(POINT_HP_RECOVERY), GetMaxHP() * 7 / 100));
+			int iVal = MIN(static_cast<int>(GetPoint(POINT_HP_RECOVERY)), GetMaxHP() * 7 / 100);
 
 			if (iVal > 0)
 			{
@@ -118,9 +118,9 @@ bool CHARACTER::UpdateAffect()
 			int iVal;
 
 			if (!g_iUseLocale)
-				iVal = static_cast<int>(MIN(GetPoint(POINT_SP_RECOVERY), GetMaxSP() * 7 / 100));
+				iVal = MIN(static_cast<int>(GetPoint(POINT_SP_RECOVERY)), GetMaxSP() * 7 / 100);
 			else
-				iVal = static_cast<int>(MIN(GetPoint(POINT_SP_RECOVERY), GetMaxSP() * 7 / 100));
+				iVal = MIN(static_cast<int>(GetPoint(POINT_SP_RECOVERY)), GetMaxSP() * 7 / 100);
 
 			PointChange(POINT_SP, iVal);
 			PointChange(POINT_SP_RECOVERY, -iVal);

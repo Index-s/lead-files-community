@@ -1390,7 +1390,7 @@ namespace quest
 			{
 				return 0;
 			}
-			item_group.push_back (std::pair <DWORD, int> (lua_tonumber (L, i * 2 + 3), lua_tonumber (L, i * 2 + 4)));
+			item_group.push_back (std::pair <DWORD, int> (static_cast<DWORD>(lua_tonumber (L, i * 2 + 3)), static_cast<int>(lua_tonumber (L, i * 2 + 4))));
 		}
 		LPDUNGEON pDungeon = CQuestManager::instance().GetCurrentDungeon();
 

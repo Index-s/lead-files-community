@@ -111,7 +111,7 @@ inline bool str_is_number(const char* in)
 {
 	if (0 == in || 0 == in[0])	return false;
 
-	int len = strlen(in);
+	int len = static_cast<int>(strlen(in));
 	for (int i = 0; i < len; ++i)
 	{
 		if ((in[i] < '0' || in[i] > '9') && (i > 0 || in[i] != '-'))

@@ -899,7 +899,7 @@ void CGuildManager::ReserveWarBet(TPacketGDGuildWarBet * p)
 	if (it == m_map_kReserveWar.end())
 		return;
 
-	it->second->mapBet.insert(std::make_pair(p->szLogin, std::make_pair(p->dwGuild, p->dwGold)));
+	it->second->mapBet.insert(std::make_pair(p->szLogin, std::make_pair(p->dwGuild, static_cast<DWORD>(p->dwGold))));
 }
 
 bool CGuildManager::IsBet(DWORD dwID, const char * c_pszLogin)

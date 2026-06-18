@@ -66,7 +66,7 @@ void CAttribute::Alloc()
 
 	    for (DWORD y = 0; y < height; ++y)
 		for (DWORD x = 0; x < width; ++x)
-		    wordPtr[y][x] = defaultAttr;
+		    wordPtr[y][x] = static_cast<WORD>(defaultAttr);
 
 	    break;
 
@@ -79,7 +79,7 @@ void CAttribute::Alloc()
 
 	    for (DWORD y = 0; y < height; ++y)
 		for (DWORD x = 0; x < width; ++x)
-		    bytePtr[y][x] = defaultAttr;
+		    bytePtr[y][x] = static_cast<BYTE>(defaultAttr);
 
 	    break;
     }
@@ -134,13 +134,13 @@ CAttribute::CAttribute(DWORD * attr, DWORD width, DWORD height) // attr second b
 	    {
 		for (DWORD y = 0; y < height; ++y)
 		    for (DWORD x = 0; x < width; ++x)
-			bytePtr[y][x] = *(pdw++);
+			bytePtr[y][x] = static_cast<BYTE>(*(pdw++));
 	    }
 	    else if (dataType == D_WORD)
 	    {
 		for (DWORD y = 0; y < height; ++y)
 		    for (DWORD x = 0; x < width; ++x)
-			wordPtr[y][x] = *(pdw++);
+			wordPtr[y][x] = static_cast<WORD>(*(pdw++));
 	    }
 	}
     }
