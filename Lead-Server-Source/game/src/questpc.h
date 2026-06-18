@@ -2,6 +2,7 @@
 #define __QUEST_PC_H
 
 #include "quest.h"
+#include "common/length.h"
 
 class CHARACTER;
 
@@ -84,8 +85,8 @@ namespace quest
 			vector<TQuestStateChangeInfo> m_QuestStateChange;
 
 		public:
-			void		SetFlag(const string & name, int value, bool bSkipSave = false);
-			int			GetFlag(const string & name);
+			void		SetFlag(const string & name, TimeT64 value, bool bSkipSave = false);
+			TimeT64		GetFlag(const string & name);
 			bool		DeleteFlag(const string & name);
 
 			const string &	GetCurrentQuestName() const;
@@ -156,7 +157,7 @@ namespace quest
 			QuestState *	m_RunningQuestState;
 			string		m_stCurQuest;
 
-			typedef map<string, int> TFlagMap;
+			typedef map<string, TimeT64> TFlagMap;
 			TFlagMap		m_FlagMap;
 
 			TFlagMap		m_FlagSaveMap;

@@ -50,7 +50,7 @@ namespace quest
 		return CQuestManager::instance().GetQuestIndexByName(GetCurrentQuestName());
 	}
 
-	void PC::SetFlag(const string& name, int value, bool bSkipSave)
+	void PC::SetFlag(const string& name, TimeT64 value, bool bSkipSave)
 	{
 		if ( test_server )
 			sys_log(0, "QUEST Setting flag %s %d", name.c_str(),value);
@@ -90,7 +90,7 @@ namespace quest
 		return false;
 	}
 
-	int PC::GetFlag(const string & name)
+	TimeT64 PC::GetFlag(const string & name)
 	{
 		TFlagMap::iterator it = m_FlagMap.find(name);
 
@@ -530,7 +530,7 @@ namespace quest
 		while (it != m_FlagSaveMap.end())
 		{
 			const std::string & stComp = it->first;
-			long lValue = it->second;
+			TimeT64 lValue = it->second;
 
 			++it;
 
@@ -554,7 +554,7 @@ namespace quest
 				continue;
 			}
 
-			sys_log(1, "QUEST Save Flag %s, %s %d (%d)", stName.c_str(), stState.c_str(), lValue, i);
+			sys_log(1, "QUEST Save Flag %s, %s %lld (%d)", stName.c_str(), stState.c_str(), lValue, i);
 
 			if (stName.length() >= QUEST_NAME_MAX_LEN)
 			{

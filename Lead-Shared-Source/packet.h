@@ -747,7 +747,7 @@ typedef struct packet_quest_confirm
 {
 	BYTE header;
 	char msg[64+1]; 
-	long timeout;
+	TimeT64 timeout;
 	DWORD requestPID;
 } TPacketGCQuestConfirm;
 
@@ -1031,7 +1031,7 @@ struct TPacketGCItemDelDeprecated
 	TItemPos Cell;
 	DWORD	vnum;
 	BYTE	count;
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 };
 
@@ -1044,7 +1044,7 @@ typedef struct packet_item_set
 	DWORD	flags;
 	DWORD	anti_flags;
 	bool	highlight;
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TPacketGCItemSet;
 
@@ -1075,7 +1075,7 @@ typedef struct packet_item_update
 	BYTE	header;
 	TItemPos Cell;
 	ItemStackType	count;
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TPacketGCItemUpdate;
 
@@ -1150,7 +1150,7 @@ typedef struct packet_shop_item
 	GoldType price;
 	ItemStackType        count;
 	BYTE		display_pos;
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TShopItemData;
 
@@ -1198,7 +1198,7 @@ typedef struct packet_exchange
 	GoldType arg1;	// vnum
 	TItemPos	arg2;	// cell
 	DWORD	arg3;	// count
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TPacketGCExchange;
 
@@ -1910,7 +1910,7 @@ typedef struct SPacketCGMyShop
 typedef struct SPacketGCTime
 {
 	BYTE	bHeader;
-	uint32_t	time;
+	TimeT64	time;
 } TPacketGCTime;
 
 enum
@@ -2000,7 +2000,7 @@ typedef struct SEquipmentItemSet
 {
 	uint32_t vnum;
 	ItemStackType count;
-	int32_t alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64 alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TEquipmentItemSet;
 
@@ -2323,7 +2323,7 @@ struct TSwitchbotUpdateItem
 	BYTE	slot;
 	DWORD	vnum;
 	DWORD	count;
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 };
 
