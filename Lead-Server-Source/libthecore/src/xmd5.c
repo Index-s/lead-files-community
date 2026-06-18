@@ -1,5 +1,13 @@
 #include "stdafx.h"
 
+#ifdef __WIN32__
+#define thecore_read  _read
+#define thecore_close _close
+#else
+#define thecore_read  read
+#define thecore_close close
+#endif
+
 #ifndef __FreeBSD__
 
 /*
@@ -89,11 +97,11 @@ lutil_md5_file (const char *filename, char *buf)
 	f = _open(filename, _O_RDONLY);
 #endif
     if (f < 0) return 0;
-    while ((i = read(f,buffer,sizeof buffer)) > 0) {
+    while ((i = thecore_read(f,buffer,sizeof buffer)) > 0) {
                 MD5Update(&ctx,buffer,i);
     }
     j = errno;
-    close(f);
+    thecore_close(f);
     errno = j;
     if (i < 0) return 0;
     return MD5End(&ctx, buf);
@@ -261,7 +269,7 @@ void MD5Final(unsigned char digest[16], MD5_CTX *ctx)
  */
 void MD5Transform(uint32_t buf[4], uint32_t const in[16])
 {
-    register uint32_t a, b, c, d;
+    uint32_t a, b, c, d;
 
     a = buf[0];
     b = buf[1];

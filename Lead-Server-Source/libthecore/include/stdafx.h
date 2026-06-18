@@ -12,6 +12,7 @@
 
 #include <windows.h>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #include <tchar.h>
 #include <errno.h>
 #include <time.h>
@@ -48,6 +49,7 @@
 #define atoll(str) _atoi64(str)
 #define localtime_r(timet, result) localtime_s(result, timet)
 #define strtok_r(s, delim, ptrptr) strtok_s(s, delim, ptrptr)
+#define strdup(str) _strdup(str)
 
 #include <boost/typeof/typeof.hpp>
 #define typeof(t) BOOST_TYPEOF(t)
