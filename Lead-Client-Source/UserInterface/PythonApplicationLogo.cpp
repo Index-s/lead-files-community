@@ -172,7 +172,7 @@ int CPythonApplication::OnLogoUpdate()
 	tex->UnlockRect(0);
 
 	// Check the status of the video (whether it is finished)
-	long evCode, param1, param2;
+	long evCode; LONG_PTR param1, param2;
 	while(SUCCEEDED(m_pMediaEvent->GetEvent(&evCode, &param1, &param2, 0)))
 	{
 		switch(evCode)
