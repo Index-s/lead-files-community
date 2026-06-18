@@ -14,61 +14,28 @@ bool CSoundManager3D::Initialize()
 {
 	CSoundBase::Initialize();
 
-	if (ms_pProviderDefault)
+	if (m_bInit)
 		return true;
 
-	ms_ProviderVector.resize(MAX_PROVIDERS);
-	
-	HPROENUM enum3D = HPROENUM_FIRST;
-	int i = 0;
+	// Miles 9.3: 3D is built into the digital driver; the legacy provider/
+	// listener-object model is gone. Reuse the shared digital driver (opened
+	// here if no other manager has done so yet).
+	if (!ms_DIGDriver)
+		ms_DIGDriver = AIL_open_digital_driver(44100, 16, 2, 0);
 
-	while (AIL_enumerate_3D_providers(&enum3D,
-									  &ms_ProviderVector[i].hProvider,
-									  &ms_ProviderVector[i].name) && (i < MAX_PROVIDERS))
-	{  
-		TProvider * provider = &ms_ProviderVector[i];
-
-		//if (strcmp(provider->name, "DirectSound3D Software Emulation") == 0)
-		//if (strcmp(provider->name, "DirectSound3D Hardware Support") == 0)
-		//if (strcmp(provider->name, "DirectSound3D 7+ Software - Pan and Volume") == 0)
-		//if (strcmp(provider->name, "DirectSound3D 7+ Software - Light HRTF") == 0)
-		//if (strcmp(provider->name, "DirectSound3D 7+ Software - Full HRTF") == 0)
-		//if (strcmp(provider->name, "RAD Game Tools RSX 3D Audio") == 0)
-		//if (strcmp(provider->name, "Dolby Surround") == 0)
-		if (strcmp(provider->name, "Miles Fast 2D Positional Audio") == 0)
-			ms_pProviderDefault = provider;
-
-		++i;
-	}
-	
-	if (!ms_pProviderDefault)
+	if (!ms_DIGDriver)
 	{
 		CSoundBase::Destroy();
 		return false;
 	}
 
-	assert(ms_pProviderDefault != NULL);
-
-	if (M3D_NOERR != AIL_open_3D_provider(ms_pProviderDefault->hProvider))
-	{
-//		assert(!"AIL_open_3D_provider error");
-//		char buf[64];
-//		sprintf(buf, "Error AIL_open_3D_provider: %s\n", AIL_last_error());
-//		OutputDebugString(buf);
-		
-		CSoundBase::Destroy();
-		return false;
-	}
-
-	m_pListener = AIL_open_3D_listener(ms_pProviderDefault->hProvider);
-
-	SetListenerPosition(0.0f, 0.0f, 0.0f);
-
-	for (i = 0; i < INSTANCE_MAX_COUNT; ++i)
+	for (int i = 0; i < INSTANCE_MAX_COUNT; ++i)
 	{
 		m_Instances[i].Initialize();
 		m_bLockingFlag[i] = false;
 	}
+
+	AIL_set_listener_3D_position(ms_DIGDriver, 0.0f, 0.0f, 0.0f);
 
 	m_bInit = true;
 	return true;
@@ -76,24 +43,12 @@ bool CSoundManager3D::Initialize()
 
 
 void CSoundManager3D::Destroy()
-{		
+{
 	if (!m_bInit)
 		return;
-	
+
 	for (int i = 0; i < INSTANCE_MAX_COUNT; ++i)
 		m_Instances[i].Destroy();
-
-	if (m_pListener)
-	{
-		AIL_close_3D_listener(m_pListener);
-		m_pListener = NULL;
-	}
-
-	if (ms_pProviderDefault)
-	{
-		AIL_close_3D_provider(ms_pProviderDefault->hProvider);
-		ms_pProviderDefault = NULL;
-	}
 
 	CSoundBase::Destroy();
 	m_bInit = false;
@@ -101,25 +56,23 @@ void CSoundManager3D::Destroy()
 
 void CSoundManager3D::SetListenerDirection(float fxDir, float fyDir, float fzDir, float fxUp, float fyUp, float fzUp)
 {
-	if (NULL == m_pListener)
+	if (NULL == ms_DIGDriver)
 		return;
-	AIL_set_3D_orientation(m_pListener, fxDir, fyDir, -fzDir, fxUp, fyUp, -fzUp);
+	AIL_set_listener_3D_orientation(ms_DIGDriver, fxDir, fyDir, -fzDir, fxUp, fyUp, -fzUp);
 }
 
 void CSoundManager3D::SetListenerPosition(float fX, float fY, float fZ)
 {
-// 	assert(m_pListener != NULL);
-	if (NULL == m_pListener)
+	if (NULL == ms_DIGDriver)
 		return;
-	AIL_set_3D_position(m_pListener, fX, fY, -fZ);
+	AIL_set_listener_3D_position(ms_DIGDriver, fX, fY, -fZ);
 }
 
 void CSoundManager3D::SetListenerVelocity(float fDistanceX, float fDistanceY, float fDistanceZ, float fNagnitude)
 {
-// 	assert(m_pListener != NULL);
-	if (NULL == m_pListener)
+	if (NULL == ms_DIGDriver)
 		return;
-	AIL_set_3D_velocity(m_pListener, fDistanceX, fDistanceY, -fDistanceZ, fNagnitude);
+	AIL_set_listener_3D_velocity(ms_DIGDriver, fDistanceX, fDistanceY, -fDistanceZ, fNagnitude);
 }
 
 int CSoundManager3D::SetInstance(const char * c_pszFileName)

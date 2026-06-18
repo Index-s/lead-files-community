@@ -110,7 +110,7 @@ bool CSoundData::ReadFromDisk()
 	return true;
 }
 
-bool CSoundData::isSlotIndex(DWORD dwIndex)
+bool CSoundData::isSlotIndex(UINTa dwIndex)
 {
 	if (dwIndex >= SOUND_FILE_MAX_NUM)
 		return false;
@@ -132,7 +132,7 @@ int CSoundData::GetEmptySlotIndex()
 	return -1;
 }
 
-U32 AILCALLBACK CSoundData::open_callback(char const * filename, U32 *file_handle)
+U32 AILCALLBACK CSoundData::open_callback(char const * filename, UINTa *file_handle)
 {
 	int iIndex = GetEmptySlotIndex();
 
@@ -150,7 +150,7 @@ U32 AILCALLBACK CSoundData::open_callback(char const * filename, U32 *file_handl
 	return 1;
 }
 
-void AILCALLBACK CSoundData::close_callback(U32 file_handle)
+void AILCALLBACK CSoundData::close_callback(UINTa file_handle)
 {
 	if (!isSlotIndex(file_handle))
 		return;
@@ -159,7 +159,7 @@ void AILCALLBACK CSoundData::close_callback(U32 file_handle)
 	ms_isSoundFile[file_handle] = false;
 }
 
-S32 AILCALLBACK CSoundData::seek_callback(U32 file_handle, S32 offset, U32 type)
+S32 AILCALLBACK CSoundData::seek_callback(UINTa file_handle, S32 offset, U32 type)
 {
 	if (!isSlotIndex(file_handle))
 		return 0;
@@ -167,7 +167,7 @@ S32 AILCALLBACK CSoundData::seek_callback(U32 file_handle, S32 offset, U32 type)
 	return ms_SoundFile[file_handle].Seek(offset, type);
 }
 
-U32 AILCALLBACK CSoundData::read_callback(U32 file_handle, void * buffer, U32 bytes)
+U32 AILCALLBACK CSoundData::read_callback(UINTa file_handle, void * buffer, U32 bytes)
 {
 	if (!isSlotIndex(file_handle))
 		return 0;

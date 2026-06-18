@@ -41,9 +41,7 @@ bool CSoundInstance2D::SetSound(CSoundData * pSoundData)
 	// A counter must be put up.
 	LPVOID lpData = pSoundData->Get();
 
-	AIL_init_sample(m_sample);
-	
-    if (AIL_set_sample_file(m_sample, lpData, pSoundData->GetSize()) == NULL)
+    if (AIL_set_sample_file(m_sample, lpData, -1) == 0)
 	{
 		if (m_pSoundData != NULL)
 		{

@@ -78,12 +78,16 @@ void CSoundInstanceStream::Stop()
 
 void CSoundInstanceStream::GetVolume(float& rfVolume) const
 {
-	float tmp;
+	F32 left = 0.0f;
+	F32 right = 0.0f;
 
 	if (!IsData())
 		return;
 
-	AIL_stream_volume_levels(m_stream, &rfVolume, &tmp);
+	// Miles 9.3 removed the stream-level volume API; operate on the stream's
+	// backing sample instead.
+	AIL_sample_volume_levels(AIL_stream_sample_handle(m_stream), &left, &right);
+	rfVolume = left;
 }
 
 void CSoundInstanceStream::SetVolume(float volume) const
@@ -92,7 +96,7 @@ void CSoundInstanceStream::SetVolume(float volume) const
 		return;
 
 	volume = max(0.0f, min(1.0f, volume));
-	AIL_set_stream_volume_levels(m_stream, volume, volume);
+	AIL_set_sample_volume_levels(AIL_stream_sample_handle(m_stream), volume, volume);
 }
 
 bool CSoundInstanceStream::SetSound(CSoundData* pSound)

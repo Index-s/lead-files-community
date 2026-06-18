@@ -3,8 +3,6 @@
 
 HDIGDRIVER				CSoundBase::ms_DIGDriver = NULL;
 TSoundDataMap			CSoundBase::ms_dataMap;
-TProvider *				CSoundBase::ms_pProviderDefault = NULL;
-std::vector<TProvider>	CSoundBase::ms_ProviderVector;
 bool					CSoundBase::ms_bInitialized = false;
 int						CSoundBase::ms_iRefCount = 0;
 
@@ -51,9 +49,8 @@ void CSoundBase::Initialize()
 	AIL_set_redist_directory("miles");
 	AIL_startup();
 
-	ms_ProviderVector.clear();
 	ms_dataMap.clear();
-	
+
 }
 
 DWORD CSoundBase::GetFileCRC(const char * filename)

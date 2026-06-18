@@ -80,7 +80,7 @@ class CSoundInstance3D : public ISoundInstance
 		void	UpdatePosition(float fElapsedTime);
 
 	private:
-		H3DSAMPLE		m_sample;
+		HSAMPLE			m_sample;
 		CSoundData *		m_pSoundData;
 };
 
