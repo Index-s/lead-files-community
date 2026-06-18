@@ -65,7 +65,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mysqlclient.lib;ws2_32.lib;shlwapi.lib;secur32.lib;wsock32.lib;advapi32.lib;DevIL.lib;lzo-2.10MT_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mysqlclient.lib;crypt32.lib;bcrypt.lib;ws2_32.lib;shlwapi.lib;secur32.lib;wsock32.lib;advapi32.lib;DevIL.lib;lzo-2.10MT_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)../Lead-Extern/lib/win64;$(SolutionDir)../Lead-Extern/lib;$(ProjectDir)../../../Extern/openssl/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
