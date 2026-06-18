@@ -73,10 +73,17 @@ LONG __stdcall EterExceptionFilter(_EXCEPTION_POINTERS* pExceptionInfo)
 		
 		CONTEXT&	context		= *pExceptionInfo->ContextRecord;
 		
+#ifdef _WIN64
+		fprintf(fException, "rax: 0x%016llx\trbx: 0x%016llx\n", context.Rax, context.Rbx);
+		fprintf(fException, "rcx: 0x%016llx\trdx: 0x%016llx\n", context.Rcx, context.Rdx);
+		fprintf(fException, "rsi: 0x%016llx\trdi: 0x%016llx\n", context.Rsi, context.Rdi);
+		fprintf(fException, "rbp: 0x%016llx\trsp: 0x%016llx\n", context.Rbp, context.Rsp);
+#else
 		fprintf(fException, "eax: 0x%08x\tebx: 0x%08x\n", context.Eax, context.Ebx);
 		fprintf(fException, "ecx: 0x%08x\tedx: 0x%08x\n", context.Ecx, context.Edx);
 		fprintf(fException, "esi: 0x%08x\tedi: 0x%08x\n", context.Esi, context.Edi);
 		fprintf(fException, "ebp: 0x%08x\tesp: 0x%08x\n", context.Ebp, context.Esp);
+#endif
 		fprintf(fException, "\n");
 		/*
 		{
@@ -88,19 +95,27 @@ LONG __stdcall EterExceptionFilter(_EXCEPTION_POINTERS* pExceptionInfo)
 		}
 		*/
 		
-		STACKFRAME stackFrame = {0,};
+		STACKFRAME64 stackFrame = {0,};
+#ifdef _WIN64
+		const DWORD machineType		= IMAGE_FILE_MACHINE_AMD64;
+		stackFrame.AddrPC.Offset	= context.Rip;
+		stackFrame.AddrStack.Offset	= context.Rsp;
+		stackFrame.AddrFrame.Offset	= context.Rbp;
+#else
+		const DWORD machineType		= IMAGE_FILE_MACHINE_I386;
 		stackFrame.AddrPC.Offset	= context.Eip;
-		stackFrame.AddrPC.Mode		= AddrModeFlat;
 		stackFrame.AddrStack.Offset	= context.Esp;
-		stackFrame.AddrStack.Mode	= AddrModeFlat;
 		stackFrame.AddrFrame.Offset	= context.Ebp;
+#endif
+		stackFrame.AddrPC.Mode		= AddrModeFlat;
+		stackFrame.AddrStack.Mode	= AddrModeFlat;
 		stackFrame.AddrFrame.Mode	= AddrModeFlat;
-		
+
 		for (int i=0; i < 512 && stackFrame.AddrPC.Offset; ++i)
 		{
-			if (StackWalk(IMAGE_FILE_MACHINE_I386, hProcess, hThread, &stackFrame, &context, NULL, NULL, NULL, NULL) != FALSE)
+			if (StackWalk64(machineType, hProcess, hThread, &stackFrame, &context, NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL) != FALSE)
 			{
-				fprintf(fException, "0x%08x\t", stackFrame.AddrPC.Offset);
+				fprintf(fException, "0x%p\t", (void*) stackFrame.AddrPC.Offset);
 				//__idx+=sprintf(__msg+__idx, "0x%08x\t", stackFrame.AddrPC.Offset);
 				EnumerateLoadedModules(hProcess, (PENUMLOADED_MODULES_CALLBACK) EnumerateLoadedModulesProc, &stackFrame.AddrPC.Offset);
 				fprintf(fException, "\n");
