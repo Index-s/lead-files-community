@@ -218,7 +218,9 @@ const char* GetFontFaceFromCodePage9x(WORD codePage)
 	case CP_949:
 		return "Cursive font";
 	case CP_936:
-		return "芥竟";
+		// GBK (CP_936) bytes for U+82A5 U+7ADF; written as explicit escapes so the
+		// narrow encoding is deterministic regardless of the compiler's execution charset.
+		return "\xBD\xE6\xBE\xB9";
 	case CP_950:
 		return "Top";
 	case CP_874:
