@@ -129,11 +129,15 @@ bool PyTuple_GetInteger(PyObject* poArgs, int pos, int* ret)
 		return false;
 
 	PyObject* poItem = PyTuple_GetItem(poArgs, pos);
-	
+
 	if (!poItem)
 		return false;
-	
-	*ret = PyLong_AsLong(poItem);
+
+	// LLP64: C long is 32-bit on Win64, so PyLong_AsLong raises OverflowError for any
+	// Python int/long > LONG_MAX (e.g. 0x80000000-0xFFFFFFFF window-style flags and ARGB
+	// colors, which are normal 32-bit values). Read the low 32 bits with the masking
+	// variant (never raises) to match the 32-bit client's behavior for genuine ints.
+	*ret = (int)PyInt_AsUnsignedLongMask(poItem);
 	return true;
 }
 
