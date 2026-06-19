@@ -710,8 +710,9 @@ void CInputDB::Boot(const char* data)
 		for (WORD i = 0; i < size; ++i, ++kObj)
 			CManager::instance().LoadObject(kObj, true);
 	}
-	set_global_time(*(time_t *) data);
-	data += sizeof(time_t);
+	// Matches db_d's 64-bit TimeT64 boot-stream timestamp (see ClientManager.cpp).
+	set_global_time(static_cast<time_t>(*(TimeT64 *) data));
+	data += sizeof(TimeT64);
 
 	if (decode_2bytes(data) != sizeof(TItemIDRangeTable) )
 	{

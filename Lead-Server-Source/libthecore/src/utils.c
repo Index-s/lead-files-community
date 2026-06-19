@@ -111,8 +111,17 @@ struct timeval * timeadd(struct timeval *a, struct timeval *b)
 char *time_str(time_t ct)
 {
     static char * time_s;
+    struct tm * tmv = localtime(&ct);
 
-    time_s = asctime(localtime(&ct));
+    /* localtime() returns NULL for out-of-range time_t values; asctime() would
+       then assert/fastfail. Never let a bad timestamp take down the server. */
+    if (!tmv)
+    {
+	static char invalid[] = "?";
+	return invalid;
+    }
+
+    time_s = asctime(tmv);
 
     time_s[strlen(time_s) - 6] = '\0';
     time_s += 4;

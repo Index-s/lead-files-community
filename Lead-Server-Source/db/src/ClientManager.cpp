@@ -251,7 +251,7 @@ void CClientManager::QUERY_BOOT(CPeer* peer, TPacketGDBoot * p)
 		sizeof(WORD) + sizeof(WORD) + sizeof(building::TLand) * m_vec_kLandTable.size() +
 		sizeof(WORD) + sizeof(WORD) + sizeof(building::TObjectProto) * m_vec_kObjectProto.size() + 
 		sizeof(WORD) + sizeof(WORD) + sizeof(building::TObject) * m_map_pkObjectTable.size() +
-		sizeof(uint32_t) + 
+		sizeof(TimeT64) + // global time (must match the TimeT64 Encode below)
 		sizeof(WORD) + sizeof(WORD) + sizeof(TItemIDRangeTable)*2 +
 		//ADMIN_MANAGER
 		sizeof(WORD) + sizeof(WORD) + 16 * vHost.size() +
@@ -329,8 +329,11 @@ void CClientManager::QUERY_BOOT(CPeer* peer, TPacketGDBoot * p)
 	while (it != m_map_pkObjectTable.end())
 		peer->Encode((it++)->second, sizeof(building::TObject));
 
-	uint32_t now = static_cast<uint32_t>(time(0));
-	peer->Encode(&now, sizeof(uint32_t));
+	// Canonical 64-bit wire timestamp: the game core reads this as time_t (64-bit
+	// on x64). Encoding a 32-bit value here desynchronizes the boot stream on x64
+	// (high dword reads adjacent bytes -> bogus time -> localtime() == NULL).
+	TimeT64 now = static_cast<TimeT64>(time(0));
+	peer->Encode(&now, sizeof(now));
 
 	TItemIDRangeTable itemRange = CItemIDRangeManager::instance().GetRange();
 	TItemIDRangeTable itemRangeSpare = CItemIDRangeManager::instance().GetRange();

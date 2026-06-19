@@ -55,6 +55,120 @@
 
 #include "switchbot.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#include <dbghelp.h>
+#include <crtdbg.h>
+#pragma comment(lib, "dbghelp.lib")
+
+// Windows crash diagnostics: symbolize the faulting stack (game.pdb sits next to
+// the binary) so x64 bring-up faults (STATUS_BREAKPOINT from a debug-heap check,
+// access violations, etc.) leave a readable backtrace instead of a silent exit.
+static void Crash_WriteStack(EXCEPTION_POINTERS * pEP, const char * tag)
+{
+	FILE * fp = NULL;
+	fopen_s(&fp, "crash_stack.txt", "a");
+
+	HANDLE hProc   = GetCurrentProcess();
+	HANDLE hThread = GetCurrentThread();
+
+	SymSetOptions(SYMOPT_LOAD_LINES | SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
+	SymInitialize(hProc, NULL, TRUE);
+
+	CONTEXT ctx = *pEP->ContextRecord;
+
+	STACKFRAME64 frame;
+	memset(&frame, 0, sizeof(frame));
+	frame.AddrPC.Offset    = ctx.Rip;
+	frame.AddrPC.Mode      = AddrModeFlat;
+	frame.AddrFrame.Offset = ctx.Rbp;
+	frame.AddrFrame.Mode   = AddrModeFlat;
+	frame.AddrStack.Offset = ctx.Rsp;
+	frame.AddrStack.Mode   = AddrModeFlat;
+
+	const unsigned long excode = pEP->ExceptionRecord->ExceptionCode;
+	fprintf(stderr, "=== CRASH (%s) code=0x%08lX addr=%p ===\n", tag, excode, pEP->ExceptionRecord->ExceptionAddress);
+	if (fp)
+		fprintf(fp, "=== CRASH (%s) code=0x%08lX addr=%p ===\n", tag, excode, pEP->ExceptionRecord->ExceptionAddress);
+
+	ULONG64 symbuf[(sizeof(SYMBOL_INFO) + 512 + sizeof(ULONG64) - 1) / sizeof(ULONG64)];
+	PSYMBOL_INFO sym = reinterpret_cast<PSYMBOL_INFO>(symbuf);
+	sym->SizeOfStruct = sizeof(SYMBOL_INFO);
+	sym->MaxNameLen   = 511;
+
+	for (int i = 0; i < 64; ++i)
+	{
+		if (!StackWalk64(IMAGE_FILE_MACHINE_AMD64, hProc, hThread, &frame, &ctx,
+				NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL))
+			break;
+		if (frame.AddrPC.Offset == 0)
+			break;
+
+		DWORD64 disp = 0;
+		const char * name = "?";
+		if (SymFromAddr(hProc, frame.AddrPC.Offset, &disp, sym))
+			name = sym->Name;
+
+		IMAGEHLP_LINE64 line;
+		memset(&line, 0, sizeof(line));
+		line.SizeOfStruct = sizeof(line);
+		DWORD ldisp = 0;
+
+		if (SymGetLineFromAddr64(hProc, frame.AddrPC.Offset, &ldisp, &line))
+		{
+			fprintf(stderr, "  #%02d %s+0x%llx (%s:%lu)\n", i, name, (unsigned long long)disp, line.FileName, line.LineNumber);
+			if (fp)
+				fprintf(fp, "  #%02d %s+0x%llx (%s:%lu)\n", i, name, (unsigned long long)disp, line.FileName, line.LineNumber);
+		}
+		else
+		{
+			fprintf(stderr, "  #%02d %s+0x%llx [0x%llx]\n", i, name, (unsigned long long)disp, (unsigned long long)frame.AddrPC.Offset);
+			if (fp)
+				fprintf(fp, "  #%02d %s+0x%llx [0x%llx]\n", i, name, (unsigned long long)disp, (unsigned long long)frame.AddrPC.Offset);
+		}
+	}
+
+	fflush(stderr);
+	if (fp)
+	{
+		fflush(fp);
+		fclose(fp);
+	}
+	SymCleanup(hProc);
+}
+
+static LONG WINAPI Crash_UnhandledFilter(EXCEPTION_POINTERS * pEP)
+{
+	Crash_WriteStack(pEP, "unhandled");
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+static LONG WINAPI Crash_VectoredHandler(EXCEPTION_POINTERS * pEP)
+{
+	// First-chance: capture the breakpoint exactly where the debug CRT raises it
+	// (before any unwinding eats the stack), then let normal handling proceed.
+	static volatile LONG s_done = 0;
+	if (pEP->ExceptionRecord->ExceptionCode == EXCEPTION_BREAKPOINT)
+	{
+		if (InterlockedExchange(&s_done, 1) == 0)
+			Crash_WriteStack(pEP, "vectored-bp");
+	}
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
+static void Crash_Setup()
+{
+	SetUnhandledExceptionFilter(Crash_UnhandledFilter);
+	AddVectoredExceptionHandler(0, Crash_VectoredHandler);
+#ifdef _DEBUG
+	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
+	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
+#endif
+}
+#endif // _WIN32
+
 // Socket connected to the game
 volatile int	num_events_called = 0;
 int             max_bytes_written = 0;
@@ -259,6 +373,10 @@ static void CleanUpForEarlyExit() {
 
 int main(int argc, char **argv)
 {
+#ifdef _WIN32
+	Crash_Setup();
+#endif
+
 	ilInit(); // DevIL Initialize
 
 	SECTREE_MANAGER	sectree_manager;
