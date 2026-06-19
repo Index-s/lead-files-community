@@ -27,14 +27,20 @@ volatile int _AVOID_FLOATING_POINT_LIBRARY_BUG = _fltused;
 #pragma comment( lib, "python27.lib" )
 #pragma comment( lib, "imagehlp.lib" )
 #pragma comment( lib, "devil.lib" )
+#ifdef _WIN64
+#pragma comment( lib, "granny2_x64.lib" )
+#pragma comment( lib, "mss64.lib" )
+#else
 #pragma comment( lib, "granny2.lib" )
 #pragma comment( lib, "mss32.lib" )
+#endif
 #pragma comment( lib, "winmm.lib" )
 #pragma comment( lib, "imm32.lib" )
 #pragma comment( lib, "oldnames.lib" )
 #pragma comment( lib, "SpeedTreeRT.lib" )
 #pragma comment( lib, "dinput8.lib" )
 #pragma comment( lib, "dxguid.lib" )
+#pragma comment( lib, "d3d9.lib" )
 #pragma comment( lib, "ws2_32.lib" )
 #pragma comment( lib, "strmiids.lib" )
 #pragma comment( lib, "ddraw.lib" )
