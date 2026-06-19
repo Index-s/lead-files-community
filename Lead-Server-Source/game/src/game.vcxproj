@@ -76,7 +76,10 @@
       <ProgramDatabaseFile>$(OutDir)$(ProjectName).pdb</ProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command />
+      <Command>copy /Y "$(TargetPath)" "$(SolutionDir)..\Lead-Serverfiles\auth\game_d.exe" || echo POSTBUILD: skipped auth (in use?)
+copy /Y "$(TargetPath)" "$(SolutionDir)..\Lead-Serverfiles\channel1\game2\game_d.exe" || echo POSTBUILD: skipped channel1\game2 (in use?)
+copy /Y "$(TargetPath)" "$(SolutionDir)..\Lead-Serverfiles\channel99\game_d.exe" || echo POSTBUILD: skipped channel99 (in use?)
+exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
