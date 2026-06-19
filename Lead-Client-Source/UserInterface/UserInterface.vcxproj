@@ -57,7 +57,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <TargetEnvironment>Win32</TargetEnvironment>
+      <TargetEnvironment>X64</TargetEnvironment>
       <TypeLibraryName>.\Debug/UserInterface.tlb</TypeLibraryName>
       <HeaderFileName />
     </Midl>
