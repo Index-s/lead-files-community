@@ -39,7 +39,7 @@
     <IntDir>$(ProjectDir)OBJDIR/$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <TargetName>game_d</TargetName>
-    <LocalDebuggerCommand>$(SolutionDir)..\Lead-Serverfiles\channel1\game1\game_d.exe</LocalDebuggerCommand>
+    <LocalDebuggerCommand>$(TargetPath)</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
