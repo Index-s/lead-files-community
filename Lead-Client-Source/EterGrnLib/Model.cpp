@@ -196,7 +196,10 @@ bool CGrannyModel::LoadMeshs()
 		}
 		m_bHaveBlendThing |= rMesh.HaveBlendThing();
 
-		granny_int32x grni32xTypeCount = GrannyGetTotalTypeSize(pgrnMesh->PrimaryVertexData->VertexType) / 32;
+		// sizeof(granny_data_type_definition) is 32 on x86 but larger on x64 (the Name/
+		// ReferenceType pointers widen to 8 bytes + alignment), so the hardcoded 32 over-counted
+		// the VertexType entries on x64 -> read past the array -> strlen on a garbage Name -> AV.
+		granny_int32x grni32xTypeCount = GrannyGetTotalTypeSize(pgrnMesh->PrimaryVertexData->VertexType) / (granny_int32x)sizeof(pgrnMesh->PrimaryVertexData->VertexType[0]);
 		int i = 0;
 		while (i < grni32xTypeCount)
 		{
