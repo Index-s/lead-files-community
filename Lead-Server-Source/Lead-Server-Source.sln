@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cores", "Cores", "{2BC50D5E-7B54-4762-A81C-8F55697BC32A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game", "game\src\game.vcxproj", "{146DE22F-4DD4-4E6F-B2FD-98AE163BEBBA}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblua", "liblua\liblua.vcxproj", "{EC666345-5F4E-4A4E-8C66-C7A6326F8235}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsql", "libsql\libsql.vcxproj", "{3967853D-4E19-4548-AC3A-F6012B78E384}"
@@ -20,8 +22,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpoly", "libpoly\libpoly.vcxproj", "{BD8E86DD-07BA-49B0-BF04-3282DA8377EB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libthecore", "libthecore\libthecore.vcxproj", "{5C8620C9-5D1F-419D-8267-48D2863C3D13}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game", "game\src\game.vcxproj", "{146DE22F-4DD4-4E6F-B2FD-98AE163BEBBA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "db", "db\src\db.vcxproj", "{ADC2E26A-C39B-4817-A24C-A99827B74EB2}"
 EndProject
