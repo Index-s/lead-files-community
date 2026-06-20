@@ -1,6 +1,9 @@
 SERVER_NAME			= "FreeBSD"
 SERVER_NAME_TEST	= "Windows"
-SERVER_IP			= "192.168.0.122"
+# FreeBSD = the local QEMU VM, reached through host port-forwards on the
+# 127.0.0.2 loopback alias (qemu hostfwd 127.0.0.2:<port>-:<port>); keeps it
+# distinct from the local Windows server on 127.0.0.1 (same ports, different IP).
+SERVER_IP			= "127.0.0.2"
 SERVER_IP_TEST		= "127.0.0.1"
 CH1_NAME			= "CH1"
 CH2_NAME			= "CH2"
