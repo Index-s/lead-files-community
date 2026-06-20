@@ -23,5 +23,10 @@
 
       /usr/local/libexec/lead/lead-db-setup
 
+  Update later (downloads the matching FreeBSD/arch .pkg from the GitHub release
+  and upgrades in place only if newer; --check just compares versions):
+
+      /usr/local/libexec/lead/lead-update
+
   Logs live under /var/db/lead/<core>/{syserr.txt,log/}.
 ================================================================================
