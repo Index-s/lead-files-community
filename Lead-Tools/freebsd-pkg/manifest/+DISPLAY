@@ -19,7 +19,16 @@
 
       /usr/local/libexec/lead/lead-configure          (or LEAD_PUBLIC_IP=x.x.x.x ...)
 
-  Start everything:
+  Manage the server with lead-ctl (start/stop all, a single channel, or a core;
+  plus a full backup). Channels 1-4 (+ channel99) are configured:
+
+      lead-ctl start            # start everything (db, auth, mark, ch1-4, ch99)
+      lead-ctl start ch2        # start ONLY channel 2
+      lead-ctl stop ch4         # stop ONLY channel 4
+      lead-ctl status
+      lead-ctl backup           # full backup (all DBs + serverfiles) to /var/backups/lead
+
+  Or via the rc system at boot (uses lead_channels from rc.conf, default 1 2 3 4):
 
       service lead start
       service lead status

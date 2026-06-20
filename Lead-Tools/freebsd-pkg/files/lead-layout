@@ -16,7 +16,9 @@ LEAD_USER="${LEAD_USER:-lead}"
 LEAD_GROUP="${LEAD_GROUP:-lead}"
 
 # Cores using the "game" binary (auth is the same binary, different CONFIG).
-GAME_CORES="${LEAD_GAME_CORES:-auth channel1/game1 channel1/game2 channel99 markserver}"
+GAME_CORES="${LEAD_GAME_CORES:-auth markserver \
+	channel1/game1 channel1/game2 channel2/game1 channel2/game2 \
+	channel3/game1 channel3/game2 channel4/game1 channel4/game2 channel99}"
 DB_CORE="db"
 
 ln_rel() { rm -f "$2"; ln -s "$1" "$2"; }   # ln_rel <relative-target> <linkpath>

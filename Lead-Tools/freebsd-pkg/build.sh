@@ -122,20 +122,22 @@ P="${STAGE}/usr/local"
 log "staging into $STAGE"
 
 # Single self-contained serverfiles tree at /usr/local/lead (owned by the 'lead'
-# service user at runtime). Helper tooling stays in libexec; rc.d in etc/rc.d.
+# service user at runtime). Helper tooling stays in libexec; the admin tool in
+# sbin; rc.d in etc/rc.d. db-scripts are NOT serverfiles -> share/lead/db-scripts.
 LEADROOT="${P}/lead"
-install -d "${P}/libexec/lead" "${P}/etc/rc.d" \
-           "${LEADROOT}/share/conf" "${LEADROOT}/share/bin" \
-           "${LEADROOT}/db-scripts" "${LEADROOT}/db"
+install -d "${P}/libexec/lead" "${P}/sbin" "${P}/etc/rc.d" \
+           "${P}/share/lead/db-scripts" \
+           "${LEADROOT}/share/conf" "${LEADROOT}/share/bin" "${LEADROOT}/db"
 
 # binaries -> share/bin inside the tree (cores symlink to these)
 install -m 0755 "${SRC}/game/game" "${LEADROOT}/share/bin/game"
 install -m 0755 "${SRC}/db/db"     "${LEADROOT}/share/bin/db"
-# helper scripts (tooling)
+# helper scripts (tooling) + admin management tool
 install -m 0755 "${PKGDIR}/files/lead-db-setup"  "${P}/libexec/lead/lead-db-setup"
 install -m 0755 "${PKGDIR}/files/lead-layout"    "${P}/libexec/lead/lead-layout"
 install -m 0755 "${PKGDIR}/files/lead-update"    "${P}/libexec/lead/lead-update"
 install -m 0755 "${PKGDIR}/files/lead-configure" "${P}/libexec/lead/lead-configure"
+install -m 0755 "${PKGDIR}/files/lead-ctl"       "${P}/sbin/lead-ctl"
 # rc.d
 install -m 0755 "${PKGDIR}/files/rc.d/lead"      "${P}/etc/rc.d/lead"
 
@@ -146,13 +148,16 @@ cp -R "${SVF}/share/conf/." "${LEADROOT}/share/conf/"
 install -d "${LEADROOT}/share/package"          # empty content root (symlink target)
 : > "${LEADROOT}/share/package/.keep"
 
-# db bootstrap data
-cp -R "${DBS}/base"       "${LEADROOT}/db-scripts/base"
-cp -R "${DBS}/migrations" "${LEADROOT}/db-scripts/migrations"
+# db bootstrap data (NOT part of the serverfiles tree)
+cp -R "${DBS}/base"       "${P}/share/lead/db-scripts/base"
+cp -R "${DBS}/migrations" "${P}/share/lead/db-scripts/migrations"
 
-# per-core configs (@config; real files in the core dirs)
+# per-core configs (@config; real files in the core dirs) -- db, auth, mark,
+# channels 1-4 (game1+game2), channel99
 install -m 0644 "${SVF}/db/conf.txt" "${LEADROOT}/db/conf.txt"
-for core in auth channel1/game1 channel1/game2 channel99 markserver; do
+CORES="auth markserver channel99"
+for ch in 1 2 3 4; do CORES="${CORES} channel${ch}/game1 channel${ch}/game2"; done
+for core in $CORES; do
 	install -d "${LEADROOT}/${core}"
 	install -m 0644 "${SVF}/${core}/CONFIG" "${LEADROOT}/${core}/CONFIG"
 done
