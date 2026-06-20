@@ -4,6 +4,9 @@
 #include "../EterPack/EterPackManager.h"
 #include "../eterBase/Timer.h"
 
+#include <string>
+#include <string.h>
+
 bool CSoundData::ms_isSoundFile[SOUND_FILE_MAX_NUM];
 CMappedFile CSoundData::ms_SoundFile[SOUND_FILE_MAX_NUM];
 
@@ -140,8 +143,26 @@ U32 AILCALLBACK CSoundData::open_callback(char const * filename, UINTa *file_han
 		return 0;
 
 	LPCVOID	pMap;
-	
-	if (!CEterPackManager::Instance().Get(ms_SoundFile[iIndex], filename, &pMap))
+
+	// Motion and effect data request sounds as ".mss", but the sound packs in
+	// this distribution store the raw waveforms as ".wav". When the requested
+	// ".mss" name is absent, fall back to the ".wav" variant so the effect
+	// still resolves. isExist() probes silently (no CANNOT_FIND_PACK_FILE log).
+	const char * c_szLoadName = filename;
+	std::string strFallback;
+	if (!CEterPackManager::Instance().isExist(filename))
+	{
+		const char * pcExt = strrchr(filename, '.');
+		if (pcExt && 0 == _stricmp(pcExt, ".mss"))
+		{
+			strFallback.assign(filename, pcExt - filename);
+			strFallback += ".wav";
+			if (CEterPackManager::Instance().isExist(strFallback.c_str()))
+				c_szLoadName = strFallback.c_str();
+		}
+	}
+
+	if (!CEterPackManager::Instance().Get(ms_SoundFile[iIndex], c_szLoadName, &pMap))
 		return 0;
 
 	ms_isSoundFile[iIndex] = true;
