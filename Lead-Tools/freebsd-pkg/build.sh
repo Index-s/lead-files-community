@@ -6,9 +6,9 @@
 #   <outdir>/lead-server-<version>.pkg
 #
 # Usage:
-#   packaging/freebsd/build.sh [options]
+#   Lead-Tools/freebsd-pkg/build.sh [options]
 #     --version <v>     package version (default: git describe, else date)
-#     --outdir  <dir>   where to write the .pkg (default: packaging/freebsd/dist)
+#     --outdir  <dir>   where to write the .pkg (default: Lead-Tools/freebsd-pkg/dist)
 #     --install-deps    pkg install the build dependencies first (needs root)
 #     --no-build        skip compiling; reuse existing Lead-Server-Source/{game,db}
 #     --mariadb <pkg>   MariaDB server package to depend on
@@ -20,7 +20,7 @@ set -eu
 
 # --- locate ourselves / repo root -------------------------------------------
 SELF="$(realpath "$0")"
-PKGDIR="$(dirname "$SELF")"                 # packaging/freebsd
+PKGDIR="$(dirname "$SELF")"                 # Lead-Tools/freebsd-pkg
 ROOT="$(realpath "${PKGDIR}/../..")"        # repo root
 
 SRC="${ROOT}/Lead-Server-Source"

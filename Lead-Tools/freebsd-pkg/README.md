@@ -89,20 +89,20 @@ Everything must be built **on FreeBSD/amd64** (it produces amd64 ELF binaries).
 
 ```sh
 # one-time: install build deps (needs root)
-sh packaging/freebsd/build.sh --install-deps --no-build
+sh Lead-Tools/freebsd-pkg/build.sh --install-deps --no-build
 
 # build the package
-sh packaging/freebsd/build.sh --version 1.0.0
-# -> packaging/freebsd/dist/lead-server-1.0.0.pkg
+sh Lead-Tools/freebsd-pkg/build.sh --version 1.0.0
+# -> Lead-Tools/freebsd-pkg/dist/lead-server-1.0.0.pkg
 
 # turn it into a publishable repo (optionally signed)
-sh packaging/freebsd/make-repo.sh --url https://INDEX-S.github.io/lead-files-community
-# -> packaging/freebsd/repo-out/   (publish this tree to gh-pages)
+sh Lead-Tools/freebsd-pkg/make-repo.sh --url https://INDEX-S.github.io/lead-files-community
+# -> Lead-Tools/freebsd-pkg/repo-out/   (publish this tree to gh-pages)
 ```
 
 Test it on a clean jail/VM:
 ```sh
-pkg add ./packaging/freebsd/dist/lead-server-1.0.0.pkg   # or via the repo
+pkg add ./Lead-Tools/freebsd-pkg/dist/lead-server-1.0.0.pkg   # or via the repo
 service lead start
 ```
 
