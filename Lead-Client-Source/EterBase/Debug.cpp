@@ -32,7 +32,14 @@ class CLogFile : public CSingleton<CLogFile>
 		void Initialize()
 		{
 			if (fopen_s(&m_fp, "log.txt", "w") != 0)
-				m_fp = NULL;
+			{
+				// A second client in the same folder can't reopen log.txt; give it
+				// a per-process file so both instances log instead of one going mute.
+				char szName[64];
+				_snprintf_s(szName, sizeof(szName), _TRUNCATE, "log_%lu.txt", GetCurrentProcessId());
+				if (fopen_s(&m_fp, szName, "w") != 0)
+					m_fp = NULL;
+			}
 		}
 
 		void Write(const char * c_pszMsg)
@@ -324,7 +331,18 @@ void OpenLogFile(bool bUseLogFIle)
 {
 #ifndef _DISTRIBUTE
 	FILE * fpStdErr = NULL;
-	freopen_s(&fpStdErr, "syserr.txt", "w", stderr);
+	// A second client started from the same folder cannot reopen syserr.txt (the
+	// first instance holds it). Without a fallback, freopen_s() fails and leaves
+	// stderr with an invalid fd, so the next fprintf(stderr, ...) asserts in the
+	// CRT _write() ("(fh >= 0 && ...)"). Fall back to a per-process file, then to
+	// the null device, so any number of clients can run side by side.
+	if (freopen_s(&fpStdErr, "syserr.txt", "w", stderr) != 0 || !fpStdErr)
+	{
+		char szErr[64];
+		_snprintf_s(szErr, sizeof(szErr), _TRUNCATE, "syserr_%lu.txt", GetCurrentProcessId());
+		if (freopen_s(&fpStdErr, szErr, "w", stderr) != 0 || !fpStdErr)
+			freopen_s(&fpStdErr, "nul", "w", stderr);
+	}
 
 	if (bUseLogFIle)
 	{
