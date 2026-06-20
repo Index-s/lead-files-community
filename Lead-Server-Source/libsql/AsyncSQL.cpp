@@ -253,7 +253,7 @@ SQLMsg * CAsyncSQL::DirectQuery(const char * c_pszQuery)
 	{
 		char buf[1024];
 
-		_snprintf_s(buf, sizeof(buf), _TRUNCATE,
+		snprintf(buf, sizeof(buf),
 				"AsyncSQL::DirectQuery : mysql_query error: %s\nquery: %s",
 				mysql_error(&m_hDB), p->stQuery.c_str());
 

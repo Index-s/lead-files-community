@@ -3,8 +3,8 @@ BIN_DIR = ../lib
 BIN = $(BIN_DIR)/libthecore.a
 INCLUDE = ../include
 
-#CFLAGS = -m32 -Wall -O2 -pipe -g -I$(INCLUDE) -Wno-invalid-source-encoding
-CFLAGS = -m32 -march=i686 -msse2 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -fno-stack-protector -fno-strict-aliasing -I$(INCLUDE)
+#CFLAGS = -m64 -Wall -O2 -pipe -g -I$(INCLUDE) -Wno-invalid-source-encoding
+CFLAGS = -m64 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -fno-stack-protector -fno-strict-aliasing -I$(INCLUDE)
 
 C_SRCS = $(wildcard *.c)
 CPP_SRCS = $(wildcard *.cpp)
