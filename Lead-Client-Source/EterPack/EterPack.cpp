@@ -308,7 +308,7 @@ bool CEterPack::DecryptIndexFile()
 
 	file.Write(&eterpack::c_IndexCC, sizeof(DWORD));
 	file.Write(&eterpack::c_Version, sizeof(DWORD));
-	file.Write(&m_indexCount, sizeof(long));
+	file.Write(&m_indexCount, sizeof(m_indexCount));
 	file.Write(m_indexData, sizeof(TEterPackIndex) * m_indexCount);
 
 	file.Close();
@@ -445,8 +445,8 @@ bool CEterPack::__BuildIndex(CEterFileDict& rkFileDict, bool bOverwrite)
 		return false;
 	}
 
-	m_indexCount = *(long *) pbData;
-	pbData += sizeof(long);
+	m_indexCount = *(int *) pbData;
+	pbData += sizeof(int);
 
 	if (uiFileSize < eterpack::c_HeaderSize + sizeof(TEterPackIndex) * m_indexCount)
 	{
@@ -1093,7 +1093,7 @@ bool CEterPack::CreateIndexFile()
 
 	fwrite(&eterpack::c_IndexCC, sizeof(DWORD), 1, fp);
 	fwrite(&eterpack::c_Version, sizeof(DWORD), 1, fp);
-	fwrite(&m_indexCount, sizeof(long), 1, fp);
+	fwrite(&m_indexCount, sizeof(m_indexCount), 1, fp);
 
 	fclose(fp);
 	return true;
@@ -1103,7 +1103,7 @@ bool CEterPack::CreateIndexFile()
 void CEterPack::WriteIndex(CFileBase & file, TEterPackIndex * index)
 {
 	file.Seek(sizeof(DWORD) + sizeof(DWORD));
-	file.Write(&m_indexCount, sizeof(long));
+	file.Write(&m_indexCount, sizeof(m_indexCount));
 	file.Seek(eterpack::c_HeaderSize + (index->id * sizeof(TEterPackIndex)));
 
 	if (!file.Write(index, sizeof(TEterPackIndex)))

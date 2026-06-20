@@ -506,7 +506,7 @@ typedef struct SSkillTable
 	DWORD	preSkillVnum;
 	BYTE	preSkillLevel;
 
-	long	lMaxHit; 
+	int32_t	lMaxHit; 
 	char	szSplashAroundDamageAdjustPoly[100 + 1];
 
 	BYTE	bSkillAttrType;
@@ -547,13 +547,13 @@ typedef struct SQuestTable
 typedef struct SItemLimit
 {
 	BYTE	bType;
-	long	lValue;
+	int32_t	lValue;
 } TItemLimit;
 
 typedef struct SItemApply
 {
 	BYTE	bType;
-	long	lValue;
+	int32_t	lValue;
 } TItemApply;
 
 typedef struct SItemTable : public SEntityTable
@@ -607,7 +607,7 @@ struct TItemAttrTable
 	char    szApply[APPLY_NAME_MAX_LEN + 1];
 	DWORD   dwApplyIndex;
 	DWORD   dwProb;
-	long    lValues[5];
+	int32_t    lValues[5];
 	BYTE    bMaxLevelBySet[ATTRIBUTE_SET_MAX_NUM];
 };
 
@@ -778,10 +778,10 @@ typedef struct TPacketAffectElement
 {
 	DWORD	dwType;
 	BYTE	bApplyOn;
-	long	lApplyValue;
+	int32_t	lApplyValue;
 	DWORD	dwFlag;
 	TimeT64	lDuration;
-	long	lSPCost;
+	int32_t	lSPCost;
 } TPacketAffectElement;
 
 typedef struct SPacketGDAddAffect
@@ -872,8 +872,8 @@ typedef struct SPacketGuildWar
 	BYTE	bWar;
 	DWORD	dwGuildFrom;
 	DWORD	dwGuildTo;
-	long	lWarPrice;
-	long	lInitialScore;
+	int32_t	lWarPrice;
+	int32_t	lInitialScore;
 } TPacketGuildWar;
 
 // Game -> DB : 상대적 변화값
@@ -882,8 +882,8 @@ typedef struct SPacketGuildWarScore
 {
 	DWORD dwGuildGainPoint;
 	DWORD dwGuildOpponent;
-	long lScore;
-	long lBetScore;
+	int32_t lScore;
+	int32_t lBetScore;
 } TPacketGuildWarScore;
 
 typedef struct SRefineMaterial
@@ -923,16 +923,16 @@ typedef struct SPacketDGChangeName
 typedef struct SPacketGuildLadder
 {
 	DWORD dwGuild;
-	long lLadderPoint;
-	long lWin;
-	long lDraw;
-	long lLoss;
+	int32_t lLadderPoint;
+	int32_t lWin;
+	int32_t lDraw;
+	int32_t lLoss;
 } TPacketGuildLadder;
 
 typedef struct SPacketGuildLadderPoint
 {
 	DWORD dwGuild;
-	long lChange;
+	int32_t lChange;
 } TPacketGuildLadderPoint;
 
 typedef struct SPacketGuildUseSkill
@@ -1071,7 +1071,7 @@ typedef struct SPacketGDGuildMoneyWithdrawGiveReply
 typedef struct SPacketSetEventFlag
 {
 	char	szFlagName[EVENT_FLAG_NAME_MAX_LEN + 1];
-	long	lValue;
+	int32_t	lValue;
 } TPacketSetEventFlag;
 
 typedef struct SPacketLoginOnSetup
@@ -1108,14 +1108,14 @@ typedef struct SGuildReserve
 	DWORD       dwGuildTo;
 	TimeT64       dwTime;
 	BYTE        bType;
-	long        lWarPrice;
-	long        lInitialScore;
+	int32_t        lWarPrice;
+	int32_t        lInitialScore;
 	bool        bStarted;
 	DWORD	dwBetFrom;
 	DWORD	dwBetTo;
-	long	lPowerFrom;
-	long	lPowerTo;
-	long	lHandicap;
+	int32_t	lPowerFrom;
+	int32_t	lPowerTo;
+	int32_t	lHandicap;
 } TGuildWarReserve;
 
 typedef struct
@@ -1202,7 +1202,7 @@ typedef struct SItemPriceListTable
 typedef struct
 {
 	char szName[CHARACTER_NAME_MAX_LEN + 1];
-	long lDuration;
+	int32_t lDuration;
 } TPacketBlockChat;
 
 //ADMIN_MANAGER
@@ -1320,7 +1320,7 @@ struct TSwitchbottAttributeTable
 {
 	BYTE attribute_set;
 	int apply_num;
-	long max_value;
+	int32_t max_value;
 };
 
 #pragma pack()
