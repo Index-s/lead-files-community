@@ -196,7 +196,14 @@ log "plist entries: $(wc -l < "$PLIST")"
 META="$(mktemp -d)"; trap 'rm -rf "$STAGE" "$META" "$PLIST"' EXIT
 
 dep_line() { # dep_line <pkgname> <origin>
+	# Pin the exact version: prefer the locally-installed version, else the one
+	# available in the repo (so a dep that isn't installed on the build host -
+	# e.g. mariadb<NNN>-server, only its client is - is still pinned, not left
+	# version-less). pkg treats this as the version the package was built/tested
+	# against; resolution still allows a newer compatible build (so security
+	# patches flow), it just won't accept anything OLDER.
 	_v="$(pkg query '%v' "$1" 2>/dev/null || true)"
+	[ -n "$_v" ] || _v="$(pkg rquery '%v' "$1" 2>/dev/null | head -1 || true)"
 	if [ -n "$_v" ]; then
 		printf '  %s: { origin: "%s", version: "%s" }\n' "$1" "$2" "$_v"
 	else
