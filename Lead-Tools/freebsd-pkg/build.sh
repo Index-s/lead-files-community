@@ -130,6 +130,7 @@ install -m 0755 "${SRC}/db/db"     "${P}/libexec/lead/db"
 # helper scripts
 install -m 0755 "${PKGDIR}/files/lead-db-setup" "${P}/libexec/lead/lead-db-setup"
 install -m 0755 "${PKGDIR}/files/lead-layout"   "${P}/libexec/lead/lead-layout"
+install -m 0755 "${PKGDIR}/files/lead-update"   "${P}/libexec/lead/lead-update"
 # rc.d
 install -m 0755 "${PKGDIR}/files/rc.d/lead"     "${P}/etc/rc.d/lead"
 
@@ -234,9 +235,21 @@ json_escape() {
 
 # --- 5. create the package --------------------------------------------------
 mkdir -p "$OUTDIR"
-log "creating package (version ${VERSION}) ..."
+log "creating package (version ${VERSION}) for ABI $(pkg config ABI) ..."
 pkg create -o "$OUTDIR" -r "$STAGE" -p "$PLIST" -m "$META" \
 	|| die "pkg create failed"
 
+# Also emit a STABLE arch+osversion-named copy so packages for different
+# FreeBSD versions / CPU architectures never collide in one GitHub Release, and
+# so `releases/latest/download/<asset>` + lead-update resolve per-host. The arch
+# is taken from the build host's ABI -- build on an amd64 host for an amd64
+# package, an aarch64 host for aarch64, etc.
+ABI="$(pkg config ABI)"                 # e.g. FreeBSD:15:amd64
+OSMAJOR="$(echo "$ABI" | cut -d: -f2)"
+ARCH="$(echo "$ABI" | cut -d: -f3)"
+STABLE="${OUTDIR}/lead-server-FreeBSD${OSMAJOR}-${ARCH}.pkg"
+cp -f "${OUTDIR}/lead-server-${VERSION}.pkg" "$STABLE"
+
 log "done:"
 ls -la "$OUTDIR"/lead-server-*.pkg 2>/dev/null || ls -la "$OUTDIR"
+log "stable asset name (for GitHub Release / lead-update): $(basename "$STABLE")"
