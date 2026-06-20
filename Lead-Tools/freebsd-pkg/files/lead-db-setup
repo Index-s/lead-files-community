@@ -66,9 +66,19 @@ done
 [ -d "$SCRIPTS_DIR" ] || fail "db-scripts directory not found: $SCRIPTS_DIR"
 
 # Build the admin connection argument list once.
-set --
-set -- --host="$LEAD_DB_HOST" --port="$LEAD_DB_PORT" --user="$LEAD_DB_ADMIN_USER" --protocol=tcp
-[ -n "$LEAD_DB_ADMIN_PASSWORD" ] && set -- "$@" --password="$LEAD_DB_ADMIN_PASSWORD"
+# For a LOCAL server (default host) connect over the unix socket: a fresh MariaDB
+# allows passwordless root only via the socket (unix_socket auth), not via TCP.
+# For an explicit/remote host, connect over TCP with host/port/password.
+case "$LEAD_DB_HOST" in
+	""|localhost|127.0.0.1)
+		set -- --user="$LEAD_DB_ADMIN_USER"
+		[ -n "$LEAD_DB_ADMIN_PASSWORD" ] && set -- "$@" --password="$LEAD_DB_ADMIN_PASSWORD"
+		;;
+	*)
+		set -- --host="$LEAD_DB_HOST" --port="$LEAD_DB_PORT" --user="$LEAD_DB_ADMIN_USER" --protocol=tcp
+		[ -n "$LEAD_DB_ADMIN_PASSWORD" ] && set -- "$@" --password="$LEAD_DB_ADMIN_PASSWORD"
+		;;
+esac
 ADMIN_ARGS="$*"
 
 # admin_sql "<sql>" [extra client args...]   -- run SQL on the server (no default db)
@@ -84,11 +94,13 @@ admin_load_file() {
 }
 
 # --- wait for the server to accept connections -------------------------------
-log "waiting for $CLIENT on $LEAD_DB_HOST:$LEAD_DB_PORT ..."
+# 180s: MariaDB's first start initialises the data directory, which is slow on
+# constrained/emulated hosts.
+log "waiting for $CLIENT (admin) to accept connections ..."
 _tries=0
 until admin_sql "SELECT 1;" >/dev/null 2>&1; do
 	_tries=$((_tries + 1))
-	[ "$_tries" -ge 60 ] && fail "database not reachable after 60s (check admin credentials / that the server is running)"
+	[ "$_tries" -ge 180 ] && fail "database not reachable after 180s (check admin credentials / that the server is running)"
 	sleep 1
 done
 log "connected as '$LEAD_DB_ADMIN_USER'."
@@ -111,13 +123,9 @@ done
 admin_sql "FLUSH PRIVILEGES;"
 log "application user '$LEAD_DB_USER' ensured with grants on all databases."
 
-# --- migration tracking table ------------------------------------------------
-admin_sql "CREATE TABLE IF NOT EXISTS common.schema_migrations (
-	filename   VARCHAR(255) NOT NULL PRIMARY KEY,
-	applied_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=Aria;"
-
 # --- load base schema into still-empty databases -----------------------------
+# NOTE: the schema_migrations tracking table is created AFTER this loop, so it
+# does not make `common` look non-empty and skip loading common.sql.
 table_count() {
 	admin_sql "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='$1';" \
 		--skip-column-names --batch 2>/dev/null | tr -d '[:space:]'
@@ -134,6 +142,12 @@ for db in $DATABASES; do
 		admin_load_file "$db" "$_base" latin1
 	fi
 done
+
+# --- migration tracking table (created after the base load) ------------------
+admin_sql "CREATE TABLE IF NOT EXISTS common.schema_migrations (
+	filename   VARCHAR(255) NOT NULL PRIMARY KEY,
+	applied_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=Aria;"
 
 # --- apply migrations in lexicographic order ---------------------------------
 is_applied() {
