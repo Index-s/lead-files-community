@@ -100,9 +100,18 @@ cmd_start() {
 	# (and accepting connections) before starting anything.
 	if [ -f /usr/local/etc/rc.d/mysql-server ] && ! service mysql-server status >/dev/null 2>&1; then
 		note "MariaDB is not running; starting it ..."
-		service mysql-server start >/dev/null 2>&1 || err "could not start MariaDB"
+		service mysql-server onestart >/dev/null 2>&1 || service mysql-server start >/dev/null 2>&1 || err "could not start MariaDB"
 		_n=0
-		until mariadb -u root -e 'SELECT 1' >/dev/null 2>&1 || [ "$_n" -ge 30 ]; do sleep 1; _n=$((_n + 1)); done
+		until mariadb -u root -e 'SELECT 1' >/dev/null 2>&1 || [ "$_n" -ge 60 ]; do sleep 1; _n=$((_n + 1)); done
+	fi
+	# Self-heal: if the schema isn't there (e.g. a post-install hiccup), bootstrap
+	# it now (idempotent) so the cores always have a database to connect to.
+	if [ -x "${LIBEXEC}/lead-db-setup" ]; then
+		_seeded="$(mariadb -u root -N -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='player'" 2>/dev/null | tr -d '[:space:]')"
+		if [ "${_seeded:-0}" -lt 1 ] 2>/dev/null; then
+			note "databases not initialised; bootstrapping ..."
+			"${LIBEXEC}/lead-db-setup" >/dev/null 2>&1 || note "WARNING: db bootstrap failed; run 'lead-ctl migrate'"
+		fi
 	fi
 	# db and auth are prerequisites for every game core and MUST come up first, in
 	# order, and be READY (listening) before channels start - else the channels

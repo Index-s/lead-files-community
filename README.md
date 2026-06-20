@@ -24,31 +24,41 @@ service) in one command.
 
 The package is published as a plain **download** on the GitHub Release — no pkg
 repo or other hosted service required. Pick the `.pkg` matching your host's
-FreeBSD version + CPU architecture (`lead-server-FreeBSD<major>-<arch>.pkg`):
+FreeBSD version + CPU architecture (`lead-server-FreeBSD<major>-<arch>.pkg`),
+then install it with **one command**:
 
 ```sh
-# 1. dependencies (a local .pkg does not auto-fetch them)
-pkg install -y mariadb118-server devil lzo2
-
-# 2. download the matching package and install it — this creates the databases,
-#    applies migrations, builds the runtime tree/symlinks and enables the service
+# download the matching package ...
 fetch -o lead-server.pkg \
   https://github.com/Index-s/lead-files-community/releases/latest/download/lead-server-FreeBSD15-amd64.pkg
-pkg add ./lead-server.pkg
 
-# 3. set your public/bind IP in the configs, then start
-#    /usr/local/etc/lead/{auth,channel1/game1,...}/CONFIG  and  db/conf.txt
-service lead start
-service lead status
+# ... and install it. Use `pkg install` (NOT `pkg add`): given a file path, pkg
+# install resolves and fetches the dependencies (MariaDB, DevIL, lzo2) from the
+# FreeBSD repo automatically.  This one command also creates the databases,
+# applies migrations, builds the runtime tree/symlinks, autodetects the host IP,
+# and enables the service.
+pkg install -y ./lead-server.pkg
+
+# start the server (db -> auth -> channels, in order)
+lead-ctl start            # or: service lead start
+lead-ctl status
 ```
 
-**Updating** — run the bundled updater. It checks the latest GitHub Release,
-and if it is newer than what's installed, downloads the matching FreeBSD/arch
-package and upgrades in place (re-applying any new DB migrations):
+> `pkg add ./lead-server.pkg` does **not** work on a bare host — `pkg add` never
+> fetches dependencies, so it fails with `Missing dependency 'devil'`. Always use
+> `pkg install ./...pkg`.
+
+The server is managed entirely through **`lead-ctl`** (on PATH in `/usr/local/sbin`):
 
 ```sh
-/usr/local/libexec/lead/lead-update            # or --check to just compare
+lead-ctl start [ch2]      lead-ctl stop [ch4]       lead-ctl restart
+lead-ctl status           lead-ctl backup           lead-ctl migrate
+lead-ctl configure        lead-ctl update           # update to a newer release
 ```
+
+> Each game core loads map/quest data into RAM, so a full 4-channel server
+> (12 cores) wants roughly **4 GB+ of RAM**. On a smaller box run fewer channels:
+> `sysrc lead_channels="1"` (or `lead-ctl start ch1`).
 
 Full admin guide: [`Lead-Tools/freebsd-pkg/README.md`](Lead-Tools/freebsd-pkg/README.md).
 
