@@ -1,0 +1,80 @@
+name: Build & publish FreeBSD pkg
+
+# Tag a version (vX.Y.Z) -> CI builds the .pkg in a FreeBSD VM, publishes the
+# pkg repository to GitHub Pages, and attaches the .pkg to the GitHub release.
+# Servers then get it with `pkg install lead-server` / `pkg upgrade`.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Package version (without leading v)"
+        required: false
+
+permissions:
+  contents: write   # gh-pages branch + release assets
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      LEAD_SIGNING_KEY: ${{ secrets.LEAD_REPO_SIGNING_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # tags needed for `git describe`
+
+      - name: Determine version
+        id: ver
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            v="${{ github.event.inputs.version }}"
+          elif [ "${{ github.ref_type }}" = "tag" ]; then
+            v="${GITHUB_REF_NAME#v}"
+          else
+            v="0.0.0.$(date +%Y%m%d)"
+          fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
+      - name: Compute Pages URL
+        id: url
+        run: |
+          owner=$(echo "${{ github.repository_owner }}" | tr 'A-Z' 'a-z')
+          repo=$(basename "${{ github.repository }}")
+          echo "url=https://${owner}.github.io/${repo}" >> "$GITHUB_OUTPUT"
+
+      - name: Build pkg + repo in FreeBSD VM
+        uses: vmactions/freebsd-vm@v1
+        with:
+          release: "14.3"
+          usesh: true
+          envs: "LEAD_SIGNING_KEY"
+          prepare: |
+            pkg install -y gmake llvm lzo2 png jpeg-turbo cryptopp devil boost-libs mariadb1011-server git
+          run: |
+            set -e
+            VER='${{ steps.ver.outputs.version }}'
+            URL='${{ steps.url.outputs.url }}'
+            sh packaging/freebsd/build.sh --version "$VER"
+            if [ -n "${LEAD_SIGNING_KEY:-}" ]; then
+              umask 077; printf '%s' "$LEAD_SIGNING_KEY" > /tmp/lead-repo.key
+              sh packaging/freebsd/make-repo.sh --url "$URL" --key /tmp/lead-repo.key
+              rm -f /tmp/lead-repo.key
+            else
+              sh packaging/freebsd/make-repo.sh --url "$URL"
+            fi
+
+      - name: Publish repository to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: packaging/freebsd/repo-out
+          force_orphan: true
+
+      - name: Attach package to the GitHub release
+        if: ${{ github.ref_type == 'tag' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: packaging/freebsd/dist/*.pkg
