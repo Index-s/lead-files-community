@@ -375,7 +375,7 @@ bool Main(HINSTANCE hInstance, LPSTR lpCmdLine)
 
 #ifdef _DEBUG
 	OpenConsoleWindow();
-	OpenLogFile(true); // true == uses syserr.txt and log.txt
+	OpenLogFile(false); // syserr.txt only (no log.txt) in every build
 #else
 	OpenLogFile(false); // false == uses syserr.txt only
 #endif

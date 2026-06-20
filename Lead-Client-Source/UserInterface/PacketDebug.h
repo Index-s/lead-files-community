@@ -10,7 +10,10 @@
 #ifndef __PACKET_DEBUG_H__
 #define __PACKET_DEBUG_H__
 
-#ifdef _DEBUG
+// Packet-trace middleware is OFF by default (it writes a large debug_packet.log).
+// Define ENABLE_PACKET_DEBUG in a debug build to opt in; otherwise the macros below
+// compile to no-ops and no log file is created.
+#if defined(_DEBUG) && defined(ENABLE_PACKET_DEBUG)
 
 #include <windows.h>
 #include <stdio.h>
