@@ -2369,7 +2369,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 								{
 									if (item->GetVnum() == DRAGON_HEART_VNUM)
 									{
-										snprintf(buf, sizeof(buf), "Inc %ds by item{VN:%d SOC%d:%lld}", ret, item->GetVnum(), ITEM_SOCKET_CHARGING_AMOUNT_IDX, item->GetSocket(ITEM_SOCKET_CHARGING_AMOUNT_IDX));
+										snprintf(buf, sizeof(buf), "Inc %ds by item{VN:%d SOC%d:%lld}", ret, item->GetVnum(), ITEM_SOCKET_CHARGING_AMOUNT_IDX, (long long) item->GetSocket(ITEM_SOCKET_CHARGING_AMOUNT_IDX));
 									}
 									else
 									{
@@ -2385,7 +2385,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 								{
 									if (item->GetVnum() == DRAGON_HEART_VNUM)
 									{
-										snprintf(buf, sizeof(buf), "No change by item{VN:%d SOC%d:%lld}", item->GetVnum(), ITEM_SOCKET_CHARGING_AMOUNT_IDX, item->GetSocket(ITEM_SOCKET_CHARGING_AMOUNT_IDX));
+										snprintf(buf, sizeof(buf), "No change by item{VN:%d SOC%d:%lld}", item->GetVnum(), ITEM_SOCKET_CHARGING_AMOUNT_IDX, (long long) item->GetSocket(ITEM_SOCKET_CHARGING_AMOUNT_IDX));
 									}
 									else
 									{

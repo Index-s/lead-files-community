@@ -2796,6 +2796,13 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 			}
 			return static_cast<int>(SubPacketLen);
 
+		case GUILD_SUBHEADER_CG_DEPOSIT_MONEY:
+		case GUILD_SUBHEADER_CG_WITHDRAW_MONEY:
+			// Guild-bank money transfer is not implemented in this server build; consume
+			// and ignore the sub-packet (like the other known-but-unused sub-headers) so
+			// the CG stream stays aligned. Silences -Wswitch.
+			return static_cast<int>(SubPacketLen);
+
 	}
 
 	return 0;
