@@ -1,0 +1,70 @@
+#!/bin/sh
+#
+# lead-layout - (re)create the per-core runtime tree and symlinks for the Lead
+# server, idempotently. Replaces every per-core install.sh.
+#
+# Each core runs with its working directory under ${LEAD_RUNDIR} (default
+# /var/db/lead/<core>). The binary reads relative paths (CONFIG/conf.txt,
+# data/, locale/, package/, CMD, *_proto.txt) from that directory, so we link
+# them to the pkg-owned read-only content under share/ and the admin-editable
+# CONFIG files under etc/.
+#
+# Run by post-install AND by the rc.d start_precmd, so a lost symlink self-heals
+# on the next "service lead start".
+#
+set -eu
+
+PREFIX="${PREFIX:-/usr/local}"
+LEAD_RUNDIR="${LEAD_RUNDIR:-/var/db/lead}"
+LEAD_USER="${LEAD_USER:-lead}"
+LEAD_GROUP="${LEAD_GROUP:-lead}"
+
+SHARE="$PREFIX/share/lead"
+ETC="$PREFIX/etc/lead"
+LIBEXEC="$PREFIX/libexec/lead"
+
+# Cores that use the "game" binary (auth is the same binary, different CONFIG).
+GAME_CORES="${LEAD_GAME_CORES:-auth channel1/game1 channel1/game2 channel99 markserver}"
+# Core that uses the "db" binary.
+DB_CORE="db"
+
+ln_sf() { # ln_sf <target> <linkpath>  -- force-refresh a symlink
+	rm -f "$2"
+	ln -s "$1" "$2"
+}
+
+ensure_dir() {
+	[ -d "$1" ] || mkdir -p "$1"
+}
+
+# --- db core -----------------------------------------------------------------
+d="$LEAD_RUNDIR/$DB_CORE"
+ensure_dir "$d"
+ln_sf "$SHARE/conf/item_proto.txt" "$d/item_proto.txt"
+ln_sf "$SHARE/conf/mob_proto.txt"  "$d/mob_proto.txt"
+ln_sf "$SHARE/conf/item_names.txt" "$d/item_names.txt"
+ln_sf "$SHARE/conf/mob_names.txt"  "$d/mob_names.txt"
+ln_sf "$ETC/db/conf.txt"           "$d/conf.txt"
+ensure_dir "$d/log"
+ensure_dir "$d/cores"
+
+# --- game cores --------------------------------------------------------------
+for core in $GAME_CORES; do
+	d="$LEAD_RUNDIR/$core"
+	ensure_dir "$d"
+	ln_sf "$SHARE/data"        "$d/data"
+	ln_sf "$SHARE/locale"      "$d/locale"
+	ln_sf "$SHARE/package"     "$d/package"
+	ln_sf "$SHARE/conf/CMD"    "$d/CMD"
+	ln_sf "$ETC/$core/CONFIG"  "$d/CONFIG"
+	ensure_dir "$d/mark"
+	ensure_dir "$d/log"
+	ensure_dir "$d/cores"
+done
+
+# --- ownership ---------------------------------------------------------------
+if id "$LEAD_USER" >/dev/null 2>&1; then
+	chown -RH "$LEAD_USER:$LEAD_GROUP" "$LEAD_RUNDIR" 2>/dev/null || true
+fi
+
+echo "lead-layout: runtime tree ready under $LEAD_RUNDIR"
