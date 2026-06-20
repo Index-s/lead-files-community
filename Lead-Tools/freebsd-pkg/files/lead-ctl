@@ -83,6 +83,15 @@ stop_core() {  # <corepath>
 	rm -f "$_pf"
 }
 
+wait_listen() {  # <port> [max_seconds] -- wait until something listens on the port
+	_port="$1"; _max="${2:-60}"; _w=0
+	while ! sockstat -4l 2>/dev/null | grep -q ":${_port} "; do
+		[ "$_w" -ge "$_max" ] && return 1
+		sleep 2; _w=$((_w + 2))
+	done
+	return 0
+}
+
 cmd_start() {
 	_t="${1:-all}"; _list="$(cores_for "$_t")" || { err "unknown target: $_t"; exit 2; }
 	mkdir -p "$PIDDIR"
@@ -95,11 +104,14 @@ cmd_start() {
 		_n=0
 		until mariadb -u root -e 'SELECT 1' >/dev/null 2>&1 || [ "$_n" -ge 30 ]; do sleep 1; _n=$((_n + 1)); done
 	fi
-	# Game cores need the db core (port 15000); start it first if not already up.
-	case " $_list " in
-		*" db:db "*) : ;;
-		*) is_running db || { note "(db core not running; starting it first)"; start_core db db; } ;;
-	esac
+	# db and auth are prerequisites for every game core and MUST come up first, in
+	# order, and be READY (listening) before channels start - else the channels
+	# can't reach the db cache / login master and exit immediately.
+	if ! is_running db; then note "starting db core ..."; start_core db db; fi
+	wait_listen 15000 90 || note "WARNING: db core did not open :15000 in time (proto still loading?)"
+	if ! is_running auth; then note "starting auth ..."; start_core auth game; fi
+	wait_listen 11000 30 || true
+	# Now start whatever was requested (db/auth get skipped if already running).
 	for _e in $_list; do start_core "${_e%%:*}" "${_e##*:}" || true; done
 	note "start ($_t) complete."
 }
