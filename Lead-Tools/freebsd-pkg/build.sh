@@ -121,40 +121,46 @@ STAGE="$(mktemp -d)"; trap 'rm -rf "$STAGE"' EXIT
 P="${STAGE}/usr/local"
 log "staging into $STAGE"
 
-install -d "${P}/libexec/lead" "${P}/share/lead/conf" "${P}/share/lead/db-scripts" \
-           "${P}/etc/lead/db" "${P}/etc/rc.d"
+# Single self-contained serverfiles tree at /usr/local/lead (owned by the 'lead'
+# service user at runtime). Helper tooling stays in libexec; rc.d in etc/rc.d.
+LEADROOT="${P}/lead"
+install -d "${P}/libexec/lead" "${P}/etc/rc.d" \
+           "${LEADROOT}/share/conf" "${LEADROOT}/share/bin" \
+           "${LEADROOT}/db-scripts" "${LEADROOT}/db"
 
-# binaries
-install -m 0755 "${SRC}/game/game" "${P}/libexec/lead/game"
-install -m 0755 "${SRC}/db/db"     "${P}/libexec/lead/db"
-# helper scripts
-install -m 0755 "${PKGDIR}/files/lead-db-setup" "${P}/libexec/lead/lead-db-setup"
-install -m 0755 "${PKGDIR}/files/lead-layout"   "${P}/libexec/lead/lead-layout"
-install -m 0755 "${PKGDIR}/files/lead-update"   "${P}/libexec/lead/lead-update"
+# binaries -> share/bin inside the tree (cores symlink to these)
+install -m 0755 "${SRC}/game/game" "${LEADROOT}/share/bin/game"
+install -m 0755 "${SRC}/db/db"     "${LEADROOT}/share/bin/db"
+# helper scripts (tooling)
+install -m 0755 "${PKGDIR}/files/lead-db-setup"  "${P}/libexec/lead/lead-db-setup"
+install -m 0755 "${PKGDIR}/files/lead-layout"    "${P}/libexec/lead/lead-layout"
+install -m 0755 "${PKGDIR}/files/lead-update"    "${P}/libexec/lead/lead-update"
+install -m 0755 "${PKGDIR}/files/lead-configure" "${P}/libexec/lead/lead-configure"
 # rc.d
-install -m 0755 "${PKGDIR}/files/rc.d/lead"     "${P}/etc/rc.d/lead"
+install -m 0755 "${PKGDIR}/files/rc.d/lead"      "${P}/etc/rc.d/lead"
 
-# content tree
-cp -R "${SVF}/share/data"   "${P}/share/lead/data"
-cp -R "${SVF}/share/locale" "${P}/share/lead/locale"
-cp -R "${SVF}/share/conf/." "${P}/share/lead/conf/"
-install -d "${P}/share/lead/package"          # empty content root (symlink target)
-: > "${P}/share/lead/package/.keep"
+# content
+cp -R "${SVF}/share/data"   "${LEADROOT}/share/data"
+cp -R "${SVF}/share/locale" "${LEADROOT}/share/locale"
+cp -R "${SVF}/share/conf/." "${LEADROOT}/share/conf/"
+install -d "${LEADROOT}/share/package"          # empty content root (symlink target)
+: > "${LEADROOT}/share/package/.keep"
 
 # db bootstrap data
-cp -R "${DBS}/base"       "${P}/share/lead/db-scripts/base"
-cp -R "${DBS}/migrations" "${P}/share/lead/db-scripts/migrations"
+cp -R "${DBS}/base"       "${LEADROOT}/db-scripts/base"
+cp -R "${DBS}/migrations" "${LEADROOT}/db-scripts/migrations"
 
-# per-core configs (@config; copied from the known-good serverfiles)
-install -m 0644 "${SVF}/db/conf.txt"               "${P}/etc/lead/db/conf.txt"
+# per-core configs (@config; real files in the core dirs)
+install -m 0644 "${SVF}/db/conf.txt" "${LEADROOT}/db/conf.txt"
 for core in auth channel1/game1 channel1/game2 channel99 markserver; do
-	install -d "${P}/etc/lead/${core}"
-	install -m 0644 "${SVF}/${core}/CONFIG" "${P}/etc/lead/${core}/CONFIG"
+	install -d "${LEADROOT}/${core}"
+	install -m 0644 "${SVF}/${core}/CONFIG" "${LEADROOT}/${core}/CONFIG"
 done
 
-# normalise perms on copied trees
-find "${P}/share/lead" -type d -exec chmod 0755 {} +
-find "${P}/share/lead" -type f -exec chmod 0644 {} +
+# normalise perms on copied trees (then restore the binary bits)
+find "${LEADROOT}" -type d -exec chmod 0755 {} +
+find "${LEADROOT}" -type f -exec chmod 0644 {} +
+chmod 0755 "${LEADROOT}/share/bin/game" "${LEADROOT}/share/bin/db"
 
 # Drop 32-bit ELF build tools shipped inside the content tree (e.g. the quest
 # compiler locale/.../quest/qc). They can't run on the x64-only server and would
@@ -175,7 +181,7 @@ PLIST="$(mktemp)"
 TMP_PLIST="$(mktemp)"
 while IFS= read -r line; do
 	case "$line" in
-		/usr/local/etc/lead/*/CONFIG|/usr/local/etc/lead/db/conf.txt)
+		/usr/local/lead/*/CONFIG|/usr/local/lead/db/conf.txt)
 			echo "@config ${line}" ;;
 		*) echo "$line" ;;
 	esac

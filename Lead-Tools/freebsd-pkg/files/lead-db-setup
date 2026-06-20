@@ -31,7 +31,7 @@ LEAD_DB_ADMIN_PASSWORD="${LEAD_DB_ADMIN_PASSWORD:-}"
 LEAD_DB_USER="${LEAD_DB_USER:-metin2}"
 LEAD_DB_PASSWORD="${LEAD_DB_PASSWORD:-password}"
 
-SCRIPTS_DIR="${LEAD_DB_SCRIPTS:-/usr/local/share/lead/db-scripts}"
+SCRIPTS_DIR="${LEAD_DB_SCRIPTS:-/usr/local/lead/db-scripts}"
 
 # Databases in load order. Charset for loading the base dumps is latin1: the
 # dumps declare per-table CHARSET explicitly (latin1/big5/ascii), and player.sql
