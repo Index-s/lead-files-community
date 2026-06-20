@@ -108,18 +108,33 @@ service lead start
 
 ### Automated build (GitHub Actions)
 
-`.github/workflows/freebsd-pkg.yml` builds in a FreeBSD VM and publishes on every
-`vX.Y.Z` tag:
+`.github/workflows/freebsd-pkg.yml` builds in a FreeBSD VM and publishes when you
+**publish a GitHub Release** tagged `vX.Y.Z` (same flow as upstream):
 
 ```sh
-git tag v1.0.0 && git push origin v1.0.0
+gh release create v1.0.0 --title "v1.0.0" --notes "..."   # or via the web UI
 ```
 
 - Repo is published to the **gh-pages** branch (enable Pages → branch `gh-pages`).
-- The `.pkg` is also attached to the GitHub release.
+- The `.pkg` is also attached to that release.
+- `workflow_dispatch` is available for manual test builds (no release needed).
 - Optional signing: add an RSA private key as the `LEAD_REPO_SIGNING_KEY` secret;
   the workflow signs the catalog and emits `lead-repo.pub` (clients install it to
   `/usr/local/etc/pkg/keys/` and set `signature_type: "pubkey"`).
+
+### Bumping the FreeBSD version (when a newer release appears)
+
+The FreeBSD version is a single knob in each place that needs it — no other files
+reference it (build.sh derives the package ABI from the build host automatically):
+
+| Where | How to bump |
+|-------|-------------|
+| **GitHub Actions** | Set repo variable **`FREEBSD_RELEASE`** (Settings → Secrets and variables → Actions → Variables), **or** edit the `FREEBSD_RELEASE` default in `.github/workflows/freebsd-pkg.yml`, **or** pass `freebsd_release` to a manual `workflow_dispatch` run. |
+| **Local Vagrant build** | Set env var **`LEAD_FREEBSD_BOX`** (e.g. `generic/freebsd16`) or edit the default in `Vagrantfile`. |
+| **Manual `build.sh` on a VM** | Nothing — just run it on whatever FreeBSD version the host is; the package is tagged for that release. |
+
+So a new FreeBSD release = change one variable and re-run; the next published
+Release builds and ships a package for it.
 
 ---
 

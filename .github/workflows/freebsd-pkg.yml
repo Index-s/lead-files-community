@@ -1,10 +1,14 @@
 name: Build & publish FreeBSD pkg
 
 # Runs ONLY when a GitHub Release is published (matching the upstream repo's
-# manual vX.Y.Z release process) -> builds the .pkg in a FreeBSD 15.1 VM,
-# publishes the pkg repository to GitHub Pages, and attaches the .pkg to that
-# release. Servers then get it with `pkg install lead-server` / `pkg upgrade`.
+# manual vX.Y.Z release process) -> builds the .pkg in a FreeBSD VM, publishes
+# the pkg repository to GitHub Pages, and attaches the .pkg to that release.
+# Servers then get it with `pkg install lead-server` / `pkg upgrade`.
 # (workflow_dispatch is kept for manual test builds.)
+#
+# To target a newer FreeBSD: bump FREEBSD_RELEASE below (one place), OR set a
+# repository variable FREEBSD_RELEASE (Settings -> Secrets and variables ->
+# Actions -> Variables), OR pass it per-run via the workflow_dispatch input.
 
 on:
   release:
@@ -14,9 +18,16 @@ on:
       version:
         description: "Package version (without leading v)"
         required: false
+      freebsd_release:
+        description: "FreeBSD release to build on (overrides FREEBSD_RELEASE)"
+        required: false
 
 permissions:
   contents: write   # gh-pages branch + release assets
+
+env:
+  # Single source of truth for the FreeBSD version. Repo variable wins if set.
+  FREEBSD_RELEASE: ${{ vars.FREEBSD_RELEASE || '15.1' }}
 
 jobs:
   build:
@@ -50,7 +61,7 @@ jobs:
       - name: Build pkg + repo in FreeBSD VM
         uses: vmactions/freebsd-vm@v1
         with:
-          release: "15.1"
+          release: ${{ github.event.inputs.freebsd_release || env.FREEBSD_RELEASE }}
           usesh: true
           envs: "LEAD_SIGNING_KEY"
           prepare: |
