@@ -611,17 +611,22 @@ int start(int argc, char **argv)
 	
 	main_fdw = fdwatch_new(4096);
 
-	if ((tcp_socket = socket_tcp_bind(g_szPublicIP, mother_port)) == INVALID_SOCKET)
+	// Bind to the internal interface when one exists, but advertise g_szPublicIP to
+	// clients. These differ behind NAT / a port-forward (e.g. a FreeBSD guest reached
+	// through a qemu hostfwd: bind the guest IP 10.x to receive the forward, publish the
+	// host-reachable address). With no internal IP this is the previous behaviour.
+	const char* bind_ip = *g_szInternalIP ? g_szInternalIP : g_szPublicIP;
+
+	if ((tcp_socket = socket_tcp_bind(bind_ip, mother_port)) == INVALID_SOCKET)
 	{
 		perror("socket_tcp_bind: tcp_socket");
 		return 0;
 	}
 
-	
+
 
 	// if internal ip exists, p2p socket uses internal ip, if not use public ip
-	//if ((p2p_socket = socket_tcp_bind(*g_szInternalIP ? g_szInternalIP : g_szPublicIP, p2p_port)) == INVALID_SOCKET)
-	if ((p2p_socket = socket_tcp_bind(g_szPublicIP, p2p_port)) == INVALID_SOCKET)
+	if ((p2p_socket = socket_tcp_bind(bind_ip, p2p_port)) == INVALID_SOCKET)
 	{
 		perror("socket_tcp_bind: p2p_socket");
 		return 0;
