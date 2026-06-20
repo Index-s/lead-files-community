@@ -121,6 +121,18 @@ done
 find "${P}/share/lead" -type d -exec chmod 0755 {} +
 find "${P}/share/lead" -type f -exec chmod 0644 {} +
 
+# Drop 32-bit ELF build tools shipped inside the content tree (e.g. the quest
+# compiler locale/.../quest/qc). They can't run on the x64-only server and would
+# add spurious ":32" shared-library requirements to the package.
+log "pruning 32-bit ELF dev tools from the stage ..."
+find "${P}" -type f -exec sh -c '
+	for f do
+		if file -b "$f" 2>/dev/null | grep -q "ELF 32-bit"; then
+			echo "    removed $f"; rm -f "$f"
+		fi
+	done
+' _ {} +
+
 # --- 3. plist (auto-generated; mark @config) --------------------------------
 PLIST="$(mktemp)"
 ( cd "$STAGE" && find . \( -type f -o -type l \) | sed 's/^\.//' | sort ) > "$PLIST"
@@ -147,9 +159,14 @@ dep_line() { # dep_line <pkgname> <origin>
 		printf '  %s: { origin: "%s" }\n' "$1" "$2"
 	fi
 }
+# Runtime deps. Derived from `ldd` of the built game core: it links DevIL
+# (libIL) dynamically, which transitively pulls png/jpeg/tiff/jasper/mng/lcms2/
+# squish/zstd/etc; plus our own lzo2. `db` is self-contained (static mysqlclient
+# + base). mariadb server is needed by the app, its client by lead-db-setup.
 DEPS_FILE="$(mktemp)"
 {
-	dep_line lzo2 archivers/lzo2
+	dep_line devil graphics/devil
+	dep_line lzo2  archivers/lzo2
 	dep_line "$MARIADB_PKG" "databases/${MARIADB_PKG}"
 } > "$DEPS_FILE"
 
