@@ -91,7 +91,10 @@ bool CGuildMarkUploader::__LoadSymbol(const char* c_szFileName, UINT* peError)
 		return false;
 	}
 	ilDeleteImages(1, &uImg);
-	ilShutDown();
+	// NOTE: do NOT ilShutDown() here. DevIL is process-global and initialised once at
+	// startup (UserInterface.cpp ilInit); tearing it down after the first symbol/mark
+	// validation made every later ilLoad/GetImageInfo fail, surfacing as
+	// "The game does not support this picture." for subsequent uploads.
 
 	/////
 
@@ -99,6 +102,7 @@ bool CGuildMarkUploader::__LoadSymbol(const char* c_szFileName, UINT* peError)
 	if (fopen_s(&file, c_szFileName, "rb") != 0 || !file)
 	{
 		*peError=ERROR_LOAD;
+		return false;
 	}
 
 	fseek(file, 0, SEEK_END);
@@ -206,7 +210,7 @@ void CGuildMarkUploader::__Inialize()
 
 	if (m_pbySymbolBuf)
 	{
-		delete m_pbySymbolBuf;
+		delete [] m_pbySymbolBuf;	// matches `new BYTE[]` at allocation
 	}
 
 	m_dwSymbolBufSize = 0;

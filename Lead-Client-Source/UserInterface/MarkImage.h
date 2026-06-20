@@ -2,8 +2,12 @@
 #define __INC_METIN_II_MARKIMAGE_H__
 
 #include <IL/il.h>
+#include <cstdint>
 
-typedef unsigned long Pixel;
+// 32-bit BGRA pixel (match the server + the 4-byte-per-pixel mark/symbol wire format).
+// Was `unsigned long` -- 4 bytes on Win64/LLP64 so unchanged here, but pinned to a
+// fixed width to stay identical to the LP64 server.
+typedef uint32_t Pixel;
 
 struct SGuildMark
 {

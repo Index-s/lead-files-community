@@ -3,8 +3,13 @@
 
 #include <IL/il.h>
 #include <lzo-2.10/lzo1x.h>
+#include <cstdint>
 
-typedef unsigned long Pixel;
+// A guild mark/symbol pixel is fixed 4-byte BGRA on the wire and in DevIL
+// (IL_BGRA/IL_UNSIGNED_BYTE). `unsigned long` is 8 bytes on LP64 (FreeBSD amd64),
+// which doubled every block buffer and broke the LZO/CRC block format against the
+// 4-byte LLP64 client. Pin it to 32-bit so sizeof(Pixel)==4 on every platform.
+typedef uint32_t Pixel;
 
 struct SGuildMark
 {
