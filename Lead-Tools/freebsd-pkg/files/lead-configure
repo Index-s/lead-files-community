@@ -11,7 +11,9 @@
 set -eu
 
 LEAD_ROOT="${LEAD_ROOT:-/usr/local/lead}"
-GAME_CORES="${LEAD_GAME_CORES:-auth channel1/game1 channel1/game2 channel99 markserver}"
+GAME_CORES="${LEAD_GAME_CORES:-auth markserver \
+	channel1/game1 channel1/game2 channel2/game1 channel2/game2 \
+	channel3/game1 channel3/game2 channel4/game1 channel4/game2 channel99}"
 
 log() { echo "lead-configure: $*"; }
 
