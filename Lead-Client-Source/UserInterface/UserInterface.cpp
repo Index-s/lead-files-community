@@ -1,11 +1,10 @@
-﻿#include "StdAfx.h"
+#include "StdAfx.h"
 #include "PythonApplication.h"
 #include "ProcessScanner.h"
 #include "PythonExceptionSender.h"
 #include "resource.h"
 #include "Version.h"
 #include <shobjidl.h>
-#include <imagehlp.h>
 
 #ifdef _DEBUG
 #include <crtdbg.h>
@@ -479,101 +478,8 @@ void ApplyUniqueAppID()
 	SetCurrentProcessExplicitAppUserModelID(appID.c_str());
 }
 
-// Vectored crash handler: runs first-chance (cannot be overridden by a later
-// SetUnhandledExceptionFilter) and writes a heap-free raw backtrace + a best-effort
-// symbolized stack to crash_client.txt. Survives heap corruption (the raw part uses
-// only RtlCaptureStackBackTrace/WriteFile, no allocations) where the CRT fopen-based
-// EterExceptionFilter dies.
-static LONG WINAPI Client_CrashVEH(EXCEPTION_POINTERS* ep)
-{
-	const DWORD code = ep->ExceptionRecord->ExceptionCode;
-	if (code != EXCEPTION_ACCESS_VIOLATION && code != EXCEPTION_STACK_OVERFLOW &&
-		code != EXCEPTION_ILLEGAL_INSTRUCTION && code != 0xC0000409u &&
-		code != EXCEPTION_ARRAY_BOUNDS_EXCEEDED && code != EXCEPTION_INT_DIVIDE_BY_ZERO)
-		return EXCEPTION_CONTINUE_SEARCH;
-
-	static volatile LONG s_once = 0;
-	if (InterlockedExchange(&s_once, 1) != 0)
-		return EXCEPTION_CONTINUE_SEARCH;
-
-	HANDLE h = CreateFileA("crash_client.txt", GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (h == INVALID_HANDLE_VALUE)
-		return EXCEPTION_CONTINUE_SEARCH;
-
-	char line[1024];
-	DWORD wr;
-	int n = wsprintfA(line, "=== CLIENT CRASH code=0x%08X addr=%p ===\r\n",
-		code, ep->ExceptionRecord->ExceptionAddress);
-	WriteFile(h, line, n, &wr, NULL);
-
-	// heap-free raw backtrace: module + RVA (RandomizedBaseAddress is off, so RVA is stable)
-	void* frames[64];
-	USHORT cnt = RtlCaptureStackBackTrace(0, 64, frames, NULL);
-	for (USHORT i = 0; i < cnt; ++i)
-	{
-		HMODULE hm = NULL;
-		char modpath[MAX_PATH] = { 0 };
-		if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-			(LPCSTR)frames[i], &hm) && hm)
-		{
-			GetModuleFileNameA(hm, modpath, MAX_PATH);
-			const char* base = strrchr(modpath, '\\');
-			base = base ? base + 1 : modpath;
-			n = wsprintfA(line, "  #%02d %p  %s+0x%I64x\r\n", i, frames[i], base,
-				(unsigned __int64)((char*)frames[i] - (char*)hm));
-		}
-		else
-			n = wsprintfA(line, "  #%02d %p  ?\r\n", i, frames[i]);
-		WriteFile(h, line, n, &wr, NULL);
-	}
-
-	// best-effort symbolized walk (may fail on a corrupt heap; debug.pdb must sit beside the exe)
-	WriteFile(h, "--- symbolized ---\r\n", 20, &wr, NULL);
-	HANDLE hProc = GetCurrentProcess();
-	SymSetOptions(SYMOPT_LOAD_LINES | SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
-	if (SymInitialize(hProc, NULL, TRUE))
-	{
-		CONTEXT ctx = *ep->ContextRecord;
-		STACKFRAME64 sf;
-		memset(&sf, 0, sizeof(sf));
-		sf.AddrPC.Offset = ctx.Rip;       sf.AddrPC.Mode = AddrModeFlat;
-		sf.AddrFrame.Offset = ctx.Rbp;    sf.AddrFrame.Mode = AddrModeFlat;
-		sf.AddrStack.Offset = ctx.Rsp;    sf.AddrStack.Mode = AddrModeFlat;
-		ULONG64 symbuf[(sizeof(IMAGEHLP_SYMBOL64) + 512 + sizeof(ULONG64) - 1) / sizeof(ULONG64)];
-		PIMAGEHLP_SYMBOL64 sym = (PIMAGEHLP_SYMBOL64)symbuf;
-		sym->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL64);
-		sym->MaxNameLength = 511;
-		for (int i = 0; i < 64; ++i)
-		{
-			if (!StackWalk64(IMAGE_FILE_MACHINE_AMD64, hProc, GetCurrentThread(), &sf, &ctx,
-				NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL))
-				break;
-			if (!sf.AddrPC.Offset)
-				break;
-			DWORD64 disp = 0;
-			const char* nm = "?";
-			if (SymGetSymFromAddr64(hProc, sf.AddrPC.Offset, &disp, sym))
-				nm = sym->Name;
-			IMAGEHLP_LINE64 ln;
-			memset(&ln, 0, sizeof(ln));
-			ln.SizeOfStruct = sizeof(ln);
-			DWORD ld = 0;
-			if (SymGetLineFromAddr64(hProc, sf.AddrPC.Offset, &ld, &ln))
-				n = wsprintfA(line, "  #%02d %s+0x%I64x (%s:%lu)\r\n", i, nm, (unsigned __int64)disp, ln.FileName, ln.LineNumber);
-			else
-				n = wsprintfA(line, "  #%02d %s+0x%I64x [0x%I64x]\r\n", i, nm, (unsigned __int64)disp, (unsigned __int64)sf.AddrPC.Offset);
-			WriteFile(h, line, n, &wr, NULL);
-		}
-	}
-	FlushFileBuffers(h);
-	CloseHandle(h);
-	return EXCEPTION_CONTINUE_SEARCH; // let normal termination proceed
-}
-
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	AddVectoredExceptionHandler(1, Client_CrashVEH);
 	ApplyUniqueAppID();
 #ifdef _DEBUG
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_CRT_DF | _CRTDBG_LEAK_CHECK_DF );
