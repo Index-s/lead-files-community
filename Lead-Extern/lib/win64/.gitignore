@@ -1,5 +1,0 @@
-# x64 dependency binaries are large and rebuildable from README.md — do not commit.
-*.lib
-*.dll
-*.pdb
-*.exp
