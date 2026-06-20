@@ -129,6 +129,16 @@ inline double rint(double x)
 #include <sys/event.h>
 #endif
 
+// Compatibility for code that calls MSVC CRT names directly. The Windows
+// branch above maps the POSIX names onto the MSVC ones; here we map the MSVC
+// names back onto their POSIX equivalents so either spelling builds anywhere.
+#include <strings.h>
+#define _stricmp   strcasecmp
+#define _strnicmp  strncasecmp
+#define _write     write
+#define _close     close
+typedef void * PVOID;
+
 #endif
 
 #ifndef false
