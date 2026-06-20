@@ -53,7 +53,7 @@ class CPeer : public CPeerBase
 	WORD	GetP2PPort() { return m_wP2PPort; }
 
 	void	SetMaps(int32_t* pl);
-	long *	GetMaps() { return &m_alMaps[0]; }
+	int32_t *	GetMaps() { return &m_alMaps[0]; }
 
 	bool	SetItemIDRange(TItemIDRangeTable itemRange);
 	bool	SetSpareItemIDRange(TItemIDRangeTable itemRange);
@@ -68,7 +68,7 @@ class CPeer : public CPeerBase
 	DWORD	m_dwUserCount;
 	WORD	m_wListenPort;	// Game server for clients listen port
 	WORD	m_wP2PPort;	// Game server is game server P2P for connection listen port
-	long	m_alMaps[32];	// What maps are you in charge of? ?
+	int32_t	m_alMaps[32];	// What maps are you in charge of? (must match the int32_t[32] wire structs TPacketGDSetup/TMapLocation; bare long was 8 bytes on LP64 -> over-read on SetMaps + mis-packed copy to TMapLocation)
 
 	TItemIDRangeTable m_itemRange;
 	TItemIDRangeTable m_itemSpareRange;
