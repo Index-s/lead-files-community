@@ -14,7 +14,10 @@
 repo_root = File.expand_path("../../..", __FILE__)
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "generic/freebsd14"
+  # A published FreeBSD 15 box for the virtualbox provider. Adjust the name to
+  # whatever box exists on Vagrant Cloud for your host (e.g. a freebsd/FreeBSD-15.1
+  # box) if generic/freebsd15 is unavailable.
+  config.vm.box = "generic/freebsd15"
   config.vm.hostname = "lead-build"
   config.ssh.shell = "/bin/sh"
 

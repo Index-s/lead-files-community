@@ -48,16 +48,18 @@ jobs:
       - name: Build pkg + repo in FreeBSD VM
         uses: vmactions/freebsd-vm@v1
         with:
-          release: "14.3"
+          release: "15.1"
           usesh: true
           envs: "LEAD_SIGNING_KEY"
           prepare: |
-            pkg install -y gmake llvm lzo2 png jpeg-turbo cryptopp devil boost-libs mariadb1011-server git
+            pkg install -y git
           run: |
             set -e
             VER='${{ steps.ver.outputs.version }}'
             URL='${{ steps.url.outputs.url }}'
-            sh Lead-Tools/freebsd-pkg/build.sh --version "$VER"
+            # --install-deps installs the build deps and auto-detects the latest
+            # MariaDB available on this FreeBSD release.
+            sh Lead-Tools/freebsd-pkg/build.sh --install-deps --version "$VER"
             if [ -n "${LEAD_SIGNING_KEY:-}" ]; then
               umask 077; printf '%s' "$LEAD_SIGNING_KEY" > /tmp/lead-repo.key
               sh Lead-Tools/freebsd-pkg/make-repo.sh --url "$URL" --key /tmp/lead-repo.key

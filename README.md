@@ -78,7 +78,8 @@ vagrant destroy -f
 
 ### C. On a FreeBSD host/VM directly
 
-Requirements: FreeBSD 14.x amd64. The build deps are installed for you with
+Requirements: FreeBSD 15.x amd64. The build deps (incl. the latest available
+MariaDB) are installed for you with
 `--install-deps` (needs root):
 
 ```sh

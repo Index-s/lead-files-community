@@ -32,7 +32,7 @@ VERSION=""
 OUTDIR="${PKGDIR}/dist"
 INSTALL_DEPS=0
 DO_BUILD=1
-MARIADB_PKG="mariadb1011-server"
+MARIADB_PKG=""   # empty = auto-detect the latest mariadb*-server available
 
 while [ $# -gt 0 ]; do
 	case "$1" in
@@ -61,8 +61,35 @@ die() { echo "build.sh: ERROR: $*" >&2; exit 1; }
 
 [ "$(uname -s)" = "FreeBSD" ] || die "must run on FreeBSD (produces amd64 ELF). Use the VM or CI."
 
+# --- resolve MariaDB (latest available unless overridden via --mariadb) ------
+# Refresh the catalog first so `pkg rquery` sees the newest versions.
+[ "$INSTALL_DEPS" -eq 1 ] && pkg update >/dev/null 2>&1 || true
+detect_mariadb_server() {
+	# Newest mariadb<NNN>-server by semantic version (sort -V handles 10.11 < 11.4 < 11.8).
+	pkg rquery '%n %v' 2>/dev/null \
+		| awk '$1 ~ /^mariadb[0-9]+-server$/ {print $2, $1}' \
+		| sort -V | tail -1 | awk '{print $2}'
+}
+if [ -z "$MARIADB_PKG" ]; then
+	MARIADB_PKG="$(detect_mariadb_server || true)"
+	if [ -n "$MARIADB_PKG" ]; then
+		log "MariaDB (latest available): $MARIADB_PKG"
+	else
+		MARIADB_PKG="mariadb114-server"
+		log "WARNING: could not query repos for MariaDB; defaulting to ${MARIADB_PKG}"
+	fi
+fi
+# Accept a bare base ("mariadb118") as well as a full "...-server" name.
+case "$MARIADB_PKG" in
+	*-server) ;;
+	mariadb[0-9]*) MARIADB_PKG="${MARIADB_PKG}-server" ;;
+esac
+MARIADB_CLIENT="${MARIADB_PKG%-server}-client"
+
 # --- 0. build dependencies --------------------------------------------------
-BUILD_DEPS="gmake llvm lzo2 png jpeg-turbo cryptopp devil boost-libs ${MARIADB_PKG}"
+# The compile needs the MariaDB client headers (mysql.h); the runtime package
+# depends on the server (declared in the manifest below).
+BUILD_DEPS="gmake llvm lzo2 png jpeg-turbo cryptopp devil boost-libs ${MARIADB_CLIENT}"
 if [ "$INSTALL_DEPS" -eq 1 ]; then
 	log "installing build dependencies: $BUILD_DEPS"
 	pkg install -y $BUILD_DEPS || die "pkg install of build deps failed"
