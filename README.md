@@ -79,7 +79,42 @@ port first, after which the packaging picks them up with no changes.
 
 The package contains FreeBSD ELF binaries, so it **must be built on FreeBSD**, on
 a host of the target CPU architecture (the package is tagged for whatever host
-builds it). Pick the path that fits you:
+builds it).
+
+### How the package is created
+
+One script does it — [`Lead-Tools/freebsd-pkg/build.sh`](Lead-Tools/freebsd-pkg/build.sh).
+Run on a FreeBSD host it:
+
+1. **(optional) `--install-deps`** — `pkg install`s the build deps (gmake, clang/llvm,
+   png, jpeg-turbo, cryptopp, devil, boost-libs, the latest mariadb client) and
+   auto-detects the newest available MariaDB for the runtime dependency.
+2. **Compiles the server** from `Lead-Server-Source` with `gmake` (`--no-build`
+   skips this and reuses existing `game`/`db` binaries).
+3. **Stages a single self-contained tree** into a temp `STAGEDIR`:
+   - `/usr/local/lead/share/bin/{game,db}` — the two server binaries
+   - `/usr/local/lead/share/{data,locale,conf}` — game content (from `Lead-Serverfiles/share`)
+   - `/usr/local/lead/{db,auth,channel1..4/game1..2,channel99,markserver}/CONFIG`
+     — the per-core configs (from `Lead-Serverfiles`, **127.0.0.1** + canonical db names), marked `@config`
+   - `/usr/local/share/lead/db-scripts/{base,migrations}` — SQL (from `Lead-Database-Scripts`)
+   - `/usr/local/libexec/lead/{lead-db-setup,lead-layout,lead-configure,lead-update}` — helpers
+   - `/usr/local/sbin/lead-ctl`, `/usr/local/etc/rc.d/lead` — the admin tool + service
+   - prunes any 32-bit ELF (e.g. the quest compiler) so the package stays pure amd64
+4. **Generates the manifest** — name/version/maintainer, the runtime deps **pinned to
+   exact versions** (`devil`, `lzo2`, `mariadb<NNN>-server`), and embeds the lifecycle
+   scripts (`+POST_INSTALL` etc.) + the install message.
+5. **`pkg create`** → `dist/lead-server-<version>.pkg` **and** a stable
+   `dist/lead-server-FreeBSD<major>-<arch>.pkg` copy (the one published as a release
+   asset / used by `lead-update`).
+
+So a build is just:
+```sh
+sh Lead-Tools/freebsd-pkg/build.sh --install-deps      # version defaults to 0.1.0
+# -> Lead-Tools/freebsd-pkg/dist/lead-server-FreeBSD15-amd64.pkg
+```
+Everything the *installed* package does at install time (deps, DB seed + migrations,
+symlinks, IP autodetect, service) lives in the embedded `+POST_INSTALL` script; the
+build just packs it. CI runs this exact script in a FreeBSD VM — see below.
 
 ### A. GitHub Actions — recommended, no local FreeBSD needed (works from Windows)
 
