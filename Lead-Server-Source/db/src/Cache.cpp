@@ -95,9 +95,9 @@ void CItemCache::OnFlush()
 		{
 			iLen += snprintf(szColumns + iLen, sizeof(szColumns) - iLen, ", socket0, socket1, socket2");
 			iValueLen += snprintf(szValues + iValueLen, sizeof(szValues) - iValueLen,
-						", %lld, %lld, %lld", p->alSockets[0], p->alSockets[1], p->alSockets[2]);
+						", %lld, %lld, %lld", (long long) p->alSockets[0], (long long) p->alSockets[1], (long long) p->alSockets[2]);
 			iUpdateLen += snprintf(szUpdate + iUpdateLen, sizeof(szUpdate) - iUpdateLen,
-					", socket0=%lld, socket1=%lld, socket2=%lld", p->alSockets[0], p->alSockets[1], p->alSockets[2]);
+					", socket0=%lld, socket1=%lld, socket2=%lld", (long long) p->alSockets[0], (long long) p->alSockets[1], (long long) p->alSockets[2]);
 		}
 
 		if (isAttr)

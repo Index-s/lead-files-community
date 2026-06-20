@@ -424,7 +424,7 @@ void CClientManager::QUERY_QUEST_SAVE(CPeer * pkPeer, TQuestTable * pTable, DWOR
 		{
 			snprintf(szQuery, sizeof(szQuery),
 					"REPLACE INTO quest%s (dwPID, szName, szState, lValue) VALUES(%d, '%s', '%s', %lld)",
-					GetTablePostfix(), pTable->dwPID, pTable->szName, pTable->szState, pTable->lValue);
+					GetTablePostfix(), pTable->dwPID, pTable->szName, pTable->szState, (long long) pTable->lValue);
 		}
 
 		CDBManager::instance().ReturnQuery(szQuery, QID_QUEST_SAVE, pkPeer->GetHandle(), NULL);
@@ -728,7 +728,7 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 								pi->account_id,
 								pi->ip[0] == 0 ? "SAFEBOX" : "MALL",
 								iPos,
-								pItemAward->dwVnum, pItemAward->dwCount, pItemAward->dwSocket0, pItemAward->dwSocket1, dwSocket2);
+								pItemAward->dwVnum, pItemAward->dwCount, (long long) pItemAward->dwSocket0, (long long) pItemAward->dwSocket1, (long long) dwSocket2);
 					}
 
 					std::unique_ptr<SQLMsg> pmsg(CDBManager::instance().DirectQuery(szQuery));
@@ -1252,9 +1252,9 @@ void CClientManager::QUERY_ITEM_SAVE(CPeer * pkPeer, const char * c_pData)
 			p->pos,
 			p->count,
 			p->vnum,
-			p->alSockets[0],
-			p->alSockets[1],
-			p->alSockets[2],
+			(long long) p->alSockets[0],
+			(long long) p->alSockets[1],
+			(long long) p->alSockets[2],
 			p->aAttr[0].bType, p->aAttr[0].sValue,
 			p->aAttr[1].bType, p->aAttr[1].sValue,
 			p->aAttr[2].bType, p->aAttr[2].sValue,

@@ -1362,8 +1362,8 @@ bool CClientManager::MirrorItemTableIntoDatabase()
 				"%d, %d, %d, \"%s\", \"%s\", %lld, %lld, %d, %d, "
 				"%d, %d, %d, %d, "
 				"%d, %d, %d, %d, %d, "
-				"%d, %ld, %d, %ld, "
-				"%d, %ld, %d, %ld, %d, %ld, "
+				"%d, %d, %d, %d, "
+				"%d, %d, %d, %d, %d, %d, "
 				"%d, %d, %d, %d, %d, %d )",
 				GetTablePostfix(), g_stLocaleNameColumn.c_str(),
 				t.dwVnum, t.bType, t.bSubType, t.szName, t.szLocaleName, t.dwGold, t.dwShopBuyPrice, t.bWeight, t.bSize,
@@ -1390,8 +1390,8 @@ bool CClientManager::MirrorItemTableIntoDatabase()
 				"%d, %d, %d, \"%s\", %lld, %lld, %d, %d, "
 				"%d, %d, %d, %d, "
 				"%d, %d, %d, %d, %d, "
-				"%d, %ld, %d, %ld, "
-				"%d, %ld, %d, %ld, %d, %ld, "
+				"%d, %d, %d, %d, "
+				"%d, %d, %d, %d, %d, %d, "
 				"%d, %d, %d, %d, %d, %d )",
 				GetTablePostfix(),
 				t.dwVnum, t.bType, t.bSubType, t.szName, t.dwGold, t.dwShopBuyPrice, t.bWeight, t.bSize,

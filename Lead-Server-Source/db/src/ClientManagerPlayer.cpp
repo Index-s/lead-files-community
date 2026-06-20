@@ -153,7 +153,7 @@ size_t CreatePlayerSaveQuery(char * pszQuery, size_t querySize, TPlayerTable * p
 		pkTab->horse.bLevel,
 		pkTab->horse.bRiding,
 		pkTab->horse.sHealth,
-		pkTab->horse.dwHorseHealthDropTime,
+		(long long) pkTab->horse.dwHorseHealthDropTime,
 		pkTab->horse.sStamina,
 		pkTab->horse_skill_point);
 
@@ -1142,14 +1142,14 @@ void CClientManager::QUERY_ADD_AFFECT(CPeer * peer, TPacketGDAddAffect * p)
 	   */
 	snprintf(queryStr, sizeof(queryStr),
 			"REPLACE INTO affect%s (dwPID, bType, bApplyOn, lApplyValue, dwFlag, lDuration, lSPCost) "
-			"VALUES(%u, %u, %u, %ld, %u, %lld, %ld)",
+			"VALUES(%u, %u, %u, %d, %u, %lld, %d)",
 			GetTablePostfix(),
 			p->dwPID,
 			p->elem.dwType,
 			p->elem.bApplyOn,
 			p->elem.lApplyValue,
 			p->elem.dwFlag,
-			p->elem.lDuration,
+			(long long) p->elem.lDuration,
 			p->elem.lSPCost);
 
 	CDBManager::instance().AsyncQuery(queryStr);
