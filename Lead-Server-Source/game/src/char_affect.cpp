@@ -675,6 +675,8 @@ bool CHARACTER::RemoveAffect(CAffect * pkAff)
 	m_list_pkAffect.remove(pkAff);
 	// END_OF_AFFECT_BUF_FIX
 
+	TAffectFlag afOld = m_afAffectFlag;
+
 	ComputeAffect(pkAff, false);
 
 	// White flag bug fix .
@@ -691,6 +693,14 @@ bool CHARACTER::RemoveAffect(CAffect * pkAff)
 		ComputePoints();
 	}
 	CheckMaximumPoints();
+
+	// The other affect-flag mutators (AddAffect, ClearAffect, ProcessAffect timer-expiry)
+	// re-broadcast m_afAffectFlag via UpdatePacket(); this remove path did not, so a flag
+	// cleared here (e.g. AFFECT_REVIVE_INVISIBLE/EUNHYUNG on attack/move/skill/guild-zone)
+	// stayed set on the client and left the model stuck semi-transparent until some
+	// unrelated update happened to re-send the flags. Re-broadcast on change.
+	if (afOld != m_afAffectFlag)
+		UpdatePacket();
 
 	if (test_server)
 		sys_log(0, "AFFECT_REMOVE: %s (flag %u apply: %u)", GetName(), pkAff->dwFlag, pkAff->bApplyOn);
