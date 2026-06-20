@@ -46,10 +46,10 @@ while [ $# -gt 0 ]; do
 	esac
 done
 
-# Baseline version. Held at 1.0.0 (do not bump during local dev/testing). Real
+# Baseline version. Held at 0.1.0 (do not bump during local dev/testing). Real
 # version progression begins once releases are cut via GitHub Actions, which pass
 # the published tag through --version (see .github/workflows/freebsd-pkg.yml).
-VERSION="${VERSION:-1.0.0}"
+VERSION="${VERSION:-0.1.0}"
 
 MAINTAINER="${LEAD_MAINTAINER:-andreiganea69@gmail.com}"
 WWW="${LEAD_WWW:-https://github.com/Index-s/lead-files-community}"
