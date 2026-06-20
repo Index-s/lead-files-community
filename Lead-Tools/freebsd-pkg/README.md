@@ -92,8 +92,8 @@ Everything must be built **on FreeBSD/amd64** (it produces amd64 ELF binaries).
 sh Lead-Tools/freebsd-pkg/build.sh --install-deps --no-build
 
 # build the package
-sh Lead-Tools/freebsd-pkg/build.sh --version 1.0.0
-# -> Lead-Tools/freebsd-pkg/dist/lead-server-1.0.0.pkg
+sh Lead-Tools/freebsd-pkg/build.sh --version 0.1.0
+# -> Lead-Tools/freebsd-pkg/dist/lead-server-0.1.0.pkg
 
 # turn it into a publishable repo (optionally signed)
 sh Lead-Tools/freebsd-pkg/make-repo.sh --url https://INDEX-S.github.io/lead-files-community
@@ -102,7 +102,7 @@ sh Lead-Tools/freebsd-pkg/make-repo.sh --url https://INDEX-S.github.io/lead-file
 
 Test it on a clean jail/VM:
 ```sh
-pkg add ./Lead-Tools/freebsd-pkg/dist/lead-server-1.0.0.pkg   # or via the repo
+pkg add ./Lead-Tools/freebsd-pkg/dist/lead-server-0.1.0.pkg   # or via the repo
 service lead start
 ```
 
@@ -112,7 +112,7 @@ service lead start
 **publish a GitHub Release** tagged `vX.Y.Z` (same flow as upstream):
 
 ```sh
-gh release create v1.0.0 --title "v1.0.0" --notes "..."   # or via the web UI
+gh release create v0.1.0 --title "v0.1.0" --notes "..."   # or via the web UI
 ```
 
 - Repo is published to the **gh-pages** branch (enable Pages → branch `gh-pages`).
