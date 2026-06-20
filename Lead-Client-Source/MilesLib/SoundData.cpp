@@ -144,22 +144,22 @@ U32 AILCALLBACK CSoundData::open_callback(char const * filename, UINTa *file_han
 
 	LPCVOID	pMap;
 
-	// Motion and effect data request sounds as ".mss", but the sound packs in
-	// this distribution store the raw waveforms as ".wav". When the requested
-	// ".mss" name is absent, fall back to the ".wav" variant so the effect
-	// still resolves. isExist() probes silently (no CANNOT_FIND_PACK_FILE log).
+	// Motion/effect/monster data request sounds as ".mss", but the x64 Miles runtime
+	// cannot decode the legacy .mss sample format, so the packs ship raw ".wav"
+	// waveforms. Prefer the ".wav" twin for ANY ".mss" request whenever one exists --
+	// even when the .mss is also present. The earlier guard only fell back when the
+	// .mss was MISSING, which worked for effect sounds (their .mss are usually absent)
+	// but NOT for monster sounds, which ship BOTH .mss and .wav: the .mss got loaded
+	// and then played silently. isExist() probes quietly (no CANNOT_FIND_PACK_FILE log).
 	const char * c_szLoadName = filename;
 	std::string strFallback;
-	if (!CEterPackManager::Instance().isExist(filename))
+	const char * pcExt = strrchr(filename, '.');
+	if (pcExt && 0 == _stricmp(pcExt, ".mss"))
 	{
-		const char * pcExt = strrchr(filename, '.');
-		if (pcExt && 0 == _stricmp(pcExt, ".mss"))
-		{
-			strFallback.assign(filename, pcExt - filename);
-			strFallback += ".wav";
-			if (CEterPackManager::Instance().isExist(strFallback.c_str()))
-				c_szLoadName = strFallback.c_str();
-		}
+		strFallback.assign(filename, pcExt - filename);
+		strFallback += ".wav";
+		if (CEterPackManager::Instance().isExist(strFallback.c_str()))
+			c_szLoadName = strFallback.c_str();
 	}
 
 	if (!CEterPackManager::Instance().Get(ms_SoundFile[iIndex], c_szLoadName, &pMap))

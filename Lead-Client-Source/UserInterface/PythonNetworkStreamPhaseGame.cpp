@@ -3404,7 +3404,6 @@ bool CPythonNetworkStream::RecvGuild()
 			if (!Recv(sizeof(lScore), &lScore))
 				return false;
 
-			Tracef(" >> GUILD_SUBHEADER_GC_WAR_SCORE : self %u opp %u score %d\n", dwGuildSelf, dwGuildOpp, lScore);
 			break;
 		}
 		case GUILD_SUBHEADER_GC_GUILD_NAME:
