@@ -46,12 +46,10 @@ while [ $# -gt 0 ]; do
 	esac
 done
 
-if [ -z "$VERSION" ]; then
-	if VERSION="$(git -C "$ROOT" describe --tags --always --dirty 2>/dev/null)"; then
-		VERSION="$(echo "$VERSION" | sed 's/^v//')"
-	fi
-	[ -n "$VERSION" ] || VERSION="0.0.0"
-fi
+# Baseline version. Held at 1.0.0 (do not bump during local dev/testing). Real
+# version progression begins once releases are cut via GitHub Actions, which pass
+# the published tag through --version (see .github/workflows/freebsd-pkg.yml).
+VERSION="${VERSION:-1.0.0}"
 
 MAINTAINER="${LEAD_MAINTAINER:-andreiganea69@gmail.com}"
 WWW="${LEAD_WWW:-https://github.com/Index-s/lead-files-community}"
