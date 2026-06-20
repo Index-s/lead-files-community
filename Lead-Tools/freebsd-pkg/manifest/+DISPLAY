@@ -1,20 +1,25 @@
 ================================================================================
-  Lead game server installed.
+  Lead game server installed under /usr/local/lead
 
   The post-install step has already (best effort):
-    * created the 'lead' user/group
-    * built the runtime tree + symlinks under /var/db/lead
+    * created the dedicated 'lead' user/group (home = /usr/local/lead)
+    * built the in-tree symlinks + runtime dirs
+    * autodiscovered this host's IP and wrote it as bind_ip in the core configs
     * enabled & started MariaDB and created the databases + migrations
     * enabled the service (lead_enable=YES)
 
-  BEFORE STARTING, set the address clients connect to. Edit the public/bind IP
-  in the core configs (these are @config files, preserved across upgrades):
+  Review the autodetected address (and DB credentials) if needed - the core
+  configs are @config files, preserved across upgrades:
 
-      /usr/local/etc/lead/auth/CONFIG
-      /usr/local/etc/lead/channel1/game1/CONFIG   (and game2, channel99)
-      /usr/local/etc/lead/db/conf.txt
+      /usr/local/lead/auth/CONFIG
+      /usr/local/lead/channel1/game1/CONFIG   (and game2, channel99, markserver)
+      /usr/local/lead/db/conf.txt
 
-  Then start everything:
+  Re-run IP autodiscovery any time the host address changes:
+
+      /usr/local/libexec/lead/lead-configure          (or LEAD_PUBLIC_IP=x.x.x.x ...)
+
+  Start everything:
 
       service lead start
       service lead status
@@ -28,5 +33,5 @@
 
       /usr/local/libexec/lead/lead-update
 
-  Logs live under /var/db/lead/<core>/{syserr.txt,log/}.
+  Logs live under /usr/local/lead/<core>/{syserr.txt,log/}.
 ================================================================================

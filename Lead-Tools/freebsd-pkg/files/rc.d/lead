@@ -5,13 +5,14 @@
 # KEYWORD: shutdown
 #
 # rc.d script for the Lead game server. Starts every core in dependency order
-# (db -> auth -> markserver -> channels) and stops them in reverse. Replaces the
+# (db -> auth -> markserver -> channels) and stops them in reverse. Each core
+# runs from its directory inside the single serverfiles tree. Replaces the
 # interactive start.sh / per-core run.sh.
 #
 # Enable and tune in /etc/rc.conf:
 #   lead_enable="YES"
 #   lead_user="lead"                 # account the cores run as
-#   lead_rundir="/var/db/lead"       # per-core working directories
+#   lead_root="/usr/local/lead"      # the serverfiles tree
 #   lead_cores="db:db auth:game markserver:game \
 #               channel1/game2:game channel1/game1:game channel99:game"
 #
@@ -25,12 +26,11 @@ load_rc_config "$name"
 
 : ${lead_enable:="NO"}
 : ${lead_user:="lead"}
-: ${lead_rundir:="/var/db/lead"}
-: ${lead_prefix:="/usr/local"}
+: ${lead_root:="/usr/local/lead"}
 : ${lead_cores:="db:db auth:game markserver:game channel1/game2:game channel1/game1:game channel99:game"}
 : ${lead_startdelay:="2"}
 
-_libexec="${lead_prefix}/libexec/lead"
+_libexec="/usr/local/libexec/lead"
 _piddir="/var/run/lead"
 
 start_cmd="lead_start"
@@ -39,23 +39,20 @@ status_cmd="lead_status"
 restart_cmd="lead_restart"
 extra_commands="status restart"
 
-_pidfile() { # _pidfile <corepath> -> sanitized pidfile path
-	echo "${_piddir}/$(echo "$1" | tr '/' '_').pid"
-}
+_pidfile() { echo "${_piddir}/$(echo "$1" | tr '/' '_').pid"; }
 
 lead_start()
 {
 	mkdir -p "$_piddir"
-	# Self-heal the runtime tree / symlinks before each launch.
-	PREFIX="$lead_prefix" LEAD_RUNDIR="$lead_rundir" LEAD_USER="$lead_user" \
-		"${_libexec}/lead-layout" >/dev/null
+	# Self-heal the symlinks / runtime dirs before each launch.
+	LEAD_ROOT="$lead_root" LEAD_USER="$lead_user" "${_libexec}/lead-layout" >/dev/null
 
 	for entry in $lead_cores; do
 		_core="${entry%%:*}"
 		_bin="${entry##*:}"
-		_dir="${lead_rundir}/${_core}"
+		_dir="${lead_root}/${_core}"
+		_exe="${lead_root}/share/bin/${_bin}"
 		_pid="$(_pidfile "$_core")"
-		_exe="${_libexec}/${_bin}"
 
 		if [ ! -x "$_exe" ]; then
 			warn "missing binary for core ${_core}: ${_exe}"
@@ -75,10 +72,8 @@ lead_start()
 
 lead_stop()
 {
-	# Stop in reverse start order so dependents die before db.
 	_rev=""
 	for entry in $lead_cores; do _rev="$entry $_rev"; done
-
 	for entry in $_rev; do
 		_core="${entry%%:*}"
 		_pid="$(_pidfile "$_core")"
@@ -88,9 +83,7 @@ lead_stop()
 			echo "lead: stopping ${_core} (pid ${_p}) ..."
 			kill -TERM "$_p" 2>/dev/null
 			_n=0
-			while kill -0 "$_p" 2>/dev/null && [ "$_n" -lt 15 ]; do
-				sleep 1; _n=$((_n + 1))
-			done
+			while kill -0 "$_p" 2>/dev/null && [ "$_n" -lt 15 ]; do sleep 1; _n=$((_n + 1)); done
 			kill -0 "$_p" 2>/dev/null && kill -KILL "$_p" 2>/dev/null
 		fi
 		rm -f "$_pid"
@@ -110,11 +103,6 @@ lead_status()
 	done
 }
 
-lead_restart()
-{
-	lead_stop
-	sleep 1
-	lead_start
-}
+lead_restart() { lead_stop; sleep 1; lead_start; }
 
 run_rc_command "$1"
