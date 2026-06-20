@@ -81,6 +81,14 @@ channel99_start() # Run channel99
 	#clear
 }
 
+markserver_start() # Run guild mark server (client PORT_MARK 13000)
+{
+	echo -e "\033[31mStarting markserver..\033[0m"
+	cd $ROOT/markserver && sh run.sh
+	sleep 2
+	clear
+}
+
 echo -e "\033[31m  
 How many channels do you start?? \n 
 1 - 1CH\n 
@@ -95,6 +103,7 @@ case $chs in
 
 	db_start
 	auth_start
+	markserver_start
 	ch1_start
 	channel99_start
 	echo -e "\033[32m \n Server started! CH1\033[0m"
@@ -104,6 +113,7 @@ case $chs in
 
 	db_start
 	auth_start
+	markserver_start
 	ch1_start
 	ch2_start
 	channel99_start
@@ -113,6 +123,7 @@ case $chs in
 3*)
 	db_start
 	auth_start
+	markserver_start
 	ch1_start
 	ch2_start
 	ch3_start
@@ -122,6 +133,7 @@ case $chs in
 4*)
 	db_start
 	auth_start
+	markserver_start
 	ch1_start
 	ch2_start
 	ch3_start

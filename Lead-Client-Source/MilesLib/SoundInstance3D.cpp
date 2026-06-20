@@ -1,8 +1,12 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "SoundManager3D.h"
 #include "../eterBase/Timer.h"
 
-CSoundInstance3D::CSoundInstance3D() : m_sample(NULL), m_pSoundData(NULL)
+#include <math.h>
+
+CSoundInstance3D::CSoundInstance3D()
+	: m_sample(NULL), m_pSoundData(NULL),
+	  m_fBaseVolume(1.0f), m_fDistanceScale(1.0f), m_fPan(0.5f)
 {
 }
 
@@ -27,11 +31,12 @@ bool CSoundInstance3D::Initialize()
 	if (m_sample)
 		return true;
 
+	// Plain 2D sample handle on the shared digital driver -- deliberately NOT
+	// AIL_set_sample_is_3D(). The x64 Miles 9.3 digital-driver 3D positioner does
+	// not mix manually-allocated 3D samples to the output (samples load and report
+	// PLAYING, but are inaudible), whereas ordinary 2D samples and streamed music on
+	// the SAME driver play fine. We therefore spatialise by hand in SetPosition().
 	m_sample = AIL_allocate_sample_handle(CSoundBase::ms_DIGDriver);
-
-	if (m_sample)
-		AIL_set_sample_is_3D(m_sample, 1);
-
 	return m_sample ? true : false;
 }
 
@@ -39,19 +44,16 @@ bool CSoundInstance3D::SetSound(CSoundData* pSoundData)
 {
 	assert(m_sample != NULL && pSoundData != NULL);
 
-	// It must be loaded when the reference count becomes 1 to return the correct size.
-	// Therefore, you must call Get before proceeding.
-	// Also, m_pSoundData is the same as pSoundData and is a reference to m_pSoundData.
-	// If the counter is 1, unnecessary loading occurs, so reference is required in advance.
-	// A counter must be put up.
+	// Get() before Release() so a shared CSoundData whose refcount would otherwise
+	// drop to 1 is not reloaded unnecessarily.
 	LPVOID lpData = pSoundData->Get();
-	
+
 	if (m_pSoundData != NULL)
 	{
 		m_pSoundData->Release();
 		m_pSoundData = NULL;
 	}
-	
+
 	if (AIL_set_sample_file(m_sample, lpData, -1) == 0)
 	{
 		TraceError("%s: %s", AIL_last_error(), pSoundData->GetFileName());
@@ -61,8 +63,22 @@ bool CSoundInstance3D::SetSound(CSoundData* pSoundData)
 
 	m_pSoundData = pSoundData;
 
-	AIL_set_sample_3D_position(m_sample, 0.0F, 0.0F, 0.0F);
+	// Fresh waveform bound: play centred at full volume until SetPosition()/
+	// SetVolume() reconfigure the manual spatialisation for this play.
+	m_fDistanceScale = 1.0f;
+	m_fPan = 0.5f;
+	__ApplyVolumePan();
 	return true;
+}
+
+void CSoundInstance3D::__ApplyVolumePan() const
+{
+	if (!m_sample)
+		return;
+
+	float fVolume = m_fBaseVolume * m_fDistanceScale;
+	fVolume = max(0.0f, min(1.0f, fVolume));
+	AIL_set_sample_volume_pan(m_sample, fVolume, m_fPan);
 }
 
 bool CSoundInstance3D::IsDone() const
@@ -105,38 +121,55 @@ void CSoundInstance3D::Stop()
 
 void CSoundInstance3D::GetVolume(float& rfVolume) const
 {
-	F32 volume = 0.0f;
-	F32 pan = 0.0f;
-	AIL_sample_volume_pan(m_sample, &volume, &pan);
-	rfVolume = volume;
+	rfVolume = m_fBaseVolume;
 }
 
 void CSoundInstance3D::SetVolume(float volume) const
 {
-	volume = max(0.0f, min(1.0f, volume));
-	AIL_set_sample_volume_pan(m_sample, volume, 0.5f);
+	m_fBaseVolume = max(0.0f, min(1.0f, volume));
+	__ApplyVolumePan();
 }
 
 void CSoundInstance3D::SetPosition(float x, float y, float z) const
 {
-	AIL_set_sample_3D_position(m_sample, x, y, -z);
+	// Manual spatialisation. x/y/z are listener-relative world units already divided
+	// by CSoundManager::m_fSoundScale (200); PlayCharacterSound3D() discards anything
+	// past ~25 relative units (5000 world). Keep near sounds at full volume and fall
+	// off only to a floor so every in-range sound stays clearly audible. Pan follows
+	// the left/right (X) offset.
+	float fDist = sqrtf(x * x + y * y + z * z);
+
+	const float fMinDist = 6.0f;	// full volume within this radius (~1200 world units)
+	const float fMaxDist = 30.0f;	// reach the floor by here (~6000 world units)
+	const float fFloor   = 0.35f;	// never fade fully -- in-range sounds must be heard
+
+	if (fDist <= fMinDist)
+		m_fDistanceScale = 1.0f;
+	else if (fDist >= fMaxDist)
+		m_fDistanceScale = fFloor;
+	else
+		m_fDistanceScale = 1.0f - (1.0f - fFloor) * ((fDist - fMinDist) / (fMaxDist - fMinDist));
+
+	const float fPanRange = 12.0f;	// |X| beyond this is hard left/right
+	float fPanOffset = x / fPanRange;
+	fPanOffset = max(-1.0f, min(1.0f, fPanOffset));
+	m_fPan = 0.5f + 0.5f * fPanOffset;
+
+	__ApplyVolumePan();
 }
 
-void CSoundInstance3D::SetOrientation(float x_face, float y_face, float z_face, 
+void CSoundInstance3D::SetOrientation(float x_face, float y_face, float z_face,
 									  float x_normal, float y_normal, float z_normal) const
 {
-	assert(!"CSoundInstance3D::SetOrientation - Deprecated functionunctionunctionunction");
-//	AIL_set_3D_orientation(m_sample, 
-//						   x_face, y_face, z_face,
-//						   x_normal, y_normal, z_normal);
+	// Listener orientation is not modelled in the manual 2D-pan spatialisation.
 }
 
 void CSoundInstance3D::SetVelocity(float fDistanceX, float fDistanceY, float fDistanceZ, float fNagnitude) const
 {
-	AIL_set_sample_3D_velocity(m_sample, fDistanceX, fDistanceY, fDistanceZ, fNagnitude);
+	// Doppler is not modelled in the manual 2D-pan spatialisation.
 }
 
 void CSoundInstance3D::UpdatePosition(float fElapsedTime)
 {
-	AIL_update_sample_3D_position(m_sample, fElapsedTime);
+	// Position is applied immediately in SetPosition(); nothing to advance per-frame.
 }
