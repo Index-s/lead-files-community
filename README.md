@@ -53,16 +53,19 @@ Pick the path that fits you:
 
 ### A. GitHub Actions — recommended, no local FreeBSD needed (works from Windows)
 
-Push a version tag; CI builds in a FreeBSD VM and publishes the result:
+**Publish a GitHub Release** with a `vX.Y.Z` tag (the same flow the upstream repo
+uses). The workflow triggers on the release, builds in a FreeBSD 15.1 VM and
+publishes the result:
 
 ```sh
-git tag v0.1.0
-git push origin v0.1.0
+gh release create v0.1.0 --title "v0.1.0" --notes "..."
+# or create the release from the GitHub web UI
 ```
 
 - The repository is published to the **gh-pages** branch (enable Pages →
   branch `gh-pages`).
-- The `.pkg` is attached to the GitHub release — download and `pkg add` it.
+- The `.pkg` is attached to that release — download and `pkg add` it.
+- (`workflow_dispatch` is available for manual test builds without a release.)
 
 ### B. Local build on Windows/macOS/Linux via VirtualBox (Vagrant)
 

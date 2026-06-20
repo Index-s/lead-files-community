@@ -1,12 +1,14 @@
 name: Build & publish FreeBSD pkg
 
-# Tag a version (vX.Y.Z) -> CI builds the .pkg in a FreeBSD VM, publishes the
-# pkg repository to GitHub Pages, and attaches the .pkg to the GitHub release.
-# Servers then get it with `pkg install lead-server` / `pkg upgrade`.
+# Runs ONLY when a GitHub Release is published (matching the upstream repo's
+# manual vX.Y.Z release process) -> builds the .pkg in a FreeBSD 15.1 VM,
+# publishes the pkg repository to GitHub Pages, and attaches the .pkg to that
+# release. Servers then get it with `pkg install lead-server` / `pkg upgrade`.
+# (workflow_dispatch is kept for manual test builds.)
 
 on:
-  push:
-    tags: ["v*"]
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       version:
@@ -31,8 +33,8 @@ jobs:
         run: |
           if [ -n "${{ github.event.inputs.version }}" ]; then
             v="${{ github.event.inputs.version }}"
-          elif [ "${{ github.ref_type }}" = "tag" ]; then
-            v="${GITHUB_REF_NAME#v}"
+          elif [ "${{ github.event_name }}" = "release" ]; then
+            v="${{ github.event.release.tag_name }}"; v="${v#v}"
           else
             v="0.0.0.$(date +%Y%m%d)"
           fi
@@ -76,7 +78,8 @@ jobs:
           force_orphan: true
 
       - name: Attach package to the GitHub release
-        if: ${{ github.ref_type == 'tag' }}
+        if: ${{ github.event_name == 'release' }}
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.event.release.tag_name }}
           files: Lead-Tools/freebsd-pkg/dist/*.pkg
