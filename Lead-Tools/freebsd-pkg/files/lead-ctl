@@ -1,14 +1,17 @@
 #!/bin/sh
 #
-# lead-ctl - manage the Lead game server.
+# lead-ctl - the single command to manage the Lead game server.
 #
 #   lead-ctl start   [target]    start the server (default: all)
 #   lead-ctl stop    [target]    stop it
 #   lead-ctl restart [target]    stop then start
 #   lead-ctl status              show every core's state
 #   lead-ctl backup  [dir]       full backup: all databases + serverfiles
+#   lead-ctl migrate             create DBs + apply migrations (idempotent)
+#   lead-ctl configure           autodiscover this host's IP into the configs
+#   lead-ctl update              update to a newer GitHub release if available
 #
-# target:
+# target (for start/stop/restart):
 #   all                          db, auth, markserver, channels 1-4, channel99
 #   db | auth | mark | ch99      a single base core
 #   ch1 ch2 ch3 ch4 (chN)        one whole channel (game1 + game2)
@@ -18,6 +21,7 @@
 #   lead-ctl start ch2           start only channel 2
 #   lead-ctl stop ch4            stop only channel 4
 #   lead-ctl backup /mnt/backups
+#   lead-ctl migrate             apply new DB migrations after an update
 #
 set -eu
 
@@ -140,6 +144,12 @@ case "$_cmd" in
 	restart) cmd_stop "${1:-all}"; sleep 1; cmd_start "${1:-all}" ;;
 	status)  cmd_status ;;
 	backup)  cmd_backup "${1:-}" ;;
+	# DB setup + migrations, IP autodiscovery, and self-update are exposed here so
+	# everything is driven through this one on-PATH command. The implementations
+	# live in libexec (internal helpers, not meant to be run by hand).
+	migrate|db-setup) LEAD_ROOT="$LEAD_ROOT" exec "${LIBEXEC}/lead-db-setup" "$@" ;;
+	configure)        LEAD_ROOT="$LEAD_ROOT" exec "${LIBEXEC}/lead-configure" "$@" ;;
+	update)           exec "${LIBEXEC}/lead-update" "$@" ;;
 	-h|--help|help) grep '^#' "$0" | sed 's/^# \{0,1\}//' ;;
-	*) err "unknown command: $_cmd (try: start|stop|restart|status|backup)"; exit 2 ;;
+	*) err "unknown command: $_cmd (try: start|stop|restart|status|backup|migrate|configure|update)"; exit 2 ;;
 esac
