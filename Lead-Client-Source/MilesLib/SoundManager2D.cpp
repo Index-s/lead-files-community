@@ -17,7 +17,15 @@ bool CSoundManager2D::Initialize()
 		return true;
 
 	ms_DIGDriver = AIL_open_digital_driver(44100, 16, 2, 0);
-	
+
+	// Report failure instead of masking it: a NULL driver makes every later
+	// AIL_allocate_sample_handle() fail (silent sound effects). Matches SoundManager3D.
+	if (!ms_DIGDriver)
+	{
+		CSoundBase::Destroy();
+		return false;
+	}
+
 	for (int i = 0; i < INSTANCE_MAX_COUNT; ++i)
 		ms_Instances[i].Initialize();
 /*	ms_DIGDriver = AIL_open_digital_driver(44100,

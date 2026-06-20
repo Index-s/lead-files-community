@@ -18,6 +18,14 @@ bool CSoundManagerStream::Initialize()
 
 	ms_DIGDriver = AIL_open_digital_driver(44100, 16, 2, 0);
 
+	// Report failure instead of masking it: with a NULL driver every later
+	// AIL_open_stream() silently returns NULL (no music). Matches SoundManager3D.
+	if (!ms_DIGDriver)
+	{
+		CSoundBase::Destroy();
+		return false;
+	}
+
 	for (int i = 0; i < MUSIC_INSTANCE_MAX_NUM; ++i)
 		m_Instances[i].Initialize();
 
