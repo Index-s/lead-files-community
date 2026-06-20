@@ -46,8 +46,16 @@ if service -e 2>/dev/null | grep -q mysql-server || [ -f /usr/local/etc/rc.d/mys
 	sysrc mysql_enable=YES >/dev/null 2>&1 || true
 	if ! service mysql-server status >/dev/null 2>&1; then
 		note "starting MariaDB (first start initialises the data directory) ..."
-		service mysql-server start >/dev/null 2>&1 || warn "could not start MariaDB"
+		# onestart forces a start regardless of how mysql_enable is read inside the
+		# pkg post-install environment (avoids the '$mysql_enable not set properly'
+		# race that left MariaDB down).
+		service mysql-server onestart >/dev/null 2>&1 || service mysql-server start >/dev/null 2>&1 || warn "could not start MariaDB"
 	fi
+	# Wait until MariaDB actually accepts connections before seeding -- the first
+	# boot creates the data dir + InnoDB logs and can be slow (up to ~5 min on a
+	# slow/emulated disk).
+	_w=0
+	until mariadb -u root -e 'SELECT 1' >/dev/null 2>&1 || [ "$_w" -ge 300 ]; do sleep 3; _w=$((_w + 3)); done
 
 	if [ -x "${LIBEXEC}/lead-db-setup" ]; then
 		note "bootstrapping databases + migrations ..."
