@@ -100,7 +100,14 @@ command -v pkg   >/dev/null 2>&1 || die "pkg not found"
 # --- 1. compile -------------------------------------------------------------
 if [ "$DO_BUILD" -eq 1 ]; then
 	log "building server (gmake) in $SRC ..."
-	( cd "$SRC" && gmake ) || die "server build failed"
+	# `gmake -B` (always-make): the top Makefile's game/db/lib*  targets are not
+	# .PHONY and collide with same-named directories, so a plain `gmake` skips
+	# them when the directory looks up-to-date, leaving game/db unbuilt.
+	( cd "$SRC" && gmake -B ) || die "server build failed"
+	# Belt-and-suspenders: build the cores directly from their src dirs (the libs
+	# are built above). This is what actually produces game/game and db/db.
+	[ -f "${SRC}/game/game" ] || ( cd "$SRC/game/src" && gmake ) || die "game core build failed"
+	[ -f "${SRC}/db/db" ]     || ( cd "$SRC/db/src"   && gmake ) || die "db core build failed"
 fi
 [ -f "${SRC}/game/game" ] || die "missing build output ${SRC}/game/game"
 [ -f "${SRC}/db/db" ]     || die "missing build output ${SRC}/db/db"
