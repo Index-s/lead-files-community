@@ -23,7 +23,12 @@ SELF="$(realpath "$0")"; PKGDIR="$(dirname "$SELF")"
 PKGSRC="${PKGDIR}/dist"
 REPODIR="${PKGDIR}/repo-out"
 KEY=""
-URL="${LEAD_REPO_URL:-https://INDEX-S.github.io/lead-files-community}"
+# Derive the GitHub Pages URL from the single repo-identity variable (owner/name).
+# Override LEAD_REPO_URL directly, or LEAD_REPO to retarget a fork.
+LEAD_REPO="${LEAD_REPO:-Index-s/lead-files-community}"
+_owner="$(printf '%s' "${LEAD_REPO%%/*}" | tr 'A-Z' 'a-z')"
+_name="${LEAD_REPO##*/}"
+URL="${LEAD_REPO_URL:-https://${_owner}.github.io/${_name}}"
 
 while [ $# -gt 0 ]; do
 	case "$1" in
