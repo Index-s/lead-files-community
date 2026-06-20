@@ -51,8 +51,11 @@ done
 # the published tag through --version (see .github/workflows/freebsd-pkg.yml).
 VERSION="${VERSION:-0.1.0}"
 
+# Single source for the repo identity (owner/name); everything else derives from
+# it. Override LEAD_REPO (or the individual vars) to retarget a fork.
+LEAD_REPO="${LEAD_REPO:-Index-s/lead-files-community}"
 MAINTAINER="${LEAD_MAINTAINER:-andreiganea69@gmail.com}"
-WWW="${LEAD_WWW:-https://github.com/Index-s/lead-files-community}"
+WWW="${LEAD_WWW:-https://github.com/${LEAD_REPO}}"
 
 log() { echo "==> $*"; }
 die() { echo "build.sh: ERROR: $*" >&2; exit 1; }
