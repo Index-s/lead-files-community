@@ -548,7 +548,7 @@ void DESC::StartHandshake(DWORD _handshake)
 	m_iHandshakeRetry = 0;
 }
 
-void DESC::SendHandshake(DWORD dwCurTime, long lNewDelta)
+void DESC::SendHandshake(DWORD dwCurTime, int lNewDelta)
 {
 	TPacketGCHandshake pack;
 
@@ -563,7 +563,7 @@ void DESC::SendHandshake(DWORD dwCurTime, long lNewDelta)
 	m_bHandshaking = true;
 }
 
-bool DESC::HandshakeProcess(DWORD dwTime, long lDelta, bool bInfiniteRetry)
+bool DESC::HandshakeProcess(DWORD dwTime, int lDelta, bool bInfiniteRetry)
 {
 	DWORD dwCurTime = get_dword_time();
 
@@ -593,7 +593,7 @@ bool DESC::HandshakeProcess(DWORD dwTime, long lDelta, bool bInfiniteRetry)
 		return true; 
 	}
 
-	long lNewDelta = (long) (dwCurTime - dwTime) / 2;
+	int lNewDelta = (int) (dwCurTime - dwTime) / 2;
 
 	if (lNewDelta < 0)
 	{
