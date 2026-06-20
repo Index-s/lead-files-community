@@ -3388,6 +3388,25 @@ bool CPythonNetworkStream::RecvGuild()
 			}
 			break;
 		}
+		case GUILD_SUBHEADER_GC_WAR_SCORE:
+		{
+			// The stock client has no handler for this guild-war sub-packet, so its body was
+			// never consumed and the following packet got mis-parsed ("Unknown packet header"
+			// -> PostQuitMessage), disconnecting any guild member who logged in during an
+			// active war. The server (guild_war.cpp / war_map.cpp) sends DWORD guildSelf,
+			// DWORD guildOpp, int32 score; consume them to keep the byte stream aligned.
+			DWORD dwGuildSelf, dwGuildOpp;
+			int lScore;
+			if (!Recv(sizeof(dwGuildSelf), &dwGuildSelf))
+				return false;
+			if (!Recv(sizeof(dwGuildOpp), &dwGuildOpp))
+				return false;
+			if (!Recv(sizeof(lScore), &lScore))
+				return false;
+
+			Tracef(" >> GUILD_SUBHEADER_GC_WAR_SCORE : self %u opp %u score %d\n", dwGuildSelf, dwGuildOpp, lScore);
+			break;
+		}
 		case GUILD_SUBHEADER_GC_GUILD_NAME:
 		{
 			DWORD dwID;
