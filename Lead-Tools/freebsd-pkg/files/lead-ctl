@@ -120,9 +120,15 @@ cmd_backup() {
 		err "database dump failed (is MariaDB running / root socket available?)"
 	fi
 	note "archiving serverfiles (excluding logs/cores) ..."
+	# tar may exit 1 on benign warnings (e.g. a file changing while a core runs);
+	# judge success by whether a non-empty archive was produced.
 	tar czf "${_dest}/serverfiles.tar.gz" -C "$(dirname "$LEAD_ROOT")" "$(basename "$LEAD_ROOT")" \
-		--exclude='*/log' --exclude='*/cores' 2>/dev/null || err "serverfiles archive had warnings"
-	note "  -> ${_dest}/serverfiles.tar.gz"
+		--exclude='*/log' --exclude='*/cores' >/dev/null 2>&1 || true
+	if [ -s "${_dest}/serverfiles.tar.gz" ]; then
+		note "  -> ${_dest}/serverfiles.tar.gz"
+	else
+		err "serverfiles archive failed"
+	fi
 	note "full backup complete: ${_dest}"
 }
 
