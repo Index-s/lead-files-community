@@ -87,6 +87,14 @@ cmd_start() {
 	_t="${1:-all}"; _list="$(cores_for "$_t")" || { err "unknown target: $_t"; exit 2; }
 	mkdir -p "$PIDDIR"
 	[ -x "${LIBEXEC}/lead-layout" ] && LEAD_ROOT="$LEAD_ROOT" LEAD_USER="$LEAD_USER" "${LIBEXEC}/lead-layout" >/dev/null 2>&1 || true
+	# The cores exit instantly if they can't reach MariaDB, so make sure it is up
+	# (and accepting connections) before starting anything.
+	if [ -f /usr/local/etc/rc.d/mysql-server ] && ! service mysql-server status >/dev/null 2>&1; then
+		note "MariaDB is not running; starting it ..."
+		service mysql-server start >/dev/null 2>&1 || err "could not start MariaDB"
+		_n=0
+		until mariadb -u root -e 'SELECT 1' >/dev/null 2>&1 || [ "$_n" -ge 30 ]; do sleep 1; _n=$((_n + 1)); done
+	fi
 	# Game cores need the db core (port 15000); start it first if not already up.
 	case " $_list " in
 		*" db:db "*) : ;;
