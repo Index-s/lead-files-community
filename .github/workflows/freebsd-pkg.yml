@@ -57,24 +57,24 @@ jobs:
             set -e
             VER='${{ steps.ver.outputs.version }}'
             URL='${{ steps.url.outputs.url }}'
-            sh packaging/freebsd/build.sh --version "$VER"
+            sh Lead-Tools/freebsd-pkg/build.sh --version "$VER"
             if [ -n "${LEAD_SIGNING_KEY:-}" ]; then
               umask 077; printf '%s' "$LEAD_SIGNING_KEY" > /tmp/lead-repo.key
-              sh packaging/freebsd/make-repo.sh --url "$URL" --key /tmp/lead-repo.key
+              sh Lead-Tools/freebsd-pkg/make-repo.sh --url "$URL" --key /tmp/lead-repo.key
               rm -f /tmp/lead-repo.key
             else
-              sh packaging/freebsd/make-repo.sh --url "$URL"
+              sh Lead-Tools/freebsd-pkg/make-repo.sh --url "$URL"
             fi
 
       - name: Publish repository to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: packaging/freebsd/repo-out
+          publish_dir: Lead-Tools/freebsd-pkg/repo-out
           force_orphan: true
 
       - name: Attach package to the GitHub release
         if: ${{ github.ref_type == 'tag' }}
         uses: softprops/action-gh-release@v2
         with:
-          files: packaging/freebsd/dist/*.pkg
+          files: Lead-Tools/freebsd-pkg/dist/*.pkg

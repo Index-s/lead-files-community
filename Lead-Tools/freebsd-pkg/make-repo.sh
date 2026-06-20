@@ -5,7 +5,7 @@
 # with `pkg install` / `pkg upgrade`.
 #
 # Usage:
-#   packaging/freebsd/make-repo.sh [options]
+#   Lead-Tools/freebsd-pkg/make-repo.sh [options]
 #     --pkgdir  <dir>   directory containing the .pkg files (default: dist)
 #     --repodir <dir>   output repository directory       (default: repo-out)
 #     --key     <file>  RSA private key to SIGN the catalog (optional but
@@ -15,7 +15,7 @@
 #                       render the sample client config (lead.conf).
 #
 # Publish the resulting <repodir> tree to gh-pages; clients then point a repo
-# config at the URL. See packaging/freebsd/repo/lead.conf and README.md.
+# config at the URL. See Lead-Tools/freebsd-pkg/repo/lead.conf and README.md.
 #
 set -eu
 
