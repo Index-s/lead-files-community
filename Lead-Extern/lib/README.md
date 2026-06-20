@@ -1,9 +1,10 @@
-# Lead-Extern/lib/win64 — x64 server + client dependency libraries
+# Lead-Extern/lib — x64 server + client dependency libraries
 
 These are the **64-bit** builds of the third-party libraries the x64 server **and
-client** link against (the `lib/` directory holds the 32-bit versions). The x64
-projects prepend this directory to `AdditionalLibraryDirectories`, so these take
-precedence over the 32-bit libs.
+client** link against. The old 32-bit `win32`/`win64` split was flattened during
+the x64 port: `lib/` now holds the x64 libs directly (the 32-bit versions were
+removed), and the x64 projects reference this directory in
+`AdditionalLibraryDirectories`.
 
 The binaries themselves are **not committed** (large / rebuildable) — see
 `.gitignore`. Rebuild them with the steps below. All built with VS 2026 (v145
@@ -15,7 +16,7 @@ except DevIL which is a DLL (CRT-isolated).
 | `cryptlib-Debug.lib` | in-repo `Lead-Extern/sources/cryptopp` | `msbuild cryptlib.vcxproj /p:Configuration=Debug /p:Platform=x64` (after the `integer.cpp`/`zdeflate.cpp` patch that drops `stdext::make_*checked_array_iterator`, removed from modern MSVC STL). Output copied to `cryptlib-Debug.lib`. |
 | `lzo-2.10MT_d.lib` | lzo 2.10 (oberhumer.com) | `cl /c /MTd /O2 /I include src\*.c` then `lib /out:lzo-2.10MT_d.lib *.obj` in an x64 dev shell. |
 | `mysqlclient.lib` | MariaDB Connector/C **3.3.8** (matches the bundled `include/mysql` headers) | `cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DWITH_SSL=SCHANNEL -DWITH_UNIT_TESTS=OFF -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_POLICY_VERSION_MINIMUM=3.5` then `cmake --build . --target mariadbclient`; `mariadbclient.lib` copied to `mysqlclient.lib`. Schannel backend ⇒ the server links `crypt32.lib`/`bcrypt.lib`. |
-| `DevIL.lib` + `DevIL.dll` | DevIL 1.8.0 (github DentonW/DevIL) | `cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5` then `cmake --build . --target IL`. Built with DevIL's built-in formats (TGA/BMP for guild marks); external png/jpeg/tiff backends not required. `DevIL.dll` must sit next to the exes at runtime. |
+| `DevIL.lib` + `DevIL.dll` | DevIL master (github DentonW/DevIL) | `cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON -DIL_TESTS=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DJPEG_INCLUDE_DIR=<extern>/include/libjpeg -DJPEG_LIBRARY=<extern>/lib/libjpeg-9fMT_d.lib` then `cmake --build . --target IL` (comment out `add_subdirectory(src-ILUT)` in `DevIL/CMakeLists.txt` — pulls in GLUT, unused). **JPEG backend is wired in** so guild-mark upload accepts `.jpg`: the client decodes the picked image via `ilLoad` and ships compressed BGRA pixel blocks; the server only ever `ilSave`/`ilLoad`s `IL_TGA` mark blocks, so its DevIL needs no external codecs. Without JPEG, `ilLoad` of a `.jpg` returns `IL_INVALID_ENUM` (0x501) ⇒ in-game "The game does not support this picture". `DevIL.dll` must sit next to the exes at runtime. |
 
 ## x64 client-only dependency libs
 
@@ -33,5 +34,5 @@ ones above. Built/fetched VS 2026 (v145), x64, `/MTd` to match the client.
 | `SpeedTreeRT.lib` | `SpeedTreeRT_SRC_1.6.zip` (from `SpeedTreeRT.rar`) | added Debug\|x64 to `SpeedTreeRT.vcxproj` (v145, `/Zc:strictStrings-`, `_HAS_STD_BYTE=0`); removed the unused `LoadTree(KStream*)` overload (client-internal dep not in this drop) and matched `SetNumWindMatrices(unsigned int)` to the vendored public header. |
 | `libjpeg-9fMT_d.lib` | IJG libjpeg 9f (`ijg.org/files/jpegsr9f.zip`) | `jconfig.vc`→`jconfig.h`, then `cl /c /MTd` the `j*.c` core (minus `jpegtran.c` + the alternate `jmem*` managers, keep `jmemnobs`) and `lib` into this exact name (the `jpegLibLink.h` pragma builds `libjpeg-9f` + runtime-model + `_d`). |
 
-Runtime DLLs are staged next to the exe in `Lead-Client/x64/`: granny2_x64, mss64,
+Runtime DLLs are staged next to the exe in `Lead-Client/`: granny2_x64, mss64,
 python27, WebView2Loader, D3DX9_43, DevIL.
