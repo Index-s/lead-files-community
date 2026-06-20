@@ -74,7 +74,7 @@ void CGuild::SendEnemyGuild(LPCHARACTER ch)
 	TPacketGCGuild p;
 	p.header = HEADER_GC_GUILD;
 	p.subheader = GUILD_SUBHEADER_GC_WAR_SCORE;
-	p.size = sizeof(p) + sizeof(DWORD) + sizeof(DWORD) + sizeof(long);
+	p.size = sizeof(p) + sizeof(DWORD) + sizeof(DWORD) + sizeof(int32_t);
 
 	for (itertype(m_EnemyGuild) it = m_EnemyGuild.begin(); it != m_EnemyGuild.end(); ++it)
 	{
@@ -89,21 +89,21 @@ void CGuild::SendEnemyGuild(LPCHARACTER ch)
 
 		if (it->second.state == GUILD_WAR_ON_WAR)
 		{
-			long lScore;
+			int32_t lScore;
 
 			lScore = GetWarScoreAgainstTo(pack2.dwGuildOpp);
 
 			d->BufferedPacket(&p, sizeof(p));
 			d->BufferedPacket(&pack2.dwGuildSelf, sizeof(DWORD));
 			d->BufferedPacket(&pack2.dwGuildOpp, sizeof(DWORD));
-			d->Packet(&lScore, sizeof(long));
+			d->Packet(&lScore, sizeof(int32_t));
 
 			lScore = CGuildManager::instance().TouchGuild(pack2.dwGuildOpp)->GetWarScoreAgainstTo(pack2.dwGuildSelf);
 
 			d->BufferedPacket(&p, sizeof(p));
 			d->BufferedPacket(&pack2.dwGuildOpp, sizeof(DWORD));
 			d->BufferedPacket(&pack2.dwGuildSelf, sizeof(DWORD));
-			d->Packet(&lScore, sizeof(long));
+			d->Packet(&lScore, sizeof(int32_t));
 		}
 	}
 }
@@ -201,14 +201,14 @@ void CGuild::SetWarScoreAgainstTo(DWORD dwOppGID, int iScore)
 
 			p.header = HEADER_GC_GUILD;
 			p.subheader = GUILD_SUBHEADER_GC_WAR_SCORE;
-			p.size = sizeof(p) + sizeof(DWORD) + sizeof(DWORD) + sizeof(long);
+			p.size = sizeof(p) + sizeof(DWORD) + sizeof(DWORD) + sizeof(int32_t);
 
 			TEMP_BUFFER buf;
 			buf.write(&p, sizeof(p));
 
 			buf.write(&dwSelfGID, sizeof(DWORD));
 			buf.write(&dwOppGID, sizeof(DWORD));
-			buf.write(&iScore, sizeof(long));
+			buf.write(&iScore, sizeof(int32_t));
 
 			Packet(buf.read_peek(), buf.size());
 
