@@ -78,7 +78,7 @@ uses). The workflow triggers on the release, builds in a FreeBSD VM, and
 **attaches the `.pkg` to that release** for download:
 
 ```sh
-gh release create v0.1.0 --title "v0.1.0" --notes "..."
+gh release create v1.0.0 --title "v1.0.0" --notes "..."
 # or create the release from the GitHub web UI
 ```
 
@@ -113,8 +113,8 @@ Requirements: a FreeBSD host of the target architecture. The build deps (incl.
 the latest available MariaDB) are installed for you with `--install-deps` (root):
 
 ```sh
-sh Lead-Tools/freebsd-pkg/build.sh --install-deps --version 0.1.0
-# -> dist/lead-server-0.1.0.pkg  AND  dist/lead-server-FreeBSD<major>-<arch>.pkg
+sh Lead-Tools/freebsd-pkg/build.sh --install-deps        # version defaults to 1.0.0
+# -> dist/lead-server-1.0.0.pkg  AND  dist/lead-server-FreeBSD<major>-<arch>.pkg
 ```
 
 No FreeBSD box on hand? Run one locally with **QEMU**, pulling the image directly
