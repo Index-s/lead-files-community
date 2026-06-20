@@ -1491,7 +1491,12 @@ void CInputDB::PartySetMemberLevel(const char* c_pData)
 
 void CInputDB::Time(const char * c_pData)
 {
-	set_global_time(*(time_t *) c_pData);
+	// db_d forwards the time as a 32-bit uint32_t (ForwardPacket(..., sizeof(uint32_t))).
+	// Reading it as time_t over-reads 4 bytes past the packet body on x64 (time_t is
+	// 8 bytes on Win64 and FreeBSD LP64), poisoning the high bits and yielding a garbage
+	// global_time_gap (seen as "GLOBAL_TIME: ? time_gap <huge>"). Match the sender's
+	// width, then widen to time_t.
+	set_global_time(static_cast<time_t>(*(const uint32_t *) c_pData));
 }
 
 void CInputDB::ReloadProto(const char * c_pData)
