@@ -36,7 +36,7 @@ bool CInsultChecker::__GetInsultLength(const char* c_szWord, UINT* puInsultLen)
 		int ret=LocaleService_StringCompareCI(c_szWord, rstInsult.c_str(), rstInsult.length());		
 		if (0==ret)
 		{
-			*puInsultLen=rstInsult.length();
+			*puInsultLen=static_cast<UINT>(rstInsult.length());
 			return true;
 		}
 	}

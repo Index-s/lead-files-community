@@ -44,7 +44,11 @@ void CMapLocation::Insert(int32_t lIndex, const char * c_pszHost, WORD wPort)
 {
 	TLocation loc;
 
-	loc.addr = inet_addr(c_pszHost);
+	struct in_addr stAddr;
+	if (inet_pton(AF_INET, c_pszHost, &stAddr) == 1)
+		loc.addr = (int32_t)stAddr.s_addr;
+	else
+		loc.addr = (int32_t)INADDR_NONE;
 	loc.port = wPort;
 
 	m_map_address.insert(std::make_pair(lIndex, loc));

@@ -12,6 +12,7 @@
 
 #include <windows.h>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #include <tchar.h>
 #include <errno.h>
 #include <time.h>
@@ -33,7 +34,6 @@
 #include "xgetopt.h"
 
 #define S_ISDIR(m)      (m & _S_IFDIR)
-#define snprintf _snprintf
 
 #define __USE_SELECT__
 
@@ -43,11 +43,30 @@
 #define strlcat(dst, src, size) strcat_s(dst, size, src)
 #define strlcpy(dst, src, size) strncpy_s(dst, size, src, _TRUNCATE)
 #define strtoull(str, endptr, base) _strtoui64(str, endptr, base)
-#define strcasecmp(s1, s2) stricmp(s1, s2)
-#define strncasecmp(s1, s2, n) strnicmp(s1, s2, n)
+#define strcasecmp(s1, s2) _stricmp(s1, s2)
+#define strncasecmp(s1, s2, n) _strnicmp(s1, s2, n)
 #define atoll(str) _atoi64(str)
 #define localtime_r(timet, result) localtime_s(result, timet)
+#define gmtime_r(timet, result) gmtime_s(result, timet)
 #define strtok_r(s, delim, ptrptr) strtok_s(s, delim, ptrptr)
+#define strdup(str) _strdup(str)
+
+// Portable file-open wrappers: route the standard (POSIX) signatures to the
+// bounded MSVC *_s variants on Windows. Defined after <stdio.h> so the system
+// prototypes are already parsed; POSIX builds use the native functions.
+static INLINE FILE * __thecore_fopen(const char * filename, const char * mode)
+{
+	FILE * fp = NULL;
+	return (fopen_s(&fp, filename, mode) == 0) ? fp : NULL;
+}
+#define fopen(filename, mode) __thecore_fopen((filename), (mode))
+
+static INLINE FILE * __thecore_freopen(const char * filename, const char * mode, FILE * stream)
+{
+	FILE * fp = NULL;
+	return (freopen_s(&fp, filename, mode, stream) == 0) ? fp : NULL;
+}
+#define freopen(filename, mode, stream) __thecore_freopen((filename), (mode), (stream))
 
 #include <boost/typeof/typeof.hpp>
 #define typeof(t) BOOST_TYPEOF(t)
@@ -109,6 +128,16 @@ inline double rint(double x)
 #ifdef __FreeBSD__
 #include <sys/event.h>
 #endif
+
+// Compatibility for code that calls MSVC CRT names directly. The Windows
+// branch above maps the POSIX names onto the MSVC ones; here we map the MSVC
+// names back onto their POSIX equivalents so either spelling builds anywhere.
+#include <strings.h>
+#define _stricmp   strcasecmp
+#define _strnicmp  strncasecmp
+#define _write     write
+#define _close     close
+typedef void * PVOID;
 
 #endif
 

@@ -61,7 +61,7 @@ public:
 	DWORD AttachFlyEffect(int iType, const std::string & strFilename, float fRoll, float fArg1, float fArg2);
 
 	TFlyingAttachData & GetAttachDataReference(int iIndex);
-	int GetAttachDataCount() { return m_AttachDataVector.size(); } 
+	int GetAttachDataCount() { return static_cast<int>(m_AttachDataVector.size()); }
 
 	void DuplicateAttach(int iIndex);
 	void RemoveAttach(int iIndex);

@@ -89,14 +89,17 @@ class IP
 		void Print()
 		{
 			struct in_addr in_ip, in_mask, in_end;
+			char szIP[INET_ADDRSTRLEN];
+			char szEnd[INET_ADDRSTRLEN];
+			char szMask[INET_ADDRSTRLEN];
 
 			in_ip.s_addr = dwStart;
 			in_mask.s_addr = dwMask;
 			in_end.s_addr = dwEnd;
 
-			fprintf(stderr, "\t%s", inet_ntoa(in_ip));
-			fprintf(stderr, "\t%s", inet_ntoa(in_end));
-			fprintf(stderr, "\t%s\tfirst %d\n", inet_ntoa(in_mask), hash());
+			fprintf(stderr, "\t%s", inet_ntop(AF_INET, &in_ip, szIP, sizeof(szIP)));
+			fprintf(stderr, "\t%s", inet_ntop(AF_INET, &in_end, szEnd, sizeof(szEnd)));
+			fprintf(stderr, "\t%s\tfirst %d\n", inet_ntop(AF_INET, &in_mask, szMask, sizeof(szMask)), hash());
 		}
 
 	protected:

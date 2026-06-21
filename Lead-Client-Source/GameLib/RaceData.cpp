@@ -231,7 +231,7 @@ BOOL CRaceData::GetMotionVectorPointer(WORD wMotionMode, WORD wMotionIndex, cons
 
 DWORD CRaceData::GetAttachingDataCount()
 {
-	return m_AttachingDataVector.size();
+	return static_cast<DWORD>(m_AttachingDataVector.size());
 }
 
 BOOL CRaceData::GetAttachingDataPointer(DWORD dwIndex, const NRaceData::TAttachingData ** c_ppAttachingData)
@@ -425,7 +425,7 @@ BOOL CRaceData::GetNormalAttackIndex(WORD wMotionModeIndex, WORD * pwMotionIndex
 	if (m_NormalAttackIndexMap.end() == itor)
 		return FALSE;
 
-	*pwMotionIndex = itor->second;
+	*pwMotionIndex = static_cast<WORD>(itor->second);
 
 	return TRUE;
 }

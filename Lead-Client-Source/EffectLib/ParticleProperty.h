@@ -44,7 +44,7 @@ class CParticleProperty
 
 		__forceinline DWORD GetTextureAnimationFrameCount()
 		{
-			return m_ImageVector.size();
+			return static_cast<DWORD>(m_ImageVector.size());
 		}
 
 		__forceinline float GetTextureAnimationFrameDelay()

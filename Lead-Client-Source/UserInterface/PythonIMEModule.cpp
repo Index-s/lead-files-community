@@ -52,7 +52,7 @@ PyObject* imeSetText(PyObject* poSelf, PyObject* poArgs)
 	if (!PyTuple_GetString(poArgs, 0, &szText))
 		return Py_BuildException();
 
-	CPythonIME::Instance().SetText(szText, strlen(szText));
+	CPythonIME::Instance().SetText(szText, static_cast<int>(strlen(szText)));
 	return Py_BuildNone();
 }
 

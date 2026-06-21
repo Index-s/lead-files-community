@@ -369,8 +369,8 @@ CInstanceBase* CNetworkActorManager::__AppendCharacterManagerActor(SNetworkActor
 			(!bIsMountingHorse && kCreateData.m_dwMountVnum != 0) )
 		{
 			//Override Pos
-			kCreateData.m_lPosX = oldPos.x;
-			kCreateData.m_lPosY = -oldPos.y;
+			kCreateData.m_lPosX = static_cast<LONG>(oldPos.x);
+			kCreateData.m_lPosY = static_cast<LONG>(-oldPos.y);
 		}
 
 		rkChrMgr.DeleteInstance(dwVID);

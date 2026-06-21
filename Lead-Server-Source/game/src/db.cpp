@@ -363,9 +363,9 @@ void DBManager::AnalyzeReturnQuery(SQLMsg * pMsg)
 						str_to_number(retValue, row[col]);
 
 						time_t create_time = retValue;
-						struct tm * tm1;
-						tm1 = localtime(&create_time);
-						strftime(szCreateDate, 255, "%Y%m%d", tm1);
+						struct tm _tmbuf;
+						localtime_r(&create_time, &_tmbuf);
+						strftime(szCreateDate, 255, "%Y%m%d", &_tmbuf);
 
 						sys_log(0, "Create_Time %d %s", retValue, szCreateDate);
 						sys_log(0, "Block Time %d ", strncmp(szCreateDate, g_stBlockDate.c_str(), 8));

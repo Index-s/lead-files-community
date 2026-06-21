@@ -93,22 +93,22 @@ bool SplitToken(const char * c_szLine, CTokenVector * pstTokenVector, const char
 	std::string stToken;
 	std::string strLine = c_szLine;
 
-	DWORD basePos = 0;
+	std::string::size_type basePos = 0;
 
 	do
 	{
-		int beginPos = strLine.find_first_not_of(c_szDelimeter, basePos);
-		if (beginPos < 0)
+		std::string::size_type beginPos = strLine.find_first_not_of(c_szDelimeter, basePos);
+		if (beginPos == std::string::npos)
 			return false;
 
-		int endPos;
+		std::string::size_type endPos;
 
 		if (strLine[beginPos] == '"')
 		{
 			++beginPos;
 			endPos = strLine.find_first_of("\"", beginPos);
 
-			if (endPos < 0)
+			if (endPos == std::string::npos)
 				return false;
 			
 			basePos = endPos + 1;
@@ -226,9 +226,9 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 				return;
 			}
 
-			UINT gold = atoi(TokenVector[2].c_str());
-			UINT itemVnum = atoi(TokenVector[3].c_str());
-			UINT count = atoi(TokenVector[4].c_str());
+			UINT gold = static_cast<UINT>(atoi(TokenVector[2].c_str()));
+			UINT itemVnum = static_cast<UINT>(atoi(TokenVector[3].c_str()));
+			UINT count = static_cast<UINT>(atoi(TokenVector[4].c_str()));
 			PyCallClassMemberFunc(m_apoPhaseWnd[PHASE_WINDOW_GAME], "BINARY_Cube_UpdateInfo", Py_BuildValue("(iii)", gold, itemVnum, count));
 		}
 		else if ("success" == TokenVector[1])
@@ -239,8 +239,8 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 				return;
 			}
 
-			UINT itemVnum = atoi(TokenVector[2].c_str());
-			UINT count = atoi(TokenVector[3].c_str());
+			UINT itemVnum = static_cast<UINT>(atoi(TokenVector[2].c_str()));
+			UINT count = static_cast<UINT>(atoi(TokenVector[3].c_str()));
 			PyCallClassMemberFunc(m_apoPhaseWnd[PHASE_WINDOW_GAME], "BINARY_Cube_Succeed", Py_BuildValue("(ii)", itemVnum, count));
 		}
 		else if ("fail" == TokenVector[1])
@@ -289,7 +289,7 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 			return;
 		}
 
-		UINT uObserverCount= atoi(TokenVector[1].c_str());				
+		UINT uObserverCount= static_cast<UINT>(atoi(TokenVector[1].c_str()));
 
 		PyCallClassMemberFunc(m_apoPhaseWnd[PHASE_WINDOW_GAME], 
 			"BINARY_BettingGuildWar_UpdateObserverCount", 
@@ -304,8 +304,8 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 			return;
 		}
 
-		UINT uMode= atoi(TokenVector[1].c_str());
-		
+		UINT uMode= static_cast<UINT>(atoi(TokenVector[1].c_str()));
+
 		IAbstractPlayer& rkPlayer=IAbstractPlayer::GetSingleton();
 		rkPlayer.SetObserverMode(uMode ? true : false);
 
@@ -326,9 +326,9 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 		}
 
 		// vid distance(1-3) angle(0-360)
-		DWORD dwVID = atoi(TokenVector[1].c_str());
-		BYTE byDistance = atoi(TokenVector[2].c_str());
-		float fAngle = atof(TokenVector[3].c_str());
+		DWORD dwVID = static_cast<DWORD>(atoi(TokenVector[1].c_str()));
+		BYTE byDistance = static_cast<BYTE>(atoi(TokenVector[2].c_str()));
+		float fAngle = static_cast<float>(atof(TokenVector[3].c_str()));
 		fAngle = fmod(540.0f - fAngle, 360.0f);
 		Tracef("StoneDetect [VID:%d] [Distance:%d] [Angle:%d->%f]\n", dwVID, byDistance, atoi(TokenVector[3].c_str()), fAngle);
 
@@ -383,8 +383,8 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 			return;
 		}
 
-		DWORD dwConsumePerSec = atoi(TokenVector[1].c_str());
-		DWORD dwCurrentStamina = atoi(TokenVector[2].c_str());
+		DWORD dwConsumePerSec = static_cast<DWORD>(atoi(TokenVector[1].c_str()));
+		DWORD dwCurrentStamina = static_cast<DWORD>(atoi(TokenVector[2].c_str()));
 
 		IAbstractPlayer& rPlayer=IAbstractPlayer::GetSingleton();
 		rPlayer.StartStaminaConsume(dwConsumePerSec, dwCurrentStamina);
@@ -398,7 +398,7 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 			return;
 		}
 
-		DWORD dwCurrentStamina = atoi(TokenVector[1].c_str());
+		DWORD dwCurrentStamina = static_cast<DWORD>(atoi(TokenVector[1].c_str()));
 
 		IAbstractPlayer& rPlayer=IAbstractPlayer::GetSingleton();
 		rPlayer.StopStaminaConsume(dwCurrentStamina);
@@ -410,21 +410,21 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 	}
 	else if (!strcmpi(szCmd, "combo"))
 	{
-		int iFlag = atoi(TokenVector[1].c_str());
+		int iFlag = static_cast<int>(atoi(TokenVector[1].c_str()));
 		IAbstractPlayer& rPlayer=IAbstractPlayer::GetSingleton();
 		rPlayer.SetComboSkillFlag(iFlag);
 		m_bComboSkillFlag = iFlag ? true : false;
 	}
 	else if (!strcmpi(szCmd, "setblockmode"))
 	{
-		int iFlag = atoi(TokenVector[1].c_str());
+		int iFlag = static_cast<int>(atoi(TokenVector[1].c_str()));
 		PyCallClassMemberFunc(m_apoPhaseWnd[PHASE_WINDOW_GAME], "OnBlockMode", Py_BuildValue("(i)", iFlag));
 	}
 	// Emotion Start
 	else if (!strcmpi(szCmd, "french_kiss"))
 	{
-		int iVID1 = atoi(TokenVector[1].c_str());
-		int iVID2 = atoi(TokenVector[2].c_str());
+		int iVID1 = static_cast<int>(atoi(TokenVector[1].c_str()));
+		int iVID2 = static_cast<int>(atoi(TokenVector[2].c_str()));
 
 		IAbstractCharacterManager & rkChrMgr = IAbstractCharacterManager::GetSingleton();
 		CInstanceBase * pInstance1 = rkChrMgr.GetInstancePtr(iVID1);
@@ -434,8 +434,8 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 	}
 	else if (!strcmpi(szCmd, "kiss"))
 	{
-		int iVID1 = atoi(TokenVector[1].c_str());
-		int iVID2 = atoi(TokenVector[2].c_str());
+		int iVID1 = static_cast<int>(atoi(TokenVector[1].c_str()));
+		int iVID2 = static_cast<int>(atoi(TokenVector[2].c_str()));
 
 		IAbstractCharacterManager & rkChrMgr = IAbstractCharacterManager::GetSingleton();
 		CInstanceBase * pInstance1 = rkChrMgr.GetInstancePtr(iVID1);
@@ -445,8 +445,8 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 	}
 	else if (!strcmpi(szCmd, "slap"))
 	{
-		int iVID1 = atoi(TokenVector[1].c_str());
-		int iVID2 = atoi(TokenVector[2].c_str());
+		int iVID1 = static_cast<int>(atoi(TokenVector[1].c_str()));
+		int iVID2 = static_cast<int>(atoi(TokenVector[2].c_str()));
 
 		IAbstractCharacterManager & rkChrMgr = IAbstractCharacterManager::GetSingleton();
 		CInstanceBase * pInstance1 = rkChrMgr.GetInstancePtr(iVID1);
@@ -456,7 +456,7 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 	}
 	else if (!strcmpi(szCmd, "clap"))
 	{
-		int iVID = atoi(TokenVector[1].c_str());
+		int iVID = static_cast<int>(atoi(TokenVector[1].c_str()));
 		IAbstractCharacterManager & rkChrMgr = IAbstractCharacterManager::GetSingleton();
 		CInstanceBase * pInstance = rkChrMgr.GetInstancePtr(iVID);
 		if (pInstance)
@@ -464,7 +464,7 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 	}
 	else if (!strcmpi(szCmd, "cheer1"))
 	{
-		int iVID = atoi(TokenVector[1].c_str());
+		int iVID = static_cast<int>(atoi(TokenVector[1].c_str()));
 		IAbstractCharacterManager & rkChrMgr = IAbstractCharacterManager::GetSingleton();
 		CInstanceBase * pInstance = rkChrMgr.GetInstancePtr(iVID);
 		if (pInstance)
@@ -472,7 +472,7 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 	}
 	else if (!strcmpi(szCmd, "cheer2"))
 	{
-		int iVID = atoi(TokenVector[1].c_str());
+		int iVID = static_cast<int>(atoi(TokenVector[1].c_str()));
 		IAbstractCharacterManager & rkChrMgr = IAbstractCharacterManager::GetSingleton();
 		CInstanceBase * pInstance = rkChrMgr.GetInstancePtr(iVID);
 		if (pInstance)
@@ -480,7 +480,7 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 	}
 	else if (!strcmpi(szCmd, "dance1"))
 	{
-		int iVID = atoi(TokenVector[1].c_str());
+		int iVID = static_cast<int>(atoi(TokenVector[1].c_str()));
 		IAbstractCharacterManager & rkChrMgr = IAbstractCharacterManager::GetSingleton();
 		CInstanceBase * pInstance = rkChrMgr.GetInstancePtr(iVID);
 		if (pInstance)
@@ -488,7 +488,7 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 	}
 	else if (!strcmpi(szCmd, "dance2"))
 	{
-		int iVID = atoi(TokenVector[1].c_str());
+		int iVID = static_cast<int>(atoi(TokenVector[1].c_str()));
 		IAbstractCharacterManager & rkChrMgr = IAbstractCharacterManager::GetSingleton();
 		CInstanceBase * pInstance = rkChrMgr.GetInstancePtr(iVID);
 		if (pInstance)
@@ -496,7 +496,7 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 	}
 	else if (!strcmpi(szCmd, "dig_motion"))
 	{
-		int iVID = atoi(TokenVector[1].c_str());
+		int iVID = static_cast<int>(atoi(TokenVector[1].c_str()));
 		IAbstractCharacterManager & rkChrMgr = IAbstractCharacterManager::GetSingleton();
 		CInstanceBase * pInstance = rkChrMgr.GetInstancePtr(iVID);
 		if (pInstance)
@@ -536,7 +536,7 @@ void CPythonNetworkStream::ServerCommand(char * c_szCommand)
 		{
 			int emotionIndex = f->second;
 
-			int iVID = atoi(TokenVector[1].c_str());
+			int iVID = static_cast<int>(atoi(TokenVector[1].c_str()));
 			IAbstractCharacterManager & rkChrMgr = IAbstractCharacterManager::GetSingleton();
 			CInstanceBase * pInstance = rkChrMgr.GetInstancePtr(iVID);
 

@@ -199,7 +199,7 @@ bool CGraphicThingInstance::CheckModelInstanceIndex(int iModelInstance)
 	if (iModelInstance < 0)
 		return false;
 
-	int max = m_LODControllerVector.size();
+	int max = static_cast<int>(m_LODControllerVector.size());
 
 	if (iModelInstance >= max)
 		return false;
@@ -212,7 +212,7 @@ bool CGraphicThingInstance::CheckModelThingIndex(int iModelThing)
 	if (iModelThing < 0)
 		return false;
 
-	int max = m_modelThingSetVector.size();
+	int max = static_cast<int>(m_modelThingSetVector.size());
 
 	if (iModelThing >= max)
 		return false;
@@ -654,7 +654,7 @@ BOOL CGraphicThingInstance::GetCompositeBoneMatrix(DWORD dwModelInstanceIndex, D
 void CGraphicThingInstance::UpdateTransform(D3DXMATRIX * pMatrix, float fSecondsElapsed, int iModelInstanceIndex)
 {
 	//TraceError("%s",GetBaseThingPtr()->GetFileName());
-	int nLODCount=m_LODControllerVector.size();
+	int nLODCount=static_cast<int>(m_LODControllerVector.size());
 	if (iModelInstanceIndex>=nLODCount)
 	{
 		//TraceError("void CGraphicThingInstance::UpdateTransform(pMatrix, fSecondsElapsed=%f, iModelInstanceIndex=%d/nLODCount=%d)",
@@ -855,7 +855,7 @@ void CGraphicThingInstance::OnRenderPCBlocker()
 
 DWORD CGraphicThingInstance::GetLODControllerCount() const
 {
-	return m_LODControllerVector.size();
+	return static_cast<DWORD>(m_LODControllerVector.size());
 }
 
 CGrannyLODController * CGraphicThingInstance::GetLODControllerPointer(DWORD dwModelIndex) const

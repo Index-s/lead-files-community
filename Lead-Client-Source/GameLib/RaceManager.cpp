@@ -112,8 +112,8 @@ CRaceData* CRaceManager::__LoadRaceData(DWORD dwRaceIndex)
 		const char* pathName = c_rstRaceName.c_str() + 1;
 		char shapeFileName[256];
 		char motionListFileName[256];
-		_snprintf(shapeFileName, sizeof(shapeFileName), "%sshape.msm", pathName);
-		_snprintf(motionListFileName, sizeof(motionListFileName), "%smotlist.txt", pathName);
+		_snprintf_s(shapeFileName, sizeof(shapeFileName), _TRUNCATE, "%sshape.msm", pathName);
+		_snprintf_s(motionListFileName, sizeof(motionListFileName), _TRUNCATE, "%smotlist.txt", pathName);
 				
 		CRaceData * pRaceData = CRaceData::New();
 		pRaceData->SetRace(dwRaceIndex);
@@ -267,7 +267,7 @@ bool CRaceManager::__LoadRaceMotionList(CRaceData& rkRaceData, const char* pathN
 		DWORD motionType = CRaceMotionData::NAME_NONE;
 
 		const std::string& c_rstLine=kTextFileLoader.GetLineString(uLineIndex);
-		sscanf(c_rstLine.c_str(), "%s %s %s %d", szMode, szType, szFile, &nPercent);
+		sscanf_s(c_rstLine.c_str(), "%s %s %s %d", szMode, (unsigned)sizeof(szMode), szType, (unsigned)sizeof(szType), szFile, (unsigned)sizeof(szFile), &nPercent);
 
 		std::map<std::string, DWORD>::iterator fTypeIndex=s_kMap_stType_dwIndex.find(szType);
 
@@ -302,7 +302,7 @@ bool CRaceManager::__LoadRaceMotionList(CRaceData& rkRaceData, const char* pathN
 		stMotionFileName = pathName;
 		stMotionFileName += szFile; 
 
-		rkRaceData.RegisterMotionData(CRaceMotionData::MODE_GENERAL, motionType, stMotionFileName.c_str(), nPercent);
+		rkRaceData.RegisterMotionData(CRaceMotionData::MODE_GENERAL, static_cast<WORD>(motionType), stMotionFileName.c_str(), nPercent);
 
 		switch (motionType)
 		{

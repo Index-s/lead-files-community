@@ -8,8 +8,8 @@
 #pragma warning(disable:4018)
 #pragma warning(disable:4245)
 
-#if _MSC_VER >= 1400
-//if don't use below, time_t is 64bit
+#if _MSC_VER >= 1400 && !defined(_WIN64)
+//if don't use below, time_t is 64bit (not allowed on x64)
 #define _USE_32BIT_TIME_T
 #endif
 

@@ -270,7 +270,7 @@ void LogManager::DetailLoginLog(bool isLogin, LPCHARACTER ch)
 	{
 		Query("INSERT INTO loginlog2(type, is_gm, login_time, channel, account_id, pid, ip) "
 				"VALUES('INVALID', %s, NOW(), %d, %u, %u, inet_aton('%s'))",
-				ch->IsGM() == true ? "'Y'" : "'N'",
+				ch->IsGM() != FALSE ? "1" : "0",	// loginlog2.is_gm is int(11); 'Y'/'N' fails under strict SQL mode (errno 1366)
 				g_bChannel,
 				ch->GetDesc()->GetAccountTable().id,
 				ch->GetPlayerID(),

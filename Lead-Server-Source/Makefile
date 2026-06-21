@@ -31,9 +31,11 @@ libthecore: .
 
 game: .
 	$(MAKE) -C $@/src clean
+	$(MAKE) -C $@/src
 
 db: .
 	$(MAKE) -C $@/src clean
+	$(MAKE) -C $@/src
 
 all: 
 	@echo "--------------------------------------"

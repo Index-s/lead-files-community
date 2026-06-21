@@ -53,7 +53,7 @@ bool CProperty::GetString(const char * c_pszKey, const char ** c_ppString)
 
 DWORD CProperty::GetSize()
 {
-	return m_stTokenMap.size();
+	return static_cast<DWORD>(m_stTokenMap.size());
 }
 
 bool CProperty::GetVector(const char * c_pszKey, CTokenVector & rTokenVector)
@@ -128,7 +128,7 @@ void GetTimeString(char * str, time_t ct)
 	if (localtime_s(&tm, &seconds) != 0)
 		return;
 
-    _snprintf(str, 15, "%04d%02d%02d%02d%02d%02d",
+    _snprintf_s(str, 15, _TRUNCATE, "%04d%02d%02d%02d%02d%02d",
             tm.tm_year + 1900,
             tm.tm_mon + 1,
             tm.tm_mday,
@@ -158,7 +158,7 @@ bool CProperty::Save(const char * c_pszFileName)
 		m_stCRC.assign(szCRC);
 	}
 
-	file.Write(m_stCRC.c_str(), m_stCRC.length());
+	file.Write(m_stCRC.c_str(), static_cast<int>(m_stCRC.length()));
 	file.Write("\r\n", 2);
 
 	CTokenVectorMap::iterator itor = m_stTokenMap.begin();
@@ -168,12 +168,12 @@ bool CProperty::Save(const char * c_pszFileName)
 	{
 		CTokenVector & tokenVector = itor->second;
 
-		int len = _snprintf(buf, sizeof(buf), "%s\t", itor->first.c_str());
+		int len = _snprintf_s(buf, sizeof(buf), _TRUNCATE, "%s\t", itor->first.c_str());
 		file.Write(buf, len);
 
 		for (DWORD i = 0; i < tokenVector.size(); ++i)
 		{
-			len = _snprintf(buf, sizeof(buf), "\t\"%s\"", tokenVector[i].c_str());
+			len = _snprintf_s(buf, sizeof(buf), _TRUNCATE, "\t\"%s\"", tokenVector[i].c_str());
 			file.Write(buf, len);
 		}
 
@@ -246,7 +246,7 @@ bool CProperty::ReadFromMemory(const void * c_pvData, int iLen, const char * c_p
 	textFileLoader.Bind(iLen - (sizeof(DWORD) + 2), pcData);
 
 	m_stCRC = textFileLoader.GetLineString(0);
-	m_dwCRC = atoi(m_stCRC.c_str());
+	m_dwCRC = static_cast<DWORD>(atoi(m_stCRC.c_str()));
 
 	for (DWORD i = 1; i < textFileLoader.GetLineCount(); ++i)
 	{

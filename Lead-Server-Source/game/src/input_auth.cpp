@@ -12,8 +12,6 @@ extern time_t get_global_time();
 
 bool FN_IS_VALID_LOGIN_STRING(const char *str)
 {
-	const char*	tmp;
-
 	if (!str || !*str)
 		return false;
 
@@ -53,8 +51,11 @@ void CInputAuth::Login(LPDESC d, const char * c_pData)
 
 	if (!g_bAuthServer)
 	{
-		sys_err ("CInputAuth class is not for game server. IP %s might be a hacker.", 
-			inet_ntoa(d->GetAddr().sin_addr));
+		char szAddr[INET_ADDRSTRLEN];
+		if (NULL == inet_ntop(AF_INET, &d->GetAddr().sin_addr, szAddr, sizeof(szAddr)))
+			szAddr[0] = '\0';
+		sys_err ("CInputAuth class is not for game server. IP %s might be a hacker.",
+			szAddr);
 		d->DelayedDisconnect(5);
 		return;
 	}
@@ -150,8 +151,11 @@ int CInputAuth::Analyze(LPDESC d, BYTE bHeader, const char * c_pData)
 
 	if (!g_bAuthServer)
 	{
-		sys_err ("CInputAuth class is not for game server. IP %s might be a hacker.", 
-			inet_ntoa(d->GetAddr().sin_addr));
+		char szAddr[INET_ADDRSTRLEN];
+		if (NULL == inet_ntop(AF_INET, &d->GetAddr().sin_addr, szAddr, sizeof(szAddr)))
+			szAddr[0] = '\0';
+		sys_err ("CInputAuth class is not for game server. IP %s might be a hacker.",
+			szAddr);
 		d->DelayedDisconnect(5);
 		return 0;
 	}

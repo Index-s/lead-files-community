@@ -50,7 +50,7 @@ CGraphicSubImage * CItemData::GetIconImage()
 
 DWORD CItemData::GetLODModelThingCount()
 {
-	return m_pLODModelThingVector.size();
+	return static_cast<DWORD>(m_pLODModelThingVector.size());
 }
 
 BOOL CItemData::GetLODModelThingPointer(DWORD dwIndex, CGraphicThing ** ppModelThing)
@@ -65,7 +65,7 @@ BOOL CItemData::GetLODModelThingPointer(DWORD dwIndex, CGraphicThing ** ppModelT
 
 DWORD CItemData::GetAttachingDataCount()
 {
-	return m_AttachingDataVector.size();
+	return static_cast<DWORD>(m_AttachingDataVector.size());
 }
 
 BOOL CItemData::GetCollisionDataPointer(DWORD dwIndex, const NRaceData::TAttachingData ** c_ppAttachingData)

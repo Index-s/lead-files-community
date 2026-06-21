@@ -66,6 +66,6 @@ int CEventQueue::GetTopKey()
 
 int CEventQueue::Size()
 {
-	return m_pq_queue.size();
+	return static_cast<int>(m_pq_queue.size());
 }
 

@@ -95,7 +95,7 @@ public:
 
 	UINT GetWaterFaceCount();
 
-	void SoftwareTransformPatch_UpdateTerrainLighting(DWORD dwVersion, const D3DLIGHT9& c_rkLight, const D3DMATERIAL9& c_rkMtrl);
+	void SoftwareTransformPatch_UpdateTerrainLighting(DWORD_PTR dwVersion, const D3DLIGHT9& c_rkLight, const D3DMATERIAL9& c_rkMtrl);
 	
 	void BuildTerrainVertexBuffer(HardwareTransformPatch_SSourceVertex* akSrcVertex);
 	void BuildWaterVertexBuffer(SWaterVertex* akSrcVertex, UINT uWaterVertexCount);
@@ -120,7 +120,7 @@ private:
 	BYTE					m_byType;
 
 	bool					m_bNeedUpdate;
-	DWORD					m_dwVersion;
+	DWORD_PTR				m_dwVersion;
 
 public:
 	CGraphicVertexBuffer* GetWaterVertexBufferPointer()	{ return &m_WaterVertexBuffer;}
@@ -194,7 +194,7 @@ public:
 	SoftwareTransformPatch_SSourceVertex* SoftwareTransformPatch_GetTerrainVertexDataPtr();
 	CGraphicVertexBuffer* HardwareTransformPatch_GetVertexBufferPtr();
 
-	void SoftwareTransformPatch_UpdateTerrainLighting(DWORD dwVersion, const D3DLIGHT9& c_rkLight, const D3DMATERIAL9& c_rkMtrl);
+	void SoftwareTransformPatch_UpdateTerrainLighting(DWORD_PTR dwVersion, const D3DLIGHT9& c_rkLight, const D3DMATERIAL9& c_rkMtrl);
 	
 protected:
 	bool					m_bUsed;

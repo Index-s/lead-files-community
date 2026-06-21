@@ -10,7 +10,7 @@
 
 void Normalize(VECTOR * pV1, VECTOR * pV2)
 {
-	float l = sqrtf(pV1->x * pV1->x + pV1->y * pV1->y + pV1->z * pV1->z + 1.0e-12);
+	float l = sqrtf(pV1->x * pV1->x + pV1->y * pV1->y + pV1->z * pV1->z + 1.0e-12f);
 
 	pV2->x = pV1->x / l;
 	pV2->y = pV1->y / l;
@@ -48,7 +48,7 @@ float GetDegreeFromPosition(float x, float y)
 
 float GetDegreeFromPositionXY(long sx, long sy, long ex, long ey)
 {
-	return GetDegreeFromPosition(ex - sx, ey - sy);
+	return GetDegreeFromPosition(static_cast<float>(ex - sx), static_cast<float>(ey - sy));
 }
 
 void GetDeltaByDegree(float fDegree, float fDistance, float *x, float *y)

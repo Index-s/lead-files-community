@@ -201,7 +201,7 @@ LPCHARACTER CHARACTER_MANAGER::FindPC(const char * name)
 
 	// <Factor> Added sanity check
 	LPCHARACTER found = it->second;
-	if (found != NULL && strncasecmp(szName, found->GetName(), CHARACTER_NAME_MAX_LEN) != 0) {
+	if (found != NULL && _strnicmp(szName, found->GetName(), CHARACTER_NAME_MAX_LEN) != 0) {
 		sys_err("[CHARACTER_MANAGER::FindPC] <Factor> %s != %s", name, found->GetName());
 		return NULL;
 	}
@@ -308,7 +308,7 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMobRandomPosition(DWORD dwVnum, long lMapInd
 		if (ch->GetEmpire() == 0)
 			ch->SetEmpire(SECTREE_MANAGER::instance().GetEmpireFromMapIndex(lMapIndex));
 
-	ch->SetRotation(number(0, 360));
+	ch->SetRotation(static_cast<float>(number(0, 360)));
 
 	if (!ch->Show(lMapIndex, x, y, 0, false))
 	{
@@ -320,7 +320,7 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMobRandomPosition(DWORD dwVnum, long lMapInd
 	char buf[512+1];
 	long local_x = x - pkSectreeMap->m_setting.iBaseX;
 	long local_y = y - pkSectreeMap->m_setting.iBaseY;
-	snprintf(buf, sizeof(buf), "spawn %s[%d] random position at %ld %ld %ld %ld (time: %d)", ch->GetName(), dwVnum, x, y, local_x, local_y, get_global_time());
+	snprintf(buf, sizeof(buf), "spawn %s[%d] random position at %ld %ld %ld %ld (time: %d)", ch->GetName(), dwVnum, x, y, local_x, local_y, static_cast<int>(get_global_time()));
 	
 	if (test_server)
 		SendNotice(buf);
@@ -359,9 +359,9 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMob(DWORD dwVnum, long lMapIndex, long x, lo
 		{
 			// SPAWN_BLOCK_LOG
 			static bool s_isLog=quest::CQuestManager::instance().GetEventFlag("spawn_block_log");
-			static DWORD s_nextTime=get_global_time()+10000;
+			static DWORD s_nextTime=static_cast<DWORD>(get_global_time())+10000;
 
-			DWORD curTime=get_global_time();
+			DWORD curTime=static_cast<DWORD>(get_global_time());
 
 			if (curTime>s_nextTime)
 			{
@@ -409,7 +409,7 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMob(DWORD dwVnum, long lMapIndex, long x, lo
 		if (ch->GetEmpire() == 0)
 			ch->SetEmpire(SECTREE_MANAGER::instance().GetEmpireFromMapIndex(lMapIndex));
 
-	ch->SetRotation(iRot);
+	ch->SetRotation(static_cast<float>(iRot));
 
 	if (bShow && !ch->Show(lMapIndex, x, y, z, bSpawnMotion))
 	{
@@ -958,12 +958,12 @@ void CHARACTER_MANAGER::SendScriptToMap(long lMapIndex, const std::string & s)
 
 	p.header = HEADER_GC_SCRIPT;
 	p.skin = 1;
-	p.src_size = s.size();
+	p.src_size = static_cast<WORD>(s.size());
 
 	quest::FSendPacket f;
 	p.size = p.src_size + sizeof(struct packet_script);
 	f.buf.write(&p, sizeof(struct packet_script));
-	f.buf.write(&s[0], s.size());
+	f.buf.write(&s[0], static_cast<int>(s.size()));
 
 	pSecMap->for_each(f);
 }

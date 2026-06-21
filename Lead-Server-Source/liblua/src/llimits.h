@@ -46,10 +46,10 @@ typedef unsigned int lu_hash;
 typedef int ls_hash;
 
 /* an unsigned integer big enough to count the total memory used by Lua; */
-/* it should be at least as large as size_t */
-typedef unsigned long lu_mem;
+/* it should be at least as large as size_t (pointer-sized on LLP64/x64) */
+typedef size_t lu_mem;
 
-#define MAX_LUMEM	ULONG_MAX
+#define MAX_LUMEM	((lu_mem)(~(lu_mem)0))
 
 
 /* an integer big enough to count the number of strings in use */
@@ -69,7 +69,7 @@ typedef unsigned char lu_byte;
 ** this is for hashing only; there is no problem if the integer
 ** cannot hold the whole pointer value
 */
-#define IntPoint(p)  ((lu_hash)(p))
+#define IntPoint(p)  ((lu_hash)(size_t)(p))
 
 
 

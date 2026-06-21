@@ -276,7 +276,7 @@ void CWarMap::UsePotion(LPCHARACTER ch, LPITEM item)
 	if (!item->GetProto())
 		return;
 
-	int iPrice = item->GetProto()->dwGold;
+	int iPrice = static_cast<int>(item->GetProto()->dwGold);
 
 	DWORD gid = ch->GetGuild()->GetID();
 
@@ -288,7 +288,7 @@ void CWarMap::UsePotion(LPCHARACTER ch, LPITEM item)
 
 int CWarMap::STeamData::GetAccumulatedJoinerCount()
 {
-	return set_pidJoiner.size();
+	return static_cast<int>(set_pidJoiner.size());
 }
 
 int CWarMap::STeamData::GetCurJointerCount()
@@ -644,13 +644,13 @@ void CWarMap::SendScorePacket(BYTE bIdx, LPDESC d)
 
 	p.header = HEADER_GC_GUILD;
 	p.subheader = GUILD_SUBHEADER_GC_WAR_SCORE;
-	p.size = sizeof(p) + sizeof(DWORD) + sizeof(DWORD) + sizeof(long);
+	p.size = sizeof(p) + sizeof(DWORD) + sizeof(DWORD) + sizeof(int32_t);
 
 	TEMP_BUFFER buf;
 	buf.write(&p, sizeof(p));
 	buf.write(&m_TeamData[bIdx].dwID, sizeof(DWORD));
 	buf.write(&m_TeamData[bIdx ? 0 : 1].dwID, sizeof(DWORD));
-	buf.write(&m_TeamData[bIdx].iScore, sizeof(long));
+	buf.write(&m_TeamData[bIdx].iScore, sizeof(int32_t));
 
 	if (d)
 		d->Packet(buf.read_peek(), buf.size());

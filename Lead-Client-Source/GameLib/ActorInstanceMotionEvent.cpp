@@ -17,7 +17,7 @@ void CActorInstance::MotionEventProcess()
 	for (DWORD i = 0; i < m_pkCurRaceMotionData->GetMotionEventDataCount(); ++i)
 	{
 		const CRaceMotionData::TMotionEventData * c_pData;
-		if (!m_pkCurRaceMotionData->GetMotionEventDataPointer(i, &c_pData))
+		if (!m_pkCurRaceMotionData->GetMotionEventDataPointer(static_cast<BYTE>(i), &c_pData))
 			continue;
 
 		MotionEventProcess(m_kCurMotNode.dwcurFrame, i, c_pData);
@@ -317,7 +317,7 @@ void CActorInstance::ProcessMotionEventWarp(const CRaceMotionData::TMotionEventD
 
 		// 2004.07.05.myevan. Solved the problem of getting stuck in the Gungsin Tanyeong map. If the target location is a place that cannot be moved, do not move.
 		IBackground& rkBG=GetBackground();
-		if (!rkBG.IsBlock(DestPixelPosition.x, -DestPixelPosition.y))
+		if (!rkBG.IsBlock(static_cast<int>(DestPixelPosition.x), static_cast<int>(-DestPixelPosition.y)))
 			SetPixelPosition(DestPixelPosition);
 
 		LookAt(c_rv3TargetPosition.x, c_rv3TargetPosition.y);

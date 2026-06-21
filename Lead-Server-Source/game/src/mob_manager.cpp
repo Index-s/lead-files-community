@@ -148,7 +148,7 @@ const CMob * CMobManager::Get(const char * c_pszName, bool bIsAbbrev)
 		return it->second;
 	}
 
-	int len = strlen(c_pszName);
+	int len = static_cast<int>(strlen(c_pszName));
 	it = m_map_pkMobByName.begin();
 
 	while (it != m_map_pkMobByName.end())

@@ -387,10 +387,10 @@ namespace quest
 						}
 						else
 						{
-							int nBeOtherLeader = pNewMaster->GetQuestFlag("change_guild_master.be_other_leader");
+							TimeT64 nBeOtherLeader = pNewMaster->GetQuestFlag("change_guild_master.be_other_leader");
 							CQuestManager::instance().GetPC( ch->GetPlayerID() );
 
-							if ( lua_toboolean(L, 6) == true ) nBeOtherLeader = 0;
+							if ( lua_toboolean(L, 6) != 0 ) nBeOtherLeader = 0;
 
 							if ( nBeOtherLeader > get_global_time() )
 							{

@@ -55,9 +55,8 @@ bool CGuildMarkManager::LoadMarkIndex()
 {
 	char buf[64];
 	snprintf(buf, sizeof(buf), "mark/%s_index", m_pathPrefix.c_str());
-	FILE * fp = fopen(buf, "r");
-
-	if (!fp)
+	FILE * fp = NULL;
+	if (fopen_s(&fp, buf, "r") != 0 || !fp)
 		return false;
 
 	DWORD guildID;
@@ -67,7 +66,7 @@ bool CGuildMarkManager::LoadMarkIndex()
 
 	while (fgets(line, sizeof(line)-1, fp))
 	{
-		sscanf(line, "%lu %lu", &guildID, &markID);
+		sscanf_s(line, "%lu %lu", &guildID, &markID);
 		line[0] = '\0';
 		AddMarkIDByGuildID(guildID, markID);
 	}
@@ -82,9 +81,8 @@ bool CGuildMarkManager::SaveMarkIndex()
 {
 	char buf[64];
 	snprintf(buf, sizeof(buf), "mark/%s_index", m_pathPrefix.c_str());
-	FILE * fp = fopen(buf, "w");
-
-	if (!fp)
+	FILE * fp = NULL;
+	if (fopen_s(&fp, buf, "w") != 0 || !fp)
 	{
 		sys_err("MarkManager::SaveMarkData: cannot open index file.");
 		return false;
@@ -188,12 +186,12 @@ DWORD CGuildMarkManager::__AllocMarkID(DWORD guildID)
 
 DWORD CGuildMarkManager::GetMarkImageCount() const
 {
-	return m_mapIdx_Image.size();
+	return static_cast<DWORD>(m_mapIdx_Image.size());
 }
 
 DWORD CGuildMarkManager::GetMarkCount() const
 {
-	return m_mapGID_MarkID.size();
+	return static_cast<DWORD>(m_mapGID_MarkID.size());
 }
 
 // SERVER
@@ -203,8 +201,8 @@ void CGuildMarkManager::CopyMarkIdx(char * pcBuf) const
 
 	for (std::map<DWORD, DWORD>::const_iterator it = m_mapGID_MarkID.begin(); it != m_mapGID_MarkID.end(); ++it)
 	{
-		*(pwBuf++) = it->first; // guild id
-		*(pwBuf++) = it->second; // mark id
+		*(pwBuf++) = static_cast<WORD>(it->first); // guild id
+		*(pwBuf++) = static_cast<WORD>(it->second); // mark id
 	}
 }
 
@@ -324,9 +322,8 @@ const CGuildMarkManager::TGuildSymbol * CGuildMarkManager::GetGuildSymbol(DWORD 
 
 bool CGuildMarkManager::LoadSymbol(const char* filename)
 {
-	FILE* fp = fopen(filename, "rb");
-
-	if (!fp)
+	FILE* fp = NULL;
+	if (fopen_s(&fp, filename, "rb") != 0 || !fp)
 		return true;
 	else
 	{
@@ -354,20 +351,20 @@ bool CGuildMarkManager::LoadSymbol(const char* filename)
 
 void CGuildMarkManager::SaveSymbol(const char* filename)
 {
-	FILE* fp = fopen(filename, "wb");
-	if (!fp)
+	FILE* fp = NULL;
+	if (fopen_s(&fp, filename, "wb") != 0 || !fp)
 	{
 		sys_err("Cannot open Symbol file (name: %s)", filename);
 		return;
 	}
 
-	DWORD symbolCount = m_mapSymbol.size();
+	DWORD symbolCount = static_cast<DWORD>(m_mapSymbol.size());
 	fwrite(&symbolCount, 4, 1, fp);
 
 	for (std::map<DWORD, TGuildSymbol>::iterator it = m_mapSymbol.begin(); it != m_mapSymbol.end(); ++it)
 	{
 		DWORD guildID = it->first;
-		DWORD dwSize = it->second.raw.size();
+		DWORD dwSize = static_cast<DWORD>(it->second.raw.size());
 		fwrite(&guildID, 4, 1, fp);
 		fwrite(&dwSize, 4, 1, fp);
 		fwrite(&it->second.raw[0], 1, dwSize, fp);

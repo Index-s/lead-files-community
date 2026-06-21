@@ -80,7 +80,7 @@ namespace UI
 
 			bool			HasParent()		{ return m_pParent ? true : false; }
 			bool			HasChild()		{ return m_pChildList.empty() ? false : true; }
-			int				GetChildCount()	{ return m_pChildList.size(); }
+			int				GetChildCount()	{ return static_cast<int>(m_pChildList.size()); }
 
 			CWindow *		GetRoot();
 			CWindow *		GetParent();

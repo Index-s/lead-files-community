@@ -67,7 +67,7 @@ bool CShopEx::AddGuest(LPCHARACTER ch,DWORD owner_vid, bool bOtherEmpire)
 	memset(&pack2, 0, sizeof(pack2));
 	
 	pack2.owner_vid = owner_vid;
-	pack2.shop_tab_count = m_vec_shopTabs.size();
+	pack2.shop_tab_count = static_cast<BYTE>(m_vec_shopTabs.size());
 	char temp[8096]; // maximum 1728 * 3
 	char* buf = &temp[0];
 	size_t size = 0;
@@ -103,11 +103,11 @@ bool CShopEx::AddGuest(LPCHARACTER ch,DWORD owner_vid, bool bOtherEmpire)
 		size += sizeof(pack_tab);
 	}
 
-	pack.size = sizeof(pack) + sizeof(pack2) + size;
+	pack.size = static_cast<WORD>(sizeof(pack) + sizeof(pack2) + size);
 
 	ch->GetDesc()->BufferedPacket(&pack, sizeof(TPacketGCShop));
 	ch->GetDesc()->BufferedPacket(&pack2, sizeof(TPacketGCShopStartEx));
-	ch->GetDesc()->Packet(temp, size);
+	ch->GetDesc()->Packet(temp, static_cast<int>(size));
 
 	return true;
 }
@@ -194,7 +194,7 @@ int CShopEx::Buy(LPCHARACTER ch, BYTE pos)
 		ch->PointChange(POINT_GOLD, -dwPrice, false);
 		break;
 	case SHOP_COIN_TYPE_SECONDARY_COIN:
-		ch->RemoveSpecifyTypeItem(ITEM_SECONDARY_COIN, dwPrice);
+		ch->RemoveSpecifyTypeItem(ITEM_SECONDARY_COIN, static_cast<DWORD>(dwPrice));
 		break;
 	}
 

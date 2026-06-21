@@ -53,7 +53,16 @@ namespace quest
 	int _time_to_str(lua_State* L)
 	{
 		time_t curTime = (time_t)lua_tonumber(L, -1);
-		lua_pushstring(L, asctime(gmtime(&curTime)));
+		struct tm _tmbuf;
+		gmtime_r(&curTime, &_tmbuf);
+		struct tm* _tmptr = &_tmbuf;
+		char _abuf[32];
+#ifdef _WIN32
+		asctime_s(_abuf, sizeof(_abuf), _tmptr);
+#else
+		asctime_r(_tmptr, _abuf);
+#endif
+		lua_pushstring(L, _abuf);
 		return 1;
 	}
 
@@ -362,7 +371,7 @@ namespace quest
 
 		sys_log(0, "QUEST: quest: %s player: %s : %s", pc->GetCurrentQuestName().c_str(), ch->GetName(), lua_tostring(L, 2));
 
-		if (true == test_server)
+		if (test_server)
 		{
 			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("QUEST_SYSLOG %s"), lua_tostring(L, 2));
 		}
@@ -409,7 +418,7 @@ namespace quest
 		if (!bgmName)
 			return 0;
 
-		float bgmVol = lua_isnumber(L, 3) ? lua_tonumber(L, 3) : (1.0f/5.0f)*0.1f;
+		float bgmVol = lua_isnumber(L, 3) ? static_cast<float>(lua_tonumber(L, 3)) : (1.0f/5.0f)*0.1f;
 
 		CHARACTER_AddBGMInfo(mapIndex, bgmName, bgmVol);
 
@@ -686,7 +695,7 @@ namespace quest
 
 	int _get_global_time(lua_State* L)
 	{
-		lua_pushnumber(L, get_global_time());
+		lua_pushnumber(L, static_cast<lua_Number>(get_global_time()));
 		return 1;
 	}
 	
@@ -845,12 +854,12 @@ namespace quest
 			std::string stQuestName	= lua_tostring(L, 1);
 			stQuestName += ".__status";
 
-			int nRet = pPC->GetFlag( stQuestName.c_str() ); 
+			TimeT64 nRet = pPC->GetFlag( stQuestName.c_str() );
 
-			lua_pushnumber(L, nRet );
+			lua_pushnumber(L, static_cast<lua_Number>(nRet) );
 
 			if ( test_server )
-				sys_log(0,"Get_quest_state name %s value %d", stQuestName.c_str(), nRet );
+				sys_log(0,"Get_quest_state name %s value %lld", stQuestName.c_str(), nRet );
 		}
 		else
 		{
@@ -878,7 +887,7 @@ namespace quest
 
 		TPacketGGNotice p;
 		p.bHeader = HEADER_GG_NOTICE;
-		p.lSize = strlen(s.str().c_str()) + 1;
+		p.lSize = static_cast<long>(strlen(s.str().c_str()) + 1);
 
 		TEMP_BUFFER buf;
 		buf.write(&p, sizeof(p));
@@ -985,12 +994,12 @@ namespace quest
 
 		packet_script.header = HEADER_GC_SCRIPT;
 		packet_script.skin = CQuestManager::QUEST_SKIN_NORMAL;
-		packet_script.src_size = Script.size();
+		packet_script.src_size = static_cast<WORD>(Script.size());
 		packet_script.size = packet_script.src_size + sizeof(struct packet_script);
 
 		FSendPacket f;
 		f.buf.write(&packet_script, sizeof(struct packet_script));
-		f.buf.write(&Script[0], Script.size());
+		f.buf.write(&Script[0], static_cast<int>(Script.size()));
 
 		LPSECTREE_MAP pSecMap = SECTREE_MANAGER::instance().GetMap( iMapIndex );
 
@@ -1018,7 +1027,7 @@ namespace quest
 
 	int _kill_all_in_map ( lua_State * L )
 	{
-		LPSECTREE_MAP pSecMap = SECTREE_MANAGER::instance().GetMap( lua_tonumber(L,1) );
+		LPSECTREE_MAP pSecMap = SECTREE_MANAGER::instance().GetMap( static_cast<long>(lua_tonumber(L,1)) );
 
 		if (NULL != pSecMap)
 		{
@@ -1093,7 +1102,7 @@ namespace quest
 
 		if (pChar != NULL)
 		{
-			if (lua_isstring(L, 1) != true && lua_isstring(L, 2) != true)
+			if (lua_isstring(L, 1) == 0 && lua_isstring(L, 2) == 0)
 			{
 				lua_pushboolean(L, false);
 				return 1;
@@ -1123,7 +1132,7 @@ namespace quest
 		}
 
 		const DWORD dwVnum = static_cast<DWORD>(lua_tonumber(L, 1));
-		const size_t count = MINMAX(1, static_cast<size_t>(lua_tonumber(L, 2)), 10);
+		const size_t count = MINMAX(1, static_cast<int>(lua_tonumber(L, 2)), 10);
 		const bool isAggresive = static_cast<bool>(lua_toboolean(L, 3));
 		size_t SpawnCount = 0;
 
@@ -1154,7 +1163,7 @@ namespace quest
 			sys_log(0, "QUEST Spawn Monstster: VNUM(%u) COUNT(%u) isAggresive(%b)", dwVnum, SpawnCount, isAggresive);
 		}
 
-		lua_pushnumber(L, SpawnCount);
+		lua_pushnumber(L, static_cast<lua_Number>(SpawnCount));
 
 		return 1;
 	}
@@ -1210,10 +1219,10 @@ namespace quest
 
 	int _purge_area( lua_State* L )
 	{
-		int x1 = lua_tonumber(L, 1);
-		int y1 = lua_tonumber(L, 2);
-		int x2 = lua_tonumber(L, 3);
-		int y2 = lua_tonumber(L, 4);
+		int x1 = static_cast<int>(lua_tonumber(L, 1));
+		int y1 = static_cast<int>(lua_tonumber(L, 2));
+		int x2 = static_cast<int>(lua_tonumber(L, 3));
+		int y2 = static_cast<int>(lua_tonumber(L, 4));
 
 		const int mapIndex = SECTREE_MANAGER::instance().GetMapIndex( x1, y1 );
 
@@ -1268,15 +1277,15 @@ namespace quest
 
 	int _warp_all_in_area_to_area( lua_State* L )
 	{
-		int from_x1 = lua_tonumber(L, 1);
-		int from_y1 = lua_tonumber(L, 2);
-		int from_x2 = lua_tonumber(L, 3);
-		int from_y2 = lua_tonumber(L, 4);
+		int from_x1 = static_cast<int>(lua_tonumber(L, 1));
+		int from_y1 = static_cast<int>(lua_tonumber(L, 2));
+		int from_x2 = static_cast<int>(lua_tonumber(L, 3));
+		int from_y2 = static_cast<int>(lua_tonumber(L, 4));
 
-		int to_x1 = lua_tonumber(L, 5);
-		int to_y1 = lua_tonumber(L, 6);
-		int to_x2 = lua_tonumber(L, 7);
-		int to_y2 = lua_tonumber(L, 8);
+		int to_x1 = static_cast<int>(lua_tonumber(L, 5));
+		int to_y1 = static_cast<int>(lua_tonumber(L, 6));
+		int to_x2 = static_cast<int>(lua_tonumber(L, 7));
+		int to_y2 = static_cast<int>(lua_tonumber(L, 8));
 
 		const int mapIndex = SECTREE_MANAGER::instance().GetMapIndex( from_x1, from_y1 );
 
@@ -1295,7 +1304,7 @@ namespace quest
 
 			pSectree->for_each(func);
 
-			lua_pushnumber(L, func.warpCount);
+			lua_pushnumber(L, static_cast<lua_Number>(func.warpCount));
 			sys_log(0, "_warp_all_in_area_to_area: %u character warp", func.warpCount);
 			return 1;
 		}

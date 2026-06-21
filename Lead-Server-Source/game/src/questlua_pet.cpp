@@ -42,7 +42,7 @@ namespace quest
 		}
 
 		// of the summoned beast vnum
-		DWORD mobVnum= lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
+		DWORD mobVnum= lua_isnumber(L, 1) ? static_cast<DWORD>(lua_tonumber(L, 1)) : 0;
 
 		// Summoner's name
 		const char* petName = lua_isstring(L, 2) ? lua_tostring(L, 2) : 0;
@@ -70,7 +70,7 @@ namespace quest
 			return 0;
 
 		// of the summoned beast vnum
-		DWORD mobVnum= lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
+		DWORD mobVnum= lua_isnumber(L, 1) ? static_cast<DWORD>(lua_tonumber(L, 1)) : 0;
 
 		petSystem->Unsummon(mobVnum);
 		return 1;
@@ -102,7 +102,7 @@ namespace quest
 			return 0;
 
 		// of the summoned beast vnum
-		DWORD mobVnum= lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
+		DWORD mobVnum= lua_isnumber(L, 1) ? static_cast<DWORD>(lua_tonumber(L, 1)) : 0;
 
 		CPetActor* petActor = petSystem->GetByVnum(mobVnum);
 
@@ -122,7 +122,7 @@ namespace quest
 		if (0 == petSystem)
 			return 0;
 
-		DWORD mobVnum = lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
+		DWORD mobVnum = lua_isnumber(L, 1) ? static_cast<DWORD>(lua_tonumber(L, 1)) : 0;
 
 		CPetActor* petActor = petSystem->GetByVnum(mobVnum);
 		if (NULL == petActor)

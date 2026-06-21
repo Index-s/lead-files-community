@@ -52,7 +52,8 @@ bool CBoundaryShapeManager::LoadBsfFile(const char* pszFilename)
 	bool bSuccess = true;
 	try
 	{
-		FILE* pFile=fopen(pszFilename, "rb");
+		FILE* pFile = NULL;
+		fopen_s(&pFile, pszFilename, "rb");
 		if (pFile)
 		{
 			// number of boundary shapes
@@ -173,7 +174,7 @@ bool CBoundaryShapeManager::PointInShape(SBoundaryShape& sShape, float fX, float
 
 	for (DWORD k = 0; k < sShape.m_vContours.size(); ++k)
 	{
-		for (DWORD i = 0, j = sShape.m_vContours[k].size() - 1; i < sShape.m_vContours[k].size(); j = i++)
+		for (size_t i = 0, j = sShape.m_vContours[k].size() - 1; i < sShape.m_vContours[k].size(); j = i++)
 		{
 			if ((((sShape.m_vContours[k][i][1] <= fY) && (fY < sShape.m_vContours[k][j][1])) ||
 				 ((sShape.m_vContours[k][j][1] <= fY) && (fY < sShape.m_vContours[k][i][1]))) &&
@@ -198,7 +199,7 @@ bool CBoundaryShapeManager::RandomPoint(float& fX, float& fY)
 	if (m_vBoundaries.size() > 0)
 	{
 		// pick a random boundary shape
-		int nIndex = random_range(0, m_vBoundaries.size() - 1);
+		int nIndex = random_range(0, static_cast<long>(m_vBoundaries.size() - 1));
 		SBoundaryShape& sShape = m_vBoundaries[nIndex];
 
 		// pick a point at random within its extents

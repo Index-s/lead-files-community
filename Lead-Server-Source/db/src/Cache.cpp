@@ -64,16 +64,16 @@ void CItemCache::OnFlush()
 	}
 	else
 	{
-		long alSockets[ITEM_SOCKET_MAX_NUM];
+		TimeT64 alSockets[ITEM_SOCKET_MAX_NUM];
 		TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 		bool isSocket = false, isAttr = false;
 
-		memset(&alSockets, 0, sizeof(long) * ITEM_SOCKET_MAX_NUM);
+		memset(&alSockets, 0, sizeof(alSockets));
 		memset(&aAttr, 0, sizeof(TPlayerItemAttribute) * ITEM_ATTRIBUTE_MAX_NUM);
 
 		TPlayerItem * p = &m_data;
 
-		if (memcmp(alSockets, p->alSockets, sizeof(long) * ITEM_SOCKET_MAX_NUM))
+		if (memcmp(alSockets, p->alSockets, sizeof(alSockets)))
 			isSocket = true;
 
 		if (memcmp(aAttr, p->aAttr, sizeof(TPlayerItemAttribute) * ITEM_ATTRIBUTE_MAX_NUM))
@@ -95,9 +95,9 @@ void CItemCache::OnFlush()
 		{
 			iLen += snprintf(szColumns + iLen, sizeof(szColumns) - iLen, ", socket0, socket1, socket2");
 			iValueLen += snprintf(szValues + iValueLen, sizeof(szValues) - iValueLen,
-						", %d, %d, %d", p->alSockets[0], p->alSockets[1], p->alSockets[2]);
+						", %lld, %lld, %lld", (long long) p->alSockets[0], (long long) p->alSockets[1], (long long) p->alSockets[2]);
 			iUpdateLen += snprintf(szUpdate + iUpdateLen, sizeof(szUpdate) - iUpdateLen,
-					", socket0=%d, socket1=%d, socket2=%d", p->alSockets[0], p->alSockets[1], p->alSockets[2]);
+					", socket0=%lld, socket1=%lld, socket2=%lld", (long long) p->alSockets[0], (long long) p->alSockets[1], (long long) p->alSockets[2]);
 		}
 
 		if (isAttr)
@@ -224,12 +224,12 @@ void CItemPriceListTableCache::UpdateList(const TItemPriceListTable* pUpdateList
 			sizeAddOldDataSize = tmpvec.size();
 
 		thecore_memcpy(m_data.aPriceInfo + pUpdateList->byCount, &tmpvec[0], sizeof(TItemPriceInfo) * sizeAddOldDataSize);
-		m_data.byCount += sizeAddOldDataSize;
+		m_data.byCount += static_cast<BYTE>(sizeAddOldDataSize);
 
-		nDeletedNum = tmpvec.size() - sizeAddOldDataSize;
+		nDeletedNum = static_cast<int>(tmpvec.size() - sizeAddOldDataSize);
 	}
 	else
-		nDeletedNum = tmpvec.size();
+		nDeletedNum = static_cast<int>(tmpvec.size());
 
 	m_bNeedQuery = true;
 
@@ -256,8 +256,8 @@ void CItemPriceListTableCache::OnFlush()
 	for (int idx = 0; idx < m_data.byCount; ++idx)
 	{
 		snprintf(szQuery, sizeof(szQuery),
-				"INSERT INTO myshop_pricelist%s(owner_id, item_vnum, price) VALUES(%u, %u, %u)", 
-				GetTablePostfix(), m_data.dwOwnerID, m_data.aPriceInfo[idx].dwVnum, m_data.aPriceInfo[idx].dwPrice);
+				"INSERT INTO myshop_pricelist%s(owner_id, item_vnum, price) VALUES(%u, %u, %lld)",
+				GetTablePostfix(), m_data.dwOwnerID, m_data.aPriceInfo[idx].dwVnum, static_cast<long long>(m_data.aPriceInfo[idx].dwPrice));
 		CDBManager::instance().ReturnQuery(szQuery, QID_ITEMPRICE_SAVE, 0, NULL);
 	}
 

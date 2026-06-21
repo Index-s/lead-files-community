@@ -62,7 +62,7 @@ const char *first_han(const BYTE *str)
 	" Whoop ", "?", "?", "?", "" 
     };
 
-    len = strlen((const char*) str);
+    len = (int) strlen((const char*) str);
 
     if (len < 2)
 	return p;
@@ -94,7 +94,7 @@ int under_han(const void * orig)
     BYTE high, low;
     int len;
 
-    len = strlen((const char*) str);
+    len = (int) strlen((const char*) str);
 
     if (len < 2) 
 	return 0;

@@ -62,13 +62,13 @@ bool NRaceData::THitData::Load(CTextFileLoader & rTextFileLoader)
 		{
 			float time;
 			NRaceData::THitTimePosition hp;
-			time = atof(it++->c_str());
-			hp.v3LastPosition.x = atof(it++->c_str());
-			hp.v3LastPosition.y = atof(it++->c_str());
-			hp.v3LastPosition.z = atof(it++->c_str());
-			hp.v3Position.x = atof(it++->c_str());
-			hp.v3Position.y = atof(it++->c_str());
-			hp.v3Position.z = atof(it++->c_str());
+			time = static_cast<float>(atof(it++->c_str()));
+			hp.v3LastPosition.x = static_cast<float>(atof(it++->c_str()));
+			hp.v3LastPosition.y = static_cast<float>(atof(it++->c_str()));
+			hp.v3LastPosition.z = static_cast<float>(atof(it++->c_str()));
+			hp.v3Position.x = static_cast<float>(atof(it++->c_str()));
+			hp.v3Position.y = static_cast<float>(atof(it++->c_str()));
+			hp.v3Position.z = static_cast<float>(atof(it++->c_str()));
 
 			mapHitPosition[time] = hp;
 		}
@@ -272,9 +272,9 @@ void NRaceData::SaveCollisionData(FILE * File, int iTabCount, const TCollisionDa
 // Attaching Data
 void NRaceData::SaveAttachingData(FILE * File, int iTabCount, const TAttachingDataVector & c_rAttachingDataVector)
 {
-	DWORD dwAttachingDataCount = c_rAttachingDataVector.size();
+	size_t dwAttachingDataCount = c_rAttachingDataVector.size();
 
-	PrintfTabs(File, iTabCount, "AttachingDataCount       %d\n", dwAttachingDataCount);
+	PrintfTabs(File, iTabCount, "AttachingDataCount       %d\n", (int)dwAttachingDataCount);
 	PrintfTabs(File, iTabCount, "\n");
 
 	for (DWORD i = 0; i < dwAttachingDataCount; ++i)

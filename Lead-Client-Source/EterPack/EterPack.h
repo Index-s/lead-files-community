@@ -24,7 +24,9 @@ namespace eterpack
 	const DWORD	c_IndexCC = MAKEFOURCC('E', 'P', 'K', 'D');
 	const DWORD c_Version = 2;
 								// FourCC + Version + m_indexCount
-	const DWORD c_HeaderSize = sizeof(DWORD) + sizeof(DWORD) + sizeof(long);
+	// Fixed-width 'int' (4 bytes on every target) keeps the .epk/.eix on-disk
+	// header/index identical across Win64 (LLP64, long=4) and LP64 (long=8).
+	const DWORD c_HeaderSize = sizeof(DWORD) + sizeof(DWORD) + sizeof(int);
 };
 
 enum EEterPackTypes
@@ -47,17 +49,17 @@ enum EEterPackTypes
 #pragma pack(push, 4)
 typedef struct SEterPackIndex
 {
-	long			id;
+	int				id;
 	char			filename[FILENAME_MAX_LEN + 1];
 	DWORD			filename_crc;
-	long			real_data_size;
-	long			data_size;
+	int				real_data_size;
+	int				data_size;
 #ifdef CHECKSUM_CHECK_MD5
-	BYTE			MD5Digest[16];	
+	BYTE			MD5Digest[16];
 #else
 	DWORD			data_crc;
 #endif
-	long			data_position;
+	int				data_position;
 	char			compressed_type;
 } TEterPackIndex;
 #pragma pack(pop)
@@ -166,7 +168,7 @@ class CEterPack
 		char*					m_file_data;
 		unsigned				m_file_size;
 
-		long					m_indexCount;
+		int						m_indexCount;	// 4 bytes on every target (was 'long' -> 8 on LP64)
 		bool					m_bEncrypted;
 
 		char					m_dbName[DBNAME_MAX_LEN+1];

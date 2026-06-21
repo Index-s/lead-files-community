@@ -18,14 +18,14 @@ INCDIR = -I$(EXTERN_DIR)/include \
 
 LIBDIR = -L../../libthecore/lib -L../../libsql -L../../libpoly -L../../libgame/lib
 
-#CFLAGS = -m32 -g -Wall -O2 -pipe -fno-rtti -fno-exceptions -pthread -D_THREAD_SAFE
-CFLAGS = -m32 -march=i686 -msse2 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -fno-stack-protector -fno-strict-aliasing
+#CFLAGS = -m64 -g -Wall -O2 -pipe -fno-rtti -fno-exceptions -pthread -D_THREAD_SAFE
+CFLAGS = -m64 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -fno-stack-protector -fno-strict-aliasing
 
 LIBS = ../../libsql/libsql.a \
        ../../libpoly/libpoly.a \
        ../../libgame/lib/libgame.a \
        $(EXTERN_DIR)/lib/mysqlclient.a \
-       /usr/lib32/libssl.a /usr/lib32/libcrypto.a \
+       /usr/lib/libssl.a /usr/lib/libcrypto.a \
        ../../libthecore/lib/libthecore.a \
        -lm -lz
 

@@ -46,14 +46,14 @@ const char * GetPropertyExtension(DWORD dwType)
 const char * IntegerNumberToString(int iNumber)
 {
 	static char szString[16+1];
-	_snprintf(szString, sizeof(szString), "%d", iNumber);
+	_snprintf_s(szString, sizeof(szString), _TRUNCATE, "%d", iNumber);
 	return szString;
 }
 
 const char * FloatNumberToString(float fNumber)
 {
 	static char szString[16+1];
-	_snprintf(szString, sizeof(szString), "%f", fNumber);
+	_snprintf_s(szString, sizeof(szString), _TRUNCATE, "%f", fNumber);
 	return szString;
 }
 
@@ -99,8 +99,8 @@ bool PropertyTreeStringToData(CProperty * pProperty, TPropertyTree * pData)
 		return false;
 
 	pData->strFileName = c_pszTreeName;
-	pData->fSize = atof(c_pszTreeSize);
-	pData->fVariance = atof(c_pszTreeVariance);
+	pData->fSize = static_cast<float>(atof(c_pszTreeSize));
+	pData->fVariance = static_cast<float>(atof(c_pszTreeVariance));
 
 	return true;
 }
@@ -148,7 +148,7 @@ bool PropertyBuildingStringToData(CProperty * pProperty, TPropertyBuilding * pDa
 	}
 	else
 	{
-		pData->isShadowFlag = atoi(c_pszShadowFlag);
+		pData->isShadowFlag = static_cast<BOOL>(atoi(c_pszShadowFlag));
 	}
 
 	return true;
@@ -250,10 +250,10 @@ bool PropertyAmbienceStringToData(CProperty * pProperty, TPropertyAmbience * pDa
 		return false;
 
 	pData->strPlayType = c_pszPlayType;
-	pData->fPlayInterval = atof(c_pszPlayInterval);
-	pData->fPlayIntervalVariation = atof(c_pszPlayIntervalVariation);
+	pData->fPlayInterval = static_cast<float>(atof(c_pszPlayInterval));
+	pData->fPlayIntervalVariation = static_cast<float>(atof(c_pszPlayIntervalVariation));
 	if (c_pszMaxVolumeAreaPercentage)
-		pData->fMaxVolumeAreaPercentage = atof(c_pszMaxVolumeAreaPercentage);
+		pData->fMaxVolumeAreaPercentage = static_cast<float>(atof(c_pszMaxVolumeAreaPercentage));
 	for (CTokenVector::iterator itor = AmbienceSoundVector.begin(); itor != AmbienceSoundVector.end(); ++itor)
 		pData->AmbienceSoundVector.push_back(*itor);
 

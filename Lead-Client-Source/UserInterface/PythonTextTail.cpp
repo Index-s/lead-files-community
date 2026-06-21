@@ -42,11 +42,11 @@ CGraphicText * ms_pFont = NULL;
 void CPythonTextTail::GetInfo(std::string* pstInfo)
 {
 	char szInfo[256];
-	sprintf(szInfo, "TextTail: ChatTail %d, ChrTail (Map %d, List %d), ItemTail (Map %d, List %d), Pool %d", 
-		m_ChatTailMap.size(), 
-		m_CharacterTextTailMap.size(), m_CharacterTextTailList.size(), 
-		m_ItemTextTailMap.size(), m_ItemTextTailList.size(), 
-		m_TextTailPool.GetCapacity());
+	sprintf_s(szInfo, sizeof(szInfo), "TextTail: ChatTail %llu, ChrTail (Map %llu, List %llu), ItemTail (Map %llu, List %llu), Pool %llu",
+		m_ChatTailMap.size(),
+		m_CharacterTextTailMap.size(), m_CharacterTextTailList.size(),
+		m_ItemTextTailMap.size(), m_ItemTextTailList.size(),
+		(unsigned long long)m_TextTailPool.GetCapacity());
 
 	pstInfo->append(szInfo);
 }
@@ -221,7 +221,7 @@ void CPythonTextTail::ArrangeTextTail()
 		if (pMarkInstance && pGuildNameInstance)
 		{
 			int iWidth, iHeight;
-			int iImageHalfSize = pMarkInstance->GetWidth()/2 + c_fxMarkPosition;
+			float iImageHalfSize = pMarkInstance->GetWidth()/2 + c_fxMarkPosition;
 			pGuildNameInstance->GetTextSize(&iWidth, &iHeight);
 
 			pMarkInstance->SetPosition(pTextTail->x - iWidth/2 - iImageHalfSize, pTextTail->y - c_fyMarkPosition);

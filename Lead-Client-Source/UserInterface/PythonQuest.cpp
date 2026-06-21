@@ -106,7 +106,7 @@ void CPythonQuest::SetQuestIconFileName(DWORD dwIndex, const char * c_szIconFile
 
 int CPythonQuest::GetQuestCount()
 {
-	return m_QuestInstanceContainer.size();
+	return static_cast<int>(m_QuestInstanceContainer.size());
 }
 
 bool CPythonQuest::GetQuestInstancePtr(DWORD dwArrayIndex, SQuestInstance ** ppQuestInstance)

@@ -170,7 +170,7 @@ int FindColorTagStartPosition(const wchar_t * src, int src_len)
         while (len > 1) // At least 2 characters must be checked.
         {
             if (*cur == L'c' && *(cur - 1) == L'|')
-                return (src - cur) + 1;
+                return static_cast<int>((src - cur) + 1);
 
             --cur;
             --len;
@@ -196,7 +196,7 @@ int FindColorTagEndPosition(const wchar_t * src, int src_len)
 		while (left > 1)
 		{
 			if (*cur == L'|' && *(cur + 1) == L'r')
-				return (cur - src) + 1;
+				return static_cast<int>((cur - src) + 1);
 
 			--left;
 			++cur;

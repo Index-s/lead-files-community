@@ -96,7 +96,7 @@ void CNetworkAddress::GetIP(char* szIP, int len)
 	BYTE IPs[4];
 	*((DWORD*)IPs)=m_sockAddrIn.sin_addr.s_addr;
 
-	_snprintf(szIP, len, "%d.%d.%d.%d", IPs[0], IPs[1], IPs[2], IPs[3]);
+	_snprintf_s(szIP, len, _TRUNCATE, "%d.%d.%d.%d", IPs[0], IPs[1], IPs[2], IPs[3]);
 }
 			
 int CNetworkAddress::GetPort()

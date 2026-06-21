@@ -321,20 +321,20 @@ void MessengerManager::SendList(MessengerManager::keyA account)
 			pack_online.connected = 1;
 
 			// Online
-			pack_online.length = it->size();
+			pack_online.length = static_cast<BYTE>(it->size());
 
 			buf.write(&pack_online, sizeof(TPacketGCMessengerListOnline));
-			buf.write(it->c_str(), it->size());
+			buf.write(it->c_str(), static_cast<int>(it->size()));
 		}
 		else
 		{
 			pack_offline.connected = 0;
 
 			// Offline
-			pack_offline.length = it->size();
+			pack_offline.length = static_cast<BYTE>(it->size());
 
 			buf.write(&pack_offline, sizeof(TPacketGCMessengerListOffline));
-			buf.write(it->c_str(), it->size());
+			buf.write(it->c_str(), static_cast<int>(it->size()));
 		}
 
 		++it;
@@ -360,7 +360,7 @@ void MessengerManager::SendLogin(MessengerManager::keyA account, MessengerManage
 	if (ch->GetGMLevel() == GM_PLAYER && gm_get_level(companion.c_str()) != GM_PLAYER)
 		return;
 
-	BYTE bLen = companion.size();
+	BYTE bLen = static_cast<BYTE>(companion.size());
 
 	TPacketGCMessenger pack;
 
@@ -370,7 +370,7 @@ void MessengerManager::SendLogin(MessengerManager::keyA account, MessengerManage
 
 	d->BufferedPacket(&pack, sizeof(TPacketGCMessenger));
 	d->BufferedPacket(&bLen, sizeof(BYTE));
-	d->Packet(companion.c_str(), companion.size());
+	d->Packet(companion.c_str(), static_cast<int>(companion.size()));
 }
 
 void MessengerManager::SendLogout(MessengerManager::keyA account, MessengerManager::keyA companion)
@@ -384,7 +384,7 @@ void MessengerManager::SendLogout(MessengerManager::keyA account, MessengerManag
 	if (!d)
 		return;
 
-	BYTE bLen = companion.size();
+	BYTE bLen = static_cast<BYTE>(companion.size());
 
 	TPacketGCMessenger pack;
 
@@ -394,6 +394,6 @@ void MessengerManager::SendLogout(MessengerManager::keyA account, MessengerManag
 
 	d->BufferedPacket(&pack, sizeof(TPacketGCMessenger));
 	d->BufferedPacket(&bLen, sizeof(BYTE));
-	d->Packet(companion.c_str(), companion.size());
+	d->Packet(companion.c_str(), static_cast<int>(companion.size()));
 }
 

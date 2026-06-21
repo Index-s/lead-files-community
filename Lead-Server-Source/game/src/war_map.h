@@ -157,7 +157,7 @@ class CWarMapManager : public singleton<CWarMapManager>
 		long		CreateWarMap(const TGuildWarInfo & r_WarInfo, DWORD dwGuildID1, DWORD dwGuildID2);
 		void		DestroyWarMap(CWarMap* pMap);
 		CWarMap *	Find(long lMapIndex);
-		int		CountWarMap() { return m_mapWarMap.size(); }
+		int		CountWarMap() { return static_cast<int>(m_mapWarMap.size()); }
 
 		void		OnShutdown();
 

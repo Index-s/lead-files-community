@@ -1,0 +1,11 @@
+CHANNEL: 1
+HOSTNAME: MarkServer
+PORT: 13000
+P2P_PORT: 14000
+DB_ADDR: 127.0.0.1
+DB_PORT: 15000
+MAP_ALLOW:
+PLAYER_SQL: 127.0.0.1 metin2 password player
+COMMON_SQL: 127.0.0.1 metin2 password common
+LOG_SQL: 127.0.0.1 metin2 password log
+mark_server: 1

@@ -4,6 +4,7 @@
 #include "../eterBase/Utils.h"
 #include "msctf.h"
 #include <oleauto.h>
+#include <cstdint>
 
 #define COUNTOF(a)						( sizeof( a ) / sizeof( ( a )[0] ) )
 
@@ -24,11 +25,11 @@ wchar_t	CIME::m_wText[IMESTR_MAXLEN];
 #define LANG_CHS						MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)
 
 // Chinese Traditional
-#define _CHT_HKL_DAYI					((HKL)0xE0060404)	// DaYi
-#define _CHT_HKL_NEW_PHONETIC			((HKL)0xE0080404)	// New Phonetic
-#define _CHT_HKL_NEW_CHANG_JIE			((HKL)0xE0090404)	// New Chang Jie
-#define _CHT_HKL_NEW_QUICK				((HKL)0xE00A0404)	// New Quick
-#define _CHT_HKL_HK_CANTONESE			((HKL)0xE00B0404)	// Hong Kong Cantonese
+#define _CHT_HKL_DAYI					((HKL)(uintptr_t)0xE0060404)	// DaYi
+#define _CHT_HKL_NEW_PHONETIC			((HKL)(uintptr_t)0xE0080404)	// New Phonetic
+#define _CHT_HKL_NEW_CHANG_JIE			((HKL)(uintptr_t)0xE0090404)	// New Chang Jie
+#define _CHT_HKL_NEW_QUICK				((HKL)(uintptr_t)0xE00A0404)	// New Quick
+#define _CHT_HKL_HK_CANTONESE			((HKL)(uintptr_t)0xE00B0404)	// Hong Kong Cantonese
 
 #define CHT_IMEFILENAME1				"TINTLGNT.IME" // New Phonetic
 #define CHT_IMEFILENAME2				"CINTLGNT.IME" // New Chang Jie
@@ -44,10 +45,10 @@ wchar_t	CIME::m_wText[IMESTR_MAXLEN];
 #define IMEID_CHT_VER_VISTA				(LANG_CHT | MAKEIMEVERSION(7, 0))	// All TSF TIP under Cicero UI-less mode: a hack to make GetImeId() return non-zero value
 
 // Chinese Simplized
-#define _CHS_HKL						((HKL)0xE00E0804) // MSPY
-#define _CHS_HKL_QQPINYIN				((HKL)0xE0210804) // QQ PinYin
-#define _CHS_HKL_SOGOU					((HKL)0xE0220804) // Sougou PinYin
-#define _CHS_HKL_GOOGLEPINYIN			((HKL)0xE0230804) // Google PinYin
+#define _CHS_HKL						((HKL)(uintptr_t)0xE00E0804) // MSPY
+#define _CHS_HKL_QQPINYIN				((HKL)(uintptr_t)0xE0210804) // QQ PinYin
+#define _CHS_HKL_SOGOU					((HKL)(uintptr_t)0xE0220804) // Sougou PinYin
+#define _CHS_HKL_GOOGLEPINYIN			((HKL)(uintptr_t)0xE0230804) // Google PinYin
 
 #define CHS_IMEFILENAME1			    "PINTLGNT.IME"		// MSPY1.5/2/3
 #define CHS_IMEFILENAME2			    "MSSCIPYA.IME"		// MSPY3 for OfficeXP
@@ -311,7 +312,7 @@ bool CIME::Initialize(HWND hWnd)
 	ms_bDisableIMECompletely = false;
     
 	if(GetSystemDirectoryA(szPath, MAX_PATH+1)) {
-		strcat(szPath, "\\imm32.dll");
+		strcat_s(szPath, sizeof(szPath), "\\imm32.dll");
 		ms_hImm32Dll = LoadLibraryA(szPath);
 		if(ms_hImm32Dll)
 		{
@@ -421,12 +422,12 @@ int CIME::GetReading(std::string & rstrText)
 	
 	if(ms_wstrReading.size() == 0)
 		return 0;
-	int readingLen = WideCharToMultiByte(ms_uOutputCodePage, 0, &ms_wstrReading[0], ms_wstrReading.size(), reading, sizeof(reading), NULL, NULL);
+	int readingLen = WideCharToMultiByte(ms_uOutputCodePage, 0, &ms_wstrReading[0], static_cast<int>(ms_wstrReading.size()), reading, sizeof(reading), NULL, NULL);
 
 	rstrText.append(GetCodePageText());
 	rstrText.append(reading, reading + readingLen);
 
-	return rstrText.size();
+	return static_cast<int>(rstrText.size());
 }
 
 int CIME::GetReadingError()
@@ -456,10 +457,10 @@ void CIME::SetText(const char* szText, int len)
 
 	int m_wTextLen = sizeof(m_wText)/sizeof(wchar_t);
 
-	ms_lastpos = MultiByteToWideChar(ms_uInputCodePage, 0, begin, iter-begin, m_wText, m_wTextLen);
+	ms_lastpos = MultiByteToWideChar(ms_uInputCodePage, 0, begin, static_cast<int>(iter-begin), m_wText, m_wTextLen);
 
 	if (iter < end)
-		ms_lastpos += MultiByteToWideChar(ReadToken(iter), 0, (iter+5), end-(iter+5), m_wText+ms_lastpos, m_wTextLen-ms_lastpos);
+		ms_lastpos += MultiByteToWideChar(ReadToken(iter), 0, (iter+5), static_cast<int>(end-(iter+5)), m_wText+ms_lastpos, m_wTextLen-ms_lastpos);
 
 	ms_curpos = min(ms_curpos, ms_lastpos);
 }
@@ -503,7 +504,7 @@ int  CIME::GetText(std::string & rstrText, bool addCodePage)
 		rstrText.append(text+i, text+len);
 	}
 
-	return rstrText.size();
+	return static_cast<int>(rstrText.size());
 }
 
 const char* CIME::GetCodePageText()
@@ -515,7 +516,7 @@ const char* CIME::GetCodePageText()
 
 	if (outCodePage != defCodePage)
 	{
-		sprintf(szCodePage, "@%04d", outCodePage);
+		sprintf_s(szCodePage, sizeof(szCodePage), "@%04d", outCodePage);
 	}
 	else
 	{
@@ -549,7 +550,7 @@ int  CIME::GetCandidate(DWORD index, std::string & rstrText)
 	if(wszText == NULL)
 		return 0;
 
-	int wTextLen = wcslen(wszText);
+	int wTextLen = static_cast<int>(wcslen(wszText));
 	if(wTextLen == 0)
 		return 0;
 
@@ -642,7 +643,7 @@ void CIME::PasteTextFromClipBoard()
 	const char* begin = strClipboard.c_str();
 	const char* end = begin + strClipboard.length();
 	wchar_t m_wText[IMESTR_MAXLEN];
-	int wstrLen = MultiByteToWideChar(ms_uInputCodePage, 0, begin, end-begin, m_wText, IMESTR_MAXLEN);
+	int wstrLen = MultiByteToWideChar(ms_uInputCodePage, 0, begin, static_cast<int>(end-begin), m_wText, IMESTR_MAXLEN);
 
 	InsertString(m_wText, wstrLen);
 	if(ms_pEvent)
@@ -820,7 +821,7 @@ void CIME::DelCurPos()
 	if (ms_curpos < ms_lastpos)
 	{
 		int eraseCount = FindColorTagEndPosition(m_wText + ms_curpos, ms_lastpos - ms_curpos) + 1;
-		wcscpy(m_wText + ms_curpos, m_wText + ms_curpos + eraseCount);
+		wcscpy_s(m_wText + ms_curpos, IMESTR_MAXLEN - ms_curpos, m_wText + ms_curpos + eraseCount);
 		ms_lastpos -= eraseCount;
 		ms_curpos = min(ms_lastpos, ms_curpos);
 	}
@@ -831,7 +832,7 @@ void CIME::PasteString(const char * str)
 	const char * begin = str;
 	const char * end = str + strlen(str);
 	wchar_t m_wText[IMESTR_MAXLEN];
-	int wstrLen = MultiByteToWideChar(ms_uInputCodePage, 0, begin, end - begin, m_wText, IMESTR_MAXLEN);
+	int wstrLen = MultiByteToWideChar(ms_uInputCodePage, 0, begin, static_cast<int>(end - begin), m_wText, IMESTR_MAXLEN);
 	InsertString(m_wText, wstrLen);
 	if(ms_pEvent)
 		ms_pEvent->OnUpdate();
@@ -1047,7 +1048,7 @@ void CIME::CandidateProcess(HIMC hImc)
 			UINT i;
 			for (i = 0; i < ms_dwCandidateCount; i++)
 			{
-				UINT uLen = lstrlenW((LPWSTR)((DWORD)lpCandidateList + lpCandidateList->dwOffset[i])) + (3 - sizeof(WCHAR));
+				UINT uLen = lstrlenW((LPWSTR)((uintptr_t)lpCandidateList + lpCandidateList->dwOffset[i])) + (3 - sizeof(WCHAR));
 				if (uLen + cChars > maxCandChar)
 				{
 					if (i > ms_dwCandidateSelection)
@@ -1073,7 +1074,7 @@ void CIME::CandidateProcess(HIMC hImc)
 		//printf( "SEL: %d, START: %d, PAGED: %d\n", ms_dwCandidateSelection, iStartOfPage, ms_dwCandidatePageSize );
 	    memset(&ms_wszCandidate, 0, sizeof(ms_wszCandidate));
 	    for(UINT i = iStartOfPage, j = 0; (DWORD)i < lpCandidateList->dwCount && j < ms_dwCandidatePageSize; i++, j++) {
-			wcscpy( ms_wszCandidate[j], (LPWSTR)( (DWORD)lpCandidateList + lpCandidateList->dwOffset[i] ) );
+			wcscpy_s( ms_wszCandidate[j], MAX_CANDIDATE_LENGTH, (LPWSTR)( (uintptr_t)lpCandidateList + lpCandidateList->dwOffset[i] ) );
 	    }
 
 		// don't display selection in candidate list in case of Korean and old Chinese IME.
@@ -1239,8 +1240,8 @@ bool CIME::IsMax(const wchar_t* wInput, int len)
 	{
 		std::wstring str = GetTextTagOutputString(m_wText, ms_lastpos);
 		std::wstring input = GetTextTagOutputString(wInput, len);
-		int textLen = WideCharToMultiByte(ms_uOutputCodePage, 0, str.c_str(), str.length(), 0, 0, NULL, NULL);
-		int inputLen = WideCharToMultiByte(ms_uOutputCodePage, 0, input.c_str(), input.length(), 0, 0, NULL, NULL);
+		int textLen = WideCharToMultiByte(ms_uOutputCodePage, 0, str.c_str(), static_cast<int>(str.length()), 0, 0, NULL, NULL);
+		int inputLen = WideCharToMultiByte(ms_uOutputCodePage, 0, input.c_str(), static_cast<int>(input.length()), 0, 0, NULL, NULL);
 		return textLen + inputLen > m_userMax;
 	}
 	return false;
@@ -1258,7 +1259,7 @@ DWORD CIME::GetImeId( UINT uIndex )
 		return ms_adwId[uIndex];
 	hklPrev = hkl;
 
-	DWORD dwLang = ((DWORD)hkl & 0xffff);
+	DWORD dwLang = ((DWORD)((uintptr_t)hkl & 0xffff));
 
 	if ( ms_bUILessMode && GETLANG() == LANG_CHT ) {
 		// In case of Vista, artifitial value is returned so that it's not considered as older IME.
@@ -1343,8 +1344,8 @@ bool CIME::GetReadingWindowOrientation()
         char szRegPath[MAX_PATH];
         HKEY hKey;
         DWORD dwVer = ms_adwId[0] & 0xFFFF0000;
-        strcpy(szRegPath, "software\\microsoft\\windows\\currentversion\\");
-        strcat(szRegPath, (dwVer >= MAKEIMEVERSION(5, 1)) ? "MSTCIPH" : "TINTLGNT");
+        strcpy_s(szRegPath, sizeof(szRegPath), "software\\microsoft\\windows\\currentversion\\");
+        strcat_s(szRegPath, sizeof(szRegPath), (dwVer >= MAKEIMEVERSION(5, 1)) ? "MSTCIPH" : "TINTLGNT");
         LONG lRc = RegOpenKeyExA(HKEY_CURRENT_USER, szRegPath, 0, KEY_READ, &hKey);
         if (lRc == ERROR_SUCCESS)
         {
@@ -1527,7 +1528,7 @@ void CIME::CheckToggleState()
 
 	/* Check Toggle State */ 
 	bool bIme = ImmIsIME( ms_hklCurrent ) != 0
-		&& ( ( 0xF0000000 & (DWORD)ms_hklCurrent ) == 0xE0000000 ); // Hack to detect IME correctly. When IME is running as TIP, ImmIsIME() returns true for CHT US keyboard.
+		&& ( ( 0xF0000000 & (DWORD)(uintptr_t)ms_hklCurrent ) == 0xE0000000 ); // Hack to detect IME correctly. When IME is running as TIP, ImmIsIME() returns true for CHT US keyboard.
 	ms_bChineseIME = ( GETPRIMLANG() == LANG_CHINESE ) && bIme;
 
 	HIMC himc;
@@ -1940,7 +1941,7 @@ void CTsfUiLessMode::MakeCandidateStrings(ITfCandidateListUIElement* pcandidate)
 		{
 			if(bstr)
 			{
-				wcscpy( CIME::ms_wszCandidate[j], bstr );
+				wcscpy_s( CIME::ms_wszCandidate[j], CIME::MAX_CANDIDATE_LENGTH, bstr );
 				SysFreeString(bstr);
 			}
 		}

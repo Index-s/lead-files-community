@@ -256,7 +256,9 @@ void parse(char * filename)
 {
 	ifstream inf(filename);
 	LoadF lf;
-	lf.f = fopen(filename,"r");
+	lf.f = nullptr;
+	if (fopen_s(&lf.f, filename, "r") != 0 || !lf.f)
+		lf.f = nullptr;
 	ZIO z;
 	luaZ_init(&z, getF,&lf,"quest");
 	Mbuffer b;
@@ -584,7 +586,7 @@ void parse(char * filename)
 					string callname;
 					bool registered = false;
 					if (prev.t.token == '.')
-						prev.t.token == TK_DO; // any token
+						prev.t.token = TK_DO; // any token
 					while (1)
 					{
 						if (lexstate.t.token == TK_DO || lexstate.t.token == TK_IF /*|| lexstate.t.token == TK_FOR*/ || lexstate.t.token == TK_BEGIN || lexstate.t.token == TK_FUNCTION)
@@ -894,7 +896,7 @@ void parse(char * filename)
 				// two like [WHO].Kill
 				string s = it->first;
 				transform(s.begin(),s.end(),s.begin(),::tolower);
-				int i = s.find('.');
+				int i = static_cast<int>(s.find('.'));
 				mkdir((OUTPUT_FOLDER "/"+it->first.substr(0,i)).c_str(),0755);
 				mkdir((OUTPUT_FOLDER "/"+it->first.substr(0,i)+"/"+s.substr(i+1,s.npos)).c_str(),0755);
 				path = OUTPUT_FOLDER "/" + it->first.substr(0,i) + "/"+s.substr(i+1,s.npos)+"/";
@@ -949,7 +951,7 @@ void parse(char * filename)
 				// two like [WHO].Kill
 				string s = it->first;
 				transform(s.begin(),s.end(),s.begin(),::tolower);
-				int i = s.find('.');
+				int i = static_cast<int>(s.find('.'));
 				mkdir((OUTPUT_FOLDER "/"+it->first.substr(0,i)).c_str(),0755);
 				mkdir((OUTPUT_FOLDER "/"+it->first.substr(0,i)+"/"+s.substr(i+1,s.npos)).c_str(),0755);
 				path = OUTPUT_FOLDER "/" + it->first.substr(0,i) + "/"+s.substr(i+1,s.npos)+"/";

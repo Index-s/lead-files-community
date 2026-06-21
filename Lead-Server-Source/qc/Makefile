@@ -1,5 +1,5 @@
 CPP = clang++
-CPPFLAGS=-g -m32
+CPPFLAGS=-g -m64
 INCLUDEDIR=../liblua/include
 LIBDIR=../liblua/lib
 LIBS=-llua -llualib -lm

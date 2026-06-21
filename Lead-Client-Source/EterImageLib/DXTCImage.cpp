@@ -4,6 +4,7 @@
 #include <d3d.h>
 #include <ddraw.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <assert.h>
 
@@ -93,8 +94,8 @@ bool CDXTCImage::LoadFromFile(const char * filename)
 	
 	static char fileupper[MAX_PATH+1];
 	
-	strncpy(fileupper, filename, MAX_PATH); 
-	strupr(fileupper);
+	strncpy_s(fileupper, sizeof(fileupper), filename, _TRUNCATE);
+	_strupr_s(fileupper, sizeof(fileupper));
 	
 	int i;
 	bool knownformat = false;
@@ -681,14 +682,14 @@ void CDXTCImage::DecompressDXT1(int miplevel, DWORD * pdwDest)
 	for (y = 0; y < yblocks; ++y)
 	{
 		// 8 bytes per block
-		pBlock = (DXTColBlock *) ((DWORD) pPos + y * xblocks * 8);
-		
+		pBlock = (DXTColBlock *) ((uintptr_t) pPos + y * xblocks * 8);
+
 		for (x = 0; x < xblocks; ++x, ++pBlock)
 		{
 			// inline func:
 			GetColorBlockColors(pBlock, &col_0, &col_1, &col_2, &col_3, wrd);
 
-			pImPos = (DWORD *) ((DWORD) pBase + x*16 + (y*4) * nWidth * 4);
+			pImPos = (DWORD *) ((uintptr_t) pBase + x*16 + (y*4) * nWidth * 4);
 			DecodeColorBlock(pImPos, pBlock, nWidth, (DWORD *)&col_0, (DWORD *)&col_1, (DWORD *)&col_2, (DWORD *)&col_3);
 			// Set to RGB test pattern
 			//	pImPos = (DWORD*) ((DWORD) pBase + i * 4 + j * m_nWidth * 4);
@@ -747,7 +748,7 @@ void CDXTCImage::DecompressDXT3(int miplevel, DWORD* pdwDest)
 	{
 		// 8 bytes per block
 		// 1 block for alpha, 1 block for color
-		pBlock = (DXTColBlock *) ((DWORD) (pPos + y * xblocks * 16));
+		pBlock = (DXTColBlock *) ((uintptr_t) (pPos + y * xblocks * 16));
 
 		for (x = 0; x < xblocks; ++x, ++pBlock)
 		{
@@ -762,8 +763,8 @@ void CDXTCImage::DecompressDXT3(int miplevel, DWORD* pdwDest)
 			
 			// Decode the color block into the bitmap bits
 			// inline func:
-			pImPos = (DWORD *) ((DWORD) (pBase + x * 16 + (y * 4) * nWidth * 4));
-			
+			pImPos = (DWORD *) ((uintptr_t) (pBase + x * 16 + (y * 4) * nWidth * 4));
+
 			DecodeColorBlock(pImPos,
 							 pBlock, 
 							 nWidth,
@@ -823,7 +824,7 @@ void CDXTCImage::DecompressDXT5(int level, DWORD * pdwDest)
 	{
 		// 8 bytes per block
 		// 1 block for alpha, 1 block for color
-		pBlock = (DXTColBlock*) ((DWORD) (pPos + y * xblocks * 16));
+		pBlock = (DXTColBlock*) ((uintptr_t) (pPos + y * xblocks * 16));
 
 		for (x = 0; x < xblocks; ++x, ++pBlock)
 		{
@@ -840,7 +841,7 @@ void CDXTCImage::DecompressDXT5(int level, DWORD * pdwDest)
 			
 			// Decode the color block into the bitmap bits
 			// inline func:
-			pImPos = (DWORD *) ((DWORD) (pBase + x * 16 + (y * 4) * nWidth * 4));
+			pImPos = (DWORD *) ((uintptr_t) (pBase + x * 16 + (y * 4) * nWidth * 4));
 
 			//DecodeColorBlock(pImPos, pBlock, nWidth, (DWORD *)&col_0, (DWORD *)&col_1, (DWORD *)&col_2, (DWORD *)&col_3);
 			DecodeColorBlock(pImPos, pBlock, nWidth, (DWORD *)&col_0, (DWORD *)&col_1, (DWORD *)&col_2, (DWORD *)&col_3);
@@ -923,39 +924,39 @@ VOID CDXTCImage::DecodePixelFormat(CHAR* strPixelFormat, XDDPIXELFORMAT* pxddpf)
 				WORD g = GetNumberOfBits(pxddpf->dwGBitMask);
 				WORD b = GetNumberOfBits(pxddpf->dwBBitMask);
 
-				_snprintf(strPixelFormat, 31, "ARGB-%d%d%d%d%s", a, r, g, b,
+				_snprintf_s(strPixelFormat, 32, 31, "ARGB-%d%d%d%d%s", a, r, g, b,
 					pxddpf->dwBBitMask & DDPF_ALPHAPREMULT ? "-premul" : "");
 				m_CompFormat = PF_ARGB;
 			}
 			break;
 			
 		case MAKEFOURCC('D','X','T','1'):
-			strncpy(strPixelFormat, "DXT1", 31);
+			strncpy_s(strPixelFormat, 32, "DXT1", _TRUNCATE);
 			m_CompFormat = PF_DXT1;
 			break;
-			
+
 		case MAKEFOURCC('D','X','T','2'):
-			strncpy(strPixelFormat, "DXT2", 31);
+			strncpy_s(strPixelFormat, 32, "DXT2", _TRUNCATE);
 			m_CompFormat = PF_DXT2;
 			break;
-			
+
 		case MAKEFOURCC('D','X','T','3'):
-			strncpy(strPixelFormat, "DXT3", 31);
+			strncpy_s(strPixelFormat, 32, "DXT3", _TRUNCATE);
 			m_CompFormat = PF_DXT3;
 			break;
-			
+
 		case MAKEFOURCC('D','X','T','4'):
-			strncpy(strPixelFormat, "DXT4", 31);
+			strncpy_s(strPixelFormat, 32, "DXT4", _TRUNCATE);
 			m_CompFormat = PF_DXT4;
 			break;
-			
+
 		case MAKEFOURCC('D','X','T','5'):
-			strncpy(strPixelFormat, "DXT5", 31);
+			strncpy_s(strPixelFormat, 32, "DXT5", _TRUNCATE);
 			m_CompFormat = PF_DXT5;
 			break;
 
 		default:
-			strcpy(strPixelFormat, "Format Unknown");
+			strcpy_s(strPixelFormat, 32, "Format Unknown");
 			m_CompFormat = PF_UNKNOWN;
 			break;
 	}

@@ -1,6 +1,8 @@
 #ifndef __INC_AFFECT_H
 #define __INC_AFFECT_H
 
+#include "common/length.h"
+
 class CAffect
 {
 	public:
@@ -8,7 +10,7 @@ class CAffect
 		BYTE    bApplyOn;
 		long    lApplyValue;
 		DWORD   dwFlag;
-		long	lDuration;
+		TimeT64	lDuration;
 		long	lSPCost;
 
 		static CAffect* Acquire();

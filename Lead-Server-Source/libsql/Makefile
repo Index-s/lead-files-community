@@ -3,8 +3,8 @@ BIN = ./libsql.a
 
 EXTERN_DIR = ../../Lead-Extern
 INCDIR = -I$(EXTERN_DIR)/include -I../libthecore/include
-#CFLAGS = -m32 -Wall -O2 -pipe -D_THREAD_SAFE -fno-exceptions $(INCDIR)
-CFLAGS = -m32 -march=i686 -msse2 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -fno-stack-protector -fno-strict-aliasing $(INCDIR)
+#CFLAGS = -m64 -Wall -O2 -pipe -D_THREAD_SAFE -fno-exceptions $(INCDIR)
+CFLAGS = -m64 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -fno-stack-protector -fno-strict-aliasing $(INCDIR)
 
 SRCS = $(wildcard *.cpp)
 OBJFILES = $(SRCS:.cpp=.o)

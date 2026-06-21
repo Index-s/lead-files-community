@@ -167,17 +167,17 @@ void CPythonPlayerEventHandler::FlushVictimList()
 
 	// #0000682: [M2EU] Bounce when using the great advance skill
 	unsigned int SYNC_POSITION_COUNT_LIMIT = 16;
-	unsigned int uiVictimCount = m_kVctkVictim.size();
+	size_t uiVictimCount = m_kVctkVictim.size();
 
 	CPythonNetworkStream& rkStream=CPythonNetworkStream::Instance();
 
 	TPacketCGSyncPosition kPacketSyncPos;
 	kPacketSyncPos.bHeader=HEADER_CG_SYNC_POSITION;
-	kPacketSyncPos.wSize=sizeof(kPacketSyncPos)+sizeof(TPacketCGSyncPositionElement) * uiVictimCount;
+	kPacketSyncPos.wSize=static_cast<WORD>(sizeof(kPacketSyncPos)+sizeof(TPacketCGSyncPositionElement) * uiVictimCount);
 
 	rkStream.Send(sizeof(kPacketSyncPos), &kPacketSyncPos);
 
-	for (unsigned int i = 0; i < uiVictimCount; ++i)
+	for (size_t i = 0; i < uiVictimCount; ++i)
 	{
 		const SVictim& rkVictim =  m_kVctkVictim[i];
 		rkStream.SendSyncPositionElementPacket(rkVictim.m_dwVID, rkVictim.m_lPixelX, rkVictim.m_lPixelY);		

@@ -232,7 +232,7 @@ void TEMP_CAreaLoaderThread::ProcessArea()	// called in loader thread
 	const std::string & c_rStrMapName = pArea->GetOwner()->GetName();
 
 	char szAreaPathName[64+1];
-	_snprintf(szAreaPathName, sizeof(szAreaPathName), "%s\\%06u\\", c_rStrMapName.c_str(), dwID);
+	_snprintf_s(szAreaPathName, sizeof(szAreaPathName), _TRUNCATE, "%s\\%06u\\", c_rStrMapName.c_str(), dwID);
 
 	pArea->Load(szAreaPathName);
 
@@ -270,7 +270,7 @@ void TEMP_CAreaLoaderThread::ProcessTerrain()	// called in loader thread
 
 	const std::string & c_rStrMapName = pTerrain->GetOwner()->GetName();
 	char filename[256];
-	sprintf(filename, "%s\\%06u\\AreaProperty.txt", c_rStrMapName.c_str(), dwID);
+	sprintf_s(filename, sizeof(filename), "%s\\%06u\\AreaProperty.txt", c_rStrMapName.c_str(), dwID);
 	
 	CTokenVectorMap stTokenVectorMap;
 	
@@ -299,13 +299,13 @@ void TEMP_CAreaLoaderThread::ProcessTerrain()	// called in loader thread
 	char szMiniMapTexName[64+1];
 	char szSplatName[64+1];
 	
-	_snprintf(szRawHeightFieldname, sizeof(szRawHeightFieldname), "%s\\%06u\\height.raw", c_rStrMapName.c_str(), dwID);
-	_snprintf(szSplatName, sizeof(szSplatName), "%s\\%06u\\tile.raw", c_rStrMapName.c_str(), dwID);
-	_snprintf(szAttrMapName, sizeof(szAttrMapName), "%s\\%06u\\attr.atr", c_rStrMapName.c_str(), dwID);
-	_snprintf(szWaterMapName, sizeof(szWaterMapName), "%s\\%06u\\water.wtr", c_rStrMapName.c_str(), dwID);
-	_snprintf(szShadowTexName, sizeof(szShadowTexName), "%s\\%06u\\shadowmap.dds", c_rStrMapName.c_str(), dwID);
-	_snprintf(szShadowMapName, sizeof(szShadowMapName), "%s\\%06u\\shadowmap.raw", c_rStrMapName.c_str(), dwID);
-	_snprintf(szMiniMapTexName,	sizeof(szMiniMapTexName), "%s\\%06u\\minimap.dds", c_rStrMapName.c_str(), dwID);
+	_snprintf_s(szRawHeightFieldname, sizeof(szRawHeightFieldname), _TRUNCATE, "%s\\%06u\\height.raw", c_rStrMapName.c_str(), dwID);
+	_snprintf_s(szSplatName, sizeof(szSplatName), _TRUNCATE, "%s\\%06u\\tile.raw", c_rStrMapName.c_str(), dwID);
+	_snprintf_s(szAttrMapName, sizeof(szAttrMapName), _TRUNCATE, "%s\\%06u\\attr.atr", c_rStrMapName.c_str(), dwID);
+	_snprintf_s(szWaterMapName, sizeof(szWaterMapName), _TRUNCATE, "%s\\%06u\\water.wtr", c_rStrMapName.c_str(), dwID);
+	_snprintf_s(szShadowTexName, sizeof(szShadowTexName), _TRUNCATE, "%s\\%06u\\shadowmap.dds", c_rStrMapName.c_str(), dwID);
+	_snprintf_s(szShadowMapName, sizeof(szShadowMapName), _TRUNCATE, "%s\\%06u\\shadowmap.raw", c_rStrMapName.c_str(), dwID);
+	_snprintf_s(szMiniMapTexName,	sizeof(szMiniMapTexName), _TRUNCATE, "%s\\%06u\\minimap.dds", c_rStrMapName.c_str(), dwID);
 	
 	pTerrain->CopySettingFromGlobalSetting();
 

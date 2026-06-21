@@ -3,12 +3,12 @@
 
 void CPythonExchange::SetSelfName(const char *name)
 {
-	strncpy(m_self.name, name, CHARACTER_NAME_MAX_LEN);
+	strncpy_s(m_self.name, sizeof(m_self.name), name, _TRUNCATE);
 }
 
 void CPythonExchange::SetTargetName(const char *name)
 {
-	strncpy(m_victim.name, name, CHARACTER_NAME_MAX_LEN);
+	strncpy_s(m_victim.name, sizeof(m_victim.name), name, _TRUNCATE);
 }
 
 char * CPythonExchange::GetNameFromSelf()

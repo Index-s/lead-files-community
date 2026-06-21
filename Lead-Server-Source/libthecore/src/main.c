@@ -51,7 +51,7 @@ static void pid_deinit(void)
 int thecore_init(int fps, HEARTFUNC heartbeat_func)
 {
 #ifdef __WIN32__
-    srand(time(0));
+    srand((unsigned int) time(0));
 #else
     srandom(time(0) + getpid() + getuid());
     srandomdev();

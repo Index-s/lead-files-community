@@ -197,7 +197,7 @@ bool CGraphicThing::LoadModels()
 	//char localPath[256] = "";
 	if (fileName.length() > 2 && fileName[1] != ':')
 	{				
-		int sepPos = fileName.rfind('\\');
+		std::string::size_type sepPos = fileName.rfind('\\');
 		gs_modelLocalPath.assign(fileName, 0, sepPos+1);
 	}
 	// END_OF_SUPPORT_LOCAL_TEXTURE

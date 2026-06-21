@@ -122,7 +122,7 @@ bool CCamera::EndDrag()
 
 	m_bDrag = false;
 
-	float fSum=sqrt(m_fPitchSum*m_fPitchSum+m_fRollSum*m_fRollSum);
+	float fSum=sqrtf(m_fPitchSum*m_fPitchSum+m_fRollSum*m_fRollSum);
 
 	m_fPitchSum = 0.0f;
 	m_fRollSum = 0.0f;

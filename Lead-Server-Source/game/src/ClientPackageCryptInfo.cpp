@@ -174,7 +174,7 @@ bool CClientPackageCryptInfo::LoadPackageCryptInfo( const char* pCryptInfoDir )
 
 void CClientPackageCryptInfo::GetPackageCryptKeys( BYTE** ppData, int& iDataSize )
 {
-	int nCryptKeySize = m_vecPackageCryptKeys.size();
+	int nCryptKeySize = static_cast<int>(m_vecPackageCryptKeys.size());
 	int iStreamSize   = sizeof(int)+nCryptKeySize;
 
 	//NOTE : Crypt Key Info isn`t updated during runtime. ( in case of file reloading all data is cleared & recreated )

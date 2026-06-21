@@ -167,7 +167,16 @@ bool CConfig::GetParam(const char*key, int index, DWORD *Param)
 
 	char szParam[5][32];
 
+#ifdef _WIN32
+	sscanf_s(pstStr->c_str(), "%s %s %s %s %s",
+		szParam[0], (unsigned)sizeof(szParam[0]),
+		szParam[1], (unsigned)sizeof(szParam[1]),
+		szParam[2], (unsigned)sizeof(szParam[2]),
+		szParam[3], (unsigned)sizeof(szParam[3]),
+		szParam[4], (unsigned)sizeof(szParam[4]));
+#else
 	sscanf(pstStr->c_str(), "%s %s %s %s %s", szParam[0],szParam[1],szParam[2],szParam[3],szParam[4]);
+#endif
 
 	str_to_number(*Param, szParam[index]);
 

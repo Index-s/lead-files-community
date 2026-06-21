@@ -22,7 +22,7 @@ class CPlayerTableCache : public cache<TPlayerTable>
 
 	virtual void OnFlush();
 
-	DWORD GetLastUpdateTime() { return m_lastUpdateTime; }
+	DWORD GetLastUpdateTime() { return static_cast<DWORD>(m_lastUpdateTime); }
 };
 
 // MYSHOP_PRICE_LIST

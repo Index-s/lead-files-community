@@ -57,15 +57,15 @@ void ItemAwardManager::Load(SQLMsg * pMsg)
 			// during the game why If there is a change in the call room				
 			char* whyStr = kData->szWhy;	//why call room reading
 			char cmdStr[100] = "";	//why The value read from the call room is copied to a temporary string.
-			strcpy(cmdStr,whyStr);	// This is because if a token is used in the process of obtaining a command, the original is also tokenized.
+			strlcpy(cmdStr,whyStr,sizeof(cmdStr));	// This is because if a token is used in the process of obtaining a command, the original is also tokenized.
 			char command[20] = "";
-			strcpy(command,CClientManager::instance().GetCommand(cmdStr));	// command get
+			strlcpy(command,CClientManager::instance().GetCommand(cmdStr),sizeof(command));	// command get
 			//sys_err("%d,  %s",pItemAward->dwID,command);
 			if( !(strcmp(command,"GIFT") ))	// command go GIFT This side
 			{
 				TPacketItemAwardInfromer giftData;
-				strcpy(giftData.login, kData->szLogin);	// Copy Login ID
-				strcpy(giftData.command, command);					// Copy command
+				strlcpy(giftData.login, kData->szLogin, sizeof(giftData.login));	// Copy Login ID
+				strlcpy(giftData.command, command, sizeof(giftData.command));					// Copy command
 				giftData.vnum = kData->dwVnum;				// item vnum also copy
 				CClientManager::instance().ForwardPacket(HEADER_DG_ITEMAWARD_INFORMER,&giftData,sizeof(TPacketItemAwardInfromer));
 			}

@@ -27,7 +27,7 @@ void CTextBar::__SetFont(int fontSize, bool isBold)
 	logFont.lfClipPrecision		= CLIP_DEFAULT_PRECIS;
 	logFont.lfQuality			= ANTIALIASED_QUALITY;
 	logFont.lfPitchAndFamily	= DEFAULT_PITCH;
-	strcpy(logFont.lfFaceName, GetFontFaceFromCodePage(iCodePage));
+	strcpy_s(logFont.lfFaceName, sizeof(logFont.lfFaceName), GetFontFaceFromCodePage(iCodePage));
 	m_hFont = CreateFontIndirect(&logFont);
 
 		
@@ -45,7 +45,7 @@ void CTextBar::SetTextColor(int r, int g, int b)
 void CTextBar::GetTextExtent(const char * c_szText, SIZE* p_size)
 {
 	HDC hDC = m_dib.GetDCHandle();
-	GetTextExtentPoint32(hDC, c_szText, strlen(c_szText), p_size); 
+	GetTextExtentPoint32(hDC, c_szText, static_cast<int>(strlen(c_szText)), p_size);
 }
 
 void CTextBar::TextOut(int ix, int iy, const char * c_szText)

@@ -5,9 +5,10 @@
  * description : 
  */
 
+#include "stdafx.h"
+
 #define _cube_cpp_
 
-#include "stdafx.h"
 #include "constants.h"
 #include "utils.h"
 #include "log.h"
@@ -152,7 +153,7 @@ static CUBE_DATA* FN_find_cube (LPITEM *items, WORD npc_vnum)
 	if (0==npc_vnum)	return NULL;
 
 	// FOR ALL CUBE_PROTO
-	end_index = s_cube_proto.size();
+	end_index = static_cast<DWORD>(s_cube_proto.size());
 	for (i=0; i<end_index; ++i)
 	{
 		if ( s_cube_proto[i]->can_make_item(items, npc_vnum) )
@@ -179,20 +180,20 @@ static bool FN_check_cube_data (CUBE_DATA *cube_data)
 	DWORD	i = 0;
 	DWORD	end_index = 0;
 
-	end_index = cube_data->npc_vnum.size();
+	end_index = static_cast<DWORD>(cube_data->npc_vnum.size());
 	for (i=0; i<end_index; ++i)
 	{
 		if ( cube_data->npc_vnum[i] == 0 )	return false;
 	}
 
-	end_index = cube_data->item.size();
+	end_index = static_cast<DWORD>(cube_data->item.size());
 	for (i=0; i<end_index; ++i)
 	{
 		if ( cube_data->item[i].vnum == 0 )		return false;
 		if ( cube_data->item[i].count == 0 )	return false;
 	}
 
-	end_index = cube_data->reward.size();
+	end_index = static_cast<DWORD>(cube_data->reward.size());
 	for (i=0; i<end_index; ++i)
 	{
 		if ( cube_data->reward[i].vnum == 0 )	return false;
@@ -217,7 +218,7 @@ bool CUBE_DATA::can_make_item (LPITEM *items, WORD npc_vnum)
 	int		found_npc = false;
 
 	// check npc_vnum
-	end_index = this->npc_vnum.size();
+	end_index = static_cast<DWORD>(this->npc_vnum.size());
 	for (i=0; i<end_index; ++i)
 	{
 		if (npc_vnum == this->npc_vnum[i])
@@ -225,7 +226,7 @@ bool CUBE_DATA::can_make_item (LPITEM *items, WORD npc_vnum)
 	}
 	if (false==found_npc)	return false;
 
-	end_index = this->item.size();
+	end_index = static_cast<DWORD>(this->item.size());
 	for (i=0; i<end_index; ++i)
 	{
 		need_vnum	= this->item[i].vnum;
@@ -244,7 +245,7 @@ CUBE_VALUE* CUBE_DATA::reward_value ()
 	int		end_index		= 0;
 	DWORD	reward_index	= 0;
 
-	end_index = this->reward.size();
+	end_index = static_cast<int>(this->reward.size());
 	reward_index = number(0, end_index);
 	reward_index = number(0, end_index-1);
 
@@ -259,7 +260,7 @@ void CUBE_DATA::remove_material (LPCHARACTER ch)
 	int		need_count;
 	LPITEM	*items = ch->GetCubeItem();
 
-	end_index = this->item.size();
+	end_index = static_cast<DWORD>(this->item.size());
 	for (i=0; i<end_index; ++i)
 	{
 		need_vnum	= this->item[i].vnum;
@@ -306,7 +307,7 @@ void Cube_open (LPCHARACTER ch)
 
 	if ( FN_check_valid_npc(npc->GetRaceNum()) == false )
 	{
-		if ( test_server == true )
+		if ( test_server != 0 )
 		{
 			dev_log(LOG_DEB0, "cube not valid NPC");
 		}
@@ -394,6 +395,7 @@ bool Cube_load (const char *file)
 	int		value1, value2;
 	const char	*delim = " \t\r\n";
 	char	*v, *token_string;
+	char	*saveptr = NULL;
 	CUBE_DATA	*cube_data = NULL;
 	CUBE_VALUE	cube_value = {0,0};
 
@@ -410,16 +412,16 @@ bool Cube_load (const char *file)
 		if (one_line[0] == '#')
 			continue;
 
-		token_string = strtok(one_line, delim);
+		token_string = strtok_r(one_line, delim, &saveptr);
 
 		if (NULL == token_string)
 			continue;
 
 		// set value1, value2
-		if ((v = strtok(NULL, delim)))
+		if ((v = strtok_r(NULL, delim, &saveptr)))
 			str_to_number(value1, v);
 
-		if ((v = strtok(NULL, delim)))
+		if ((v = strtok_r(NULL, delim, &saveptr)))
 			str_to_number(value2, v);
 
 		TOKEN("section")
@@ -573,7 +575,7 @@ bool Cube_make (LPCHARACTER ch)
 	
 	// Deduction of gold required for manufacturing
 	if (0 < cube_proto->gold)
-		ch->PointChange(POINT_GOLD, -(cube_proto->gold), false);
+		ch->PointChange(POINT_GOLD, -static_cast<GoldType>(cube_proto->gold), false);
 
 	percent_number = number(1,100);
 	if ( percent_number<=cube_proto->percent)
@@ -766,8 +768,8 @@ void Cube_MakeCubeInformationText()
 				for (TCubeValueVector::iterator iter = materialInfo.complicateMaterial.begin(); materialInfo.complicateMaterial.end() != iter; ++iter)
 				{
 					char tempBuffer[128];
-					sprintf(tempBuffer, "%d,%d|", iter->vnum, iter->count);
-					
+					snprintf(tempBuffer, sizeof(tempBuffer), "%d,%d|", iter->vnum, iter->count);
+
 					infoText += std::string(tempBuffer);
 				}
 
@@ -781,7 +783,7 @@ void Cube_MakeCubeInformationText()
 			for (TCubeValueVector::iterator iter = materialInfo.material.begin(); materialInfo.material.end() != iter; ++iter)
 			{
 				char tempBuffer[128];
-				sprintf(tempBuffer, "%d,%d&", iter->vnum, iter->count);
+				snprintf(tempBuffer, sizeof(tempBuffer), "%d,%d&", iter->vnum, iter->count);
 				infoText += std::string(tempBuffer);
 			}
 
@@ -791,7 +793,7 @@ void Cube_MakeCubeInformationText()
 			if (0 < materialInfo.gold)
 			{
 				char temp[128];
-				sprintf(temp, "%d", materialInfo.gold);
+				snprintf(temp, sizeof(temp), "%d", materialInfo.gold);
 				infoText += std::string("/") + temp;
 			}
 
@@ -905,7 +907,7 @@ void Cube_request_result_list(LPCHARACTER ch)
 
 	DWORD npcVNUM = npc->GetRaceNum();
 
-	if (!FN_check_valid_npc(npcVNUM))
+	if (!FN_check_valid_npc(static_cast<WORD>(npcVNUM)))
 		return;
 
 	size_t resultCount = 0;
@@ -922,7 +924,7 @@ void Cube_request_result_list(LPCHARACTER ch)
 		{
 			const SCubeMaterialInfo& materialInfo = *iter;
 			char temp[128];
-			sprintf(temp, "%d,%d", materialInfo.reward.vnum, materialInfo.reward.count);
+			snprintf(temp, sizeof(temp), "%d,%d", materialInfo.reward.vnum, materialInfo.reward.count);
 
 			resultText += std::string(temp) + "/";
 		}
@@ -961,7 +963,7 @@ void Cube_request_material_info(LPCHARACTER ch, int requestStartIndex, int reque
 		return;
 
 	DWORD npcVNUM = npc->GetRaceNum();
-	if (!FN_check_valid_npc(npcVNUM))
+	if (!FN_check_valid_npc(static_cast<WORD>(npcVNUM)))
 		return;
 
 	std::string materialInfoText = "";

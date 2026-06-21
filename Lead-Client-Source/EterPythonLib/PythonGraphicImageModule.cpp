@@ -2,32 +2,32 @@
 
 bool PyTuple_GetImageInstance(PyObject* poArgs, int pos, CGraphicImageInstance** ppRetImageInstance)
 {
-	int handle;
+	void* hHandle;
 
-	if (!PyTuple_GetInteger(poArgs, pos, &handle))
+	if (!PyTuple_GetHandle(poArgs, pos, &hHandle))
 		return false;
 
-	if (!handle)
+	if (!hHandle)
 		return false;
 
-	*ppRetImageInstance = (CGraphicImageInstance*)handle;	
+	*ppRetImageInstance = (CGraphicImageInstance*)hHandle;
 	return true;
 }
 
 bool PyTuple_GetExpandedImageInstance(PyObject* poArgs, int pos, CGraphicExpandedImageInstance ** ppRetImageInstance)
 {
-	int handle;
+	void* hHandle;
 
-	if (!PyTuple_GetInteger(poArgs, pos, &handle))
+	if (!PyTuple_GetHandle(poArgs, pos, &hHandle))
 		return false;
 
-	if (!handle)
+	if (!hHandle)
 		return false;
 
-	if (!((CGraphicImageInstance*)handle)->IsType(CGraphicExpandedImageInstance::Type()))
+	if (!((CGraphicImageInstance*)hHandle)->IsType(CGraphicExpandedImageInstance::Type()))
 		return false;
 
-	*ppRetImageInstance = (CGraphicExpandedImageInstance*)handle;
+	*ppRetImageInstance = (CGraphicExpandedImageInstance*)hHandle;
 
 	return true;
 }
@@ -40,7 +40,7 @@ PyObject* grpImageGenerate(PyObject * poSelf, PyObject* poArgs)
 		return Py_BadArgument();
 
 	if (!*szFileName)
-		return Py_BuildValue("i", 0);
+		return Py_BuildHandle(NULL);
 
 	CResource * pResource = CResourceManager::Instance().GetResourcePointer(szFileName);
 
@@ -53,7 +53,7 @@ PyObject* grpImageGenerate(PyObject * poSelf, PyObject* poArgs)
 	if (pImageInstance->IsEmpty())
 		return Py_BuildException("Cannot load image (filename: %s)", szFileName);
 
-	return Py_BuildValue("i", pImageInstance);
+	return Py_BuildHandle(pImageInstance);
 }
 
 PyObject* grpImageGenerateExpanded(PyObject* poSelf, PyObject* poArgs)
@@ -64,7 +64,7 @@ PyObject* grpImageGenerateExpanded(PyObject* poSelf, PyObject* poArgs)
 		return Py_BadArgument();
 
 	if (strlen(szFileName) <= 0)
-		return Py_BuildValue("i", 0);
+		return Py_BuildHandle(NULL);
 
 	CResource* pResource = CResourceManager::Instance().GetResourcePointer(szFileName);
 
@@ -76,20 +76,20 @@ PyObject* grpImageGenerateExpanded(PyObject* poSelf, PyObject* poArgs)
 
 	if (pImageInstance->IsEmpty())
 		return Py_BuildException("Cannot load image (filename: %s)", szFileName);
-	
-	return Py_BuildValue("i", pImageInstance);
+
+	return Py_BuildHandle(pImageInstance);
 }
 
 PyObject* grpImageGenerateFromHandle(PyObject * poSelf, PyObject* poArgs)
 {
-	int iHandle;
-	if (!PyTuple_GetInteger(poArgs, 0, &iHandle))
+	void* hHandle;
+	if (!PyTuple_GetHandle(poArgs, 0, &hHandle))
 		return Py_BadArgument();
 
 	CGraphicImageInstance * pImageInstance = CGraphicImageInstance::New();
-	pImageInstance->SetImagePointer((CGraphicImage *)iHandle);
+	pImageInstance->SetImagePointer((CGraphicImage *)hHandle);
 
-	return Py_BuildValue("i", pImageInstance);
+	return Py_BuildHandle(pImageInstance);
 }
 
 PyObject* grpImageDelete(PyObject* poSelf, PyObject* poArgs)

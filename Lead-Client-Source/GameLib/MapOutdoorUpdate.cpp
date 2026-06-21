@@ -907,8 +907,8 @@ void CMapOutdoor::AssignPatch(long lPatchNum, long x0, long y0, long x1, long y1
 		return;
 
 	BYTE byPatchNumX, byPatchNumY;
-	byPatchNumX = x0 / CTerrainImpl::PATCH_XSIZE;
-	byPatchNumY = y0 / CTerrainImpl::PATCH_YSIZE;
+	byPatchNumX = static_cast<BYTE>(x0 / CTerrainImpl::PATCH_XSIZE);
+	byPatchNumY = static_cast<BYTE>(y0 / CTerrainImpl::PATCH_YSIZE);
 	
 	CTerrainPatch * pTerrainPatch = pTerrain->GetTerrainPatchPtr(byPatchNumX, byPatchNumY);
 	if (!pTerrainPatch)

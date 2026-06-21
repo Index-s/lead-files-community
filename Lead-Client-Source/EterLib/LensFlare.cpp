@@ -322,7 +322,7 @@ void CLensFlare::DrawFlare()
 		STATEMANAGER.SaveRenderState(D3DRS_ALPHABLENDENABLE, TRUE); // glEnable(GL_BLEND);
 
 		D3DXMATRIX matProj;
-		D3DXMatrixOrthoOffCenterRH(&matProj, 0.0f, ms_Viewport.Width, ms_Viewport.Height, 0.0f, -1.0f, 1.0f);
+		D3DXMatrixOrthoOffCenterRH(&matProj, 0.0f, static_cast<FLOAT>(ms_Viewport.Width), static_cast<FLOAT>(ms_Viewport.Height), 0.0f, -1.0f, 1.0f);
 		STATEMANAGER.SaveTransform(D3DTS_PROJECTION, &matProj);
 		STATEMANAGER.SaveTransform(D3DTS_VIEW, &ms_matIdentity);
 

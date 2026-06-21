@@ -158,7 +158,7 @@ void CShop::SetShopItems(TShopItemTable * pTable, BYTE bItemCount)
 		if (item.pkItem)
 		{
 			item.vnum = pkItem->GetVnum();
-			item.count = pkItem->GetCount(); // PC For shops, the number of items must be the number of actual items. .
+			item.count = static_cast<ItemStackType>(pkItem->GetCount()); // PC For shops, the number of items must be the number of actual items. .
 			item.price = pTable->price; // The price is determined by the user ..
 			item.itemid	= pkItem->GetID();
 		}
@@ -292,7 +292,7 @@ int CShop::Buy(LPCHARACTER ch, BYTE pos)
 
 	ch->PointChange(POINT_GOLD, -dwPrice, false);
 
-	DWORD dwTax = 0;
+	GoldType dwTax = 0;
 	int iVal = quest::CQuestManager::instance().GetEventFlag("personal_shop");
 
 	if (0 < iVal)
@@ -311,13 +311,13 @@ int CShop::Buy(LPCHARACTER ch, BYTE pos)
 
 	if (m_pkPC)
 	{
-		m_pkPC->SyncQuickslot(QUICKSLOT_TYPE_ITEM, item->GetCell(), 255);
+		m_pkPC->SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(item->GetCell()), 255);
 
 		char buf[512];
 
 		if (item->GetVnum() >= 80003 && item->GetVnum() <= 80007)
 		{
-			snprintf(buf, sizeof(buf), "%s FROM: %u TO: %u PRICE: %u", item->GetName(), ch->GetPlayerID(), m_pkPC->GetPlayerID(), dwPrice);
+			snprintf(buf, sizeof(buf), "%s FROM: %u TO: %u PRICE: %lld", item->GetName(), ch->GetPlayerID(), m_pkPC->GetPlayerID(), static_cast<long long>(dwPrice));
 			LogManager::instance().GoldBarLog(ch->GetPlayerID(), item->GetID(), SHOP_BUY, buf);
 			LogManager::instance().GoldBarLog(m_pkPC->GetPlayerID(), item->GetID(), SHOP_SELL, buf);
 		}
@@ -330,10 +330,10 @@ int CShop::Buy(LPCHARACTER ch, BYTE pos)
 		ITEM_MANAGER::instance().FlushDelayedSave(item);
 			
 
-		snprintf(buf, sizeof(buf), "%s %u(%s) %u %u", item->GetName(), m_pkPC->GetPlayerID(), m_pkPC->GetName(), dwPrice, item->GetCount());
+		snprintf(buf, sizeof(buf), "%s %u(%s) %lld %u", item->GetName(), m_pkPC->GetPlayerID(), m_pkPC->GetName(), static_cast<long long>(dwPrice), item->GetCount());
 		LogManager::instance().ItemLog(ch, item, "SHOP_BUY", buf);
 
-		snprintf(buf, sizeof(buf), "%s %u(%s) %u %u", item->GetName(), ch->GetPlayerID(), ch->GetName(), dwPrice, item->GetCount());
+		snprintf(buf, sizeof(buf), "%s %u(%s) %lld %u", item->GetName(), ch->GetPlayerID(), ch->GetName(), static_cast<long long>(dwPrice), item->GetCount());
 		LogManager::instance().ItemLog(m_pkPC, item, "SHOP_SELL", buf);
 
 

@@ -323,7 +323,7 @@ namespace quest
 			return 1;
 		}
 
-		lua_pushnumber(L, get_global_time() - pMarriage->marry_time);
+		lua_pushnumber(L, static_cast<lua_Number>(get_global_time() - pMarriage->marry_time));
 		return 1;
 	}
 

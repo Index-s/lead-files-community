@@ -377,10 +377,10 @@ HRESULT CMovieMan::RenderFileToMMStream(const char *cpFilename, IMultiMediaStrea
 	WCHAR wsDir[MAX_PATH + 1];
 	::memset(wsDir, 0, sizeof(wsDir));
 	::GetCurrentDirectoryW( MAX_PATH, wsDir );
-	::wcsncat( wsDir, L"\\", sizeof(WCHAR)*1 );
-	::wcsncat( wsDir, wPath, sizeof(WCHAR)*::wcsnlen(wPath, MAX_PATH) );
+	::wcsncat_s( wsDir, _countof(wsDir), L"\\", _TRUNCATE );
+	::wcsncat_s( wsDir, _countof(wsDir), wPath, _TRUNCATE );
 	::memset(wPath, 0, sizeof(wPath));
-	::wcsncpy( wPath, wsDir, sizeof(WCHAR)*::wcsnlen(wsDir, MAX_PATH) );
+	::wcsncpy_s( wPath, _countof(wPath), wsDir, _TRUNCATE );
 	//
 
 	pAMStream->Initialize(STREAMTYPE_READ, AMMSF_NOGRAPHTHREAD, NULL);
@@ -388,7 +388,7 @@ HRESULT CMovieMan::RenderFileToMMStream(const char *cpFilename, IMultiMediaStrea
 	pAMStream->AddMediaStream(NULL, &MSPID_PrimaryAudio, AMMSF_ADDDEFAULTRENDERER, NULL);
 
 	std::string ext;
-	GetFileExtension(cpFilename, strlen(cpFilename), &ext);
+	GetFileExtension(cpFilename, static_cast<int>(strlen(cpFilename)), &ext);
 	std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 	if (ext == "mpg")
 	{

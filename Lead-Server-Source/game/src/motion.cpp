@@ -20,10 +20,14 @@ static float MSA_GetNormalAttackDuration(const char* msaPath)
 		char key[1024];
 		char val[1024];
 
+#ifdef _WIN32
+		sscanf_s(line, "%s %s", key, (unsigned)sizeof(key), val, (unsigned)sizeof(val));
+#else
 		sscanf(line, "%s %s", key, val);
+#endif
 		if (strcmp(key, "MotionDuration") == 0)
 		{
-			duration = atof(val);
+			duration = static_cast<float>(atof(val));
 			break;
 		}
 	}
@@ -53,7 +57,11 @@ static float MOB_GetNormalAttackDuration(TMobTable* mobTable)
 		char msaName[1024];
 		int percent;
 
+#ifdef _WIN32
+		sscanf_s(line, "%s %s %s %d", mode, (unsigned)sizeof(mode), type, (unsigned)sizeof(type), msaName, (unsigned)sizeof(msaName), &percent);
+#else
 		sscanf(line, "%s %s %s %d", mode, type, msaName, &percent);
+#endif
 		if (strcmp(mode, "GENERAL") == 0 && strncmp(type, "NORMAL_ATTACK", 13) == 0)
 		{
 			char msaPath[1024];
@@ -101,12 +109,13 @@ static const char* GetMotionFileName(TMobTable* mobTable, EPublicMotion motion)
 
 		while (fgets(buf, 1024, fp))
 		{
-			v[0] = strtok(buf,  " \t\r\n");
-			v[1] = strtok(NULL, " \t\r\n");
-			v[2] = strtok(NULL, " \t\r\n");
-			v[3] = strtok(NULL, " \t\r\n");
+			char * saveptr = NULL;
+			v[0] = strtok_r(buf,  " \t\r\n", &saveptr);
+			v[1] = strtok_r(NULL, " \t\r\n", &saveptr);
+			v[2] = strtok_r(NULL, " \t\r\n", &saveptr);
+			v[3] = strtok_r(NULL, " \t\r\n", &saveptr);
 
-			if (NULL != v[0] && NULL != v[1] && NULL != v[2] && NULL != v[3] && !strcasecmp(v[1], field))
+			if (NULL != v[0] && NULL != v[1] && NULL != v[2] && NULL != v[3] && !_stricmp(v[1], field))
 			{
 				fclose(fp);
 
@@ -507,7 +516,7 @@ bool CMotion::LoadMobSkillFromFile(const char * c_pszFileName, CMob* pMob, int i
 					return false;
 				}
 
-				pMob->AddSkillSplash(iSkillIndex, 100 + DWORD(fStartingTime * 1000), -(DWORD)(v3Position.y));
+				pMob->AddSkillSplash(iSkillIndex, 100 + DWORD(fStartingTime * 1000), -static_cast<int>(v3Position.y));
 
 				rkTextFileLoader.SetParentNode();
 			}

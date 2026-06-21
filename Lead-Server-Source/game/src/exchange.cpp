@@ -422,7 +422,7 @@ bool CExchange::Done()
 
 		assert(empty_pos >= 0);
 
-		m_pOwner->SyncQuickslot(QUICKSLOT_TYPE_ITEM, item->GetCell(), 255);
+		m_pOwner->SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(item->GetCell()), 255);
 
 		item->RemoveFromCharacter();
 		if (item->IsDragonSoul())

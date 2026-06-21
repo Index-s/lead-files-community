@@ -304,7 +304,7 @@ void CShopManager::Sell(LPCHARACTER ch, BYTE bCell, ItemStackType bCount)
 	GoldType dwPrice;
 
 	if (bCount == 0 || bCount > item->GetCount())
-		bCount = item->GetCount();
+		bCount = static_cast<ItemStackType>(item->GetCount());
 
 	dwPrice = item->GetShopBuyPrice();
 
@@ -321,7 +321,7 @@ void CShopManager::Sell(LPCHARACTER ch, BYTE bCell, ItemStackType bCount)
 	dwPrice /= 5;
 	
 	// tax calculation
-	DWORD dwTax = 0;
+	GoldType dwTax = 0;
 	int iVal = 3;
 
 	dwTax = dwPrice * iVal/100;
@@ -476,7 +476,7 @@ bool ConvertToShopItemTable(IN CGroupNode* pNode, OUT TShopTableEx& shopTable)
 		shopTable.items[iPos] = shopItems[i];
 	}
 
-	shopTable.byItemCount = shopItems.size();
+	shopTable.byItemCount = static_cast<ItemStackType>(shopItems.size());
 	return true;
 }
 

@@ -104,7 +104,7 @@ void CItem::AddAttr(BYTE bApply, BYTE bLevel)
 		long lVal = r.lValues[MIN(4, bLevel - 1)];
 
 		if (lVal)
-			SetAttribute(i, bApply, lVal);
+			SetAttribute(i, bApply, static_cast<short>(lVal));
 	}
 }
 
@@ -394,14 +394,14 @@ bool CItem::AddRareAttribute()
 		}
 	}
 
-	const TItemAttrTable& r = g_map_itemRare[avail[number(0, avail.size() - 1)]];
+	const TItemAttrTable& r = g_map_itemRare[avail[number(0, static_cast<int>(avail.size()) - 1)]];
 	int nAttrLevel = 5;
 
 	if (nAttrLevel > r.bMaxLevelBySet[nAttrSet])
 		nAttrLevel = r.bMaxLevelBySet[nAttrSet];
 
-	attr.bType = r.dwApplyIndex;
-	attr.sValue = r.lValues[nAttrLevel - 1];
+	attr.bType = static_cast<BYTE>(r.dwApplyIndex);
+	attr.sValue = static_cast<short>(r.lValues[nAttrLevel - 1]);
 
 	UpdatePacket();
 

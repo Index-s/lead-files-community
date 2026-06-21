@@ -200,7 +200,7 @@ int CalcMagicDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim)
 		iDam = CalcMeleeDamage(pkAttacker, pkVictim, false, false);	
 	}
 
-	iDam += pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS);
+	iDam += static_cast<int>(pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS));
 
 	return CalcMagicDamageWithValue(iDam, pkAttacker, pkVictim);
 }
@@ -251,50 +251,50 @@ int CalcAttBonus(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, int iAtk)
 	if (pkVictim->IsNPC())
 	{
 		if (pkVictim->IsRaceFlag(RACE_FLAG_ANIMAL))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_ANIMAL)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_ANIMAL)) / 100);
 		else if (pkVictim->IsRaceFlag(RACE_FLAG_UNDEAD))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_UNDEAD)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_UNDEAD)) / 100);
 		else if (pkVictim->IsRaceFlag(RACE_FLAG_DEVIL))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_DEVIL)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_DEVIL)) / 100);
 		else if (pkVictim->IsRaceFlag(RACE_FLAG_HUMAN))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_HUMAN)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_HUMAN)) / 100);
 		else if (pkVictim->IsRaceFlag(RACE_FLAG_ORC))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_ORC)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_ORC)) / 100);
 		else if (pkVictim->IsRaceFlag(RACE_FLAG_MILGYO))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_MILGYO)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_MILGYO)) / 100);
 		else if (pkVictim->IsRaceFlag(RACE_FLAG_INSECT))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_INSECT)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_INSECT)) / 100);
 		else if (pkVictim->IsRaceFlag(RACE_FLAG_FIRE))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_FIRE)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_FIRE)) / 100);
 		else if (pkVictim->IsRaceFlag(RACE_FLAG_ICE))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_ICE)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_ICE)) / 100);
 		else if (pkVictim->IsRaceFlag(RACE_FLAG_DESERT))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_DESERT)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_DESERT)) / 100);
 		else if (pkVictim->IsRaceFlag(RACE_FLAG_TREE))
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_TREE)) / 100;
+			iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_TREE)) / 100);
 
-		iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_MONSTER)) / 100;
+		iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_MONSTER)) / 100);
 	}
 	else if (pkVictim->IsPC())
 	{
-		iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_HUMAN)) / 100;
+		iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_HUMAN)) / 100);
 
 		switch (pkVictim->GetJob())
 		{
 			case JOB_WARRIOR:
-				iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_WARRIOR)) / 100;
+				iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_WARRIOR)) / 100);
 				break;
 
 			case JOB_ASSASSIN:
-				iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_ASSASSIN)) / 100;
+				iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_ASSASSIN)) / 100);
 				break;
 
 			case JOB_SURA:
-				iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_SURA)) / 100;
+				iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_SURA)) / 100);
 				break;
 
 			case JOB_SHAMAN:
-				iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_SHAMAN)) / 100;
+				iAtk += static_cast<int>((iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_SHAMAN)) / 100);
 				break;
 		}
 	}
@@ -304,19 +304,19 @@ int CalcAttBonus(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, int iAtk)
 		switch (pkAttacker->GetJob())
 		{
 			case JOB_WARRIOR:
-				iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_WARRIOR)) / 100;
+				iAtk -= static_cast<int>((iAtk * pkVictim->GetPoint(POINT_RESIST_WARRIOR)) / 100);
 				break;
-				
+
 			case JOB_ASSASSIN:
-				iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_ASSASSIN)) / 100;
+				iAtk -= static_cast<int>((iAtk * pkVictim->GetPoint(POINT_RESIST_ASSASSIN)) / 100);
 				break;
-				
+
 			case JOB_SURA:
-				iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_SURA)) / 100;
+				iAtk -= static_cast<int>((iAtk * pkVictim->GetPoint(POINT_RESIST_SURA)) / 100);
 				break;
 
 			case JOB_SHAMAN:
-				iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_SHAMAN)) / 100;
+				iAtk -= static_cast<int>((iAtk * pkVictim->GetPoint(POINT_RESIST_SHAMAN)) / 100);
 				break;
 		}
 	}
@@ -327,17 +327,17 @@ int CalcAttBonus(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, int iAtk)
 	if (pkAttacker->IsNPC() && pkVictim->IsPC())
 	{
 		if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_ELEC))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_ELEC))		/ 10000;
+			iAtk -= static_cast<int>((iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_ELEC))		/ 10000);
 		else if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_FIRE))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_FIRE))		/ 10000;
+			iAtk -= static_cast<int>((iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_FIRE))		/ 10000);
 		else if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_ICE))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_ICE))		/ 10000;
+			iAtk -= static_cast<int>((iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_ICE))		/ 10000);
 		else if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_WIND))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_WIND))		/ 10000;
+			iAtk -= static_cast<int>((iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_WIND))		/ 10000);
 		else if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_EARTH))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_EARTH))	/ 10000;
+			iAtk -= static_cast<int>((iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_EARTH))	/ 10000);
 		else if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_DARK))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_DARK))		/ 10000;
+			iAtk -= static_cast<int>((iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_DARK))		/ 10000);
 	}
 		
 	
@@ -441,7 +441,7 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 	int iAtk = 0;
 
 	// level must be ignored when multiply by fAR, so subtract it before calculation.
-	iAtk = pkAttacker->GetPoint(POINT_ATT_GRADE) + iDam - (pkAttacker->GetLevel() * 2);
+	iAtk = static_cast<int>(pkAttacker->GetPoint(POINT_ATT_GRADE) + iDam - (pkAttacker->GetLevel() * 2));
 	iAtk = (int) (iAtk * fAR);
 	iAtk += pkAttacker->GetLevel() * 2; // and add again
 
@@ -454,7 +454,7 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 		///////////////////////////////////////////////
 	}
 
-	iAtk += pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS); // party attacker role bonus
+	iAtk += static_cast<int>(pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS)); // party attacker role bonus
 	iAtk = (int) (iAtk * (100 + (pkAttacker->GetPoint(POINT_ATT_BONUS) + pkAttacker->GetPoint(POINT_MELEE_MAGIC_ATT_BONUS_PER))) / 100);
 
 	iAtk = CalcAttBonus(pkAttacker, pkVictim, iAtk);
@@ -463,7 +463,7 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 
 	if (!bIgnoreDefense)
 	{
-		iDef = (pkVictim->GetPoint(POINT_DEF_GRADE) * (100 + pkVictim->GetPoint(POINT_DEF_BONUS)) / 100);
+		iDef = static_cast<int>(pkVictim->GetPoint(POINT_DEF_GRADE) * (100 + pkVictim->GetPoint(POINT_DEF_BONUS)) / 100);
 
 		if (!pkAttacker->IsPC())
 			iDef += pkVictim->GetMarriageBonus(UNIQUE_ITEM_MARRIAGE_DEFENSE_BONUS);
@@ -478,7 +478,7 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 	{
 		int DEBUG_iLV = pkAttacker->GetLevel()*2;
 		int DEBUG_iST = int((pkAttacker->GetPoint(POINT_ATT_GRADE) - DEBUG_iLV) * fAR);
-		int DEBUG_iPT = pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS);
+		int DEBUG_iPT = static_cast<int>(pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS));
 		int DEBUG_iWP = 0;
 		int DEBUG_iPureAtk = 0;
 		int DEBUG_iPureDam = 0;
@@ -550,7 +550,7 @@ int CalcArrowDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, LPITEM pkBow, 
 	// Hit value calculator
 	int iDist = (int) (DISTANCE_SQRT(pkAttacker->GetX() - pkVictim->GetX(), pkAttacker->GetY() - pkVictim->GetY()));
 	//int iGap = (iDist / 100) - 5 - pkBow->GetValue(5) - pkAttacker->GetPoint(POINT_BOW_DISTANCE);
-	int iGap = (iDist / 100) - 5 - pkAttacker->GetPoint(POINT_BOW_DISTANCE);
+	int iGap = static_cast<int>((iDist / 100) - 5 - pkAttacker->GetPoint(POINT_BOW_DISTANCE));
 	int iPercent = 100 - (iGap * 5);
 
 	if (iPercent <= 0)
@@ -565,14 +565,14 @@ int CalcArrowDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, LPITEM pkBow, 
 	int iAtk;
 
 	// level must be ignored when multiply by fAR, so subtract it before calculation.
-	iAtk = pkAttacker->GetPoint(POINT_ATT_GRADE) + iDam - (pkAttacker->GetLevel() * 2);
+	iAtk = static_cast<int>(pkAttacker->GetPoint(POINT_ATT_GRADE) + iDam - (pkAttacker->GetLevel() * 2));
 	iAtk = (int) (iAtk * fAR);
 	iAtk += pkAttacker->GetLevel() * 2; // and add again
 
 	// Refine Grade
 	iAtk += pkBow->GetValue(5) * 2;
 
-	iAtk += pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS);
+	iAtk += static_cast<int>(pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS));
 	iAtk = (int) (iAtk * (100 + (pkAttacker->GetPoint(POINT_ATT_BONUS) + pkAttacker->GetPoint(POINT_MELEE_MAGIC_ATT_BONUS_PER))) / 100);
 
 	iAtk = CalcAttBonus(pkAttacker, pkVictim, iAtk);
@@ -580,7 +580,7 @@ int CalcArrowDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, LPITEM pkBow, 
 	int iDef = 0;
 
 	if (!bIgnoreDefense)
-		iDef = (pkVictim->GetPoint(POINT_DEF_GRADE) * (100 + pkAttacker->GetPoint(POINT_DEF_BONUS)) / 100);
+		iDef = static_cast<int>(pkVictim->GetPoint(POINT_DEF_GRADE) * (100 + pkAttacker->GetPoint(POINT_DEF_BONUS)) / 100);
 
 	if (pkAttacker->IsNPC())
 		iAtk = (int) (iAtk * pkAttacker->GetMobDamageMultiply());
@@ -643,35 +643,35 @@ int battle_hit(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, int & iRetDam)
 		switch (pkWeapon->GetSubType())
 		{
 			case WEAPON_SWORD:
-				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_SWORD)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkVictim->GetPoint(POINT_RESIST_SWORD)) / 100);
 				break;
 
 			case WEAPON_TWO_HANDED:
-				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_TWOHAND)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkVictim->GetPoint(POINT_RESIST_TWOHAND)) / 100);
 				break;
 
 			case WEAPON_DAGGER:
-				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_DAGGER)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkVictim->GetPoint(POINT_RESIST_DAGGER)) / 100);
 				break;
 
 			case WEAPON_BELL:
-				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BELL)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BELL)) / 100);
 				break;
 
 			case WEAPON_FAN:
-				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_FAN)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkVictim->GetPoint(POINT_RESIST_FAN)) / 100);
 				break;
 
 			case WEAPON_BOW:
-				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BOW)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BOW)) / 100);
 				break;
 		}
 
 
 	// Final damage correction . (2011 year 2 As of March, only applies to giant spiders. .)
 	float attMul = pkAttacker->GetAttMul();
-	float tempIDam = iDam;
-	iDam = attMul * tempIDam + 0.5f;
+	float tempIDam = static_cast<float>(iDam);
+	iDam = static_cast<int>(attMul * tempIDam + 0.5f);
 
 	iRetDam = iDam;
 
@@ -698,7 +698,7 @@ DWORD GET_ATTACK_SPEED(LPCHARACTER ch)
 	}
 
 	DWORD ani_speed = ani_attack_speed(ch);
-    DWORD real_speed = (ani_speed * 100) / (default_bonus + ch->GetPoint(POINT_ATT_SPEED) + riding_bonus);
+    DWORD real_speed = (ani_speed * 100) / (default_bonus + static_cast<DWORD>(ch->GetPoint(POINT_ATT_SPEED)) + riding_bonus);
 
 	// In case of dagger, attack speed 2 ship
 	if (item && item->GetSubType() == WEAPON_DAGGER)

@@ -16,14 +16,14 @@ typedef struct SSupplementaryDataBlockInfo
 		memcpy(pStream,   &dwPackageIdentifier, sizeof(DWORD));
 		memcpy(pStream+4, &dwFileIdentifier,    sizeof(DWORD));
 
-		BYTE bSize = vecSDBStream.size();
+		BYTE bSize = static_cast<BYTE>(vecSDBStream.size());
 		memcpy(pStream+8, &bSize,  sizeof(BYTE));
 		memcpy(pStream+9, &vecSDBStream[0], bSize);
 	}
 
 	DWORD GetSerializedSize() const
 	{
-		return sizeof(DWORD)*2 + sizeof(BYTE) + vecSDBStream.size();
+		return static_cast<DWORD>(sizeof(DWORD)*2 + sizeof(BYTE) + vecSDBStream.size());
 	}
 
 } TSupplementaryDataBlockInfo;
@@ -82,7 +82,7 @@ private:
 			m_pSerializedStream = new BYTE[GetSize()];
 
 			int iWrittenOffset = 0;
-			int iSDBInfoSize   = vecSDBInfos.size();
+			int iSDBInfoSize   = static_cast<int>(vecSDBInfos.size());
 
 			//write size 
 			memcpy( m_pSerializedStream, &iSDBInfoSize, sizeof(int) );

@@ -25,7 +25,10 @@
 
 // Armadillo nanomite protection
 #ifndef NANOBEGIN
-	#ifdef __BORLANDC__
+	#ifdef _WIN64
+		#define NANOBEGIN
+		#define NANOEND
+	#elif defined(__BORLANDC__)
 		#define NANOBEGIN     __emit__ (0xEB,0x03,0xD6,0xD7,0x01)
 		#define NANOEND       __emit__ (0xEB,0x03,0xD6,0xD7,0x00)
 	#else

@@ -399,8 +399,8 @@ void CGuild::SendListOneToAll(DWORD pid)
 		cit->second._dummy = 1;
 
 		buf.write(&(cit->second), sizeof(DWORD) * 3 +1);
-		buf.write(cit->second.name.c_str(), cit->second.name.length());
-		buf.write(c, CHARACTER_NAME_MAX_LEN + 1 - cit->second.name.length());
+		buf.write(cit->second.name.c_str(), static_cast<int>(cit->second.name.length()));
+		buf.write(c, static_cast<int>(CHARACTER_NAME_MAX_LEN + 1 - cit->second.name.length()));
 		d->Packet(buf.read_peek(), buf.size());
 	}
 }
@@ -428,7 +428,7 @@ void CGuild::SendListPacket(LPCHARACTER ch)
 	pack.size = sizeof(TPacketGCGuild);
 	pack.subheader = GUILD_SUBHEADER_GC_LIST;
 
-	pack.size += sizeof(TGuildMemberPacketData) * m_member.size();
+	pack.size += static_cast<WORD>(sizeof(TGuildMemberPacketData) * m_member.size());
 
 	TEMP_BUFFER buf;
 
@@ -442,7 +442,7 @@ void CGuild::SendListPacket(LPCHARACTER ch)
 
 		buf.write(&(it->second), sizeof(DWORD)*3+1);
 
-		strlcpy(c, it->second.name.c_str(), MIN(sizeof(c), it->second.name.length() + 1));
+		strlcpy(c, it->second.name.c_str(), MIN(static_cast<int>(sizeof(c)), static_cast<int>(it->second.name.length() + 1)));
 
 		buf.write(c, CHARACTER_NAME_MAX_LEN+1 );
 
@@ -576,7 +576,7 @@ void CGuild::LoadGuildGradeData(SQLMsg* pmsg)
 		{
 			//sys_log(0, "GuildGradeLoad %s", name);
 			strlcpy(m_data.grade_array[grade-1].grade_name, name, sizeof(m_data.grade_array[grade-1].grade_name));
-			m_data.grade_array[grade-1].auth_flag = auth;
+			m_data.grade_array[grade-1].auth_flag = static_cast<BYTE>(auth);
 		}
 	}
 }
@@ -981,7 +981,7 @@ void CGuild::Disband()
 		LPCHARACTER ch = *it;
 		ch->SetGuild(NULL);
 		SendOnlineRemoveOnePacket(ch->GetPlayerID());
-		ch->SetQuestFlag("guild_manage.new_withdraw_time", get_global_time());
+		ch->SetQuestFlag("guild_manage.new_withdraw_time", static_cast<int>(get_global_time()));
 	}
 
 	for (TGuildMemberContainer::iterator it = m_member.begin(); it != m_member.end(); ++it)

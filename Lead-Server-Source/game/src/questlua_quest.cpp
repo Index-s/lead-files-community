@@ -193,7 +193,7 @@ namespace quest
 	int quest_begin_other_pc_block(lua_State* L)
 	{
 		CQuestManager& q = CQuestManager::instance();
-		DWORD pid = lua_tonumber(L, -1);
+		DWORD pid = static_cast<DWORD>(lua_tonumber(L, -1));
 		q.BeginOtherPCBlock(pid);
 		return 0;
 	}

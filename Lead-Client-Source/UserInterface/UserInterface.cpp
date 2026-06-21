@@ -1,4 +1,4 @@
-﻿#include "StdAfx.h"
+#include "StdAfx.h"
 #include "PythonApplication.h"
 #include "ProcessScanner.h"
 #include "PythonExceptionSender.h"
@@ -27,14 +27,20 @@ volatile int _AVOID_FLOATING_POINT_LIBRARY_BUG = _fltused;
 #pragma comment( lib, "python27.lib" )
 #pragma comment( lib, "imagehlp.lib" )
 #pragma comment( lib, "devil.lib" )
+#ifdef _WIN64
+#pragma comment( lib, "granny2_x64.lib" )
+#pragma comment( lib, "mss64.lib" )
+#else
 #pragma comment( lib, "granny2.lib" )
 #pragma comment( lib, "mss32.lib" )
+#endif
 #pragma comment( lib, "winmm.lib" )
 #pragma comment( lib, "imm32.lib" )
 #pragma comment( lib, "oldnames.lib" )
 #pragma comment( lib, "SpeedTreeRT.lib" )
 #pragma comment( lib, "dinput8.lib" )
 #pragma comment( lib, "dxguid.lib" )
+#pragma comment( lib, "d3d9.lib" )
 #pragma comment( lib, "ws2_32.lib" )
 #pragma comment( lib, "strmiids.lib" )
 #pragma comment( lib, "ddraw.lib" )
@@ -71,7 +77,7 @@ char gs_szErrorString[512] = "";
 
 void ApplicationSetErrorString(const char* szErrorString)
 {
-	strcpy(gs_szErrorString, szErrorString);
+	strcpy_s(gs_szErrorString, sizeof(gs_szErrorString), szErrorString);
 }
 
 bool CheckPythonLibraryFilenames()
@@ -111,19 +117,19 @@ const std::string& ApplicationStringTable_GetString(DWORD dwID, LPCSTR szKey)
 
 	::GetCurrentDirectory(sizeof(szIniFileName), szIniFileName);
 	if(szIniFileName[lstrlen(szIniFileName)-1] != '\\')
-		strcat(szIniFileName, "\\");
-	strcat(szIniFileName, "metin2client.dat");
+		strcat_s(szIniFileName, sizeof(szIniFileName), "\\");
+	strcat_s(szIniFileName, sizeof(szIniFileName), "metin2client.dat");
 
-	strcpy(szLocale, LocaleService_GetLocalePath());
+	strcpy_s(szLocale, sizeof(szLocale), LocaleService_GetLocalePath());
 	if(strnicmp(szLocale, "locale/", strlen("locale/")) == 0)
-		strcpy(szLocale, LocaleService_GetLocalePath() + strlen("locale/"));
+		strcpy_s(szLocale, sizeof(szLocale), LocaleService_GetLocalePath() + strlen("locale/"));
 	::GetPrivateProfileString(szLocale, szKey, NULL, szBuffer, sizeof(szBuffer)-1, szIniFileName);
 	if(szBuffer[0] == '\0')
 		LoadString(gs_kAppStrTable.m_hInstance, dwID, szBuffer, sizeof(szBuffer)-1);
 	if(szBuffer[0] == '\0')
 		::GetPrivateProfileString("en", szKey, NULL, szBuffer, sizeof(szBuffer)-1, szIniFileName);
 	if(szBuffer[0] == '\0')
-		strcpy(szBuffer, szKey);
+		strcpy_s(szBuffer, sizeof(szBuffer), szKey);
 
 	std::string& rstLocale=gs_kAppStrTable.m_kMap_dwID_stLocale[dwID];
 	rstLocale=szBuffer;
@@ -352,7 +358,7 @@ bool RunMainScript(CPythonLauncher& pyLauncher, const char* lpCmdLine)
 
 bool Main(HINSTANCE hInstance, LPSTR lpCmdLine)
 {
-	DWORD dwRandSeed=time(NULL)+DWORD(GetCurrentProcess());
+	DWORD dwRandSeed=(DWORD)(time(NULL)+(DWORD_PTR)GetCurrentProcess());
 	srandom(dwRandSeed);
 	srand(random());
 
@@ -369,7 +375,7 @@ bool Main(HINSTANCE hInstance, LPSTR lpCmdLine)
 
 #ifdef _DEBUG
 	OpenConsoleWindow();
-	OpenLogFile(true); // true == uses syserr.txt and log.txt
+	OpenLogFile(false); // syserr.txt only (no log.txt) in every build
 #else
 	OpenLogFile(false); // false == uses syserr.txt only
 #endif
@@ -499,8 +505,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			char szModuleName[MAX_PATH];
 			char szVersionPath[MAX_PATH];
 			GetModuleFileName(NULL, szModuleName, sizeof(szModuleName));
-			sprintf(szVersionPath, "%s.version", szModuleName);
-			FILE* fp = fopen(szVersionPath, "wt");
+			sprintf_s(szVersionPath, sizeof(szVersionPath), "%s.version", szModuleName);
+			FILE* fp = NULL;
+			fopen_s(&fp, szVersionPath, "wt");
 			if (fp)
 			{
 				extern int METIN2_GET_VERSION();
@@ -510,8 +517,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			bQuit = true;
 		} else if (__IsLocaleOption(szArgv[i]))
 		{
-			FILE* fp=fopen("locale.txt", "wt");
-			fprintf(fp, "service[%s] code_page[%d]", 
+			FILE* fp=NULL;
+			fopen_s(&fp, "locale.txt", "wt");
+			fprintf(fp, "service[%s] code_page[%d]",
 				LocaleService_GetName(), LocaleService_GetCodePage());
 			fclose(fp);
 			bQuit = true;

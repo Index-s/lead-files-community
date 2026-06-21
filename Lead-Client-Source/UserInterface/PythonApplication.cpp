@@ -121,8 +121,8 @@ void CPythonApplication::NotifyHack(const char* c_szFormat, ...)
 	char szBuf[1024];
 
 	va_list args;
-	va_start(args, c_szFormat);	
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	va_start(args, c_szFormat);
+	vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	va_end(args);
 	m_pyNetworkStream.NotifyHack(szBuf);
 }
@@ -340,7 +340,7 @@ bool CPythonApplication::Process()
 	if (dwCurrentTime > s_uiNextFrameTime)
 	{
 		int dt = dwCurrentTime - s_uiNextFrameTime;
-		int nAdjustTime = ((float)dt / (float)uiFrameTime) * uiFrameTime; 
+		int nAdjustTime = static_cast<int>(((float)dt / (float)uiFrameTime) * uiFrameTime);
 
 		if ( dt >= 500 )
 		{
@@ -358,7 +358,7 @@ bool CPythonApplication::Process()
 
 	if (!s_bFrameSkip)
 	{
-		CGrannyMaterial::TranslateSpecularMatrix(g_specularSpd, g_specularSpd, 0.0f);
+		CGrannyMaterial::TranslateSpecularMatrix(static_cast<float>(g_specularSpd), static_cast<float>(g_specularSpd), 0.0f);
 
 		DWORD dwRenderStartTime = ELTimer_GetMSec();		
 
@@ -449,7 +449,7 @@ bool CPythonApplication::Process()
 					{	
 						static float s_fBufRenderTime = 0.0f;
 
-						float fCurRenderTime = m_dwCurRenderTime;
+						float fCurRenderTime = static_cast<float>(m_dwCurRenderTime);
 
 						if (fCurRenderTime > s_fBufRenderTime)
 						{
@@ -466,7 +466,7 @@ bool CPythonApplication::Process()
 						if (s_fBufRenderTime > 100.0f)
 							s_fBufRenderTime = 100.0f;
 
-						DWORD dwBufRenderTime = s_fBufRenderTime;
+						DWORD dwBufRenderTime = static_cast<DWORD>(s_fBufRenderTime);
 
 						if (m_isWindowed)
 						{						
@@ -493,7 +493,7 @@ bool CPythonApplication::Process()
 					m_dwFaceAccCount += dwCurFaceCount;
 					m_dwFaceAccTime += m_dwCurRenderTime;
 
-					m_fFaceSpd=(m_dwFaceAccCount/m_dwFaceAccTime);
+					m_fFaceSpd=static_cast<float>(m_dwFaceAccCount/m_dwFaceAccTime);
 
 					// Distance automatic adjustment
 					if (-1 == m_iForceSightRange)
@@ -507,7 +507,7 @@ bool CPythonApplication::Process()
 						float fNear=MIN_FOG;
 						double dbAvePow=double(1000.0f/s_fAveRenderTime);
 						double dbMaxPow=60.0;
-						float fDistance=max(fNear+(fFar-fNear)*(dbAvePow)/dbMaxPow, fNear);
+						float fDistance=static_cast<float>(max(fNear+(fFar-fNear)*(dbAvePow)/dbMaxPow, fNear));
 						m_pyBackground.SetViewDistanceSet(0, fDistance);
 					}
 					// When setting forced distance
@@ -729,7 +729,7 @@ bool LoadLocaleData(const char* localePath)
 		char szEmpireTextConvFile[256];
 		for (DWORD dwEmpireID=1; dwEmpireID<=3; ++dwEmpireID)
 		{			
-			sprintf(szEmpireTextConvFile, "%s/lang%d.cvt", localePath, dwEmpireID);
+			sprintf_s(szEmpireTextConvFile, sizeof(szEmpireTextConvFile), "%s/lang%d.cvt", localePath, dwEmpireID);
 			if (!rkNetStream.LoadConvertTable(dwEmpireID, szEmpireTextConvFile))
 			{
 				TraceError("LoadLocaleData - CPythonNetworkStream::LoadConvertTable(%d, %s) FAILURE", dwEmpireID, szEmpireTextConvFile);			
@@ -918,9 +918,9 @@ void CPythonApplication::SetGlobalCenterPosition(int32_t x, int32_t y)
 	CPythonBackground& rkBG=CPythonBackground::Instance();
 	rkBG.GlobalPositionToLocalPosition(x, y);
 
-	float z = CPythonBackground::Instance().GetHeight(x, y);
+	float z = CPythonBackground::Instance().GetHeight(static_cast<float>(x), static_cast<float>(y));
 
-	CPythonApplication::Instance().SetCenterPosition(x, y, z);
+	CPythonApplication::Instance().SetCenterPosition(static_cast<float>(x), static_cast<float>(y), z);
 }
 
 void CPythonApplication::SetCenterPosition(float fx, float fy, float fz)

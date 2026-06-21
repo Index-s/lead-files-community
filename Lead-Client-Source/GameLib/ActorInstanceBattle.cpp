@@ -258,7 +258,7 @@ void CActorInstance::__RunNextCombo()
  	++m_dwcurComboIndex;
 	///////////////////////////
 
-	WORD wComboIndex = m_dwcurComboIndex;
+	DWORD wComboIndex = m_dwcurComboIndex;
 	WORD wComboType = __GetCurrentComboType();
 
 	if (wComboIndex==0)
@@ -285,7 +285,7 @@ void CActorInstance::__RunNextCombo()
 		return;
 	}
 
-	WORD wcurComboMotionIndex = pComboData->ComboIndexVector[dwComboArrayIndex];
+	DWORD wcurComboMotionIndex = pComboData->ComboIndexVector[dwComboArrayIndex];
 	ComboAttack(wcurComboMotionIndex, m_fAtkDirRot, 0.1f);
 
 	////////////////////////////////
@@ -495,7 +495,7 @@ BOOL CActorInstance::ComboAttack(DWORD dwMotionIndex, float fDirRot, float fBlen
 
 	InterceptOnceMotion(dwMotionIndex, fBlendTime, 0, __GetAttackSpeed());
 
-	__OnAttack(dwMotionIndex);
+	__OnAttack(static_cast<WORD>(dwMotionIndex));
 
 	NEW_SetAtkPixelPosition(NEW_GetCurPixelPositionRef());
 

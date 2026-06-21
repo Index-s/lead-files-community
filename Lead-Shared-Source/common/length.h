@@ -4,8 +4,10 @@
 #define WORD_MAX 0xffff
 
 #include "service.h"
+#include <cstdint>
 
 typedef long long GoldType;
+typedef int64_t   TimeT64;   // absolute Unix epoch seconds; canonical 64-bit timestamp type (wire/DB/server)
 
 enum EMisc
 {

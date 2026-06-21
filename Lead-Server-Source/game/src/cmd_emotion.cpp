@@ -215,7 +215,7 @@ ACMD(do_emotion)
 
 	TPacketGCChat pack_chat;
 	pack_chat.header = HEADER_GC_CHAT;
-	pack_chat.size = sizeof(TPacketGCChat) + len;
+	pack_chat.size = static_cast<WORD>(sizeof(TPacketGCChat) + len);
 	pack_chat.type = CHAT_TYPE_COMMAND;
 	pack_chat.id = 0;
 	TEMP_BUFFER buf;

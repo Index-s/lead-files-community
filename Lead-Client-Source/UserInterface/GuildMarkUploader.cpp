@@ -41,27 +41,43 @@ bool CGuildMarkUploader::__Load(const char* c_szFileName, UINT* peError)
 	ilEnable(IL_ORIGIN_SET);
 	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
 
-	if (!ilLoad(IL_TYPE_UNKNOWN, (const ILstring)c_szFileName))	
+	if (!ilLoad(IL_TYPE_UNKNOWN, (const ILstring)c_szFileName))
 	{
 		*peError=ERROR_LOAD;
+		ilDeleteImages(1, &uImg);
 		return false;
 	}
 
-	if (ilGetInteger(IL_IMAGE_WIDTH)!=SGuildMark::WIDTH)	
+	if (ilGetInteger(IL_IMAGE_WIDTH)!=SGuildMark::WIDTH)
 	{
 		*peError=ERROR_WIDTH;
+		ilDeleteImages(1, &uImg);
 		return false;
 	}
 
 	if (ilGetInteger(IL_IMAGE_HEIGHT)!=SGuildMark::HEIGHT)
 	{
 		*peError=ERROR_HEIGHT;
+		ilDeleteImages(1, &uImg);
 		return false;
 	}
 
-	ilConvertImage(IL_BGRA, IL_BYTE);
+	// Mark pixels are 8-bit BGRA. Use IL_UNSIGNED_BYTE, NOT the signed IL_BYTE the stock
+	// code used: the server stores and reads the mark with IL_UNSIGNED_BYTE, and with the
+	// upgraded DevIL (1.8.0) the signed-byte copy silently wrote nothing to m_apxBuf -- so
+	// every "upload sign" shipped uninitialised heap (0xCD bytes) and the guild sign
+	// rendered as a flat grey block. ilCopyPixels() returns the number of bytes written;
+	// 0 means the copy failed, so reject the upload instead of sending garbage.
+	ilConvertImage(IL_BGRA, IL_UNSIGNED_BYTE);
 
-	ilCopyPixels(0, 0, 0, SGuildMark::WIDTH, SGuildMark::HEIGHT, 1, IL_BGRA, IL_BYTE, (void*)m_kMark.m_apxBuf);
+	ILuint uCopied = ilCopyPixels(0, 0, 0, SGuildMark::WIDTH, SGuildMark::HEIGHT, 1, IL_BGRA, IL_UNSIGNED_BYTE, (void*)m_kMark.m_apxBuf);
+
+	if (uCopied == 0)
+	{
+		*peError=ERROR_LOAD;
+		ilDeleteImages(1, &uImg);
+		return false;
+	}
 
 	ilDeleteImages(1, &uImg);
 	return true;
@@ -91,14 +107,18 @@ bool CGuildMarkUploader::__LoadSymbol(const char* c_szFileName, UINT* peError)
 		return false;
 	}
 	ilDeleteImages(1, &uImg);
-	ilShutDown();
+	// NOTE: do NOT ilShutDown() here. DevIL is process-global and initialised once at
+	// startup (UserInterface.cpp ilInit); tearing it down after the first symbol/mark
+	// validation made every later ilLoad/GetImageInfo fail, surfacing as
+	// "The game does not support this picture." for subsequent uploads.
 
 	/////
 
-	FILE * file = fopen(c_szFileName, "rb");
-	if (!file)
+	FILE * file = NULL;
+	if (fopen_s(&file, c_szFileName, "rb") != 0 || !file)
 	{
 		*peError=ERROR_LOAD;
+		return false;
 	}
 
 	fseek(file, 0, SEEK_END);
@@ -206,7 +226,7 @@ void CGuildMarkUploader::__Inialize()
 
 	if (m_pbySymbolBuf)
 	{
-		delete m_pbySymbolBuf;
+		delete [] m_pbySymbolBuf;	// matches `new BYTE[]` at allocation
 	}
 
 	m_dwSymbolBufSize = 0;
@@ -278,7 +298,7 @@ bool CGuildMarkUploader::__SendSymbolPacket()
 
 	TPacketCGGuildSymbolUpload kPacketSymbolUpload;
 	kPacketSymbolUpload.header=HEADER_CG_GUILD_SYMBOL_UPLOAD;
-	kPacketSymbolUpload.size=sizeof(TPacketCGGuildSymbolUpload) + m_dwSymbolBufSize;
+	kPacketSymbolUpload.size=static_cast<WORD>(sizeof(TPacketCGGuildSymbolUpload) + m_dwSymbolBufSize);
 	kPacketSymbolUpload.guild_id=m_dwGuildID;
 
 	if (!Send(sizeof(TPacketCGGuildSymbolUpload), &kPacketSymbolUpload))

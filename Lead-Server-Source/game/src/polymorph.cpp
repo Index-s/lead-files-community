@@ -65,7 +65,7 @@ bool CPolymorphUtils::PolymorphCharacter(LPCHARACTER pChar, LPITEM pItem, const 
 	// dwDuration *= 60;
 
 	// Transformation probability = character level - mob level + Transformation level + 29 + Transformation skill level
-	iPolyPercent = pChar->GetLevel() - pMob->m_table.bLevel + pItem->GetSocket(2) + (29 + bySkillLevel);
+	iPolyPercent = pChar->GetLevel() - pMob->m_table.bLevel + static_cast<int>(pItem->GetSocket(2)) + (29 + bySkillLevel);
 
 	if (iPolyPercent <= 0)
 	{
@@ -84,7 +84,7 @@ bool CPolymorphUtils::PolymorphCharacter(LPCHARACTER pChar, LPITEM pItem, const 
 	pChar->AddAffect(AFFECT_POLYMORPH, POINT_POLYMORPH, pMob->m_table.dwVnum, AFF_POLYMORPH, dwDuration, 0, true);
 
 	// Transformation Bonus = Transformation skill level + Transformation level
-	dwBonusPercent = bySkillLevel + pItem->GetSocket(2);
+	dwBonusPercent = bySkillLevel + static_cast<DWORD>(pItem->GetSocket(2));
 
 	switch (GetBonusType(pMob->m_table.dwVnum))
 	{

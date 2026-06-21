@@ -34,7 +34,7 @@ void CPythonGraphic::SetInterfaceRenderState()
 	STATEMANAGER.SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	CPythonGraphic::Instance().SetBlendOperation();
-	CPythonGraphic::Instance().SetOrtho2D(ms_iWidth, ms_iHeight, GetOrthoDepth());
+	CPythonGraphic::Instance().SetOrtho2D(static_cast<float>(ms_iWidth), static_cast<float>(ms_iHeight), GetOrthoDepth());
 
 	STATEMANAGER.SetRenderState(D3DRS_LIGHTING, FALSE);
 }
@@ -99,10 +99,10 @@ void CPythonGraphic::SetViewport(float fx, float fy, float fWidth, float fHeight
 	ms_lpd3dDevice->GetViewport(&m_backupViewport);
 
 	D3DVIEWPORT9 ViewPort;
-	ViewPort.X = fx;
-	ViewPort.Y = fy;
-	ViewPort.Width = fWidth;
-	ViewPort.Height = fHeight;
+	ViewPort.X = static_cast<DWORD>(fx);
+	ViewPort.Y = static_cast<DWORD>(fy);
+	ViewPort.Width = static_cast<DWORD>(fWidth);
+	ViewPort.Height = static_cast<DWORD>(fHeight);
 	ViewPort.MinZ = 0.0f;
 	ViewPort.MaxZ = 1.0f;
 	if (FAILED(
@@ -161,7 +161,7 @@ void GenScreenShotTag(const char* src, DWORD crc32, char* leaf, size_t leafLen)
 	while (n = strchr(p, '\\'))
 		p = n + 1;
 
-	_snprintf(leaf, leafLen, "YMIR_METIN2:%s:0x%.8x", p, crc32);
+	_snprintf_s(leaf, leafLen, _TRUNCATE, "YMIR_METIN2:%s:0x%.8x", p, crc32);
 }
 
 bool CPythonGraphic::SaveJPEG(const char * pszFileName, LPBYTE pbyBuffer, UINT uWidth, UINT uHeight)
@@ -305,7 +305,8 @@ bool CPythonGraphic::SaveScreenShot(const char * c_pszFileName)
 
 	if (g_isScreenShotKey)
 	{
-		FILE* srcFilePtr = fopen(c_pszFileName, "rb");
+		FILE* srcFilePtr = NULL;
+		fopen_s(&srcFilePtr, c_pszFileName, "rb");
 		if (srcFilePtr)
 		{
 			fseek(srcFilePtr, 0, SEEK_END);		
@@ -323,7 +324,7 @@ bool CPythonGraphic::SaveScreenShot(const char * c_pszFileName)
 			char imgDesc[64];
 			GenScreenShotTag(c_pszFileName, GetCRC32(tail, tailSize), imgDesc, sizeof(imgDesc));
 
-			int imgDescLen = strlen(imgDesc) + 1;
+			size_t imgDescLen = strlen(imgDesc) + 1;
 			
 			unsigned char exifHeader[] = {
 				0xe1,
@@ -363,9 +364,10 @@ bool CPythonGraphic::SaveScreenShot(const char * c_pszFileName)
 				0x0,
 			};
 
-			exifHeader[2] = sizeof(exifHeader) + imgDescLen;
+			exifHeader[2] = static_cast<unsigned char>(sizeof(exifHeader) + imgDescLen);
 
-			FILE* dstFilePtr = fopen(c_pszFileName, "wb");
+			FILE* dstFilePtr = NULL;
+			fopen_s(&dstFilePtr, c_pszFileName, "wb");
 			//FILE* dstFilePtr = fopen("temp.jpg", "wb");
 			if (dstFilePtr)
 			{
@@ -555,7 +557,7 @@ void CPythonGraphic::RenderCoolTimeBox(float fxCenter, float fyCenter, float fRa
 	if (vertices.empty())
 		return;
 
-	if (SetPDTStream(&vertices[0], vertices.size()))
+	if (SetPDTStream(&vertices[0], static_cast<UINT>(vertices.size())))
 	{
 		STATEMANAGER.SaveTextureStageState(0, D3DTSS_COLORARG1,	D3DTA_DIFFUSE);
 		STATEMANAGER.SaveTextureStageState(0, D3DTSS_COLOROP,	D3DTOP_SELECTARG1);

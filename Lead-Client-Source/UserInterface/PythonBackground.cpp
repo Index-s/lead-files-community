@@ -871,7 +871,7 @@ void CPythonBackground::CreateTargetEffect(DWORD dwID, long lx, long ly)
 		return;
 	}
 
-	CreateSpecialEffect(dwID, ilx, ily, fHeight, g_strEffectName.c_str());
+	CreateSpecialEffect(dwID, static_cast<float>(ilx), static_cast<float>(ily), fHeight, g_strEffectName.c_str());
 }
 
 void CPythonBackground::DeleteTargetEffect(DWORD dwID)

@@ -62,12 +62,12 @@ typedef struct _SQLMsg
 			SQLResult * pRes = new SQLResult;
 
 			pRes->pSQLResult = mysql_store_result(m_pkSQL);
-			pRes->uiInsertID = mysql_insert_id(m_pkSQL);
-			pRes->uiAffectedRows = mysql_affected_rows(m_pkSQL);
+			pRes->uiInsertID = static_cast<uint32_t>(mysql_insert_id(m_pkSQL));
+			pRes->uiAffectedRows = static_cast<uint32_t>(mysql_affected_rows(m_pkSQL));
 
 			if (pRes->pSQLResult)
 			{
-				pRes->uiNumRows = mysql_num_rows(pRes->pSQLResult);
+				pRes->uiNumRows = static_cast<uint32_t>(mysql_num_rows(pRes->pSQLResult));
 			}
 			else
 			{

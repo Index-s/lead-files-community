@@ -133,7 +133,7 @@ RETRY:
 		DWORD val = thecore_random() % (1024 * 1024);
 
 		*(DWORD *) (crc_buf    ) = val;
-		*((DWORD *) crc_buf + 1) = get_global_time();
+		*((DWORD *) crc_buf + 1) = static_cast<DWORD>(get_global_time());
 
 		crc = GetCRC32(crc_buf, 8);
 		it = m_map_handshake.find(crc);
@@ -156,7 +156,8 @@ LPDESC DESC_MANAGER::AcceptDesc(LPFDWATCH fdw, socket_t s)
 	if ((desc = socket_accept(s, &peer)) == -1)
 		return NULL;
 
-	strlcpy(host, inet_ntoa(peer.sin_addr), sizeof(host));
+	if (NULL == inet_ntop(AF_INET, &peer.sin_addr, host, sizeof(host)))
+		host[0] = '\0';
 
 	if (g_bAuthServer)
 	{
@@ -205,7 +206,8 @@ LPDESC DESC_MANAGER::AcceptP2PDesc(LPFDWATCH fdw, socket_t bind_fd)
 	if ((fd = socket_accept(bind_fd, &peer)) == -1)
 		return NULL;
 
-	strlcpy(host, inet_ntoa(peer.sin_addr), sizeof(host));
+	if (NULL == inet_ntop(AF_INET, &peer.sin_addr, host, sizeof(host)))
+		host[0] = '\0';
 
 	LPDESC_P2P pkDesc = M2_NEW DESC_P2P;
 

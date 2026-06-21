@@ -157,8 +157,8 @@ bool CAccountConnector::__AuthState_RecvPhase()
 		TPacketCGLogin3 LoginPacket;
 		LoginPacket.header = HEADER_CG_LOGIN3;
 
-		strncpy(LoginPacket.login, m_strID.c_str(), LOGIN_MAX_LEN);
-		strncpy(LoginPacket.passwd, m_strPassword.c_str(), PASSWD_MAX_LEN);
+		strncpy_s(LoginPacket.login, sizeof(LoginPacket.login), m_strID.c_str(), _TRUNCATE);
+		strncpy_s(LoginPacket.passwd, sizeof(LoginPacket.passwd), m_strPassword.c_str(), _TRUNCATE);
 		LoginPacket.login[LOGIN_MAX_LEN] = '\0';
 		LoginPacket.passwd[PASSWD_MAX_LEN] = '\0';
 

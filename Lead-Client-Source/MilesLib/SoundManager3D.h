@@ -37,7 +37,6 @@ class CSoundManager3D : public CSoundBase
 	protected:
 		bool				m_bLockingFlag[INSTANCE_MAX_COUNT];
 		CSoundInstance3D	m_Instances[INSTANCE_MAX_COUNT];
-		H3DPOBJECT			m_pListener;
 
 		bool m_bInit;
 };

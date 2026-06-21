@@ -157,7 +157,7 @@ void CLZObject::BeginCompressInBuffer(const void * pvIn, UINT uiInLen, void * /*
 
 bool CLZObject::Compress()
 {
-    UINT	iOutLen;
+    lzo_uint	iOutLen = 0;	// lzo writes a pointer-width lzo_uint (8 bytes on x64) here
     BYTE *	pbBuffer;
 	
     pbBuffer = m_pbBuffer + sizeof(THeader);
@@ -165,9 +165,9 @@ bool CLZObject::Compress()
     pbBuffer += sizeof(DWORD);
 
 #if defined( LZO1X_999_MEM_COMPRESS )
-    int r = lzo1x_999_compress((BYTE *) m_pbIn, m_pHeader->dwRealSize, pbBuffer, (lzo_uint*) &iOutLen, CLZO::Instance().GetWorkMemory());
+    int r = lzo1x_999_compress((BYTE *) m_pbIn, m_pHeader->dwRealSize, pbBuffer, &iOutLen, CLZO::Instance().GetWorkMemory());
 #else
-    int r = lzo1x_1_compress((BYTE *) m_pbIn, m_pHeader->dwRealSize, pbBuffer, (lzo_uint*) &iOutLen, CLZO::Instance().GetWorkMemory());
+    int r = lzo1x_1_compress((BYTE *) m_pbIn, m_pHeader->dwRealSize, pbBuffer, &iOutLen, CLZO::Instance().GetWorkMemory());
 #endif
 	
     if (LZO_E_OK != r)
@@ -176,7 +176,7 @@ bool CLZObject::Compress()
 		return false;
     }
 	
-    m_pHeader->dwCompressedSize = iOutLen;
+    m_pHeader->dwCompressedSize = static_cast<DWORD>(iOutLen);	// header field is 32-bit by format contract
     m_bCompressed = true;
     return true;
 }
@@ -260,7 +260,7 @@ private:
 
 bool CLZObject::Decompress(DWORD * pdwKey)
 {
-    UINT uiSize;
+    lzo_uint uiSize = 0;	// lzo writes a pointer-width lzo_uint (8 bytes on x64) here
     int r;
 	
     if (m_pHeader->dwEncryptSize)
@@ -277,7 +277,7 @@ bool CLZObject::Decompress(DWORD * pdwKey)
 			return false;
 		}
 		
-		if (LZO_E_OK != (r = lzo1x_decompress(pbDecryptedBuffer + sizeof(DWORD), m_pHeader->dwCompressedSize, m_pbBuffer, (lzo_uint*) &uiSize, NULL)))
+		if (LZO_E_OK != (r = lzo1x_decompress(pbDecryptedBuffer + sizeof(DWORD), m_pHeader->dwCompressedSize, m_pbBuffer, &uiSize, NULL)))
 		{
 			TraceError("LZObject: Decompress failed(decrypt) ret %d\n", r);
 			return false;
@@ -288,7 +288,7 @@ bool CLZObject::Decompress(DWORD * pdwKey)
 		uiSize = m_pHeader->dwRealSize;
 		
 		//if (LZO_E_OK != (r = lzo1x_decompress_safe(m_pbIn, m_pHeader->dwCompressedSize, m_pbBuffer, (lzo_uint*) &uiSize, NULL)))
-		if (LZO_E_OK != (r = lzo1x_decompress(m_pbIn, m_pHeader->dwCompressedSize, m_pbBuffer, (lzo_uint*) &uiSize, NULL)))
+		if (LZO_E_OK != (r = lzo1x_decompress(m_pbIn, m_pHeader->dwCompressedSize, m_pbBuffer, &uiSize, NULL)))
 		{
 			TraceError("LZObject: Decompress failed : ret %d, CompressedSize %d\n", r, m_pHeader->dwCompressedSize);
 			return false;

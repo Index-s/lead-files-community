@@ -100,7 +100,7 @@ void CPythonChat::UpdateViewMode(DWORD dwID)
 		return;
 
 	TChatLineList * pLineList = &(pChatSet->m_ShowingChatLineList);
-	int iLineIndex = pLineList->size();
+	int iLineIndex = static_cast<int>(pLineList->size());
 	int iHeight = -(int(pLineList->size()+1) * pChatSet->m_iStep);
 
 	TChatLineList::iterator itor;
@@ -134,7 +134,7 @@ void CPythonChat::UpdateViewMode(DWORD dwID)
 		iHeight += pChatSet->m_iStep;
 		--iLineIndex;
 
-		pChatLine->Instance.SetPosition(pChatSet->m_ix, pChatSet->m_iy + iHeight);
+		pChatLine->Instance.SetPosition(static_cast<float>(pChatSet->m_ix), static_cast<float>(pChatSet->m_iy + iHeight));
 		pChatLine->Instance.SetColor(rColor);
 		pChatLine->Instance.Update();
 	}
@@ -175,7 +175,7 @@ void CPythonChat::UpdateEditMode(DWORD dwID)
 		}
 
 		iHeight += pChatSet->m_iStep;
-		pChatLine->Instance.SetPosition(pChatSet->m_ix, pChatSet->m_iy + iHeight);
+		pChatLine->Instance.SetPosition(static_cast<float>(pChatSet->m_ix), static_cast<float>(pChatSet->m_iy + iHeight));
 		pChatLine->Instance.SetColor(rColor);
 		pChatLine->Instance.Update();
 	}
@@ -195,7 +195,7 @@ void CPythonChat::UpdateLogMode(DWORD dwID)
 		TChatLine * pChatLine = (*itor);
 
 		iHeight -= pChatSet->m_iStep;
-		pChatLine->Instance.SetPosition(pChatSet->m_ix, pChatSet->m_iy + iHeight);
+		pChatLine->Instance.SetPosition(static_cast<float>(pChatSet->m_ix), static_cast<float>(pChatSet->m_iy + iHeight));
 		pChatLine->Instance.SetColor(pChatLine->GetColorRef(dwID));
 		pChatLine->Instance.Update();
 	}
@@ -338,7 +338,7 @@ int CPythonChat::GetVisibleLineCount(DWORD dwID)
 	if (!pLineList)
 		return 0;
 
-	return pLineList->size();
+	return static_cast<int>(pLineList->size());
 }
 
 int CPythonChat::GetEditableLineCount(DWORD dwID)
@@ -413,7 +413,7 @@ void CPythonChat::ArrangeShowingChat(DWORD dwID)
 			TempChatLineDeque.push_back(pChatLine);
 	}
 
-	int icurLineCount = TempChatLineDeque.size();
+	int icurLineCount = static_cast<int>(TempChatLineDeque.size());
 	int iVisibleLineCount = min(icurLineCount, (pChatSet->m_iHeight + pChatSet->m_iStep) / pChatSet->m_iStep);
 	int iEndLine = iVisibleLineCount + int(float(icurLineCount - iVisibleLineCount - 1) * pChatSet->m_fEndPos);
 

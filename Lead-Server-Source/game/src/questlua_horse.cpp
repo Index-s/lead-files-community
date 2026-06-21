@@ -72,7 +72,7 @@ namespace quest
 		bool bFromFar = lua_isboolean(L, 1) ? lua_toboolean(L, 1) : false;
 
 		// of the summoned beast vnum
-		DWORD horseVnum= lua_isnumber(L, 2) ? lua_tonumber(L, 2) : 0;
+		DWORD horseVnum= lua_isnumber(L, 2) ? static_cast<DWORD>(lua_tonumber(L, 2)) : 0;
 
 		const char* name = lua_isstring(L, 3) ? lua_tostring(L, 3) : 0;
 		ch->HorseSummon(true, bFromFar, horseVnum, name);
@@ -224,7 +224,7 @@ namespace quest
 		// 1 : It's a wrong name
 		// 2 : rename success
 
-		if ( lua_isstring(L, -1) != true ) return 0;
+		if ( lua_isstring(L, -1) == 0 ) return 0;
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
@@ -238,9 +238,9 @@ namespace quest
 			}
 			else
 			{
-				int nHorseNameDuration = test_server == true ? 60*5 : 60*60*24*30;
+				int nHorseNameDuration = test_server != 0 ? 60*5 : 60*60*24*30;
 
-				ch->SetQuestFlag("horse_name.valid_till", get_global_time() + nHorseNameDuration);
+				ch->SetQuestFlag("horse_name.valid_till", static_cast<int>(get_global_time() + nHorseNameDuration));
 				ch->AddAffect(AFFECT_HORSE_NAME, 0, 0, 0, PASSES_PER_SEC(nHorseNameDuration), 0, true);
 
 				CHorseNameManager::instance().UpdateHorseName(ch->GetPlayerID(), lua_tostring(L, -1), true);

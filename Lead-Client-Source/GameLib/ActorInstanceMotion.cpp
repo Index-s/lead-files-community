@@ -146,9 +146,9 @@ void CActorInstance::ReservingMotionProcess()
 	m_kCurMotNode.fSpeedRatio = fSpeedRatio;
 	m_kCurMotNode.fStartTime = fStartTime;	
 	m_kCurMotNode.fEndTime = fEndTime;
-	m_kCurMotNode.dwMotionKey = dwRealMotionKey;
+	m_kCurMotNode.dwMotionKey = dwRealMotionKey;	
 	m_kCurMotNode.dwcurFrame = 0;
-	m_kCurMotNode.dwFrameCount = fDurationTime / (1.0f / g_fGameFPS);
+	m_kCurMotNode.dwFrameCount = static_cast<DWORD>(fDurationTime / (1.0f / g_fGameFPS));
 }
 
 void CActorInstance::CurrentMotionProcess()
@@ -285,12 +285,12 @@ void CActorInstance::PushMotion(EMotionPushType iMotionType, DWORD dwMotionKey, 
 
 bool CActorInstance::InterceptOnceMotion(DWORD dwMotion, float fBlendTime, UINT uSkill, float fSpeedRatio)
 {
-	return InterceptMotion(MOTION_TYPE_ONCE, dwMotion, fBlendTime, uSkill, fSpeedRatio);
+	return InterceptMotion(MOTION_TYPE_ONCE, static_cast<WORD>(dwMotion), fBlendTime, uSkill, fSpeedRatio);
 }
 
 bool CActorInstance::InterceptLoopMotion(DWORD dwMotion, float fBlendTime)
 {
-	return InterceptMotion(MOTION_TYPE_LOOP, dwMotion, fBlendTime);
+	return InterceptMotion(MOTION_TYPE_LOOP, static_cast<WORD>(dwMotion), fBlendTime);
 }
 
 void CActorInstance::SetLoopMotion(DWORD dwMotion, float fBlendTime, float fSpeedRatio)
@@ -303,7 +303,7 @@ void CActorInstance::SetLoopMotion(DWORD dwMotion, float fBlendTime, float fSpee
 	}
 
 	MOTION_KEY dwMotionKey;
-	if (!m_pkCurRaceData->GetMotionKey(m_wcurMotionMode, dwMotion, &dwMotionKey))
+	if (!m_pkCurRaceData->GetMotionKey(m_wcurMotionMode, static_cast<WORD>(dwMotion), &dwMotionKey))
 	{
 		Tracenf("CActorInstance::SetLoopMotion(dwMotion=%d, fBlendTime=%f, fSpeedRatio=%f) - GetMotionKey(m_wcurMotionMode=%d, dwMotion=%d, &MotionKey) ERROR", 
 			dwMotion, fBlendTime, fSpeedRatio, m_wcurMotionMode, dwMotion);
@@ -328,7 +328,7 @@ void CActorInstance::SetLoopMotion(DWORD dwMotion, float fBlendTime, float fSpee
 	m_kCurMotNode.fEndTime = 0.0f;
 	m_kCurMotNode.fSpeedRatio = fSpeedRatio;
 	m_kCurMotNode.dwcurFrame = 0;
-	m_kCurMotNode.dwFrameCount = GetMotionDuration(dwRealMotionKey) / (1.0f / g_fGameFPS);
+	m_kCurMotNode.dwFrameCount = static_cast<DWORD>(GetMotionDuration(dwRealMotionKey) / (1.0f / g_fGameFPS));
 	m_kCurMotNode.uSkill = 0;
 }
 
@@ -387,9 +387,9 @@ bool CActorInstance::InterceptMotion(EMotionPushType iMotionType, WORD wMotion, 
 	m_kCurMotNode.iMotionType = iMotionType;
 	m_kCurMotNode.fStartTime = GetLocalTime();
 	m_kCurMotNode.fEndTime = m_kCurMotNode.fStartTime + fDuration;
-	m_kCurMotNode.dwMotionKey = dwRealMotionKey;	
+	m_kCurMotNode.dwMotionKey = dwRealMotionKey;
 	m_kCurMotNode.dwcurFrame = 0;
-	m_kCurMotNode.dwFrameCount = fDuration / (1.0f / g_fGameFPS);
+	m_kCurMotNode.dwFrameCount = static_cast<DWORD>(fDuration / (1.0f / g_fGameFPS));
 	m_kCurMotNode.uSkill = uSkill;
 	m_kCurMotNode.fSpeedRatio = fSpeedRatio;
 
@@ -401,7 +401,7 @@ bool CActorInstance::PushOnceMotion(DWORD dwMotion, float fBlendTime, float fSpe
 	assert(m_pkCurRaceData);
 
 	MOTION_KEY MotionKey;
-	if (!m_pkCurRaceData->GetMotionKey(m_wcurMotionMode, dwMotion, &MotionKey))
+	if (!m_pkCurRaceData->GetMotionKey(m_wcurMotionMode, static_cast<WORD>(dwMotion), &MotionKey))
 		return false;
 
 	PushMotion(MOTION_TYPE_ONCE, MotionKey, fBlendTime, fSpeedRatio);
@@ -413,7 +413,7 @@ bool CActorInstance::PushLoopMotion(DWORD dwMotion, float fBlendTime, float fSpe
 	assert(m_pkCurRaceData);
 
 	MOTION_KEY MotionKey;
-	if (!m_pkCurRaceData->GetMotionKey(m_wcurMotionMode, dwMotion, &MotionKey))
+	if (!m_pkCurRaceData->GetMotionKey(m_wcurMotionMode, static_cast<WORD>(dwMotion), &MotionKey))
 		return false;
 
 	PushMotion(MOTION_TYPE_LOOP, MotionKey, fBlendTime, fSpeedRatio);
@@ -723,7 +723,7 @@ DWORD CActorInstance::__SetMotion(const SSetMotionData& c_rkSetMotData, DWORD dw
 		else
 			m_pkHorse->m_kCurMotNode.iMotionType = MOTION_TYPE_LOOP;
 
-		m_pkHorse->m_kCurMotNode.dwFrameCount	= m_pkHorse->GetMotionDuration(dwChildMotKey) / (1.0f / g_fGameFPS);
+		m_pkHorse->m_kCurMotNode.dwFrameCount	= static_cast<DWORD>(m_pkHorse->GetMotionDuration(dwChildMotKey) / (1.0f / g_fGameFPS));
 		m_pkHorse->m_kCurMotNode.dwcurFrame		= 0;
 		m_pkHorse->m_kCurMotNode.dwMotionKey	= dwChildMotKey;
 	}
@@ -833,7 +833,7 @@ bool CActorInstance::__IsNeedFlyTargetMotion()
 	for (DWORD i = 0; i < m_pkCurRaceMotionData->GetMotionEventDataCount(); ++i)
 	{
 		const CRaceMotionData::TMotionEventData * c_pData;
-		if (!m_pkCurRaceMotionData->GetMotionEventDataPointer(i, &c_pData))
+		if (!m_pkCurRaceMotionData->GetMotionEventDataPointer(static_cast<BYTE>(i), &c_pData))
 			continue;
 
 		if (c_pData->iType == CRaceMotionData::MOTION_EVENT_TYPE_WARP)
@@ -857,7 +857,7 @@ bool CActorInstance::__HasMotionFlyEvent()
 	for (DWORD i = 0; i < m_pkCurRaceMotionData->GetMotionEventDataCount(); ++i)
 	{
 		const CRaceMotionData::TMotionEventData * c_pData;
-		if (!m_pkCurRaceMotionData->GetMotionEventDataPointer(i, &c_pData))
+		if (!m_pkCurRaceMotionData->GetMotionEventDataPointer(static_cast<BYTE>(i), &c_pData))
 			continue;
 
 		if (c_pData->iType == CRaceMotionData::MOTION_EVENT_TYPE_FLY)

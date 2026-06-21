@@ -382,7 +382,7 @@ bool CNetworkStream::Connect(DWORD dwAddr, int port, int limitSec)
 		ip[2]=dwAddr&0xff;dwAddr>>=8;
 		ip[3]=dwAddr&0xff;dwAddr>>=8;
 
-		sprintf(szAddr, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+		sprintf_s(szAddr, sizeof(szAddr), "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
 	}
 
 	return Connect(szAddr, port, limitSec);

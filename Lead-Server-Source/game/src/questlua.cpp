@@ -78,7 +78,7 @@ namespace quest
 		bool returnBool;
 		if (pPC)
 		{
-			int flagValue = pPC->GetFlag(flagname);
+			TimeT64 flagValue = pPC->GetFlag(flagname);
 			if (value > flagValue)
 				returnBool = true;
 			else
@@ -269,7 +269,7 @@ namespace quest
 		{
 			for (int loop = 0; loop < 8; ++loop)
 			{
-				float angle = number(0, 999) * M_PI * 2 / 1000;
+				float angle = static_cast<float>(number(0, 999) * M_PI * 2 / 1000);
 				float r = number(0, 999) * radius / 1000;
 
 				long x = local_x + pMap->m_setting.iBaseX + (long)(r * cos(angle));
@@ -341,7 +341,7 @@ namespace quest
 		{
 			for (int loop = 0; loop < 8; ++loop)
 			{
-				float angle = number(0, 999) * M_PI * 2 / 1000;
+				float angle = static_cast<float>(number(0, 999) * M_PI * 2 / 1000);
 				float r = number(0, 999)*radius/1000;
 
 				long x = local_x + pMap->m_setting.iBaseX + (long)(r * cos(angle));

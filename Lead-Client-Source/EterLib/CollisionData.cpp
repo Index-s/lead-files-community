@@ -268,7 +268,7 @@ D3DXVECTOR3 CSphereCollisionInstance::OnGetCollisionMovementAdjust(const CDynami
 
 	if (sum*sum-4*mul<=0)
 		return D3DXVECTOR3(0.0f,0.0f,0.0f);
-	float sq = sqrt(sum*sum-4*mul);
+	float sq = sqrtf(sum*sum-4*mul);
 	float t1=-sum-sq, t2=-sum+sq;
 	t1*=0.5f;
 	t2*=0.5f;
@@ -501,7 +501,7 @@ bool CCylinderCollisionInstance::OnMovementCollisionDynamicSphere(const CDynamic
 		cylinder = m_attribute;
 		cylinder.v3Position = s.v3LastPosition;
 		
-		int iStep = fDistance / s.fRadius*2.0f;
+		int iStep = static_cast<int>(fDistance / s.fRadius*2.0f);
 		D3DXVECTOR3 v3Step = v3Distance / float(iStep);
 		
 		for (int i = 0; i < iStep; ++i)
@@ -542,7 +542,7 @@ D3DXVECTOR3 CCylinderCollisionInstance::OnGetCollisionMovementAdjust(const CDyna
 
 	if (sum*sum-4*mul<=0)
 		return D3DXVECTOR3(0.0f,0.0f,0.0f);
-	float sq = sqrt(sum*sum-4*mul);
+	float sq = sqrtf(sum*sum-4*mul);
 	float t1=-sum-sq, t2=-sum+sq;
 	t1*=0.5f;
 	t2*=0.5f;
@@ -689,7 +689,7 @@ D3DXVECTOR3 CAABBCollisionInstance::OnGetCollisionMovementAdjust(const CDynamicS
 
 	if (sum*sum-4*mul<=0)
 		return D3DXVECTOR3(0.0f,0.0f,0.0f);
-	float sq = sqrt(sum*sum-4*mul);
+	float sq = sqrtf(sum*sum-4*mul);
 	float t1=-sum-sq, t2=-sum+sq;
 	t1*=0.5f;
 	t2*=0.5f;

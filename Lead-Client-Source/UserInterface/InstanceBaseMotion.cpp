@@ -100,7 +100,7 @@ BOOL CInstanceBase::GetFishingRot(int * pirot)
 		ELPlainCoord_GetRotatedPixelPosition(c_rkPPosCur.x, c_rkPPosCur.y, c_fFishingDistance, fCharacterRot+fRot, &kPPosFishingRight.x, &kPPosFishingRight.y);
 		if (__Background_IsWaterPixelPosition(kPPosFishingRight))
 		{
-			*pirot = fCharacterRot+fRot;
+			*pirot = static_cast<int>(fCharacterRot+fRot);
 			return TRUE;
 		}
 
@@ -108,7 +108,7 @@ BOOL CInstanceBase::GetFishingRot(int * pirot)
 		ELPlainCoord_GetRotatedPixelPosition(c_rkPPosCur.x, c_rkPPosCur.y, c_fFishingDistance, fCharacterRot-fRot, &kPPosFishingLeft.x, &kPPosFishingLeft.y);	
 		if (__Background_IsWaterPixelPosition(kPPosFishingLeft))
 		{
-			*pirot = fCharacterRot-fRot;
+			*pirot = static_cast<int>(fCharacterRot-fRot);
 			return TRUE;
 		}
 	}
@@ -161,5 +161,5 @@ void CInstanceBase::ActDualEmotion(CInstanceBase & rkDstInst, WORD wMotionNumber
 
 void CInstanceBase::ActEmotion(DWORD dwMotionNumber)
 {
-	PushOnceMotion(dwMotionNumber);
+	PushOnceMotion(static_cast<WORD>(dwMotionNumber));
 }

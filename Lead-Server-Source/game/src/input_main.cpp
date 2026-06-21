@@ -272,7 +272,7 @@ int ProcessTextTag(LPCHARACTER ch, const char * c_pszText, size_t len)
 	int hyperlinks;
 	bool colored;
 	
-	GetTextTagInfo(c_pszText, len, hyperlinks, colored);
+	GetTextTagInfo(c_pszText, static_cast<int>(len), hyperlinks, colored);
 
 	if (colored == true && hyperlinks == 0)
 		return 4;
@@ -492,7 +492,7 @@ int CInputMain::Whisper(LPCHARACTER ch, const char * data, size_t uiBytes)
 
 						pack.bHeader = HEADER_GC_WHISPER;
 						pack.bType = WHISPER_TYPE_ERROR;
-						pack.wSize = sizeof(TPacketGCWhisper) + len;
+						pack.wSize = static_cast<WORD>(sizeof(TPacketGCWhisper) + len);
 						strlcpy(pack.szNameFrom, pinfo->szNameTo, sizeof(pack.szNameFrom));
 
 						ch->GetDesc()->BufferedPacket(&pack, sizeof(pack));
@@ -515,7 +515,7 @@ int CInputMain::Whisper(LPCHARACTER ch, const char * data, size_t uiBytes)
 				TPacketGCWhisper pack;
 
 				pack.bHeader = HEADER_GC_WHISPER;
-				pack.wSize = sizeof(TPacketGCWhisper) + buflen;
+				pack.wSize = static_cast<WORD>(sizeof(TPacketGCWhisper) + buflen);
 				pack.bType = bType;
 				strlcpy(pack.szNameFrom, ch->GetName(), sizeof(pack.szNameFrom));
 
@@ -524,7 +524,7 @@ int CInputMain::Whisper(LPCHARACTER ch, const char * data, size_t uiBytes)
 				TEMP_BUFFER tmpbuf;
 
 				tmpbuf.write(&pack, sizeof(pack));
-				tmpbuf.write(buf, buflen);
+				tmpbuf.write(buf, static_cast<int>(buflen));
 
 				pkDesc->Packet(tmpbuf.read_peek(), tmpbuf.size());
 			}
@@ -651,14 +651,14 @@ struct FYmirChatPacket
 			d->GetCharacter()->GetGMLevel() > GM_PLAYER ||
 			d->GetCharacter()->IsEquipUniqueGroup(UNIQUE_GROUP_RING_OF_LANGUAGE))
 		{
-			packet.size = m_len_orig_msg + sizeof(TPacketGCChat);
+			packet.size = static_cast<WORD>(m_len_orig_msg + sizeof(TPacketGCChat));
 
 			d->BufferedPacket(&packet, sizeof(packet_chat));
 			d->Packet(m_orig_msg, m_len_orig_msg);
 		}
 		else
 		{
-			packet.size = m_len_conv_msg + sizeof(TPacketGCChat);
+			packet.size = static_cast<WORD>(m_len_conv_msg + sizeof(TPacketGCChat));
 
 			d->BufferedPacket(&packet, sizeof(packet_chat));
 			d->Packet(m_conv_msg, m_len_conv_msg);
@@ -708,7 +708,7 @@ int CInputMain::Chat(LPCHARACTER ch, const char * data, size_t uiBytes)
 
 	if (pAffect != NULL)
 	{
-		SendBlockChatInfo(ch, pAffect->lDuration);
+		SendBlockChatInfo(ch, static_cast<int>(pAffect->lDuration));
 		return iExtraLen;
 	}
 
@@ -778,7 +778,7 @@ int CInputMain::Chat(LPCHARACTER ch, const char * data, size_t uiBytes)
 	TPacketGCChat pack_chat;
 
 	pack_chat.header = HEADER_GC_CHAT;
-	pack_chat.size = sizeof(TPacketGCChat) + len;
+	pack_chat.size = static_cast<WORD>(sizeof(TPacketGCChat) + len);
 	pack_chat.type = pinfo->type;
 	pack_chat.id = ch->GetVID();
 
@@ -807,8 +807,8 @@ int CInputMain::Chat(LPCHARACTER ch, const char * data, size_t uiBytes)
 								chatbuf,
 								len, 
 								(ch->GetGMLevel() > GM_PLAYER ||
-								 ch->IsEquipUniqueGroup(UNIQUE_GROUP_RING_OF_LANGUAGE)) ? 0 : ch->GetEmpire(), 
-								ch->GetMapIndex(), strlen(ch->GetName())));
+								 ch->IsEquipUniqueGroup(UNIQUE_GROUP_RING_OF_LANGUAGE)) ? 0 : ch->GetEmpire(),
+								ch->GetMapIndex(), static_cast<int>(strlen(ch->GetName()))));
 				}
 			}
 			break;
@@ -1039,7 +1039,7 @@ int CInputMain::Shop(LPCHARACTER ch, const char * data, size_t uiBytes)
 
 				ItemCellType bPos = *(c_pData + sizeof(ItemStackType));
 				sys_log(1, "INPUT: %s SHOP: BUY %d", ch->GetName(), bPos);
-				CShopManager::instance().Buy(ch, bPos);
+				CShopManager::instance().Buy(ch, static_cast<BYTE>(bPos));
 				return (sizeof(ItemStackType) + sizeof(ItemCellType));
 			}
 
@@ -1052,7 +1052,7 @@ int CInputMain::Shop(LPCHARACTER ch, const char * data, size_t uiBytes)
 				ItemStackType count = *(c_pData);
 
 				sys_log(0, "INPUT: %s SHOP: SELL2", ch->GetName());
-				CShopManager::instance().Sell(ch, pos, count);
+				CShopManager::instance().Sell(ch, static_cast<BYTE>(pos), count);
 				return sizeof(ItemCellType) + sizeof(ItemStackType);
 			}
 
@@ -1087,7 +1087,7 @@ void CInputMain::Exchange(LPCHARACTER ch, const char * data)
 
 	int iPulse = thecore_pulse(); 
 	
-	if ((to_ch = CHARACTER_MANAGER::instance().Find(pinfo->arg1)))
+	if ((to_ch = CHARACTER_MANAGER::instance().Find(static_cast<DWORD>(pinfo->arg1))))
 	{
 		if (iPulse - to_ch->GetSafeboxLoadTime() < PASSES_PER_SEC(g_nPortalLimitTime))
 		{
@@ -1115,7 +1115,7 @@ void CInputMain::Exchange(LPCHARACTER ch, const char * data)
 		case EXCHANGE_SUBHEADER_CG_START:	// arg1 == vid of target character
 			if (!ch->GetExchange())
 			{
-				if ((to_ch = CHARACTER_MANAGER::instance().Find(pinfo->arg1)))
+				if ((to_ch = CHARACTER_MANAGER::instance().Find(static_cast<DWORD>(pinfo->arg1))))
 				{
 					if (iPulse - ch->GetSafeboxLoadTime() < PASSES_PER_SEC(g_nPortalLimitTime))
 					{
@@ -1177,7 +1177,7 @@ void CInputMain::Exchange(LPCHARACTER ch, const char * data)
 			if (ch->GetExchange())
 			{
 				if (ch->GetExchange()->GetCompany()->GetAcceptStatus() != true)
-					ch->GetExchange()->RemoveItem(pinfo->arg1);
+					ch->GetExchange()->RemoveItem(static_cast<BYTE>(pinfo->arg1));
 			}
 			break;
 
@@ -1573,7 +1573,7 @@ void CInputMain::Move(LPCHARACTER ch, const char * data)
 		if (ch->GetLimitPoint(POINT_MOV_SPEED) == 0)
 			return;
 
-		ch->SetRotation(pinfo->bRot * 5);	// duplicate code
+		ch->SetRotation(static_cast<float>(pinfo->bRot * 5));	// duplicate code
 		ch->ResetStopTime();				// ""
 
 		ch->Goto(pinfo->lX, pinfo->lY);
@@ -1612,7 +1612,7 @@ void CInputMain::Move(LPCHARACTER ch, const char * data)
 			ch->OnMove();
 		}
 
-		ch->SetRotation(pinfo->bRot * 5);	// duplicate code
+		ch->SetRotation(static_cast<float>(pinfo->bRot * 5));	// duplicate code
 		ch->ResetStopTime();				// ""
 
 		ch->Move(pinfo->lX, pinfo->lY);
@@ -1900,7 +1900,7 @@ int CInputMain::SyncPosition(LPCHARACTER ch, const char * c_pcData, size_t uiByt
 	if (buffer_size(lpBuf) != sizeof(TPacketGCSyncPosition))
 	{
 		pHeader->bHeader = HEADER_GC_SYNC_POSITION;
-		pHeader->wSize = buffer_size(lpBuf);
+		pHeader->wSize = static_cast<WORD>(buffer_size(lpBuf));
 
 		ch->PacketAround(buffer_read_peek(lpBuf), buffer_size(lpBuf), ch);
 	}
@@ -2059,7 +2059,7 @@ void CInputMain::SafeboxCheckin(LPCHARACTER ch, const char * c_pData)
 
 	pkItem->RemoveFromCharacter();
 	if (!pkItem->IsDragonSoul())
-		ch->SyncQuickslot(QUICKSLOT_TYPE_ITEM, p->ItemPos.cell, 255);
+		ch->SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(p->ItemPos.cell), 255);
 	pkSafebox->Add(p->bSafePos, pkItem);
 	
 	char szHint[128];
@@ -2172,7 +2172,7 @@ void CInputMain::SafeboxItemMove(LPCHARACTER ch, const char * data)
 	if (!ch->GetSafebox())
 		return;
 
-	ch->GetSafebox()->MoveItem(pinfo->Cell.cell, pinfo->CellTo.cell, pinfo->count);
+	ch->GetSafebox()->MoveItem(static_cast<BYTE>(pinfo->Cell.cell), static_cast<BYTE>(pinfo->CellTo.cell), pinfo->count);
 }
 
 // PARTY_JOIN_BUG_FIX
@@ -2512,7 +2512,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 		if (SubHeader != GUILD_SUBHEADER_CG_GUILD_INVITE_ANSWER)
 		{
 			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[Guild] It does not belong to the guild."));
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 		}
 	}
 
@@ -2526,25 +2526,25 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 				if (!newmember)
 				{
 					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[Guild] The person you were searching for cannot be found."));
-					return SubPacketLen;
+					return static_cast<int>(SubPacketLen);
 				}
 
 				if (!newmember->IsPC())
-					return SubPacketLen;
+					return static_cast<int>(SubPacketLen);
 
 				if (!ch->IsPC())
-					return SubPacketLen;
+					return static_cast<int>(SubPacketLen);
 
 				pGuild->Invite(ch, newmember);
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_REMOVE_MEMBER:
 			{
 				if (pGuild->UnderAnyWar() != 0)
 				{
 					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<Guild> You cannot withdraw a guild member during a guild war."));
-					return SubPacketLen;
+					return static_cast<int>(SubPacketLen);
 				}
 
 				const DWORD pid = *reinterpret_cast<const DWORD*>(c_pData);
@@ -2560,13 +2560,13 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 					if (member->GetGuild() != pGuild)
 					{
 						ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[Guild] This person is not in the same guild."));
-						return SubPacketLen;
+						return static_cast<int>(SubPacketLen);
 					}
 
 					if (!pGuild->HasGradeAuth(m->grade, GUILD_AUTH_REMOVE_MEMBER))
 					{
 						ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[Guild] You do not have the authority to kick out guild members."));
-						return SubPacketLen;
+						return static_cast<int>(SubPacketLen);
 					}
 
 					member->SetQuestFlag("guild_manage.new_withdraw_time", get_global_time());
@@ -2578,7 +2578,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 					if (!pGuild->HasGradeAuth(m->grade, GUILD_AUTH_REMOVE_MEMBER))
 					{
 						ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[Guild] You do not have the authority to kick out guild members."));
-						return SubPacketLen;
+						return static_cast<int>(SubPacketLen);
 					}
 
 					if (pGuild->RequestRemoveMember(pid))
@@ -2587,7 +2587,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 						ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[Guild] The person you were searching for cannot be found."));
 				}
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_CHANGE_GRADE_NAME:
 			{
@@ -2616,7 +2616,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 					pGuild->ChangeGradeName(*c_pData, gradename);
 				}
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_CHANGE_GRADE_AUTHORITY:
 			{
@@ -2638,7 +2638,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 					pGuild->ChangeGradeAuth(*c_pData, *(c_pData + 1));
 				}
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_OFFER:
 			{
@@ -2663,7 +2663,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 					}
 				}
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_CHARGE_GSP:
 			{
@@ -2673,7 +2673,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 				if (offer < 0 || gold < offer || gold < 0 || ch->GetGold() < gold)
 				{
 					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[Guild] Insufficient Yang in the guild treasury."));
-					return SubPacketLen;
+					return static_cast<int>(SubPacketLen);
 				}
 
 				if (!pGuild->ChargeSP(ch, offer))
@@ -2681,7 +2681,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[Guild] Dragon ghost was not restored."));
 				}
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_POST_COMMENT:
 			{
@@ -2713,7 +2713,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 					pGuild->AddComment(ch, str);
 				}
 
-				return (1 + length);
+				return static_cast<int>(1 + length);
 			}
 
 		case GUILD_SUBHEADER_CG_DELETE_COMMENT:
@@ -2722,11 +2722,11 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 
 				pGuild->DeleteComment(ch, comment_id);
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_REFRESH_COMMENT:
 			pGuild->RefreshComment(ch);
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_CHANGE_MEMBER_GRADE:
 			{
@@ -2746,7 +2746,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 				else
 					pGuild->ChangeMemberGrade(pid, grade);
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_USE_SKILL:
 			{
@@ -2754,7 +2754,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 
 				pGuild->UseSkill(p->dwVnum, ch, p->dwPID);
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_CHANGE_MEMBER_GENERAL:
 			{
@@ -2777,7 +2777,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 					}
 				}
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
 
 		case GUILD_SUBHEADER_CG_GUILD_INVITE_ANSWER:
 			{
@@ -2794,7 +2794,14 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 						g->InviteDeny(ch->GetPlayerID());
 				}
 			}
-			return SubPacketLen;
+			return static_cast<int>(SubPacketLen);
+
+		case GUILD_SUBHEADER_CG_DEPOSIT_MONEY:
+		case GUILD_SUBHEADER_CG_WITHDRAW_MONEY:
+			// Guild-bank money transfer is not implemented in this server build; consume
+			// and ignore the sub-packet (like the other known-but-unused sub-headers) so
+			// the CG stream stays aligned. Silences -Wswitch.
+			return static_cast<int>(SubPacketLen);
 
 	}
 
@@ -2804,7 +2811,7 @@ int CInputMain::Guild(LPCHARACTER ch, const char * data, size_t uiBytes)
 void CInputMain::Fishing(LPCHARACTER ch, const char* c_pData)
 {
 	TPacketCGFishing* p = (TPacketCGFishing*)c_pData;
-	ch->SetRotation(p->dir * 5);
+	ch->SetRotation(static_cast<float>(p->dir * 5));
 	ch->fishing();
 	return;
 }
@@ -3282,7 +3289,7 @@ int CInputMain::Switchbot(LPCHARACTER ch, const char* data, size_t uiBytes)
 			}
 
 			CSwitchbotManager::Instance().Start(ch->GetPlayerID(), p->slot, vec_alternatives);
-			return extraLen;
+			return static_cast<int>(extraLen);
 		}
 
 	case SUBHEADER_CG_SWITCHBOT_STOP:

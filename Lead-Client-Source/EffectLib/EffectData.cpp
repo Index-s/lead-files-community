@@ -79,8 +79,8 @@ bool CEffectData::LoadScript(const char * c_szFileName)
 	// Load Sound
 	std::string strPathHeader = "d:/ymir work/";
 	std::string strNoExtensionName = CFileNameHelper::NoExtension(m_strFileName);
-	int iPos = strNoExtensionName.find(strPathHeader.c_str());
-	if (iPos >= 0)
+	std::string::size_type iPos = strNoExtensionName.find(strPathHeader.c_str());
+	if (iPos != std::string::npos)
 	if (strNoExtensionName.size() > strPathHeader.size())
 	{
 		std::string strSoundFileName;
@@ -130,7 +130,7 @@ CLightData * CEffectData::AllocLight()
 
 DWORD CEffectData::GetLightCount()
 {
-	return m_LightVector.size();
+	return static_cast<DWORD>(m_LightVector.size());
 }
 
 CLightData * CEffectData::GetLightPointer(DWORD dwPosition)
@@ -141,7 +141,7 @@ CLightData * CEffectData::GetLightPointer(DWORD dwPosition)
 
 DWORD CEffectData::GetParticleCount()
 {
-	return m_ParticleVector.size();
+	return static_cast<DWORD>(m_ParticleVector.size());
 }
 CParticleSystemData * CEffectData::GetParticlePointer(DWORD dwPosition)
 {
@@ -156,7 +156,7 @@ CParticleSystemData * CEffectData::GetParticlePointer(DWORD dwPosition)
 
 DWORD CEffectData::GetMeshCount()
 {
-	return m_MeshVector.size();
+	return static_cast<DWORD>(m_MeshVector.size());
 }
 CEffectMeshScript * CEffectData::GetMeshPointer(DWORD dwPosition)
 {

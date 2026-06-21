@@ -111,8 +111,17 @@ struct timeval * timeadd(struct timeval *a, struct timeval *b)
 char *time_str(time_t ct)
 {
     static char * time_s;
+    struct tm * tmv = localtime(&ct);
 
-    time_s = asctime(localtime(&ct));
+    /* localtime() returns NULL for out-of-range time_t values; asctime() would
+       then assert/fastfail. Never let a bad timestamp take down the server. */
+    if (!tmv)
+    {
+	static char invalid[] = "?";
+	return invalid;
+    }
+
+    time_s = asctime(tmv);
 
     time_s[strlen(time_s) - 6] = '\0';
     time_s += 4;
@@ -401,8 +410,8 @@ void thecore_msleep(DWORD dwMillisecond)
     thecore_sleep(&tv_sleep);
 }
 
-void core_dump_unix(const char *who, WORD line)
-{   
+void core_dump_unix(const char *who, int line)
+{
     sys_err("*** Dumping Core %s:%d ***", who, line);
 
     fflush(stdout);
@@ -441,8 +450,8 @@ void gettimeofday(struct timeval* t, struct timezone* dummy)
     t->tv_usec = (millisec % 1000) * 1000;
 }
 
-void core_dump_unix(const char *who, WORD line)
-{   
+void core_dump_unix(const char *who, int line)
+{
 }
 
 #endif

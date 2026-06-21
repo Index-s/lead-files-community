@@ -175,7 +175,7 @@ void locale_init(const char *filename)
 				if (!(end = quote_find_end(tmp)))
 					break;
 
-				strings[i] = locale_convert(tmp, end - tmp);
+				strings[i] = locale_convert(tmp, static_cast<int>(end - tmp));
 				tmp = ++end;
 
 				while (*tmp == '\n' || *tmp == '\r' || *tmp == ' ') tmp++;

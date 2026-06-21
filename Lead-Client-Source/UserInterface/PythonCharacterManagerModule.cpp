@@ -98,17 +98,17 @@ PyObject * chrmgrGetVIDInfo(PyObject* poSelf, PyObject* poArgs)
 		TPixelPosition kPPosInst;
 		pkInstBase->NEW_GetPixelPosition(&kPPosInst);
 
-		int32_t xInst=kPPosInst.x;
-		int32_t yInst=kPPosInst.y;
+		int32_t xInst=static_cast<int32_t>(kPPosInst.x);
+		int32_t yInst=static_cast<int32_t>(kPPosInst.y);
 
 		CPythonBackground& rkBG=CPythonBackground::Instance();
 		rkBG.LocalPositionToGlobalPosition(xInst, yInst);
-		sprintf(szDetail, "pos=(%d, %d)", xInst, yInst);
+		sprintf_s(szDetail, sizeof(szDetail), "pos=(%d, %d)", xInst, yInst);
 	}	
 	
 
-	char szInfo[1024];	
-	sprintf(szInfo, "VID %d (isRegistered=%d, isAlive=%d, isDead=%d) %s", 
+	char szInfo[1024];
+	sprintf_s(szInfo, sizeof(szInfo), "VID %d (isRegistered=%d, isAlive=%d, isDead=%d) %s",
 		nVID,
 		rkChrMgr.IsRegisteredVID(nVID),
 		rkChrMgr.IsAliveVID(nVID),
@@ -586,7 +586,7 @@ PyObject * chrmgrSetDustGap(PyObject* poSelf, PyObject* poArgs)
 	if (!PyTuple_GetInteger(poArgs, 0, &nGap))
 		return Py_BadArgument();
 
-	CInstanceBase::SetDustGap(nGap);
+	CInstanceBase::SetDustGap(static_cast<float>(nGap));
 	return Py_BuildNone();
 }
 
@@ -596,7 +596,7 @@ PyObject * chrmgrSetHorseDustGap(PyObject* poSelf, PyObject* poArgs)
 	if (!PyTuple_GetInteger(poArgs, 0, &nGap))
 		return Py_BadArgument();
 
-	CInstanceBase::SetHorseDustGap(nGap);
+	CInstanceBase::SetHorseDustGap(static_cast<float>(nGap));
 	return Py_BuildNone();
 }
 

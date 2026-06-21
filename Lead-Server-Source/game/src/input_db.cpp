@@ -89,7 +89,10 @@ bool GetServerLocation(TAccountTable & rTab, BYTE bEmpire)
 
 		struct in_addr in;
 		in.s_addr = rTab.players[i].lAddr;
-		sys_log(0, "success to %s:%d", inet_ntoa(in), rTab.players[i].wPort);
+		char szAddr[INET_ADDRSTRLEN];
+		if (NULL == inet_ntop(AF_INET, &in, szAddr, sizeof(szAddr)))
+			szAddr[0] = '\0';
+		sys_log(0, "success to %s:%d", szAddr, rTab.players[i].wPort);
 	}
 
 	return bFound;
@@ -350,8 +353,12 @@ void CInputDB::PlayerLoad(LPDESC d, const char * data)
 		P2P_MANAGER::instance().Send(&p, sizeof(TPacketGGLogin));
 
 		char buf[51];
-		snprintf(buf, sizeof(buf), "%s %d %d %d %d", 
-				inet_ntoa(ch->GetDesc()->GetAddr().sin_addr), ch->GetGold(), g_bChannel, ch->GetMapIndex(), ch->GetAlignment());
+		char szAddr[INET_ADDRSTRLEN];
+		struct sockaddr_in saAddr = ch->GetDesc()->GetAddr();
+		if (NULL == inet_ntop(AF_INET, &saAddr.sin_addr, szAddr, sizeof(szAddr)))
+			szAddr[0] = '\0';
+		snprintf(buf, sizeof(buf), "%s %lld %d %d %d",
+				szAddr, static_cast<long long>(ch->GetGold()), g_bChannel, ch->GetMapIndex(), ch->GetAlignment());
 		LogManager::instance().CharLog(ch, 0, "LOGIN", buf);
 	}
 
@@ -703,8 +710,9 @@ void CInputDB::Boot(const char* data)
 		for (WORD i = 0; i < size; ++i, ++kObj)
 			CManager::instance().LoadObject(kObj, true);
 	}
-	set_global_time(*(time_t *) data);
-	data += sizeof(time_t);
+	// Matches db_d's 64-bit TimeT64 boot-stream timestamp (see ClientManager.cpp).
+	set_global_time(static_cast<time_t>(*(TimeT64 *) data));
+	data += sizeof(TimeT64);
 
 	if (decode_2bytes(data) != sizeof(TItemIDRangeTable) )
 	{
@@ -1363,7 +1371,7 @@ void CInputDB::ItemLoad(LPDESC d, const char * c_pData)
 				case EQUIPMENT:
 					if (item->CheckItemUseLevel(ch->GetLevel()) == true )
 					{
-						if (item->EquipTo(ch, p->pos) == false )
+						if (item->EquipTo(ch, static_cast<BYTE>(p->pos)) == false )
 						{
 							v.push_back(item);
 						}
@@ -1483,7 +1491,12 @@ void CInputDB::PartySetMemberLevel(const char* c_pData)
 
 void CInputDB::Time(const char * c_pData)
 {
-	set_global_time(*(time_t *) c_pData);
+	// db_d forwards the time as a 32-bit uint32_t (ForwardPacket(..., sizeof(uint32_t))).
+	// Reading it as time_t over-reads 4 bytes past the packet body on x64 (time_t is
+	// 8 bytes on Win64 and FreeBSD LP64), poisoning the high bits and yielding a garbage
+	// global_time_gap (seen as "GLOBAL_TIME: ? time_gap <huge>"). Match the sender's
+	// width, then widen to time_t.
+	set_global_time(static_cast<time_t>(*(const uint32_t *) c_pData));
 }
 
 void CInputDB::ReloadProto(const char * c_pData)
@@ -1686,7 +1699,7 @@ void CInputDB::MoneyLog(const char* c_pData)
 	if (p->type == 4) // QUEST_MONEY_LOG_SKIP
 		return;
 
-	if (g_bAuthServer ==true )
+	if (g_bAuthServer != 0)
 		return;
 
 	LogManager::instance().MoneyLog(p->type, p->vnum, p->gold);

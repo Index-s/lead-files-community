@@ -397,13 +397,13 @@ float CTerrain::GetHeight(int x, int y)
 
 	x2 = x; y2 = y;
 	/* Get the height and color of the pixel at the top left corner */
-	h1 = (float) GetHeightMapValue(x2, y2) * m_fHeightScale;
-	
+	h1 = (float) GetHeightMapValue(static_cast<short>(x2), static_cast<short>(y2)) * m_fHeightScale;
+
 	/* Get the height and color of the pixel at the bottom right corner */
 	x2 = x + 1;
 	y2 = y + 1;
 
-	h2 = (float) GetHeightMapValue(x2, y2) * m_fHeightScale;
+	h2 = (float) GetHeightMapValue(static_cast<short>(x2), static_cast<short>(y2)) * m_fHeightScale;
 	
 	/* Left triangle */
 	if (xdist <= ydist)
@@ -411,7 +411,7 @@ float CTerrain::GetHeight(int x, int y)
 		x2 = x;
 		y2 = y + 1;
 
-		h3 = (float) GetHeightMapValue(x2, y2) * m_fHeightScale;
+		h3 = (float) GetHeightMapValue(static_cast<short>(x2), static_cast<short>(y2)) * m_fHeightScale;
 
 		/* Get the height of the pixel at the bottom left corner */
 		xslope = (h2 - h3) * ooscale;
@@ -424,7 +424,7 @@ float CTerrain::GetHeight(int x, int y)
 	x2 = x + 1;
 	y2 = y;
 
-	h3 = (float) GetHeightMapValue(x2, y2) * m_fHeightScale;
+	h3 = (float) GetHeightMapValue(static_cast<short>(x2), static_cast<short>(y2)) * m_fHeightScale;
 
 	/* Get the height of the pixel at the top right corner */
 	xslope = (h3 - h1) * ooscale;
@@ -440,8 +440,8 @@ void CTerrain::CalculateNormal(long x, long y)
 {
 	D3DXVECTOR3 normal;
 
-	normal.x = -m_fHeightScale * ((float)GetHeightMapValue((x-1),y)-(float)GetHeightMapValue((x+1),y));
-	normal.y = -m_fHeightScale * ((float)GetHeightMapValue(x,(y-1))-(float)GetHeightMapValue(x,(y+1)));
+	normal.x = -m_fHeightScale * ((float)GetHeightMapValue(static_cast<short>(x-1),static_cast<short>(y))-(float)GetHeightMapValue(static_cast<short>(x+1),static_cast<short>(y)));
+	normal.y = -m_fHeightScale * ((float)GetHeightMapValue(static_cast<short>(x),static_cast<short>(y-1))-(float)GetHeightMapValue(static_cast<short>(x),static_cast<short>(y+1)));
 
 	normal.z = 2.0f * (float)CELLSCALE;
 	normal *= 127.0f / D3DXVec3Length(&normal);
@@ -731,7 +731,7 @@ void CTerrain::RAW_GenerateSplat(bool bBGLoading)
 				}
 
 
-				rSplat.pd3dTexture = AddTexture32(i, abyAlphaMap, SPLATALPHA_RAW_XSIZE, SPLATALPHA_RAW_YSIZE);
+				rSplat.pd3dTexture = AddTexture32(static_cast<BYTE>(i), abyAlphaMap, SPLATALPHA_RAW_XSIZE, SPLATALPHA_RAW_YSIZE);
 			}
 			else
 			{

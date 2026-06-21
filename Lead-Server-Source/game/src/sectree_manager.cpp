@@ -185,19 +185,35 @@ int SECTREE_MANAGER::LoadSettingFile(long lMapIndex, const char * c_pszSettingFi
 
 	while (fgets(buf, 256, fp))
 	{
+#ifdef _WIN32
+		sscanf_s(buf, " %s ", cmd, (unsigned)sizeof(cmd));
+#else
 		sscanf(buf, " %s ", cmd);
+#endif
 
-		if (!strcasecmp(cmd, "MapSize"))
+		if (!_stricmp(cmd, "MapSize"))
 		{
+#ifdef _WIN32
+			sscanf_s(buf, " %s %d %d ", cmd, (unsigned)sizeof(cmd), &iWidth, &iHeight);
+#else
 			sscanf(buf, " %s %d %d ", cmd, &iWidth, &iHeight);
+#endif
 		}
-		else if (!strcasecmp(cmd, "BasePosition"))
+		else if (!_stricmp(cmd, "BasePosition"))
 		{
+#ifdef _WIN32
+			sscanf_s(buf, " %s %d %d", cmd, (unsigned)sizeof(cmd), &r_setting.iBaseX, &r_setting.iBaseY);
+#else
 			sscanf(buf, " %s %d %d", cmd, &r_setting.iBaseX, &r_setting.iBaseY);
+#endif
 		}
-		else if (!strcasecmp(cmd, "CellScale"))
+		else if (!_stricmp(cmd, "CellScale"))
 		{
+#ifdef _WIN32
+			sscanf_s(buf, " %s %d ", cmd, (unsigned)sizeof(cmd), &r_setting.iCellScale);
+#else
 			sscanf(buf, " %s %d ", cmd, &r_setting.iCellScale);
+#endif
 		}
 	}
 
@@ -319,12 +335,21 @@ bool SECTREE_MANAGER::LoadMapRegion(const char * c_pszFileName, TMapSetting & r_
 	int iX=0, iY=0;
 	PIXEL_POSITION pos[3] = { {0,0,0}, {0,0,0}, {0,0,0} };
 
-	fscanf(fp, " %d %d ", &iX, &iY);
+#ifdef _WIN32
+	fscanf_s(fp, " %d %d ", &iX, &iY);
 
-	int iEmpirePositionCount = fscanf(fp, " %d %d %d %d %d %d ", 
+	int iEmpirePositionCount = fscanf_s(fp, " %d %d %d %d %d %d ",
 			&pos[0].x, &pos[0].y,
 			&pos[1].x, &pos[1].y,
 			&pos[2].x, &pos[2].y);
+#else
+	fscanf(fp, " %d %d ", &iX, &iY);
+
+	int iEmpirePositionCount = fscanf(fp, " %d %d %d %d %d %d ",
+			&pos[0].x, &pos[0].y,
+			&pos[1].x, &pos[1].y,
+			&pos[2].x, &pos[2].y);
+#endif
 
 	fclose(fp);
 
@@ -398,7 +423,7 @@ bool SECTREE_MANAGER::LoadAttribute(LPSECTREE_MAP pkMapSectree, const char * c_p
 	fread(&iWidth, sizeof(int), 1, fp);
 	fread(&iHeight, sizeof(int), 1, fp);
 
-	int maxMemSize = LZOManager::instance().GetMaxCompressedSize(sizeof(DWORD) * (SECTREE_SIZE / CELL_SIZE) * (SECTREE_SIZE / CELL_SIZE));
+	int maxMemSize = static_cast<int>(LZOManager::instance().GetMaxCompressedSize(sizeof(DWORD) * (SECTREE_SIZE / CELL_SIZE) * (SECTREE_SIZE / CELL_SIZE)));
 
 	unsigned int uiSize;
 	lzo_uint uiDestSize;
@@ -669,7 +694,7 @@ int SECTREE_MANAGER::GetMapIndex(int32_t x, int32_t y)
 
 int SECTREE_MANAGER::Build(const char * c_pszListFileName, const char* c_pszMapBasePath)
 {
-	if (true == test_server)
+	if (0 != test_server)
 	{
 		sys_log ( 0, "[BUILD] Build %s %s ", c_pszListFileName, c_pszMapBasePath );
 	}
@@ -691,7 +716,11 @@ int SECTREE_MANAGER::Build(const char * c_pszListFileName, const char* c_pszMapB
 		if (!strncmp(buf, "//", 2) || *buf == '#')
 			continue;
 
+#ifdef _WIN32
+		sscanf_s(buf, " %d %s ", &iIndex, szMapName, (unsigned)sizeof(szMapName));
+#else
 		sscanf(buf, " %d %s ", &iIndex, szMapName);
+#endif
 
 		snprintf(szFilename, sizeof(szFilename), "%s/%s/Setting.txt", c_pszMapBasePath, szMapName);
 
@@ -714,7 +743,7 @@ int SECTREE_MANAGER::Build(const char * c_pszListFileName, const char* c_pszMapB
 			return 0;
 		}
 
-		if (true == test_server)
+		if (0 != test_server)
 			sys_log ( 0,"[BUILD] Build %s %s %d ",c_pszMapBasePath, szMapName, iIndex );
 
 		// First, check whether the monsters for this map need to be spawned on this server. .
@@ -879,7 +908,7 @@ bool SECTREE_MANAGER::GetRandomLocation(long lMapIndex, PIXEL_POSITION & r_pos, 
 			{
 				int d;
 
-				d = abs((float)dwCurrentX - x);
+				d = static_cast<int>(abs((float)dwCurrentX - x));
 
 				if (d > iMaxDistance)
 				{
@@ -889,7 +918,7 @@ bool SECTREE_MANAGER::GetRandomLocation(long lMapIndex, PIXEL_POSITION & r_pos, 
 						x = dwCurrentX + iMaxDistance;
 				}
 
-				d = abs((float)dwCurrentY - y);
+				d = static_cast<int>(abs((float)dwCurrentY - y));
 
 				if (d > iMaxDistance)
 				{
@@ -1077,7 +1106,7 @@ void SECTREE_MANAGER::SendNPCPosition(LPCHARACTER ch)
 	TEMP_BUFFER buf;
 	TPacketGCNpcPosition p;
 	p.header = HEADER_GC_NPC_POSITION;
-	p.count = m_mapNPCPosition[lMapIndex].size();
+	p.count = static_cast<WORD>(m_mapNPCPosition[lMapIndex].size());
 
 	TNPCPosition np;
 
@@ -1093,7 +1122,7 @@ void SECTREE_MANAGER::SendNPCPosition(LPCHARACTER ch)
 		buf.write(&np, sizeof(np));
 	}
 
-	p.size = sizeof(p) + buf.size();
+	p.size = static_cast<WORD>(sizeof(p) + buf.size());
 
 	if (buf.size())
 	{
@@ -1241,6 +1270,8 @@ bool SECTREE_MANAGER::ForAttrRegionRightAngle( long lMapIndex, long lCX, long lC
 	return mode == ATTR_REGION_MODE_CHECK ? false : true;
 }
 
+#undef min
+#undef max
 #define min( l, r )	((l) < (r) ? (l) : (r))
 #define max( l, r )	((l) < (r) ? (r) : (l))
 

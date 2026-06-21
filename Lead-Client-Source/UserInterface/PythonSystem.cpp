@@ -265,7 +265,7 @@ void CPythonSystem::SetSaveID(int iValue, const char * c_szSaveID)
 		return;
 	
 	m_Config.isSaveID = iValue;
-	strncpy(m_Config.SaveID, c_szSaveID, sizeof(m_Config.SaveID) - 1);
+	strncpy_s(m_Config.SaveID, sizeof(m_Config.SaveID), c_szSaveID, _TRUNCATE);
 }
 
 CPythonSystem::TConfig * CPythonSystem::GetConfig()
@@ -400,19 +400,19 @@ bool CPythonSystem::LoadConfig()
 			break;
 
 		if (!_stricmp(command, "WIDTH"))
-			m_Config.width = atoi(value);
+			m_Config.width = static_cast<DWORD>(atoi(value));
 		else if (!_stricmp(command, "HEIGHT"))
-			m_Config.height = atoi(value);
+			m_Config.height = static_cast<DWORD>(atoi(value));
 		else if (!_stricmp(command, "BPP"))
-			m_Config.bpp = atoi(value);
+			m_Config.bpp = static_cast<DWORD>(atoi(value));
 		else if (!_stricmp(command, "FREQUENCY"))
-			m_Config.frequency = atoi(value);
+			m_Config.frequency = static_cast<DWORD>(atoi(value));
 		else if (!_stricmp(command, "SOFTWARE_CURSOR"))
 			m_Config.is_software_cursor = atoi(value) ? true : false;
 		else if (!_stricmp(command, "OBJECT_CULLING"))
 			m_Config.is_object_culling = atoi(value) ? true : false;
 		else if (!_stricmp(command, "VISIBILITY"))
-			m_Config.iDistance = atoi(value);
+			m_Config.iDistance = static_cast<int>(atoi(value));
 		else if (!_stricmp(command, "MUSIC_VOLUME")) {
 			if (strchr(value, '.') == 0) { // Old compatiability
 				m_Config.music_volume = pow(10.0f, (-1.0f + (((float)atoi(value)) / 5.0f)));
@@ -420,20 +420,20 @@ bool CPythonSystem::LoadConfig()
 					m_Config.music_volume = 0.0f;
 			}
 			else
-				m_Config.music_volume = atof(value);
+				m_Config.music_volume = static_cast<FLOAT>(atof(value));
 		}
 		else if (!_stricmp(command, "VOICE_VOLUME"))
 			m_Config.voice_volume = (char)atoi(value);
 		else if (!_stricmp(command, "GAMMA"))
-			m_Config.gamma = atoi(value);
+			m_Config.gamma = static_cast<int>(atoi(value));
 		else if (!_stricmp(command, "IS_SAVE_ID"))
-			m_Config.isSaveID = atoi(value);
+			m_Config.isSaveID = static_cast<int>(atoi(value));
 		else if (!_stricmp(command, "SAVE_ID"))
 		{
 			strncpy_s(m_Config.SaveID, sizeof(m_Config.SaveID), value, _TRUNCATE);
 		}
 		else if (!_stricmp(command, "PRE_LOADING_DELAY_TIME"))
-			g_iLoadingDelayTime = atoi(value);
+			g_iLoadingDelayTime = static_cast<int>(atoi(value));
 		else if (!_stricmp(command, "WINDOWED"))
 		{
 			m_Config.bWindowed = atoi(value) == 1 ? true : false;
@@ -441,9 +441,9 @@ bool CPythonSystem::LoadConfig()
 		else if (!_stricmp(command, "USE_DEFAULT_IME"))
 			m_Config.bUseDefaultIME = atoi(value) == 1 ? true : false;
 		else if (!_stricmp(command, "SOFTWARE_TILING"))
-			m_Config.bSoftwareTiling = atoi(value);
+			m_Config.bSoftwareTiling = static_cast<BYTE>(atoi(value));
 		else if (!_stricmp(command, "SHADOW_LEVEL"))
-			m_Config.iShadowLevel = atoi(value);
+			m_Config.iShadowLevel = static_cast<int>(atoi(value));
 		else if (!_stricmp(command, "DECOMPRESSED_TEXTURE"))
 			m_Config.bDecompressDDS = atoi(value) == 1 ? true : false;
 		else if (!_stricmp(command, "NO_SOUND_CARD"))
@@ -481,9 +481,9 @@ bool CPythonSystem::LoadConfig()
 
 bool CPythonSystem::SaveConfig()
 {
-	FILE *fp;
+	FILE *fp = NULL;
 
-	if (NULL == (fp = fopen("metin2.cfg", "wt")))
+	if (fopen_s(&fp, "metin2.cfg", "wt") != 0 || !fp)
 		return false;
 
 	fprintf(fp, "WIDTH						%d\n"
@@ -537,8 +537,8 @@ bool CPythonSystem::SaveConfig()
 
 bool CPythonSystem::LoadInterfaceStatus()
 {
-	FILE * File;
-	File = fopen("interface.cfg", "rb");
+	FILE * File = NULL;
+	fopen_s(&File, "interface.cfg", "rb");
 
 	if (!File)
 		return false;
@@ -555,9 +555,9 @@ void CPythonSystem::SaveInterfaceStatus()
 
 	PyCallClassMemberFunc(m_poInterfaceHandler, "OnSaveInterfaceStatus", Py_BuildValue("()"));
 
-	FILE * File;
+	FILE * File = NULL;
 
-	File = fopen("interface.cfg", "wb");
+	fopen_s(&File, "interface.cfg", "wb");
 
 	if (!File)
 	{

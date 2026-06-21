@@ -159,20 +159,21 @@ void GetFileNameParts(const char* c_szFile, int len, char* pszPath, char* pszNam
 	}
 }
 
-void GetOldIndexingName(char * szName, int Index)
+void GetOldIndexingName(char * szName, size_t szNameSize, int Index)
 {
 	int dec, sign;
 	char Temp[512];
-	
-	strcpy(Temp, _ecvt(Index, 256, &dec, &sign));
+
+	_ecvt_s(Temp, sizeof(Temp), Index, 256, &dec, &sign);
 	Temp[dec] = '\0';
-	
-	strcat(szName, Temp);
+
+	strcat_s(szName, szNameSize, Temp);
 }
 
-void GetIndexingName(char * szName, DWORD Index)
+void GetIndexingName(char * szName, size_t szNameSize, DWORD Index)
 {
-	sprintf(szName + strlen(szName), "%u", Index);
+	size_t len = strlen(szName);
+	sprintf_s(szName + len, szNameSize - len, "%u", Index);
 }
 
 void GetOnlyFileName(const char * sz_Name, std::string & strFileName)
@@ -180,7 +181,7 @@ void GetOnlyFileName(const char * sz_Name, std::string & strFileName)
 	strFileName = "";
 
 	int i;
-	for (i=strlen(sz_Name)-1; i>=0; --i)
+	for (i=static_cast<int>(strlen(sz_Name))-1; i>=0; --i)
 	{
 		if ('\\' == sz_Name[i] || '/' == sz_Name[i])
 		{
@@ -188,7 +189,7 @@ void GetOnlyFileName(const char * sz_Name, std::string & strFileName)
 			break;
 		}
 	}
-	
+
 	if (i == -1)
 		i = 0;
 
@@ -208,7 +209,7 @@ void GetExceptionPathName(const char * sz_Name, std::string & OnlyFileName)
 void GetOnlyPathName(const char * sz_Name, std::string & OnlyPathName)
 {
 	int i;
-	for (i = strlen(sz_Name) - 1; i >= 0; --i)
+	for (i = static_cast<int>(strlen(sz_Name)) - 1; i >= 0; --i)
 	{
 		if ('\\' == sz_Name[i] || '/' == sz_Name[i])
 		{
@@ -250,7 +251,7 @@ bool GetLocalFileName(const char * c_szGlobalPath, const char * c_szFullPathFile
 	if (strGlobalPath.length() >= strFullPathFileName.length())
 		return false;
 
-	DWORD length = min(strGlobalPath.length(), strFullPathFileName.length());
+	DWORD length = static_cast<DWORD>(min(strGlobalPath.length(), strFullPathFileName.length()));
 	for (DWORD dwPos = 0; dwPos < length; ++dwPos)
 	{
 		if (strGlobalPath[dwPos] != strFullPathFileName[dwPos])
@@ -266,7 +267,7 @@ void GetWorkingFolder(std::string & strFileName)
 {
 	char buf[128+1];
 	_getcwd(buf, 128);
-	strcat(buf, "/");
+	strcat_s(buf, sizeof(buf), "/");
 	strFileName = buf;
 }
 
@@ -439,7 +440,7 @@ void MyCreateDirectory(const char* path)
 
 	p = path;
 
-	int len = strlen(path) + 1;
+	size_t len = strlen(path) + 1;
 	dir = new char[len];
 
 	while (*p)
@@ -447,7 +448,7 @@ void MyCreateDirectory(const char* path)
 		if (*p == '/' || *p == '\\')
 		{
 			memset(dir, 0, len);
-			strncpy(dir, path, p - path);
+			strncpy_s(dir, len, path, p - path);
 			CreateDirectory(dir, NULL);
 		}
 
@@ -526,7 +527,7 @@ void StringExceptCharacter(std::string * pstrString, const char * c_szCharacter)
 	int icurPos = 0;
 	int iNextPos = 0;
 
-	while((iNextPos = pstrString->find_first_of(c_szCharacter, icurPos)) >= 0)
+	while((iNextPos = static_cast<int>(pstrString->find_first_of(c_szCharacter, icurPos))) >= 0)
 	{
 		std::string strFront = pstrString->substr(icurPos, iNextPos - icurPos);
 		std::string strBack = pstrString->substr(iNextPos+1, pstrString->length() - iNextPos - 1);
@@ -545,7 +546,7 @@ bool SplitLine(const char * c_szLine, const char * c_szDelimeter, std::vector<st
 
 	do
 	{
-		int beginPos = strLine.find_first_not_of(c_szDelimeter, basePos);
+		int beginPos = static_cast<int>(strLine.find_first_not_of(c_szDelimeter, basePos));
 		if (beginPos < 0)
 			return false;
 
@@ -554,7 +555,7 @@ bool SplitLine(const char * c_szLine, const char * c_szDelimeter, std::vector<st
 		if (strLine[beginPos] == '"')
 		{
 			++beginPos;
-			endPos = strLine.find_first_of("\"", beginPos);
+			endPos = static_cast<int>(strLine.find_first_of("\"", beginPos));
 
 			if (endPos < 0)
 				return false;
@@ -563,7 +564,7 @@ bool SplitLine(const char * c_szLine, const char * c_szDelimeter, std::vector<st
 		}
 		else
 		{
-			endPos = strLine.find_first_of(c_szDelimeter, beginPos);
+			endPos = static_cast<int>(strLine.find_first_of(c_szDelimeter, beginPos));
 			basePos = endPos;
 		}
 
@@ -589,7 +590,7 @@ const char * _getf(const char* c_szFormat, ...)
 
 	va_list args;
 	va_start(args, c_szFormat);
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	va_end(args);
 
 	return szBuf;
@@ -608,7 +609,7 @@ PCHAR* CommandLineToArgv( PCHAR CmdLine, int* _argc )
 	BOOLEAN  in_TEXT;
 	BOOLEAN  in_SPACE;
 
-	len = strlen(CmdLine);
+	len = static_cast<ULONG>(strlen(CmdLine));
 	i = ((len+2)/2)*sizeof(PVOID) + sizeof(PVOID);
 
 	argv = (PCHAR*)GlobalAlloc(GMEM_FIXED,

@@ -30,6 +30,14 @@
 /**/syserr
 /**/syslog
 /**/usage.txt
+/**/*_stdout.txt
+/**/_cap_out.txt
+/**/_cap_err.txt
+
+# Mark server runtime data (uploaded guild marks/symbols are per-deployment state)
+/markserver/guild_symbol.tga
+/markserver/mark/*
+!/markserver/mark/.gitkeep
 
 # Quest objects
 /share/locale/english/quest/__pycache__

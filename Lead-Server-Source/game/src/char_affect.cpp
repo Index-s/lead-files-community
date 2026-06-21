@@ -99,7 +99,7 @@ bool CHARACTER::UpdateAffect()
 		}
 		else
 		{
-			int iVal = MIN(GetPoint(POINT_HP_RECOVERY), GetMaxHP() * 7 / 100);
+			int iVal = MIN(static_cast<int>(GetPoint(POINT_HP_RECOVERY)), GetMaxHP() * 7 / 100);
 
 			if (iVal > 0)
 			{
@@ -118,9 +118,9 @@ bool CHARACTER::UpdateAffect()
 			int iVal;
 
 			if (!g_iUseLocale)
-				iVal = MIN(GetPoint(POINT_SP_RECOVERY), GetMaxSP() * 7 / 100);
+				iVal = MIN(static_cast<int>(GetPoint(POINT_SP_RECOVERY)), GetMaxSP() * 7 / 100);
 			else
-				iVal = MIN(GetPoint(POINT_SP_RECOVERY), GetMaxSP() * 7 / 100);
+				iVal = MIN(static_cast<int>(GetPoint(POINT_SP_RECOVERY)), GetMaxSP() * 7 / 100);
 
 			PointChange(POINT_SP, iVal);
 			PointChange(POINT_SP_RECOVERY, -iVal);
@@ -174,8 +174,8 @@ void CHARACTER::StartAffectEvent()
 void CHARACTER::ClearAffect(bool bSave)
 {
 	TAffectFlag afOld = m_afAffectFlag;
-	WORD	wMovSpd = GetPoint(POINT_MOV_SPEED);
-	WORD	wAttSpd = GetPoint(POINT_ATT_SPEED);
+	WORD	wMovSpd = static_cast<WORD>(GetPoint(POINT_MOV_SPEED));
+	WORD	wAttSpd = static_cast<WORD>(GetPoint(POINT_ATT_SPEED));
 
 	itertype(m_list_pkAffect) it = m_list_pkAffect.begin();
 
@@ -266,8 +266,8 @@ int CHARACTER::ProcessAffect()
 	CHorseNameManager::instance().Validate(this);
 
 	TAffectFlag afOld = m_afAffectFlag;
-	long lMovSpd = GetPoint(POINT_MOV_SPEED);
-	long lAttSpd = GetPoint(POINT_ATT_SPEED);
+	long lMovSpd = static_cast<long>(GetPoint(POINT_MOV_SPEED));
+	long lAttSpd = static_cast<long>(GetPoint(POINT_ATT_SPEED));
 
 	itertype(m_list_pkAffect) it;
 
@@ -461,8 +461,8 @@ void CHARACTER::LoadAffect(DWORD dwCount, TPacketAffectElement * pElements)
 
 	TAffectFlag afOld = m_afAffectFlag;
 
-	long lMovSpd = GetPoint(POINT_MOV_SPEED);
-	long lAttSpd = GetPoint(POINT_ATT_SPEED);
+	long lMovSpd = static_cast<long>(GetPoint(POINT_MOV_SPEED));
+	long lAttSpd = static_cast<long>(GetPoint(POINT_ATT_SPEED));
 
 	for (DWORD i = 0; i < dwCount; ++i, ++pElements)
 	{
@@ -591,8 +591,8 @@ bool CHARACTER::AddAffect(DWORD dwType, BYTE bApplyOn, long lApplyValue, DWORD d
 	pkAff->lDuration	= lDuration;
 	pkAff->lSPCost	= lSPCost;
 
-	WORD wMovSpd = GetPoint(POINT_MOV_SPEED);
-	WORD wAttSpd = GetPoint(POINT_ATT_SPEED);
+	WORD wMovSpd = static_cast<WORD>(GetPoint(POINT_MOV_SPEED));
+	WORD wAttSpd = static_cast<WORD>(GetPoint(POINT_ATT_SPEED));
 
 	ComputeAffect(pkAff, true);
 
@@ -675,6 +675,8 @@ bool CHARACTER::RemoveAffect(CAffect * pkAff)
 	m_list_pkAffect.remove(pkAff);
 	// END_OF_AFFECT_BUF_FIX
 
+	TAffectFlag afOld = m_afAffectFlag;
+
 	ComputeAffect(pkAff, false);
 
 	// White flag bug fix .
@@ -691,6 +693,14 @@ bool CHARACTER::RemoveAffect(CAffect * pkAff)
 		ComputePoints();
 	}
 	CheckMaximumPoints();
+
+	// The other affect-flag mutators (AddAffect, ClearAffect, ProcessAffect timer-expiry)
+	// re-broadcast m_afAffectFlag via UpdatePacket(); this remove path did not, so a flag
+	// cleared here (e.g. AFFECT_REVIVE_INVISIBLE/EUNHYUNG on attack/move/skill/guild-zone)
+	// stayed set on the client and left the model stuck semi-transparent until some
+	// unrelated update happened to re-send the flags. Re-broadcast on change.
+	if (afOld != m_afAffectFlag)
+		UpdatePacket();
 
 	if (test_server)
 		sys_log(0, "AFFECT_REMOVE: %s (flag %u apply: %u)", GetName(), pkAff->dwFlag, pkAff->bApplyOn);

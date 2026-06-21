@@ -436,7 +436,7 @@ void CSlotWindow::SetSlotCount(DWORD dwIndex, DWORD dwCount)
 	else
 	{
 		char szCount[16+1];
-		_snprintf(szCount, sizeof(szCount), "%d", dwCount);
+		_snprintf_s(szCount, sizeof(szCount), _TRUNCATE, "%d", dwCount);
 
 		if (!pSlot->pNumberLine)
 		{
@@ -471,16 +471,16 @@ void CSlotWindow::SetSlotCountNew(DWORD dwIndex, DWORD dwGrade, DWORD dwCount)
 		switch (dwGrade)
 		{
 			case 0:
-				_snprintf(szCount, sizeof(szCount), "%d", dwCount);
+				_snprintf_s(szCount, sizeof(szCount), _TRUNCATE, "%d", dwCount);
 				break;
 			case 1:
-				_snprintf(szCount, sizeof(szCount), "m%d", dwCount);
+				_snprintf_s(szCount, sizeof(szCount), _TRUNCATE, "m%d", dwCount);
 				break;
 			case 2:
-				_snprintf(szCount, sizeof(szCount), "g%d", dwCount);
+				_snprintf_s(szCount, sizeof(szCount), _TRUNCATE, "g%d", dwCount);
 				break;
 			case 3:
-				_snprintf(szCount, sizeof(szCount), "p");
+				_snprintf_s(szCount, sizeof(szCount), _TRUNCATE, "p");
 				break;
 		}
 
@@ -602,7 +602,7 @@ void CSlotWindow::OnRefreshSlot()
 
 DWORD CSlotWindow::GetSlotCount()
 {
-	return m_SlotList.size();
+	return static_cast<DWORD>(m_SlotList.size());
 }
 
 void CSlotWindow::LockSlot(DWORD dwIndex)
@@ -702,7 +702,7 @@ void CSlotWindow::ClearSelected()
 
 DWORD CSlotWindow::GetSelectedSlotCount()
 {
-	return m_dwSelectedSlotIndexList.size();
+	return static_cast<DWORD>(m_dwSelectedSlotIndexList.size());
 }
 
 DWORD CSlotWindow::GetSelectedSlotNumber(DWORD dwIndex)
@@ -1026,7 +1026,7 @@ void CSlotWindow::OnRender()
 
 		if (rSlot.pInstance)
 		{
-			rSlot.pInstance->SetPosition(m_rect.left + rSlot.ixPosition, m_rect.top + rSlot.iyPosition);
+			rSlot.pInstance->SetPosition(static_cast<float>(m_rect.left + rSlot.ixPosition), static_cast<float>(m_rect.top + rSlot.iyPosition));
 			rSlot.pInstance->Render();
 		}
 
@@ -1045,10 +1045,10 @@ void CSlotWindow::OnRender()
 		if (IS_SET(rSlot.dwState, SLOT_STATE_DISABLE))
 		{
 			CPythonGraphic::Instance().SetDiffuseColor(1.0f, 0.0f, 0.0f, 0.3f);
-			CPythonGraphic::Instance().RenderBar2d(m_rect.left + rSlot.ixPosition,
-				m_rect.top + rSlot.iyPosition,
-				m_rect.left + rSlot.ixPosition + rSlot.ixCellSize,
-				m_rect.top + rSlot.iyPosition + rSlot.iyCellSize);
+			CPythonGraphic::Instance().RenderBar2d(static_cast<float>(m_rect.left + rSlot.ixPosition),
+				static_cast<float>(m_rect.top + rSlot.iyPosition),
+				static_cast<float>(m_rect.left + rSlot.ixPosition + rSlot.ixCellSize),
+				static_cast<float>(m_rect.top + rSlot.iyPosition + rSlot.iyCellSize));
 		}
 
 		if (rSlot.fCoolTime != 0.0f)
@@ -1134,7 +1134,7 @@ void CSlotWindow::RenderSlotBaseImage()
 		if (!rSlot.bRenderBaseSlotImage)
 			continue;
 
-		m_pBaseImageInstance->SetPosition(m_rect.left + rSlot.ixPosition, m_rect.top + rSlot.iyPosition);
+		m_pBaseImageInstance->SetPosition(static_cast<float>(m_rect.left + rSlot.ixPosition), static_cast<float>(m_rect.top + rSlot.iyPosition));
 		m_pBaseImageInstance->Render();
 	}
 }
@@ -1149,10 +1149,10 @@ void CSlotWindow::OnRenderPickingSlot()
 		return;
 
 	CPythonGraphic::Instance().SetDiffuseColor(1.0f, 1.0f, 1.0f, 0.5f);
-	CPythonGraphic::Instance().RenderBar2d(m_rect.left + pSlot->ixPosition,
-											m_rect.top + pSlot->iyPosition,
-											m_rect.left + pSlot->ixPosition + pSlot->ixCellSize,
-											m_rect.top + pSlot->iyPosition + pSlot->iyCellSize);
+	CPythonGraphic::Instance().RenderBar2d(static_cast<float>(m_rect.left + pSlot->ixPosition),
+											static_cast<float>(m_rect.top + pSlot->iyPosition),
+											static_cast<float>(m_rect.left + pSlot->ixPosition + pSlot->ixCellSize),
+											static_cast<float>(m_rect.top + pSlot->iyPosition + pSlot->iyCellSize));
 }
 
 void CSlotWindow::OnRenderSelectedSlot()
@@ -1165,10 +1165,10 @@ void CSlotWindow::OnRenderSelectedSlot()
 			continue;
 
 		CPythonGraphic::Instance().SetDiffuseColor(1.0f, 1.0f, 1.0f, 0.5f);
-		CPythonGraphic::Instance().RenderBar2d(m_rect.left + pSlot->ixPosition,
-												m_rect.top + pSlot->iyPosition,
-												m_rect.left + pSlot->ixPosition + pSlot->ixCellSize,
-												m_rect.top + pSlot->iyPosition + pSlot->iyCellSize);
+		CPythonGraphic::Instance().RenderBar2d(static_cast<float>(m_rect.left + pSlot->ixPosition),
+												static_cast<float>(m_rect.top + pSlot->iyPosition),
+												static_cast<float>(m_rect.left + pSlot->ixPosition + pSlot->ixCellSize),
+												static_cast<float>(m_rect.top + pSlot->iyPosition + pSlot->iyCellSize));
 	}
 }
 
@@ -1184,10 +1184,10 @@ void CSlotWindow::RenderLockedSlot()
 
 		if (rSlot.dwState & SLOT_STATE_LOCK)
 		{
-			CPythonGraphic::Instance().RenderBar2d(m_rect.left + rSlot.ixPosition,
-												   m_rect.top  + rSlot.iyPosition,
-												   m_rect.left + rSlot.ixPosition + rSlot.ixCellSize,
-												   m_rect.top  + rSlot.iyPosition + rSlot.iyCellSize);
+			CPythonGraphic::Instance().RenderBar2d(static_cast<float>(m_rect.left + rSlot.ixPosition),
+												   static_cast<float>(m_rect.top  + rSlot.iyPosition),
+												   static_cast<float>(m_rect.left + rSlot.ixPosition + rSlot.ixCellSize),
+												   static_cast<float>(m_rect.top  + rSlot.iyPosition + rSlot.iyCellSize));
 		}
 	}
 }

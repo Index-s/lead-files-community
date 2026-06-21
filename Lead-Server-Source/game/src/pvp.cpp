@@ -213,10 +213,10 @@ void CPVPManager::Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 	{
 		TPacketGCWhisper pack;
 
-		int len = MIN(CHAT_MAX_LEN, strlen(msg) + 1);
+		int len = MIN(CHAT_MAX_LEN, static_cast<int>(strlen(msg) + 1));
 
 		pack.bHeader = HEADER_GC_WHISPER;
-		pack.wSize = sizeof(TPacketGCWhisper) + len;
+		pack.wSize = static_cast<WORD>(sizeof(TPacketGCWhisper) + len);
 		pack.bType = WHISPER_TYPE_SYSTEM;
 		strlcpy(pack.szNameFrom, pkChr->GetName(), sizeof(pack.szNameFrom));
 

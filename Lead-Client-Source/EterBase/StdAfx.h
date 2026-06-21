@@ -1,13 +1,9 @@
 ﻿#pragma once
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
 
 #pragma warning(disable:4710)	// not inlined
 #pragma warning(disable:4786)	// Turn off anything that goes beyond character 255
-#pragma warning(disable:4244)	// type conversion possible lose of data
 
 #include <windows.h>
 #include <assert.h>
@@ -42,7 +38,11 @@
 
 // Armadillo nanomite protection
 #ifndef NANOBEGIN
-	#ifdef __BORLANDC__
+	#ifdef _WIN64
+		// Armadillo nanomites are x86/Armadillo-only; no inline asm on x64.
+		#define NANOBEGIN
+		#define NANOEND
+	#elif defined(__BORLANDC__)
 		#define NANOBEGIN     __emit__ (0xEB,0x03,0xD6,0xD7,0x01)
 		#define NANOEND       __emit__ (0xEB,0x03,0xD6,0xD7,0x00)
 	#else

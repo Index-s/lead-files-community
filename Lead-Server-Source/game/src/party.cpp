@@ -378,7 +378,7 @@ DWORD CParty::GetLeaderPID()
 
 DWORD CParty::GetMemberCount()
 {
-	return m_memberMap.size();
+	return static_cast<DWORD>(m_memberMap.size());
 }
 
 void CParty::P2PJoin(DWORD dwPID)
@@ -1187,7 +1187,7 @@ LPCHARACTER CParty::GetNextOwnership(LPCHARACTER ch, long x, long y)
 	if (m_itNextOwner == m_memberMap.end())
 		return ch;
 
-	int size = m_memberMap.size();
+	int size = static_cast<int>(m_memberMap.size());
 
 	while (size-- > 0)
 	{
@@ -1361,7 +1361,7 @@ void CParty::Update()
 	bool bLongTimeExpBonusChanged = false;
 
 	// After sufficient time has passed after forming a party, you will receive an experience bonus. .
-	if (!m_iLongTimeExpBonus && (get_dword_time() - m_dwPartyStartTime > PARTY_ENOUGH_MINUTE_FOR_EXP_BONUS * 60 * 1000 / (g_iUseLocale?1:2)))
+	if (!m_iLongTimeExpBonus && (get_dword_time() - m_dwPartyStartTime > static_cast<DWORD>(PARTY_ENOUGH_MINUTE_FOR_EXP_BONUS * 60 * 1000 / (g_iUseLocale?1:2))))
 	{
 		bLongTimeExpBonusChanged = true;
 		m_iLongTimeExpBonus = 5;

@@ -165,14 +165,14 @@ void CArea::RenderEffect()
 	}
 }
 
-DWORD CArea::DEBUG_GetRenderedCRCNum() 
-{ return m_kRenderedThingInstanceCRCWithNumberVector.size(); }
+DWORD CArea::DEBUG_GetRenderedCRCNum()
+{ return static_cast<DWORD>(m_kRenderedThingInstanceCRCWithNumberVector.size()); }
 
 CArea::TCRCWithNumberVector & CArea::DEBUG_GetRenderedCRCWithNumVector() 
 { return m_kRenderedThingInstanceCRCWithNumberVector; }
 
 DWORD CArea::DEBUG_GetRenderedGrapphicThingInstanceNum()
-{ return m_kRenderedGrapphicThingInstanceVector.size(); }
+{ return static_cast<DWORD>(m_kRenderedGrapphicThingInstanceVector.size()); }
 
 void CArea::CollectRenderingObject(std::vector<CGraphicThingInstance*>& rkVct_pkOpaqueThingInst)
 {
@@ -566,7 +566,7 @@ void CArea::__SetObjectInstance_SetEffect(TObjectInstance * pObjectInstance, con
 
 	pEffectInstance->SetGlobalMatrix(mat);
 
-	pObjectInstance->dwEffectInstanceIndex = m_EffectInstanceMap.size();
+	pObjectInstance->dwEffectInstanceIndex = static_cast<DWORD>(m_EffectInstanceMap.size());
 	m_EffectInstanceMap.insert(TEffectInstanceMap::value_type(pObjectInstance->dwEffectInstanceIndex, pEffectInstance));
 }
 
@@ -631,7 +631,7 @@ void CArea::__SetObjectInstance_SetBuilding(TObjectInstance * pObjectInstance, c
 		char szLODModelFileNameEnd[256];
 		for (UINT uLODIndex=1; uLODIndex<=3; ++uLODIndex)
 		{
-			sprintf(szLODModelFileNameEnd, "_lod_%.2d.gr2", uLODIndex);
+			sprintf_s(szLODModelFileNameEnd, sizeof(szLODModelFileNameEnd), "_lod_%.2d.gr2", uLODIndex);
 			stLODModelFileName = CFileNameHelper::NoExtension(stSrcModelFileName) + szLODModelFileNameEnd;
 			if (!rkResMgr.IsFileExist(stLODModelFileName.c_str()))
 				break;
@@ -749,7 +749,7 @@ void CArea::__LoadAttribute(TObjectInstance * pObjectInstance, const char * c_sz
 				CStaticCollisionData collision;
 				collision.dwType = COLLISION_TYPE_OBB;
 				D3DXQuaternionRotationYawPitchRoll(&collision.quatRotation, object->GetYaw(), object->GetPitch(), object->GetRoll());
-				strcpy(collision.szName, "DummyCollisionOBB");
+				strcpy_s(collision.szName, sizeof(collision.szName), "DummyCollisionOBB");
 				collision.v3Position = (v3Min + v3Max) * 0.5f;
 
 				D3DXVECTOR3 vDelta = (v3Max - v3Min);
@@ -914,13 +914,13 @@ bool CArea::__Load_LoadObject(const char * c_szFileName)
 
 	const std::string & c_rstrCount = stTokenVectorMap["objectcount"][0];
 
-	DWORD dwCount = atoi(c_rstrCount.c_str());
+	DWORD dwCount = static_cast<DWORD>(atoi(c_rstrCount.c_str()));
 
 	char szObjectName[32+1];
 
 	for (DWORD i = 0; i < dwCount; ++i)
 	{
-		_snprintf(szObjectName, sizeof(szObjectName), "object%03d", i);
+		_snprintf_s(szObjectName, sizeof(szObjectName), _TRUNCATE, "object%03d", i);
 
 		if (stTokenVectorMap.end() == stTokenVectorMap.find(szObjectName))
 			continue;
@@ -934,10 +934,10 @@ bool CArea::__Load_LoadObject(const char * c_szFileName)
 
 		TObjectData ObjectData;
 		ZeroMemory(&ObjectData, sizeof(ObjectData));
-		ObjectData.Position.x = atof(c_rstrxPosition.c_str());
-		ObjectData.Position.y = atof(c_rstryPosition.c_str());
-		ObjectData.Position.z = atof(c_rstrzPosition.c_str());
-		ObjectData.dwCRC = atoi	(c_rstrCRC.c_str());
+		ObjectData.Position.x = static_cast<float>(atof(c_rstrxPosition.c_str()));
+		ObjectData.Position.y = static_cast<float>(atof(c_rstryPosition.c_str()));
+		ObjectData.Position.z = static_cast<float>(atof(c_rstrzPosition.c_str()));
+		ObjectData.dwCRC = static_cast<DWORD>(atoi	(c_rstrCRC.c_str()));
 
 		// 20041217.myevan.Rotation formula changed
 		ObjectData.InitializeRotation(); //ObjectData.m_fYaw = ObjectData.m_fPitch = ObjectData.m_fRoll = 0;
@@ -946,31 +946,31 @@ bool CArea::__Load_LoadObject(const char * c_szFileName)
 			std::string::size_type s=rVector[4].find('#');
 			if (s!=rVector[4].npos)
 			{
-				ObjectData.m_fYaw = atoi(rVector[4].substr(0,s-1).c_str());
-				int p = s+1;
+				ObjectData.m_fYaw = static_cast<float>(atoi(rVector[4].substr(0,s-1).c_str()));
+				std::string::size_type p = s+1;
 				s = rVector[4].find('#',p);
-				ObjectData.m_fPitch = atoi(rVector[4].substr(p,s-1-p+1).c_str());
-				ObjectData.m_fRoll = atoi(rVector[4].substr(s+1).c_str());
+				ObjectData.m_fPitch = static_cast<float>(atoi(rVector[4].substr(p,s-1-p+1).c_str()));
+				ObjectData.m_fRoll = static_cast<float>(atoi(rVector[4].substr(s+1).c_str()));
 			}
 			else
 			{
 				ObjectData.m_fYaw = 0.0f;
 				ObjectData.m_fPitch = 0.0f;
-				ObjectData.m_fRoll = atoi(rVector[4].c_str());
+				ObjectData.m_fRoll = static_cast<float>(atoi(rVector[4].c_str()));
 			}
 		}
 		
 		ObjectData.m_fHeightBias = 0.0f;
 		if (rVector.size() > 5)
 		{
-			ObjectData.m_fHeightBias = atof(rVector[5].c_str());
+			ObjectData.m_fHeightBias = static_cast<float>(atof(rVector[5].c_str()));
 		}
 
 		if (rVector.size() > 6)
 		{
 			for (int portalIdx = 0; portalIdx < min(rVector.size()-6, PORTAL_ID_MAX_NUM); ++portalIdx)
 			{
-				ObjectData.abyPortalID[portalIdx] = atoi(rVector[6+portalIdx].c_str());
+				ObjectData.abyPortalID[portalIdx] = static_cast<BYTE>(atoi(rVector[6+portalIdx].c_str()));
 			}
 		}
 
@@ -1012,13 +1012,13 @@ bool CArea::__Load_LoadAmbience(const char * c_szFileName)
 
 	const std::string & c_rstrCount = stTokenVectorMap["objectcount"][0];
 
-	DWORD dwCount = atoi(c_rstrCount.c_str());
+	DWORD dwCount = static_cast<DWORD>(atoi(c_rstrCount.c_str()));
 
 	char szObjectName[32+1];
 
 	for (DWORD i = 0; i < dwCount; ++i)
 	{
-		_snprintf(szObjectName, sizeof(szObjectName), "object%03d", i);
+		_snprintf_s(szObjectName, sizeof(szObjectName), _TRUNCATE, "object%03d", i);
 
 		if (stTokenVectorMap.end() == stTokenVectorMap.find(szObjectName))
 			continue;
@@ -1033,11 +1033,11 @@ bool CArea::__Load_LoadAmbience(const char * c_szFileName)
 
 		TObjectData ObjectData;
 		ZeroMemory(&ObjectData, sizeof(ObjectData));
-		ObjectData.Position.x = atof(c_rstrxPosition.c_str());
-		ObjectData.Position.y = atof(c_rstryPosition.c_str());
-		ObjectData.Position.z = atof(c_rstrzPosition.c_str());
-		ObjectData.dwCRC = atoi	(c_rstrCRC.c_str());
-		ObjectData.dwRange = atoi(c_rstrRange.c_str());
+		ObjectData.Position.x = static_cast<float>(atof(c_rstrxPosition.c_str()));
+		ObjectData.Position.y = static_cast<float>(atof(c_rstryPosition.c_str()));
+		ObjectData.Position.z = static_cast<float>(atof(c_rstrzPosition.c_str()));
+		ObjectData.dwCRC = static_cast<DWORD>(atoi	(c_rstrCRC.c_str()));
+		ObjectData.dwRange = static_cast<DWORD>(atoi(c_rstrRange.c_str()));
 
 		// 20041217.myevan.Rotation reset
 		ObjectData.InitializeRotation();
@@ -1047,7 +1047,7 @@ bool CArea::__Load_LoadAmbience(const char * c_szFileName)
 		if (rVector.size() >= 6)
 		{
 			const std::string & c_rstrPercentage = rVector[5].c_str();
-			ObjectData.fMaxVolumeAreaPercentage = atof(c_rstrPercentage.c_str());
+			ObjectData.fMaxVolumeAreaPercentage = static_cast<float>(atof(c_rstrPercentage.c_str()));
 		}
 
 		// If data is not inside property, then delete it.
@@ -1076,7 +1076,7 @@ bool CArea::CheckObjectIndex(DWORD dwIndex) const
 
 DWORD CArea::GetObjectDataCount()
 {
-	return m_ObjectDataVector.size();
+	return static_cast<DWORD>(m_ObjectDataVector.size());
 }
 
 bool CArea::GetObjectDataPointer(DWORD dwIndex, const TObjectData ** ppObjectData) const
@@ -1093,7 +1093,7 @@ bool CArea::GetObjectDataPointer(DWORD dwIndex, const TObjectData ** ppObjectDat
 
 const DWORD CArea::GetObjectInstanceCount() const
 {
-	return m_ObjectInstanceVector.size();
+	return static_cast<DWORD>(m_ObjectInstanceVector.size());
 }
 
 const bool CArea::GetObjectInstancePointer(const DWORD & dwIndex, const TObjectInstance ** ppObjectInstance) const
@@ -1434,7 +1434,7 @@ void CArea::TAmbienceInstance::Render()
 
 bool CArea::SAmbienceInstance::Picking()
 {
-	return CGraphicCollisionObject::IntersectSphere(D3DXVECTOR3(fx, fy, fz), dwRange);
+	return CGraphicCollisionObject::IntersectSphere(D3DXVECTOR3(fx, fy, fz), static_cast<float>(dwRange));
 }
 
 CArea::SAmbienceInstance::SAmbienceInstance()

@@ -62,7 +62,7 @@ bool CSafebox::Add(DWORD dwPos, LPITEM pkItem)
 	}
 
 	pkItem->SetWindow(m_bWindowMode);
-	pkItem->SetCell(m_pkChrOwner, dwPos);
+	pkItem->SetCell(m_pkChrOwner, static_cast<WORD>(dwPos));
 	pkItem->Save(); // forcibly Save You have to call .
 	ITEM_MANAGER::instance().FlushDelayedSave(pkItem);
 
@@ -72,9 +72,9 @@ bool CSafebox::Add(DWORD dwPos, LPITEM pkItem)
 	TPacketGCItemSet pack;
 
 	pack.header	= m_bWindowMode == SAFEBOX ? HEADER_GC_SAFEBOX_SET : HEADER_GC_MALL_SET;
-	pack.Cell	= TItemPos(m_bWindowMode, dwPos);
+	pack.Cell	= TItemPos(m_bWindowMode, static_cast<ItemCellType>(dwPos));
 	pack.vnum	= pkItem->GetVnum();
-	pack.count	= pkItem->GetCount();
+	pack.count	= static_cast<ItemStackType>(pkItem->GetCount());
 	pack.flags	= pkItem->GetFlag();
 	pack.anti_flags	= pkItem->GetAntiFlag();
 	thecore_memcpy(pack.alSockets, pkItem->GetSockets(), sizeof(pack.alSockets));
@@ -112,7 +112,7 @@ LPITEM CSafebox::Remove(DWORD dwPos)
 	TPacketGCItemDel pack;
 
 	pack.header	= m_bWindowMode == SAFEBOX ? HEADER_GC_SAFEBOX_DEL : HEADER_GC_MALL_DEL;
-	pack.pos	= dwPos;
+	pack.pos	= static_cast<ItemCellType>(dwPos);
 
 	m_pkChrOwner->GetDesc()->Packet(&pack, sizeof(pack));
 	sys_log(1, "SAFEBOX: REMOVE %s %s count %d", m_pkChrOwner->GetName(), pkItem->GetName(), pkItem->GetCount());
@@ -197,7 +197,7 @@ bool CSafebox::MoveItem(BYTE bCell, BYTE bDestCell, ItemStackType count)
 					return false;
 
 			if (count == 0)
-				count = item->GetCount();
+				count = static_cast<ItemStackType>(item->GetCount());
 
 			count = MIN(g_ItemCountLimit - item2->GetCount(), count);
 

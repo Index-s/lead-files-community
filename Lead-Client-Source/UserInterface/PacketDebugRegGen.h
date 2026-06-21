@@ -116,7 +116,7 @@ inline void Print_TPacketCGWhisper(FILE* f, const void* data, int size) {
 
 inline void Print_TPacketCGItemDrop(FILE* f, const void* data, int size) {
     const TPacketCGItemDrop& p = *(const TPacketCGItemDrop*)data;
-    fprintf(f, "Cell=(struct) gold=%u count=%u\n", p.gold, (unsigned)p.count);
+    fprintf(f, "Cell=(struct) gold=%lld count=%u\n", (long long)p.gold, (unsigned)p.count);
 }
 
 inline void Print_TPacketCGOnClick(FILE* f, const void* data, int size) {
@@ -126,7 +126,7 @@ inline void Print_TPacketCGOnClick(FILE* f, const void* data, int size) {
 
 inline void Print_TPacketCGExchange(FILE* f, const void* data, int size) {
     const TPacketCGExchange& p = *(const TPacketCGExchange*)data;
-    fprintf(f, "sub_header=%u arg1=%u arg2=%u Pos=(struct)\n", p.sub_header, p.arg1, p.arg2);
+    fprintf(f, "sub_header=%u arg1=%lld arg2=%u Pos=(struct)\n", p.sub_header, (long long)p.arg1, p.arg2);
 }
 
 inline void Print_TPacketCGCharacterPosition(FILE* f, const void* data, int size) {
@@ -511,7 +511,7 @@ inline void Print_TPacketGCPvp(FILE* f, const void* data, int size) {
 
 inline void Print_TPacketGCExchange(FILE* f, const void* data, int size) {
     const TPacketGCExchange& p = *(const TPacketGCExchange*)data;
-    fprintf(f, "sub_header=%u is_me=%u arg1=%u arg2=(struct) arg3=%u alSockets=[ITEM_SOCKET_MAX_NUM] aAttr=(struct)\n", p.sub_header, p.is_me, p.arg1, p.arg3);
+    fprintf(f, "sub_header=%u is_me=%u arg1=%lld arg2=(struct) arg3=%u alSockets=[ITEM_SOCKET_MAX_NUM] aAttr=(struct)\n", p.sub_header, p.is_me, (long long)p.arg1, p.arg3);
 }
 
 inline void Print_TPacketGCCharacterPosition(FILE* f, const void* data, int size) {
@@ -531,7 +531,7 @@ inline void Print_TPacketGCScript(FILE* f, const void* data, int size) {
 
 inline void Print_TPacketGCQuestConfirm(FILE* f, const void* data, int size) {
     const TPacketGCQuestConfirm& p = *(const TPacketGCQuestConfirm*)data;
-    fprintf(f, "timeout=%ld requestPID=%u\n", p.timeout, p.requestPID);
+    fprintf(f, "timeout=%lld requestPID=%u\n", (long long)p.timeout, p.requestPID);
 }
 
 inline void Print_TPacketGCTargetInfo(FILE* f, const void* data, int size) {
@@ -656,7 +656,7 @@ inline void Print_TPacketGCMarkIdxlist(FILE* f, const void* data, int size) {
 
 inline void Print_TPacketGCTime(FILE* f, const void* data, int size) {
     const TPacketGCTime& p = *(const TPacketGCTime*)data;
-    fprintf(f, "time=%u\n", p.time);
+    fprintf(f, "time=%lld\n", (long long)p.time);
 }
 
 inline void Print_TPacketGCChangeName(FILE* f, const void* data, int size) {
@@ -786,12 +786,12 @@ inline void Print_TPacketGCAuthSuccess(FILE* f, const void* data, int size) {
 
 inline void Print_SPacketGCHybridCryptKeys(FILE* f, const void* data, int size) {
     const SPacketGCHybridCryptKeys& p = *(const SPacketGCHybridCryptKeys*)data;
-    fprintf(f, "uint8_t=[iStreamSize] uint8_t=[uDynamicPacketSize] m_pStream=%u uDynamicPacketSize=%u KeyStreamLen=%d\n", (unsigned)p.m_pStream, p.uDynamicPacketSize, p.KeyStreamLen);
+    fprintf(f, "uint8_t=[iStreamSize] uint8_t=[uDynamicPacketSize] m_pStream=%p uDynamicPacketSize=%u KeyStreamLen=%d\n", (void*)p.m_pStream, p.uDynamicPacketSize, p.KeyStreamLen);
 }
 
 inline void Print_SPacketGCPackageSDB(FILE* f, const void* data, int size) {
     const SPacketGCPackageSDB& p = *(const SPacketGCPackageSDB*)data;
-    fprintf(f, "uint8_t=[iStreamSize] uint8_t=[uDynamicPacketSize] m_pStream=%u uDynamicPacketSize=%u iStreamLen=%d\n", (unsigned)p.m_pStream, p.uDynamicPacketSize, p.iStreamLen);
+    fprintf(f, "uint8_t=[iStreamSize] uint8_t=[uDynamicPacketSize] m_pStream=%p uDynamicPacketSize=%u iStreamLen=%d\n", (void*)p.m_pStream, p.uDynamicPacketSize, p.iStreamLen);
 }
 
 inline void Print_TPacketGCSwitchbot(FILE* f, const void* data, int size) {

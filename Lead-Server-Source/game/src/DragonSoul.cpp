@@ -34,8 +34,8 @@ int Gamble(std::vector<float>& vec_probs)
 // weight table (prob_lst) take it random_set.size() doggy index By selecting random_set second return
 bool MakeDistinctRandomNumberSet(std::list <float> prob_lst, OUT std::vector<int>& random_set)
 {
-	int size = prob_lst.size();
-	int n = random_set.size();
+	int size = static_cast<int>(prob_lst.size());
+	int n = static_cast<int>(random_set.size());
 	if (size < n)
 		return false;
 
@@ -76,7 +76,7 @@ bool MakeDistinctRandomNumberSet(std::list <float> prob_lst, OUT std::vector<int
 
 BYTE GetType(DWORD dwVnum)
 {
-	return (dwVnum / 10000);
+	return static_cast<BYTE>(dwVnum / 10000);
 }
 
 BYTE GetGradeIdx(DWORD dwVnum)
@@ -184,7 +184,7 @@ bool DSManager::RefreshItemAttributes(LPITEM pDS)
 	}
 	fWeight /= 100.f;
 
-	int n = MIN(basic_apply_num, vec_basic_applys.size());
+	int n = MIN(basic_apply_num, static_cast<int>(vec_basic_applys.size()));
 	for (int i = 0; i < n; i++)
 	{	
 		const SApply& basic_apply = vec_basic_applys[i];
@@ -253,7 +253,7 @@ bool DSManager::PutAttributes(LPITEM pDS)
 	}
 	fWeight /= 100.f;
 
-	int n = MIN(basic_apply_num, vec_basic_applys.size());
+	int n = MIN(basic_apply_num, static_cast<int>(vec_basic_applys.size()));
 	for (int i = 0; i < n; i++)
 	{	
 		const SApply& basic_apply = vec_basic_applys[i];
@@ -462,11 +462,11 @@ bool DSManager::PullOut(LPCHARACTER ch, TItemPos DestCell, LPITEM& pItem, LPITEM
 		{
 			if (pExtractor)
 			{
-				sprintf(buf, "dice(%d) prob(%d + %d) EXTR(VN:%d)", (int)fDice, (int)fProb, iBonus, pExtractor->GetVnum());
+				snprintf(buf, sizeof(buf), "dice(%d) prob(%d + %d) EXTR(VN:%d)", (int)fDice, (int)fProb, iBonus, pExtractor->GetVnum());
 			}
 			else
 			{
-				sprintf(buf, "dice(%f) prob(%f)", fDice, fProb);
+				snprintf(buf, sizeof(buf), "dice(%f) prob(%f)", fDice, fProb);
 			}
 			LogManager::instance().ItemLog(ch, pItem, "DS_PULL_OUT_SUCCESS", buf);
 			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Dragon Stone has been removed."));
@@ -477,11 +477,11 @@ bool DSManager::PullOut(LPCHARACTER ch, TItemPos DestCell, LPITEM& pItem, LPITEM
 		{
 			if (pExtractor)
 			{
-				sprintf(buf, "dice(%d) prob(%d + %d) EXTR(VN:%d) ByProd(VN:%d)", (int)fDice, (int)fProb, iBonus, pExtractor->GetVnum(), dwByProduct);
+				snprintf(buf, sizeof(buf), "dice(%d) prob(%d + %d) EXTR(VN:%d) ByProd(VN:%d)", (int)fDice, (int)fProb, iBonus, pExtractor->GetVnum(), dwByProduct);
 			}
 			else
 			{
-				sprintf(buf, "dice(%d) prob(%d) ByProd(VNUM:%d)", (int)fDice, (int)fProb, dwByProduct);
+				snprintf(buf, sizeof(buf), "dice(%d) prob(%d) ByProd(VNUM:%d)", (int)fDice, (int)fProb, dwByProduct);
 			}
 			LogManager::instance().ItemLog(ch, pItem, "DS_PULL_OUT_FAILED", buf);
 			M2_DESTROY_ITEM(pItem);
@@ -548,11 +548,10 @@ bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL
 		return false;
 	}
 
-	int count = set_items.size();
+	int count = static_cast<int>(set_items.size());
 	int need_count = 0;
 	int fee = 0;
 	std::vector <float> vec_probs;
-	float prob_sum;
 
 	BYTE ds_type, grade_idx, step_idx, strength_idx;
 	int result_grade;
@@ -646,7 +645,7 @@ bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL
 	if (result_grade > grade_idx)
 	{
 		char buf[128];
-		sprintf(buf, "GRADE : %d -> %d", grade_idx, result_grade);
+		snprintf(buf, sizeof(buf), "GRADE : %d -> %d", grade_idx, result_grade);
 		LogManager::instance().ItemLog(ch, pResultItem, "DS_GRADE_REFINE_SUCCESS", buf);
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Refinement up one class was successful."));
 		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_SUCCEED, TItemPos (pResultItem->GetWindow(), pResultItem->GetCell()));
@@ -655,7 +654,7 @@ bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL
 	else
 	{
 		char buf[128];
-		sprintf(buf, "GRADE : %d -> %d", grade_idx, result_grade);
+		snprintf(buf, sizeof(buf), "GRADE : %d -> %d", grade_idx, result_grade);
 		LogManager::instance().ItemLog(ch, pResultItem, "DS_GRADE_REFINE_FAIL", buf);
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Refinement up one class failed."));
 		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_FAIL, TItemPos (pResultItem->GetWindow(), pResultItem->GetCell()));
@@ -705,7 +704,7 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 	}
 
 	std::string stGroupName;
-	int count = set_items.size();
+	int count = static_cast<int>(set_items.size());
 	int need_count = 0;
 	int fee = 0;
 	std::vector <float> vec_probs;
@@ -798,7 +797,7 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 	if (result_step > step_idx)
 	{
 		char buf[128];
-		sprintf(buf, "STEP : %d -> %d", step_idx, result_step);
+		snprintf(buf, sizeof(buf), "STEP : %d -> %d", step_idx, result_step);
 		LogManager::instance().ItemLog(ch, pResultItem, "DS_STEP_REFINE_SUCCESS", buf);
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Improvement of the clarity level successful."));
 		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_SUCCEED, TItemPos (pResultItem->GetWindow(), pResultItem->GetCell()));
@@ -807,7 +806,7 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 	else
 	{
 		char buf[128];
-		sprintf(buf, "STEP : %d -> %d", step_idx, result_step);
+		snprintf(buf, sizeof(buf), "STEP : %d -> %d", step_idx, result_step);
 		LogManager::instance().ItemLog(ch, pResultItem, "DS_STEP_REFINE_FAIL", buf);
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Improvement of the clarity level failed."));
 		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_FAIL, TItemPos (pResultItem->GetWindow(), pResultItem->GetCell()));
@@ -965,7 +964,7 @@ bool DSManager::DoRefineStrength(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_S
 		pRefineStone->SetCount(pRefineStone->GetCount() - 1);
 
 		char buf[128];
-		sprintf(buf, "STRENGTH : %d -> %d", bStrength, bStrength + 1);
+		snprintf(buf, sizeof(buf), "STRENGTH : %d -> %d", bStrength, bStrength + 1);
 		LogManager::instance().ItemLog(ch, pDragonSoul, "DS_STRENGTH_REFINE_SUCCESS", buf);
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Strengthening was successful."));
 		ch->AutoGiveItem(pResult, true);
@@ -987,7 +986,7 @@ bool DSManager::DoRefineStrength(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_S
 		bSubHeader = DS_SUB_HEADER_REFINE_FAIL;
 
 		char buf[128];
-		sprintf(buf, "STRENGTH : %d -> %d", bStrength, bStrength - 1);
+		snprintf(buf, sizeof(buf), "STRENGTH : %d -> %d", bStrength, bStrength - 1);
 		// strength Reinforcement can be broken if it fails , Leave a log based on the original item .
 		LogManager::instance().ItemLog(ch, pDragonSoul, "DS_STRENGTH_REFINE_FAIL", buf);
 
@@ -1032,7 +1031,7 @@ int DSManager::LeftTime(LPITEM pItem) const
 	// For now timer based on wear Only the dragon soul stone does not disappear even if time runs out. .
 	if (pItem->GetProto()->cLimitTimerBasedOnWearIndex >= 0)
 	{
-		return pItem->GetSocket(ITEM_SOCKET_REMAIN_SEC);
+		return static_cast<int>(pItem->GetSocket(ITEM_SOCKET_REMAIN_SEC));
 	}
 	// different limit type Since all Dragon Soul Stones disappear over time, the items entered here are judged to have some time left. .
 	else
@@ -1082,7 +1081,7 @@ bool DSManager::ActivateDragonSoul(LPITEM pItem)
 		if (IsTimeLeftDragonSoul(pItem) && !IsActiveDragonSoul(pItem))
 		{
 			char buf[128];
-			sprintf (buf, "LEFT TIME(%d)", LeftTime(pItem));
+			snprintf (buf, sizeof(buf), "LEFT TIME(%d)", LeftTime(pItem));
 			LogManager::instance().ItemLog(pOwner, pItem, "DS_ACTIVATE", buf);
 			pItem->ModifyPoints(true);
 			pItem->SetSocket(ITEM_SOCKET_DRAGON_SOUL_ACTIVE_IDX, 1);
@@ -1112,7 +1111,7 @@ bool DSManager::DeactivateDragonSoul(LPITEM pItem, bool bSkipRefreshOwnerActiveS
 	pItem->SetSocket(ITEM_SOCKET_DRAGON_SOUL_ACTIVE_IDX, 0);
 	pItem->ModifyPoints(false);
 
-	sprintf (buf, "LEFT TIME(%d)", LeftTime(pItem));
+	snprintf (buf, sizeof(buf), "LEFT TIME(%d)", LeftTime(pItem));
 	LogManager::instance().ItemLog(pOwner, pItem, "DS_DEACTIVATE", buf);
 
 	if (false == bSkipRefreshOwnerActiveState)

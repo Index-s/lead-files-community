@@ -43,7 +43,7 @@ static const DWORD s_adwSubSkillVnums[] =
 	SKILL_RESIST_PENETRATE
 };
 
-uint32_t CHARACTER::GetSkillNextReadTime(DWORD dwVnum) const
+TimeT64 CHARACTER::GetSkillNextReadTime(DWORD dwVnum) const
 {
 	if (dwVnum >= SKILL_MAX_NUM)
 	{
@@ -54,7 +54,7 @@ uint32_t CHARACTER::GetSkillNextReadTime(DWORD dwVnum) const
 	return m_pSkillLevels ? m_pSkillLevels[dwVnum].tNextRead : 0;
 }
 
-void CHARACTER::SetSkillNextReadTime(DWORD dwVnum, uint32_t time)
+void CHARACTER::SetSkillNextReadTime(DWORD dwVnum, TimeT64 time)
 {
 	if (m_pSkillLevels && dwVnum < SKILL_MAX_NUM)
 		m_pSkillLevels[dwVnum].tNextRead = time;
@@ -152,7 +152,7 @@ void CHARACTER::SetSkillGroup(BYTE bSkillGroup)
 
 int CHARACTER::ComputeCooltime(int time)
 {
-	return CalculateDuration(GetPoint(POINT_CASTING_SPEED), time);
+	return CalculateDuration(static_cast<int>(GetPoint(POINT_CASTING_SPEED)), time);
 }
 
 void CHARACTER::SkillLevelPacket()
@@ -272,7 +272,7 @@ bool CHARACTER::LearnGrandMasterSkill(DWORD dwSkillVnum)
 		return false;
 	}
 
-	sys_log(0, "learn grand master skill[%d] cur %d, next %d", dwSkillVnum, get_global_time(), GetSkillNextReadTime(dwSkillVnum));
+	sys_log(0, "learn grand master skill[%d] cur %lld, next %lld", dwSkillVnum, get_global_time(), GetSkillNextReadTime(dwSkillVnum));
 
 	/*
 	   if (get_global_time() < GetSkillNextReadTime(dwSkillVnum))
@@ -323,7 +323,7 @@ bool CHARACTER::LearnGrandMasterSkill(DWORD dwSkillVnum)
 
 	sys_log(0, "LearnGrandMasterSkill %s table idx %d value %d", GetName(), idx, aiGrandMasterSkillBookCountForLevelUp[idx]);
 
-	int iTotalReadCount = GetQuestFlag(strTrainSkill) + 1;
+	TimeT64 iTotalReadCount = GetQuestFlag(strTrainSkill) + 1;
 	SetQuestFlag(strTrainSkill, iTotalReadCount);
 
 	int iMinReadCount = aiGrandMasterSkillBookMinCount[idx];
@@ -344,9 +344,9 @@ bool CHARACTER::LearnGrandMasterSkill(DWORD dwSkillVnum)
 	int n = number(1, iBookCount);
 	sys_log(0, "Number(%d)", n);
 
-	DWORD nextTime = get_global_time() + number(28800, 43200);
+	TimeT64 nextTime = get_global_time() + number(28800, 43200);
 
-	sys_log(0, "GrandMaster SkillBookCount min %d cur %d max %d (next_time=%d)", iMinReadCount, iTotalReadCount, iMaxReadCount, nextTime);
+	sys_log(0, "GrandMaster SkillBookCount min %d cur %lld max %d (next_time=%lld)", iMinReadCount, iTotalReadCount, iMaxReadCount, nextTime);
 
 	bool bSuccess = n == 2;
 
@@ -421,7 +421,7 @@ bool CHARACTER::LearnSkillByBook(DWORD dwSkillVnum, BYTE bProb)
 			}
 			else 	    
 			{
-				SkillLearnWaitMoreTimeMessage(GetSkillNextReadTime(dwSkillVnum) - get_global_time());
+				SkillLearnWaitMoreTimeMessage(static_cast<DWORD>(GetSkillNextReadTime(dwSkillVnum) - get_global_time()));
 				return false;
 			}
 		}
@@ -807,7 +807,7 @@ struct FFindNearVictim
 		if (abs(m_pkChrCenter->GetX() - pkChr->GetX()) > 1000 || abs(m_pkChrCenter->GetY() - pkChr->GetY()) > 1000)
 			return;
 
-		float fDist = DISTANCE_APPROX(m_pkChrCenter->GetX() - pkChr->GetX(), m_pkChrCenter->GetY() - pkChr->GetY());
+		float fDist = static_cast<float>(DISTANCE_APPROX(m_pkChrCenter->GetX() - pkChr->GetX(), m_pkChrCenter->GetY() - pkChr->GetY()));
 
 		if (fDist < 1000)
 		{
@@ -979,12 +979,12 @@ struct FuncSplashDamage
 		//m_pkSk->kPointPoly2.SetVar("k", 1.0 * m_bUseSkillPower * m_pkSk->bMaxLevel / 100);
 		m_pkSk->SetPointVar("k", 1.0 * m_bUseSkillPower * m_pkSk->bMaxLevel / 100);
 		m_pkSk->SetPointVar("lv", m_pkChr->GetLevel());
-		m_pkSk->SetPointVar("iq", m_pkChr->GetPoint(POINT_IQ));
-		m_pkSk->SetPointVar("str", m_pkChr->GetPoint(POINT_ST));
-		m_pkSk->SetPointVar("dex", m_pkChr->GetPoint(POINT_DX));
-		m_pkSk->SetPointVar("con", m_pkChr->GetPoint(POINT_HT));
-		m_pkSk->SetPointVar("def", m_pkChr->GetPoint(POINT_DEF_GRADE));
-		m_pkSk->SetPointVar("odef", m_pkChr->GetPoint(POINT_DEF_GRADE) - m_pkChr->GetPoint(POINT_DEF_GRADE_BONUS));
+		m_pkSk->SetPointVar("iq", static_cast<double>(m_pkChr->GetPoint(POINT_IQ)));
+		m_pkSk->SetPointVar("str", static_cast<double>(m_pkChr->GetPoint(POINT_ST)));
+		m_pkSk->SetPointVar("dex", static_cast<double>(m_pkChr->GetPoint(POINT_DX)));
+		m_pkSk->SetPointVar("con", static_cast<double>(m_pkChr->GetPoint(POINT_HT)));
+		m_pkSk->SetPointVar("def", static_cast<double>(m_pkChr->GetPoint(POINT_DEF_GRADE)));
+		m_pkSk->SetPointVar("odef", static_cast<double>(m_pkChr->GetPoint(POINT_DEF_GRADE) - m_pkChr->GetPoint(POINT_DEF_GRADE_BONUS)));
 		m_pkSk->SetPointVar("horse_level", m_pkChr->GetHorseLevel());
 
 		//int iPenetratePct = (int)(1 + k*4);
@@ -1031,7 +1031,7 @@ struct FuncSplashDamage
 		m_pkSk->SetPointVar("chain", m_pkChr->GetChainLightningIndex());
 		m_pkChr->IncChainLightningIndex();
 
-		bool bUnderEunhyung = m_pkChr->GetAffectedEunhyung() > 0; // why are you doing this here ??
+		bool bUnderEunhyung = m_pkChr->GetAffectedEunhyung(); // why are you doing this here ??
 
 		m_pkSk->SetPointVar("ek", m_pkChr->GetAffectedEunhyung()*1./100);
 		//m_pkChr->ClearAffectedEunhyung();
@@ -1108,31 +1108,31 @@ struct FuncSplashDamage
 						switch (pkWeapon->GetSubType())
 						{
 							case WEAPON_SWORD:
-								iDam = iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_SWORD)) / 100;
+								iDam = static_cast<int>(iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_SWORD)) / 100);
 								break;
 
 							case WEAPON_TWO_HANDED:
-								iDam = iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_TWOHAND)) / 100;
+								iDam = static_cast<int>(iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_TWOHAND)) / 100);
 								// Two-handed sword penalty 10%
 								//iDam = iDam * 95 / 100;
 
 								break;
 
 							case WEAPON_DAGGER:
-								iDam = iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_DAGGER)) / 100;
+								iDam = static_cast<int>(iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_DAGGER)) / 100);
 								break;
 
 							case WEAPON_BELL:
-								iDam = iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_BELL)) / 100;
+								iDam = static_cast<int>(iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_BELL)) / 100);
 								break;
 
 							case WEAPON_FAN:
-								iDam = iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_FAN)) / 100;
+								iDam = static_cast<int>(iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_FAN)) / 100);
 								break;
 						}
 
 					if (!bIgnoreDefense)
-						iDam -= pkChrVictim->GetPoint(POINT_DEF_GRADE);
+						iDam -= static_cast<int>(pkChrVictim->GetPoint(POINT_DEF_GRADE));
 				}
 				break;
 
@@ -1141,7 +1141,7 @@ struct FuncSplashDamage
 				// Ahhhhh
 				// There was a bug that wasn't applied before, so if the defense was calculated again, users would get upset.
 				//iDam -= pkChrVictim->GetPoint(POINT_DEF_GRADE);
-				iDam = iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_BOW)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_BOW)) / 100);
 				break;
 
 			case SKILL_ATTR_TYPE_MAGIC:
@@ -1150,7 +1150,7 @@ struct FuncSplashDamage
 				// Ahhhhh
 				// There was a bug that wasn't applied before, so if the defense was calculated again, users would get upset.
 				//iDam -= pkChrVictim->GetPoint(POINT_MAGIC_DEF_GRADE);
-				iDam = iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_MAGIC)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_MAGIC)) / 100);
 				break;
 
 			default:
@@ -1171,17 +1171,17 @@ struct FuncSplashDamage
 		{
 			if (IS_SET(m_pkSk->dwFlag, SKILL_FLAG_WIND))
 			{
-				iDam = iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_WIND)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_WIND)) / 100);
 			}
 
 			if (IS_SET(m_pkSk->dwFlag, SKILL_FLAG_ELEC))
 			{
-				iDam = iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_ELEC)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_ELEC)) / 100);
 			}
 
 			if (IS_SET(m_pkSk->dwFlag, SKILL_FLAG_FIRE))
 			{
-				iDam = iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_FIRE)) / 100;
+				iDam = static_cast<int>(iDam * (100 - pkChrVictim->GetPoint(POINT_RESIST_FIRE)) / 100);
 			}
 		}
 
@@ -1228,7 +1228,7 @@ struct FuncSplashDamage
 
 						sys_log(0, "ANTI_SKILL: Resist(%lf) Orig(%d) Reduce(%d)", ResistAmount, iDam, int(iDam * (ResistAmount/100.0)));
 
-						iDam -= iDam * (ResistAmount/100.0);
+						iDam -= static_cast<int>(iDam * (ResistAmount/100.0));
 					}
 				}
 			}
@@ -1240,7 +1240,7 @@ struct FuncSplashDamage
 			{
 				int iAmount2 = (int) m_pkSk->kPointPoly2.Eval();
 				int iDur2 = (int) m_pkSk->kDurationPoly2.Eval();
-				iDur2 += m_pkChr->GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur2 += static_cast<int>(m_pkChr->GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 				if (number(1, 100) <= iAmount2)
 				{
@@ -1254,7 +1254,7 @@ struct FuncSplashDamage
 				int iPct = (int) m_pkSk->kPointPoly2.Eval();
 				int iDur = (int) m_pkSk->kDurationPoly2.Eval();
 
-				iDur += m_pkChr->GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur += static_cast<int>(m_pkChr->GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 				if (IS_SET(m_pkSk->dwFlag, SKILL_FLAG_STUN))
 				{
@@ -1267,10 +1267,10 @@ struct FuncSplashDamage
 				else if (IS_SET(m_pkSk->dwFlag, SKILL_FLAG_FIRE_CONT))
 				{
 					m_pkSk->SetDurationVar("k", 1.0 * m_bUseSkillPower * m_pkSk->bMaxLevel / 100);
-					m_pkSk->SetDurationVar("iq", m_pkChr->GetPoint(POINT_IQ));
+					m_pkSk->SetDurationVar("iq", static_cast<double>(m_pkChr->GetPoint(POINT_IQ)));
 
 					iDur = (int)m_pkSk->kDurationPoly2.Eval();
-					int bonus = m_pkChr->GetPoint(POINT_PARTY_BUFFER_BONUS);
+					int bonus = static_cast<int>(m_pkChr->GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 					if (bonus != 0)
 					{
@@ -1529,7 +1529,7 @@ int CHARACTER::ComputeSkillAtPosition(DWORD dwVnum, const PIXEL_POSITION& posTar
 		}
 	}
 
-	const float k = 1.0 * GetSkillPower(pkSk->dwVnum, bSkillLevel) * pkSk->bMaxLevel / 100;
+	const float k = 1.0f * GetSkillPower(pkSk->dwVnum, bSkillLevel) * pkSk->bMaxLevel / 100;
 
 	pkSk->SetPointVar("k", k);
 	pkSk->kSplashAroundDamageAdjustPoly.SetVar("k", k);
@@ -1561,16 +1561,16 @@ int CHARACTER::ComputeSkillAtPosition(DWORD dwVnum, const PIXEL_POSITION& posTar
 	}
 
 	pkSk->SetPointVar("lv", GetLevel());
-	pkSk->SetPointVar("iq", GetPoint(POINT_IQ));
-	pkSk->SetPointVar("str", GetPoint(POINT_ST));
-	pkSk->SetPointVar("dex", GetPoint(POINT_DX));
-	pkSk->SetPointVar("con", GetPoint(POINT_HT));
+	pkSk->SetPointVar("iq", static_cast<double>(GetPoint(POINT_IQ)));
+	pkSk->SetPointVar("str", static_cast<double>(GetPoint(POINT_ST)));
+	pkSk->SetPointVar("dex", static_cast<double>(GetPoint(POINT_DX)));
+	pkSk->SetPointVar("con", static_cast<double>(GetPoint(POINT_HT)));
 	pkSk->SetPointVar("maxhp", this->GetMaxHP());
 	pkSk->SetPointVar("maxsp", this->GetMaxSP());
 	pkSk->SetPointVar("chain", 0);
 	pkSk->SetPointVar("ar", CalcAttackRating(this, this));
-	pkSk->SetPointVar("def", GetPoint(POINT_DEF_GRADE));
-	pkSk->SetPointVar("odef", GetPoint(POINT_DEF_GRADE) - GetPoint(POINT_DEF_GRADE_BONUS));
+	pkSk->SetPointVar("def", static_cast<double>(GetPoint(POINT_DEF_GRADE)));
+	pkSk->SetPointVar("odef", static_cast<double>(GetPoint(POINT_DEF_GRADE) - GetPoint(POINT_DEF_GRADE_BONUS)));
 	pkSk->SetPointVar("horse_level", GetHorseLevel());
 
 	if (pkSk->bSkillAttrType != SKILL_ATTR_TYPE_NORMAL)
@@ -1653,7 +1653,7 @@ int CHARACTER::ComputeSkillAtPosition(DWORD dwVnum, const PIXEL_POSITION& posTar
 
 			if (iDur > 0)
 			{
-				iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 				if (!IS_SET(pkSk->dwFlag, SKILL_FLAG_SPLASH))
 					AddAffect(pkSk->dwVnum, pkSk->bPointOn, iAmount, pkSk->dwAffectFlag, iDur, 0, true);
@@ -1677,7 +1677,7 @@ int CHARACTER::ComputeSkillAtPosition(DWORD dwVnum, const PIXEL_POSITION& posTar
 
 			if (iDur > 0)
 			{
-				iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 				if (!IS_SET(pkSk->dwFlag, SKILL_FLAG_SPLASH))
 					AddAffect(pkSk->dwVnum, pkSk->bPointOn2, iAmount2, pkSk->dwAffectFlag2, iDur, 0, !bAdded);
@@ -1704,7 +1704,7 @@ int CHARACTER::ComputeSkillAtPosition(DWORD dwVnum, const PIXEL_POSITION& posTar
 
 			if (iDur > 0)
 			{
-				iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 				if (!IS_SET(pkSk->dwFlag, SKILL_FLAG_SPLASH))
 					AddAffect(pkSk->dwVnum, pkSk->bPointOn3, iAmount3, 0 /*pkSk->dwAffectFlag3*/, iDur, 0, !bAdded);
@@ -1733,7 +1733,7 @@ int CHARACTER::ComputeSkillAtPosition(DWORD dwVnum, const PIXEL_POSITION& posTar
 
 		if (iDur > 0)
 		{
-			iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+			iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 			// AffectFlag There is no , toggle Unless you're doing it ..
 			pkSk->kDurationSPCostPoly.SetVar("k", k/*bSkillLevel*/);
 
@@ -1758,7 +1758,7 @@ int CHARACTER::ComputeSkillAtPosition(DWORD dwVnum, const PIXEL_POSITION& posTar
 
 			if (iDur > 0)
 			{
-				iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 				AddAffect(pkSk->dwVnum, pkSk->bPointOn2, iAmount2, pkSk->dwAffectFlag2, iDur, 0, !bAdded);
 				bAdded = true;
 			}
@@ -1775,7 +1775,7 @@ int CHARACTER::ComputeSkillAtPosition(DWORD dwVnum, const PIXEL_POSITION& posTar
 
 			if (iDur > 0)
 			{
-				iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 				AddAffect(pkSk->dwVnum, pkSk->bPointOn3, iAmount3, 0 /*pkSk->dwAffectFlag3*/, iDur, 0, !bAdded);
 			}
 			else
@@ -1852,12 +1852,12 @@ int CHARACTER::ComputeSkill(DWORD dwVnum, LPCHARACTER pkVictim, BYTE bSkillLevel
 		}
 	}
 
-	if (pkVictim->IsAffectFlag(AFF_PABEOP) && pkVictim->IsGoodAffect(dwVnum))
+	if (pkVictim->IsAffectFlag(AFF_PABEOP) && pkVictim->IsGoodAffect(static_cast<BYTE>(dwVnum)))
 	{
 		return BATTLE_NONE;
 	}
 
-	const float k = 1.0 * GetSkillPower(pkSk->dwVnum, bSkillLevel) * pkSk->bMaxLevel / 100;
+	const float k = 1.0f * GetSkillPower(pkSk->dwVnum, bSkillLevel) * pkSk->bMaxLevel / 100;
 
 	pkSk->SetPointVar("k", k);
 	pkSk->kSplashAroundDamageAdjustPoly.SetVar("k", k);
@@ -1901,16 +1901,16 @@ int CHARACTER::ComputeSkill(DWORD dwVnum, LPCHARACTER pkVictim, BYTE bSkillLevel
 	}
 
 	pkSk->SetPointVar("lv", GetLevel());
-	pkSk->SetPointVar("iq", GetPoint(POINT_IQ));
-	pkSk->SetPointVar("str", GetPoint(POINT_ST));
-	pkSk->SetPointVar("dex", GetPoint(POINT_DX));
-	pkSk->SetPointVar("con", GetPoint(POINT_HT));
+	pkSk->SetPointVar("iq", static_cast<double>(GetPoint(POINT_IQ)));
+	pkSk->SetPointVar("str", static_cast<double>(GetPoint(POINT_ST)));
+	pkSk->SetPointVar("dex", static_cast<double>(GetPoint(POINT_DX)));
+	pkSk->SetPointVar("con", static_cast<double>(GetPoint(POINT_HT)));
 	pkSk->SetPointVar("maxhp", pkVictim->GetMaxHP());
 	pkSk->SetPointVar("maxsp", pkVictim->GetMaxSP());
 	pkSk->SetPointVar("chain", 0);
 	pkSk->SetPointVar("ar", CalcAttackRating(this, pkVictim));
-	pkSk->SetPointVar("def", GetPoint(POINT_DEF_GRADE));
-	pkSk->SetPointVar("odef", GetPoint(POINT_DEF_GRADE) - GetPoint(POINT_DEF_GRADE_BONUS));
+	pkSk->SetPointVar("def", static_cast<double>(GetPoint(POINT_DEF_GRADE)));
+	pkSk->SetPointVar("odef", static_cast<double>(GetPoint(POINT_DEF_GRADE) - GetPoint(POINT_DEF_GRADE_BONUS)));
 	pkSk->SetPointVar("horse_level", GetHorseLevel());
 
 	if (pkSk->bSkillAttrType != SKILL_ATTR_TYPE_NORMAL)
@@ -1998,7 +1998,7 @@ int CHARACTER::ComputeSkill(DWORD dwVnum, LPCHARACTER pkVictim, BYTE bSkillLevel
 
 			if (iDur > 0)
 			{
-				iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 				if (!IS_SET(pkSk->dwFlag, SKILL_FLAG_SPLASH))
 					pkVictim->AddAffect(pkSk->dwVnum, pkSk->bPointOn, iAmount, pkSk->dwAffectFlag, iDur, 0, true);
@@ -2021,7 +2021,7 @@ int CHARACTER::ComputeSkill(DWORD dwVnum, LPCHARACTER pkVictim, BYTE bSkillLevel
 
 			if (iDur > 0)
 			{
-				iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 				if (!IS_SET(pkSk->dwFlag, SKILL_FLAG_SPLASH))
 					pkVictim->AddAffect(pkSk->dwVnum, pkSk->bPointOn2, iAmount2, pkSk->dwAffectFlag2, iDur, 0, !bAdded);
@@ -2051,7 +2051,7 @@ int CHARACTER::ComputeSkill(DWORD dwVnum, LPCHARACTER pkVictim, BYTE bSkillLevel
 
 			if (iDur > 0)
 			{
-				iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 				if (!IS_SET(pkSk->dwFlag, SKILL_FLAG_SPLASH))
 					pkVictim->AddAffect(pkSk->dwVnum, pkSk->bPointOn3, iAmount3, /*pkSk->dwAffectFlag3*/ 0, iDur, 0, !bAdded);
@@ -2083,7 +2083,7 @@ int CHARACTER::ComputeSkill(DWORD dwVnum, LPCHARACTER pkVictim, BYTE bSkillLevel
 			pkSk->kDurationSPCostPoly.SetVar("k", k/*bSkillLevel*/);
 
 			int iDur = (long) pkSk->kDurationPoly.Eval();
-			iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+			iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 			if (pkVictim == this)
 				AddAffect(dwVnum,
@@ -2102,7 +2102,7 @@ int CHARACTER::ComputeSkill(DWORD dwVnum, LPCHARACTER pkVictim, BYTE bSkillLevel
 
 		if (iDur > 0)
 		{
-			iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+			iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 			// AffectFlag There is no , toggle Unless you're doing it ..
 			pkSk->kDurationSPCostPoly.SetVar("k", k/*bSkillLevel*/);
 
@@ -2122,7 +2122,7 @@ int CHARACTER::ComputeSkill(DWORD dwVnum, LPCHARACTER pkVictim, BYTE bSkillLevel
 								pkSk->bPointOn2,
 								iAmount2);
 
-					iDur2 += GetPoint(POINT_PARTY_BUFFER_BONUS);
+					iDur2 += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 					pkVictim->AddAffect(pkSk->dwVnum, pkSk->bPointOn2, iAmount2, pkSk->dwAffectFlag2, iDur2, 0, false);
 				}
 				else
@@ -2181,7 +2181,7 @@ int CHARACTER::ComputeSkill(DWORD dwVnum, LPCHARACTER pkVictim, BYTE bSkillLevel
 
 				if (iDur2 > 0)
 				{
-					iDur2 += GetPoint(POINT_PARTY_BUFFER_BONUS);
+					iDur2 += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 					if (pkSk->IsChargeSkill())
 						pkVictim->AddAffect(pkSk->dwVnum, pkSk->bPointOn2, iAmount2, AFF_TANHWAN_DASH, iDur2, 0, false);
@@ -2207,7 +2207,7 @@ int CHARACTER::ComputeSkill(DWORD dwVnum, LPCHARACTER pkVictim, BYTE bSkillLevel
 
 			if (iDur > 0)
 			{
-				iDur += GetPoint(POINT_PARTY_BUFFER_BONUS);
+				iDur += static_cast<int>(GetPoint(POINT_PARTY_BUFFER_BONUS));
 
 				if (!IS_SET(pkSk->dwFlag, SKILL_FLAG_SPLASH))
 					pkVictim->AddAffect(pkSk->dwVnum, pkSk->bPointOn3, iAmount3, /*pkSk->dwAffectFlag3*/ 0, iDur, 0, !bAdded);
@@ -2349,7 +2349,7 @@ bool CHARACTER::UseSkill(DWORD dwVnum, LPCHARACTER pkVictim, bool bUseGrandMaste
 	if (IsAffectFlag(AFF_REVIVE_INVISIBLE))
 		RemoveAffect(AFFECT_REVIVE_INVISIBLE);
 
-	const float k = 1.0 * GetSkillPower(pkSk->dwVnum) * pkSk->bMaxLevel / 100;
+	const float k = 1.0f * GetSkillPower(pkSk->dwVnum) * pkSk->bMaxLevel / 100;
 
 	pkSk->SetPointVar("k", k);
 	pkSk->kSplashAroundDamageAdjustPoly.SetVar("k", k);
@@ -2752,7 +2752,7 @@ bool CHARACTER::UseMobSkill(unsigned int idx)
 	if (!pkSk)
 		return false;
 
-	const float k = 1.0 * GetSkillPower(pkSk->dwVnum, pInfo->bSkillLevel) * pkSk->bMaxLevel / 100;
+	const float k = 1.0f * GetSkillPower(pkSk->dwVnum, pInfo->bSkillLevel) * pkSk->bMaxLevel / 100;
 
 	pkSk->kCooldownPoly.SetVar("k", k);
 	int iCooltime = (int) (pkSk->kCooldownPoly.Eval() * 1000);
@@ -2775,7 +2775,7 @@ bool CHARACTER::UseMobSkill(unsigned int idx)
 		if (rInfo.dwHitDistance)
 		{
 			float fx, fy;
-			GetDeltaByDegree(GetRotation(), rInfo.dwHitDistance, &fx, &fy);
+			GetDeltaByDegree(GetRotation(), static_cast<float>(rInfo.dwHitDistance), &fx, &fy);
 			pos.x += (long) fx;
 			pos.y += (long) fy;
 		}
@@ -2791,17 +2791,17 @@ bool CHARACTER::UseMobSkill(unsigned int idx)
 			info->pos = pos;
 			info->level = pInfo->bSkillLevel;
 			info->vnum = dwVnum;
-			info->index = i;
+			info->index = static_cast<int>(i);
 
 			// <Factor> Cancel existing event first
-			itertype(m_mapMobSkillEvent) it = m_mapMobSkillEvent.find(i);
+			itertype(m_mapMobSkillEvent) it = m_mapMobSkillEvent.find(static_cast<int>(i));
 			if (it != m_mapMobSkillEvent.end()) {
 				LPEVENT existing = it->second;
 				event_cancel(&existing);
 				m_mapMobSkillEvent.erase(it);
 			}
 
-			m_mapMobSkillEvent.insert(std::make_pair(i, event_create(mob_skill_hit_event, info, PASSES_PER_SEC(rInfo.dwTiming) / 1000)));
+			m_mapMobSkillEvent.insert(std::make_pair(static_cast<int>(i), event_create(mob_skill_hit_event, info, PASSES_PER_SEC(rInfo.dwTiming) / 1000)));
 		}
 		else
 		{

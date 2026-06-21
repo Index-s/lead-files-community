@@ -23,7 +23,7 @@ int GetPoisonDamageRate(LPCHARACTER ch)
 	else
 		iRate = poison_damage_rate[ch->GetMobRank()];
 
-	iRate = MAX(0, iRate - ch->GetPoint(POINT_POISON_REDUCE));
+	iRate = MAX(0, iRate - static_cast<int>(ch->GetPoint(POINT_POISON_REDUCE)));
 	return iRate;
 }
 

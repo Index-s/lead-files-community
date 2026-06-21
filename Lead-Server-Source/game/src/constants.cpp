@@ -1003,7 +1003,7 @@ long FN_get_apply_type(const char *apply_type_string)
 	TValueName	*value_name;
 	for (value_name = c_aApplyTypeNames; value_name->c_pszName; ++value_name)
 	{
-		if (0==strcasecmp(value_name->c_pszName, apply_type_string))
+		if (0==_stricmp(value_name->c_pszName, apply_type_string))
 			return value_name->lValue;
 	}
 	return 0;

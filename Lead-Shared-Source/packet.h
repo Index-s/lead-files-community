@@ -307,7 +307,7 @@ typedef struct SPacketGGLogin
 	char	szName[CHARACTER_NAME_MAX_LEN + 1];
 	DWORD	dwPID;
 	BYTE	bEmpire;
-	long	lMapIndex;
+	int32_t	lMapIndex;
 	BYTE	bChannel;
 } TPacketGGLogin;
 
@@ -321,13 +321,13 @@ typedef struct SPacketGGRelay
 {
 	BYTE	bHeader;
 	char	szName[CHARACTER_NAME_MAX_LEN + 1];
-	long	lSize;
+	int32_t	lSize;
 } TPacketGGRelay;
 
 typedef struct SPacketGGNotice
 {
 	BYTE	bHeader;
-	long	lSize;
+	int32_t	lSize;
 } TPacketGGNotice;
 
 typedef struct SPacketGGShutdown
@@ -389,7 +389,7 @@ typedef struct SPacketGGXmasWarpSanta
 {
 	BYTE	bHeader;
 	BYTE	bChannel;
-	long	lMapIndex;
+	int32_t	lMapIndex;
 } TPacketGGXmasWarpSanta;
 
 typedef struct SPacketGGXmasWarpSantaReply
@@ -426,8 +426,8 @@ typedef struct SPacketGGWarpCharacter
 {
 	BYTE header;
 	DWORD pid;
-	long x;
-	long y;
+	int32_t x;
+	int32_t y;
 } TPacketGGWarpCharacter;
 
 //  HEADER_GG_GUILD_WAR_ZONE_MAP_INDEX	    = 15,
@@ -437,14 +437,14 @@ typedef struct SPacketGGGuildWarMapIndex
 	BYTE bHeader;
 	DWORD dwGuildID1;
 	DWORD dwGuildID2;
-	long lMapIndex;
+	int32_t lMapIndex;
 } TPacketGGGuildWarMapIndex;
 
 typedef struct SPacketGGTransfer
 {
 	BYTE	bHeader;
 	char	szName[CHARACTER_NAME_MAX_LEN + 1];
-	long	lX, lY;
+	int32_t	lX, lY;
 } TPacketGGTransfer;
 
 typedef struct SPacketGGLoginPing
@@ -457,7 +457,7 @@ typedef struct SPacketGGBlockChat
 {
 	BYTE	bHeader;
 	char	szName[CHARACTER_NAME_MAX_LEN + 1];
-	long	lBlockDuration;
+	int32_t	lBlockDuration;
 } TPacketGGBlockChat;
 
 /* 클라이언트 측에서 보내는 패킷 */
@@ -747,7 +747,7 @@ typedef struct packet_quest_confirm
 {
 	BYTE header;
 	char msg[64+1]; 
-	long timeout;
+	TimeT64 timeout;
 	DWORD requestPID;
 } TPacketGCQuestConfirm;
 
@@ -756,7 +756,7 @@ typedef struct packet_handshake
 	BYTE	bHeader;
 	DWORD	dwHandshake;
 	DWORD	dwTime;
-	long	lDelta;
+	int32_t	lDelta;
 } TPacketGCHandshake;
 
 enum EPhase
@@ -950,7 +950,7 @@ typedef struct packet_main_character
 	DWORD	dwVID;
 	WORD	wRaceNum;
 	char	szName[CHARACTER_NAME_MAX_LEN + 1];
-	long	lx, ly, lz;
+	int32_t	lx, ly, lz;
 	BYTE	empire;
 	BYTE	skill_group;
 } TPacketGCMainCharacter;
@@ -968,7 +968,7 @@ typedef struct packet_main_character3_bgm
 	WORD	wRaceNum;
 	char	szChrName[CHARACTER_NAME_MAX_LEN + 1];
 	char	szBGMName[MUSIC_NAME_LEN + 1];
-	long	lx, ly, lz;
+	int32_t	lx, ly, lz;
 	BYTE	empire;
 	BYTE	skill_group;
 } TPacketGCMainCharacter3Bgm;
@@ -986,7 +986,7 @@ typedef struct packet_main_character4_bgm_vol
 	char	szChrName[CHARACTER_NAME_MAX_LEN + 1];
 	char	szBGMName[MUSIC_NAME_LEN + 1];
 	float	fBGMVol;
-	long	lx, ly, lz;
+	int32_t	lx, ly, lz;
 	BYTE	empire;
 	BYTE	skill_group;
 } TPacketGCMainCharacter4BgmVol;
@@ -1031,7 +1031,7 @@ struct TPacketGCItemDelDeprecated
 	TItemPos Cell;
 	DWORD	vnum;
 	BYTE	count;
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 };
 
@@ -1044,7 +1044,7 @@ typedef struct packet_item_set
 	DWORD	flags;
 	DWORD	anti_flags;
 	bool	highlight;
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TPacketGCItemSet;
 
@@ -1075,7 +1075,7 @@ typedef struct packet_item_update
 	BYTE	header;
 	TItemPos Cell;
 	ItemStackType	count;
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TPacketGCItemUpdate;
 
@@ -1150,7 +1150,7 @@ typedef struct packet_shop_item
 	GoldType price;
 	ItemStackType        count;
 	BYTE		display_pos;
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TShopItemData;
 
@@ -1198,7 +1198,7 @@ typedef struct packet_exchange
 	GoldType arg1;	// vnum
 	TItemPos	arg2;	// cell
 	DWORD	arg3;	// count
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TPacketGCExchange;
 
@@ -1380,9 +1380,9 @@ typedef struct packet_target_info_load
 typedef struct packet_warp
 {
 	BYTE	bHeader;
-	long	lX;
-	long	lY;
-	long	lAddr;
+	int32_t	lX;
+	int32_t	lY;
+	int32_t	lAddr;
 	WORD	wPort;
 } TPacketGCWarp;
 
@@ -1889,8 +1889,8 @@ typedef struct packet_dungeon
 
 typedef struct packet_dungeon_dest_position
 {
-	long x;
-	long y;
+	int32_t x;
+	int32_t y;
 } TPacketGCDungeonDestPosition;
 
 typedef struct SPacketGCShopSign
@@ -1910,7 +1910,7 @@ typedef struct SPacketCGMyShop
 typedef struct SPacketGCTime
 {
 	BYTE	bHeader;
-	uint32_t	time;
+	TimeT64	time;
 } TPacketGCTime;
 
 enum
@@ -1956,8 +1956,8 @@ struct TNPCPosition
 {
 	BYTE bType;
 	char name[CHARACTER_NAME_MAX_LEN+1];
-	long x;
-	long y;
+	int32_t x;
+	int32_t y;
 };
 
 typedef struct SPacketGCNPCPosition
@@ -2000,7 +2000,7 @@ typedef struct SEquipmentItemSet
 {
 	uint32_t vnum;
 	ItemStackType count;
-	int32_t alSockets[ITEM_SOCKET_MAX_NUM];
+	TimeT64 alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 } TEquipmentItemSet;
 
@@ -2014,8 +2014,8 @@ typedef struct packet_view_equip
 typedef struct 
 {
 	DWORD	dwID;
-	long	x, y;
-	long	width, height;
+	int32_t	x, y;
+	int32_t	width, height;
 	DWORD	dwGuildID;
 } TLandPacketElement;
 
@@ -2028,7 +2028,7 @@ typedef struct packet_land_list
 typedef struct
 {
 	BYTE	bHeader;
-	long	lID;
+	int32_t	lID;
 	char	szName[32+1];
 	DWORD	dwVID;
 	BYTE	bType;
@@ -2037,14 +2037,14 @@ typedef struct
 typedef struct
 {
 	BYTE	bHeader;
-	long	lID;
-	long	lX, lY;
+	int32_t	lID;
+	int32_t	lX, lY;
 } TPacketGCTargetUpdate;
 
 typedef struct
 {
 	BYTE	bHeader;
-	long	lID;
+	int32_t	lID;
 } TPacketGCTargetDelete;
 
 typedef struct
@@ -2269,8 +2269,8 @@ typedef struct SPacketGCDragonSoulRefine
 typedef struct SPacketCGStateCheck
 {
 	BYTE header;
-	unsigned long key;	
-	unsigned long index;
+	uint32_t key;	
+	uint32_t index;
 } TPacketCGStateChecker;
 
 struct TPacketGGSwitchbot
@@ -2321,9 +2321,9 @@ struct TPacketGCSwitchbot
 struct TSwitchbotUpdateItem
 {
 	BYTE	slot;
-	BYTE	vnum;
-	BYTE	count;
-	long	alSockets[ITEM_SOCKET_MAX_NUM];
+	DWORD	vnum;
+	DWORD	count;
+	TimeT64	alSockets[ITEM_SOCKET_MAX_NUM];
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 };
 

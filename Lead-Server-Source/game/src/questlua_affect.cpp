@@ -112,7 +112,7 @@ namespace quest
 
 		if ( pkAff != NULL )
 		{
-			lua_pushnumber(L, pkAff->lDuration);
+			lua_pushnumber(L, static_cast<lua_Number>(pkAff->lDuration));
 			ch->RemoveAffect( pkAff );
 		}
 		else
@@ -135,7 +135,7 @@ namespace quest
 			return 0;
 		}
 
-		DWORD affectType = lua_tonumber(L, 1);
+		DWORD affectType = (DWORD) lua_tonumber(L, 1);
 
 		CAffect* pkAff = ch->FindAffect(affectType);
 

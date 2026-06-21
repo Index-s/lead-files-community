@@ -1022,7 +1022,7 @@ bool CGuildManager::ReserveWar(TPacketGuildWar * p)
 
 	snprintf(szQuery, sizeof(szQuery),
 			"INSERT INTO guild_war_reservation (guild1, guild2, time, type, warprice, initscore, power1, power2, handicap) "
-			"VALUES(%u, %u, DATE_ADD(NOW(), INTERVAL 180 SECOND), %u, %ld, %ld, %ld, %ld, %ld)",
+			"VALUES(%u, %u, DATE_ADD(NOW(), INTERVAL 180 SECOND), %u, %d, %d, %d, %d, %d)",
 			GID1, GID2, p->bType, p->lWarPrice, p->lInitialScore, t.lPowerFrom, t.lPowerTo, t.lHandicap);
 
 	std::unique_ptr<SQLMsg> pmsg(CDBManager::instance().DirectQuery(szQuery));

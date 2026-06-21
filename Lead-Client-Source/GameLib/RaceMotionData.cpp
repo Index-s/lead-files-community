@@ -250,7 +250,7 @@ float CRaceMotionData::GetLoopEndTime() const
 // Motion Event Data
 DWORD CRaceMotionData::GetMotionEventDataCount() const
 {
-	return m_MotionEventDataVector.size();
+	return static_cast<DWORD>(m_MotionEventDataVector.size());
 }
 
 BOOL CRaceMotionData::GetMotionEventDataPointer(BYTE byIndex, const CRaceMotionData::TMotionEventData ** c_ppData) const
@@ -337,9 +337,9 @@ bool CRaceMotionData::LoadMotionData(const char * c_szFileName)
 			return false;
 		}
 
-		TPixelPosition pos(atof(pTokenVector->at(0).c_str()),
-						   atof(pTokenVector->at(1).c_str()),
-						   atof(pTokenVector->at(2).c_str()));
+		TPixelPosition pos(static_cast<float>(atof(pTokenVector->at(0).c_str())),
+						   static_cast<float>(atof(pTokenVector->at(1).c_str())),
+						   static_cast<float>(atof(pTokenVector->at(2).c_str())));
 
 		SetAccumulationPosition(pos);
 	}
@@ -447,7 +447,7 @@ bool CRaceMotionData::LoadMotionData(const char * c_szFileName)
 				if (!rkTextFileLoader.GetTokenFloat("startingtime", &m_MotionEventDataVector[j]->fStartingTime))
 					return false;
 
-				m_MotionEventDataVector[j]->dwFrame = (m_MotionEventDataVector[j]->fStartingTime / c_fFrameTime);
+				m_MotionEventDataVector[j]->dwFrame = static_cast<DWORD>(m_MotionEventDataVector[j]->fStartingTime / c_fFrameTime);
 
 				rkTextFileLoader.SetParentNode();
 			}

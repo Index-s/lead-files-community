@@ -31,7 +31,15 @@ class CLogFile : public CSingleton<CLogFile>
 
 		void Initialize()
 		{
-			m_fp = fopen("log.txt", "w");
+			if (fopen_s(&m_fp, "log.txt", "w") != 0)
+			{
+				// A second client in the same folder can't reopen log.txt; give it
+				// a per-process file so both instances log instead of one going mute.
+				char szName[64];
+				_snprintf_s(szName, sizeof(szName), _TRUNCATE, "log_%lu.txt", GetCurrentProcessId());
+				if (fopen_s(&m_fp, szName, "w") != 0)
+					m_fp = NULL;
+			}
 		}
 
 		void Write(const char * c_pszMsg)
@@ -91,10 +99,10 @@ void Logf(UINT uLevel, const char* c_szFormat, ...)
 
 	va_list args;
 	va_start(args, c_szFormat);
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	va_end(args);
 #ifdef _DEBUG
-	OutputDebugString(szBuf);	
+	OutputDebugString(szBuf);
 	fputs(szBuf, stdout);
 #endif
 
@@ -111,7 +119,7 @@ void Lognf(UINT uLevel, const char* c_szFormat, ...)
 	va_start(args, c_szFormat);
 
 	char szBuf[DEBUG_STRING_MAX_LEN+2];
-	int len = _vsnprintf(szBuf, sizeof(szBuf)-1, c_szFormat, args);
+	int len = _vsnprintf_s(szBuf, sizeof(szBuf)-1, _TRUNCATE, c_szFormat, args);
 
 	if (len > 0)
 	{
@@ -120,7 +128,7 @@ void Lognf(UINT uLevel, const char* c_szFormat, ...)
 	}
 	va_end(args);
 #ifdef _DEBUG
-	OutputDebugString(szBuf);	
+	OutputDebugString(szBuf);
 	puts(szBuf);
 #endif
 
@@ -144,7 +152,7 @@ void Tracen(const char* c_szMsg)
 {
 #ifdef _DEBUG
 	char szBuf[DEBUG_STRING_MAX_LEN+1];
-	_snprintf(szBuf, sizeof(szBuf), "%s\n", c_szMsg);
+	_snprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, "%s\n", c_szMsg);
 	OutputDebugString(szBuf);
 	puts(c_szMsg);
 
@@ -168,7 +176,7 @@ void Tracenf(const char* c_szFormat, ...)
 	va_start(args, c_szFormat);
 
 	char szBuf[DEBUG_STRING_MAX_LEN+2];
-	int len = _vsnprintf(szBuf, sizeof(szBuf)-1, c_szFormat, args);
+	int len = _vsnprintf_s(szBuf, sizeof(szBuf)-1, _TRUNCATE, c_szFormat, args);
 
 	if (len > 0)
 	{
@@ -177,7 +185,7 @@ void Tracenf(const char* c_szFormat, ...)
 	}
 	va_end(args);
 #ifdef _DEBUG
-	OutputDebugString(szBuf);	
+	OutputDebugString(szBuf);
 	printf("%s", szBuf);
 #endif
 
@@ -191,11 +199,11 @@ void Tracef(const char* c_szFormat, ...)
 
 	va_list args;
 	va_start(args, c_szFormat);
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	va_end(args);
 
 #ifdef _DEBUG
-	OutputDebugString(szBuf);	
+	OutputDebugString(szBuf);
 	fputs(szBuf, stdout);
 #endif
 
@@ -209,12 +217,12 @@ void TraceError(const char* c_szFormat, ...)
 
 	char szBuf[DEBUG_STRING_MAX_LEN+2];
 
-	strncpy(szBuf, "SYSERR: ", DEBUG_STRING_MAX_LEN);
-	int len = strlen(szBuf);
+	strncpy_s(szBuf, sizeof(szBuf), "SYSERR: ", _TRUNCATE);
+	int len = static_cast<int>(strlen(szBuf));
 
 	va_list args;
 	va_start(args, c_szFormat);
-	len = _vsnprintf(szBuf + len, sizeof(szBuf) - (len + 1), c_szFormat, args) + len;
+	len = _vsnprintf_s(szBuf + len, sizeof(szBuf) - len, sizeof(szBuf) - (len + 1), c_szFormat, args) + len;
 	va_end(args);
 
 	szBuf[len] = '\n';
@@ -255,7 +263,7 @@ void TraceErrorWithoutEnter(const char* c_szFormat, ...)
 
 	va_list args;
 	va_start(args, c_szFormat);
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 	va_end(args);
 
 	using clock = std::chrono::system_clock;
@@ -265,8 +273,8 @@ void TraceErrorWithoutEnter(const char* c_szFormat, ...)
 	if (localtime_s(&ctm, &seconds) != 0)
 		return;
 
-	fprintf(stderr, "%02d%02d %02d:%02d:%05d :: %s", 
-					ctm.tm_mon + 1, 
+	fprintf(stderr, "%02d%02d %02d:%02d:%05d :: %s",
+					ctm.tm_mon + 1,
 					ctm.tm_mday,
 					ctm.tm_hour,
 					ctm.tm_min,
@@ -290,7 +298,7 @@ void LogBoxf(const char* c_szFormat, ...)
 	va_start(args, c_szFormat);
 
 	char szBuf[2048];
-	_vsnprintf(szBuf, sizeof(szBuf), c_szFormat, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szFormat, args);
 
 	LogBox(szBuf);
 }
@@ -314,15 +322,27 @@ void LogFilef(const char * c_szMessage, ...)
 	va_list args;
 	va_start(args, c_szMessage);
 	char szBuf[DEBUG_STRING_MAX_LEN+1];
-	_vsnprintf(szBuf, sizeof(szBuf), c_szMessage, args);
+	_vsnprintf_s(szBuf, sizeof(szBuf), _TRUNCATE, c_szMessage, args);
 
 	CLogFile::Instance().Write(szBuf);
 }
 
 void OpenLogFile(bool bUseLogFIle)
 {
-#ifndef _DISTRIBUTE 
-	freopen("syserr.txt", "w", stderr);
+#ifndef _DISTRIBUTE
+	FILE * fpStdErr = NULL;
+	// A second client started from the same folder cannot reopen syserr.txt (the
+	// first instance holds it). Without a fallback, freopen_s() fails and leaves
+	// stderr with an invalid fd, so the next fprintf(stderr, ...) asserts in the
+	// CRT _write() ("(fh >= 0 && ...)"). Fall back to a per-process file, then to
+	// the null device, so any number of clients can run side by side.
+	if (freopen_s(&fpStdErr, "syserr.txt", "w", stderr) != 0 || !fpStdErr)
+	{
+		char szErr[64];
+		_snprintf_s(szErr, sizeof(szErr), _TRUNCATE, "syserr_%lu.txt", GetCurrentProcessId());
+		if (freopen_s(&fpStdErr, szErr, "w", stderr) != 0 || !fpStdErr)
+			freopen_s(&fpStdErr, "nul", "w", stderr);
+	}
 
 	if (bUseLogFIle)
 	{
@@ -336,6 +356,8 @@ void OpenConsoleWindow()
 {
 	AllocConsole();
 
-	freopen("CONOUT$", "a", stdout);
-	freopen("CONIN$", "r", stdin);
+	FILE * fpStdOut = NULL;
+	FILE * fpStdIn = NULL;
+	freopen_s(&fpStdOut, "CONOUT$", "a", stdout);
+	freopen_s(&fpStdIn, "CONIN$", "r", stdin);
 }

@@ -38,18 +38,18 @@ class CSoundData
 		int				m_iRefCount;
 		DWORD			m_dwAccessTime;
 		DWORD			m_dwPlayTime;
-		ULONG			m_size;
+		U32				m_size;
 		LPVOID			m_data;
 		long			m_flag;
 		bool			m_assigned;
 
 	private:
-		static U32 AILCALLBACK		open_callback(char const * filename, U32 *file_handle);
-		static void AILCALLBACK		close_callback(U32 file_handle);
-		static S32 AILCALLBACK		seek_callback(U32 file_handle, S32 offset, U32 type);
-		static U32 AILCALLBACK		read_callback(U32 file_handle, void *buffer, U32 bytes);
+		static U32 AILCALLBACK		open_callback(char const * filename, UINTa *file_handle);
+		static void AILCALLBACK		close_callback(UINTa file_handle);
+		static S32 AILCALLBACK		seek_callback(UINTa file_handle, S32 offset, U32 type);
+		static U32 AILCALLBACK		read_callback(UINTa file_handle, void *buffer, U32 bytes);
 
-		static bool					isSlotIndex(DWORD dwIndex);
+		static bool					isSlotIndex(UINTa dwIndex);
 		static int					GetEmptySlotIndex();
 
 		static bool					ms_isSoundFile[SOUND_FILE_MAX_NUM];

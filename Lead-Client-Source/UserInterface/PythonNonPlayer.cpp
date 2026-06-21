@@ -126,7 +126,7 @@ BYTE CPythonNonPlayer::GetEventTypeByVID(DWORD dwVID)
 		return ON_CLICK_EVENT_NONE;
 	}
 
-	WORD dwVnum = pInstance->GetVirtualNumber();
+	DWORD dwVnum = pInstance->GetVirtualNumber();
 	return GetEventType(dwVnum);
 }
 
@@ -250,7 +250,7 @@ float CPythonNonPlayer::GetMonsterDamageMultiply(DWORD dwVnum)
 	const CPythonNonPlayer::TMobTable* c_pTable = GetTable(dwVnum);
 	if (!c_pTable)
 	{
-		DWORD fDamMultiply = 0;
+		float fDamMultiply = 0.0f;
 		return fDamMultiply;
 	}
 

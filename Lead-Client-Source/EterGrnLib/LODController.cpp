@@ -388,7 +388,7 @@ void CGrannyLODController::SetLODLevel(BYTE bLodLevel)
 	assert(m_que_pkModelInst.size() > 0);
 	
 	if (m_que_pkModelInst.size() > 0)
-		m_bLODLevel	= (BYTE) MIN(m_que_pkModelInst.size() - 1, bLodLevel);
+		m_bLODLevel	= (BYTE) MIN(static_cast<int>(m_que_pkModelInst.size() - 1), bLodLevel);
 }
 
 void CGrannyLODController::CreateDeviceObjects()

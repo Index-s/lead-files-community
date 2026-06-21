@@ -37,7 +37,7 @@ bool CGroupTextParseTreeLoader::Load(const char * c_szFileName)
 	fread(pData, fileSize, 1, fp);
 	fclose(fp);
 
-	m_fileLoader.Bind(fileSize, pData);
+	m_fileLoader.Bind(static_cast<int>(fileSize), pData);
 	M2_DELETE_ARRAY(pData);
 
 	if (NULL != m_pRootGroupNode)
@@ -144,7 +144,7 @@ CGroupNode::~CGroupNode()
 
 DWORD CGroupNode::GetChildNodeCount()
 {
-	return m_mapChildNodes.size();
+	return static_cast<DWORD>(m_mapChildNodes.size());
 }
 
 bool CGroupNode::SetChildNode(const char * c_szKey, CGroupNode* pChildGroup)
@@ -184,7 +184,7 @@ bool CGroupNode::IsToken(const std::string & c_rstrKey) const
 
 int CGroupNode::GetRowCount()
 {
-	return m_map_rows.size();
+	return static_cast<int>(m_map_rows.size());
 }
 
 bool CGroupNode::GetRow(const std::string & c_rstrRowKey, OUT const CGroupNode::CGroupNodeRow ** ppRow) const
@@ -255,5 +255,5 @@ CGroupNode::CGroupNodeRow::~CGroupNodeRow()
 
 int CGroupNode::CGroupNodeRow::GetSize() const
 {
-	return m_vec_values.size();
+	return static_cast<int>(m_vec_values.size());
 }

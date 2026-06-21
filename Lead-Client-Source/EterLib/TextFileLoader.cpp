@@ -13,7 +13,7 @@ CDynamicPool<CTextFileLoader::SGroupNode>	CTextFileLoader::SGroupNode::ms_kPool;
 
 CTokenVector* CTextFileLoader::SGroupNode::GetTokenVector(const std::string& c_rstGroupName)
 {
-	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), c_rstGroupName.length());
+	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), static_cast<UINT>(c_rstGroupName.length()));
 
 	std::map<DWORD, CTokenVector>::iterator f=m_kMap_dwKey_kVct_stToken.find(dwGroupNameKey);
 	if (m_kMap_dwKey_kVct_stToken.end()==f)
@@ -24,7 +24,7 @@ CTokenVector* CTextFileLoader::SGroupNode::GetTokenVector(const std::string& c_r
 
 bool CTextFileLoader::SGroupNode::IsExistTokenVector(const std::string& c_rstGroupName)
 {
-	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), c_rstGroupName.length());
+	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), static_cast<UINT>(c_rstGroupName.length()));
 
 	if (m_kMap_dwKey_kVct_stToken.end()==m_kMap_dwKey_kVct_stToken.find(dwGroupNameKey))
 		return false;
@@ -34,7 +34,7 @@ bool CTextFileLoader::SGroupNode::IsExistTokenVector(const std::string& c_rstGro
 
 void CTextFileLoader::SGroupNode::InsertTokenVector(const std::string& c_rstGroupName, const CTokenVector& c_rkVct_stToken)
 {
-	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), c_rstGroupName.length());
+	DWORD dwGroupNameKey=GenNameKey(c_rstGroupName.c_str(), static_cast<UINT>(c_rstGroupName.length()));
 
 	m_kMap_dwKey_kVct_stToken.insert(std::map<DWORD, CTokenVector>::value_type(dwGroupNameKey, c_rkVct_stToken));
 }
@@ -62,7 +62,7 @@ void CTextFileLoader::SGroupNode::SetGroupName(const std::string& c_rstGroupName
 	m_strGroupName=c_rstGroupName;
 	stl_lowers(m_strGroupName);
 
-	m_dwGroupNameKey=GenNameKey(m_strGroupName.c_str(), m_strGroupName.length());
+	m_dwGroupNameKey=GenNameKey(m_strGroupName.c_str(), static_cast<UINT>(m_strGroupName.length()));
 }
 
 
@@ -326,7 +326,7 @@ DWORD CTextFileLoader::GetChildNodeCount()
 		return 0;
 	}
 
-	return m_pcurNode->ChildNodeVector.size();
+	return static_cast<DWORD>(m_pcurNode->ChildNodeVector.size());
 }
 
 BOOL CTextFileLoader::SetChildNode(const char * c_szKey)
@@ -337,7 +337,7 @@ BOOL CTextFileLoader::SetChildNode(const char * c_szKey)
 		return FALSE;
 	}
 
-	DWORD dwKey=SGroupNode::GenNameKey(c_szKey, strlen(c_szKey));
+	DWORD dwKey=SGroupNode::GenNameKey(c_szKey, static_cast<UINT>(strlen(c_szKey)));
 
 	for (DWORD i = 0; i < m_pcurNode->ChildNodeVector.size(); ++i)
 	{
@@ -354,7 +354,7 @@ BOOL CTextFileLoader::SetChildNode(const char * c_szKey)
 BOOL CTextFileLoader::SetChildNode(const std::string & c_rstrKeyHead, DWORD dwIndex)
 {
 	char szKey[32+1];
-	_snprintf(szKey, sizeof(szKey), "%s%02u", c_rstrKeyHead.c_str(), dwIndex);
+	_snprintf_s(szKey, sizeof(szKey), _TRUNCATE, "%s%02u", c_rstrKeyHead.c_str(), dwIndex);
 
 	return SetChildNode(szKey);
 }
@@ -509,7 +509,7 @@ BOOL CTextFileLoader::GetTokenInteger(const std::string & c_rstrKey, int * pData
 		return FALSE;
 	}
 
-	*pData = atoi(pTokenVector->at(0).c_str());
+	*pData = static_cast<int>(atoi(pTokenVector->at(0).c_str()));
 
 	return TRUE;
 }
@@ -531,7 +531,7 @@ BOOL CTextFileLoader::GetTokenFloat(const std::string & c_rstrKey, float * pData
 		return FALSE;
 	}
 
-	*pData = atof(pTokenVector->at(0).c_str());
+	*pData = static_cast<float>(atof(pTokenVector->at(0).c_str()));
 
 	return TRUE;
 }
@@ -548,8 +548,8 @@ BOOL CTextFileLoader::GetTokenVector2(const std::string & c_rstrKey, D3DXVECTOR2
 		return FALSE;
 	}
 
-	pVector2->x = atof(pTokenVector->at(0).c_str());
-	pVector2->y = atof(pTokenVector->at(1).c_str());
+	pVector2->x = static_cast<float>(atof(pTokenVector->at(0).c_str()));
+	pVector2->y = static_cast<float>(atof(pTokenVector->at(1).c_str()));
 
 	return TRUE;
 }
@@ -566,9 +566,9 @@ BOOL CTextFileLoader::GetTokenVector3(const std::string & c_rstrKey, D3DXVECTOR3
 		return FALSE;
 	}
 
-	pVector3->x = atof(pTokenVector->at(0).c_str());
-	pVector3->y = atof(pTokenVector->at(1).c_str());
-	pVector3->z = atof(pTokenVector->at(2).c_str());
+	pVector3->x = static_cast<float>(atof(pTokenVector->at(0).c_str()));
+	pVector3->y = static_cast<float>(atof(pTokenVector->at(1).c_str()));
+	pVector3->z = static_cast<float>(atof(pTokenVector->at(2).c_str()));
 
 	return TRUE;
 }
@@ -585,10 +585,10 @@ BOOL CTextFileLoader::GetTokenVector4(const std::string & c_rstrKey, D3DXVECTOR4
 		return FALSE;
 	}
 	
-	pVector4->x = atof(pTokenVector->at(0).c_str());
-	pVector4->y = atof(pTokenVector->at(1).c_str());
-	pVector4->z = atof(pTokenVector->at(2).c_str());
-	pVector4->w = atof(pTokenVector->at(3).c_str());
+	pVector4->x = static_cast<float>(atof(pTokenVector->at(0).c_str()));
+	pVector4->y = static_cast<float>(atof(pTokenVector->at(1).c_str()));
+	pVector4->z = static_cast<float>(atof(pTokenVector->at(2).c_str()));
+	pVector4->w = static_cast<float>(atof(pTokenVector->at(3).c_str()));
 	
 	return TRUE;
 }
@@ -611,10 +611,10 @@ BOOL CTextFileLoader::GetTokenQuaternion(const std::string & c_rstrKey, D3DXQUAT
 		return FALSE;
 	}
 	
-	pQ->x = atof(pTokenVector->at(0).c_str());
-	pQ->y = atof(pTokenVector->at(1).c_str());
-	pQ->z = atof(pTokenVector->at(2).c_str());
-	pQ->w = atof(pTokenVector->at(3).c_str());
+	pQ->x = static_cast<float>(atof(pTokenVector->at(0).c_str()));
+	pQ->y = static_cast<float>(atof(pTokenVector->at(1).c_str()));
+	pQ->z = static_cast<float>(atof(pTokenVector->at(2).c_str()));
+	pQ->w = static_cast<float>(atof(pTokenVector->at(3).c_str()));
 	
 	return TRUE;
 }
@@ -631,9 +631,9 @@ BOOL CTextFileLoader::GetTokenDirection(const std::string & c_rstrKey, D3DVECTOR
 		return FALSE;
 	}
 
-	pVector->x = atof(pTokenVector->at(0).c_str());
-	pVector->y = atof(pTokenVector->at(1).c_str());
-	pVector->z = atof(pTokenVector->at(2).c_str());
+	pVector->x = static_cast<float>(atof(pTokenVector->at(0).c_str()));
+	pVector->y = static_cast<float>(atof(pTokenVector->at(1).c_str()));
+	pVector->z = static_cast<float>(atof(pTokenVector->at(2).c_str()));
 
 	return TRUE;
 }
@@ -650,10 +650,10 @@ BOOL CTextFileLoader::GetTokenColor(const std::string & c_rstrKey, D3DXCOLOR * p
 		return FALSE;
 	}
 
-	pColor->r = atof(pTokenVector->at(0).c_str());
-	pColor->g = atof(pTokenVector->at(1).c_str());
-	pColor->b = atof(pTokenVector->at(2).c_str());
-	pColor->a = atof(pTokenVector->at(3).c_str());
+	pColor->r = static_cast<float>(atof(pTokenVector->at(0).c_str()));
+	pColor->g = static_cast<float>(atof(pTokenVector->at(1).c_str()));
+	pColor->b = static_cast<float>(atof(pTokenVector->at(2).c_str()));
+	pColor->a = static_cast<float>(atof(pTokenVector->at(3).c_str()));
 
 	return TRUE;
 }
@@ -670,10 +670,10 @@ BOOL CTextFileLoader::GetTokenColor(const std::string & c_rstrKey, D3DCOLORVALUE
 		return FALSE;
 	}
 
-	pColor->r = atof(pTokenVector->at(0).c_str());
-	pColor->g = atof(pTokenVector->at(1).c_str());
-	pColor->b = atof(pTokenVector->at(2).c_str());
-	pColor->a = atof(pTokenVector->at(3).c_str());
+	pColor->r = static_cast<float>(atof(pTokenVector->at(0).c_str()));
+	pColor->g = static_cast<float>(atof(pTokenVector->at(1).c_str()));
+	pColor->b = static_cast<float>(atof(pTokenVector->at(2).c_str()));
+	pColor->a = static_cast<float>(atof(pTokenVector->at(3).c_str()));
 
 	return TRUE;
 }

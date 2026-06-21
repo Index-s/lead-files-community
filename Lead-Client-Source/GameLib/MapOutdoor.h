@@ -100,7 +100,7 @@ class CMapOutdoor : public CMapBase
 
 		bool			LoadSetting(const char * c_szFileName);
 
-		void			ApplyLight(DWORD dwVersion, const D3DLIGHT9& c_rkLight);
+		void			ApplyLight(DWORD_PTR dwVersion, const D3DLIGHT9& c_rkLight);
 		void			SetEnvironmentScreenFilter();
 		void			SetEnvironmentSkyBox();
 		void			SetEnvironmentLensFlare();
@@ -357,7 +357,7 @@ class CMapOutdoor : public CMapBase
 
 			bool operator () (const TPatchDrawStruct & lhs, const TPatchDrawStruct & rhs)
 			{
-				DWORD lhsTerrainNumOrder = 0, rhsTerrainNumOrder = 0;
+				size_t lhsTerrainNumOrder = 0, rhsTerrainNumOrder = 0;
 				bool blhsOrderFound = false;
 				bool brhsOrderFound = false;
 
@@ -597,7 +597,7 @@ class CMapOutdoor : public CMapBase
 			IDirect3DVertexBuffer9* m_pkVBNone[NONE_VB_NUM];
 			DWORD m_dwSplatPos;
 			DWORD m_dwNonePos;
-			DWORD m_dwLightVersion;
+			DWORD_PTR m_dwLightVersion;
 		} m_kSTPD;
 
 		struct SoftwareTransformPatch_SRenderState {
@@ -692,7 +692,7 @@ class CMapOutdoor : public CMapBase
 		CMonsterAreaInfo * AddMonsterAreaInfo(long lOriginX, long lOriginY, long lSizeX, long lSizeY);
 		void RemoveAllMonsterAreaInfo();
 
-		DWORD GetMonsterAreaInfoCount() { return m_MonsterAreaInfoPtrVector.size();	}
+		DWORD GetMonsterAreaInfoCount() { return static_cast<DWORD>(m_MonsterAreaInfoPtrVector.size());	}
 		bool GetMonsterAreaInfoFromVectorIndex(DWORD dwMonsterAreaInfoVectorIndex, CMonsterAreaInfo ** ppMonsterAreaInfo);
 
 		CMonsterAreaInfo * AddNewMonsterAreaInfo(long lOriginX, long lOriginY, long lSizeX, long lSizeY,

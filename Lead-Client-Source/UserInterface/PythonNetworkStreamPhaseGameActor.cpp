@@ -145,7 +145,7 @@ bool CPythonNetworkStream::RecvCharacterAdditionalInfo()
 
 	
 	SNetworkActorData kNetActorData = s_kNetActorData;
-	if (IsInvisibleRace(kNetActorData.m_dwRace))
+	if (IsInvisibleRace(static_cast<WORD>(kNetActorData.m_dwRace)))
 		return true;
 
 	if(kNetActorData.m_dwVID == chrInfoPacket.dwVID)
@@ -211,7 +211,7 @@ void CPythonNetworkStream::__RecvCharacterAppendPacket(SNetworkActorData * pkNet
 
 		if (rkPlayer.NEW_GetMainActorPtr())
 		{
-			CPythonBackground::Instance().Update(pkNetActorData->m_lCurX, pkNetActorData->m_lCurY, 0.0f);
+			CPythonBackground::Instance().Update(static_cast<float>(pkNetActorData->m_lCurX), static_cast<float>(pkNetActorData->m_lCurY), 0.0f);
 			CPythonCharacterManager::Instance().Update();
 
 			// NOTE: In case of a private tower, the map name is displayed even when moving with GOTO.

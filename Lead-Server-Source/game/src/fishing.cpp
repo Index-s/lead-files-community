@@ -248,7 +248,7 @@ void Initialize()
 
 		do
 		{
-			strlcpy(szCol2, start, MIN(sizeof(szCol2), (tab - start) + 1));
+			strlcpy(szCol2, start, MIN(static_cast<int>(sizeof(szCol2)), static_cast<int>(tab - start) + 1));
 			szCol2[tab-start] = '\0';
 
 			trim_and_lower(szCol2, szCol, sizeof(szCol));
@@ -330,7 +330,7 @@ int DetermineFishByProbIndex(int prob_idx)
 {
 	int rv = number(1, g_prob_sum[prob_idx]);
 	int * p = std::lower_bound(g_prob_accumulate[prob_idx], g_prob_accumulate[prob_idx]+ MAX_FISH, rv);
-	int fish_idx = p - g_prob_accumulate[prob_idx];
+	int fish_idx = static_cast<int>(p - g_prob_accumulate[prob_idx]);
 	return fish_idx;
 }
 
@@ -385,7 +385,7 @@ int DetermineFish(LPCHARACTER ch)
 	int rv = number(adjust + 1, g_prob_sum[prob_idx]);
 
 	int * p = std::lower_bound(g_prob_accumulate[prob_idx], g_prob_accumulate[prob_idx] + MAX_FISH, rv);
-	int fish_idx = p - g_prob_accumulate[prob_idx];
+	int fish_idx = static_cast<int>(p - g_prob_accumulate[prob_idx]);
 
 	if (g_iUseLocale)
 	{
@@ -541,7 +541,7 @@ int GetFishingLevel(LPCHARACTER ch)
 	if (!rod || rod->GetType()!= ITEM_ROD)
 		return 0;
 
-	return rod->GetSocket(2) + rod->GetValue(0);
+	return static_cast<int>(rod->GetSocket(2)) + rod->GetValue(0);
 }
 
 int Compute(DWORD fish_id, DWORD ms, DWORD* item, int level)
@@ -654,7 +654,7 @@ void Take(fishing_event_info* info, LPCHARACTER ch)
 							GetFishingLevel(ch),
 							ms,
 							true,
-							item ? item->GetSocket(0) : 0);
+							item ? static_cast<DWORD>(item->GetSocket(0)) : 0);
 
 				}
 				else
@@ -754,7 +754,7 @@ void UseFish(LPCHARACTER ch, LPITEM item)
 	{
 		// 1000 500 300 100 50 30 10 5 4 1
 		static int s_acc_prob[NUM_USE_RESULT_COUNT] = { 1000, 1500, 1800, 1900, 1950, 1980, 1990, 1995, 1999, 2000 };
-		int u_index = std::lower_bound(s_acc_prob, s_acc_prob + NUM_USE_RESULT_COUNT, r) - s_acc_prob;
+		int u_index = static_cast<int>(std::lower_bound(s_acc_prob, s_acc_prob + NUM_USE_RESULT_COUNT, r) - s_acc_prob);
 
 		switch (fish_info[idx].used_table[u_index])
 		{
@@ -845,7 +845,7 @@ int RealRefineRod(LPCHARACTER ch, LPITEM item)
 
 		if (pkNewItem)
 		{
-			BYTE bCell = rod->GetCell();
+			WORD bCell = rod->GetCell();
 			// Fishing rod improvement success
 			ITEM_MANAGER::instance().RemoveItem(rod, "REMOVE (REFINE FISH_ROD)");
 			pkNewItem->AddToCharacter(ch, TItemPos (INVENTORY, bCell)); 
@@ -863,7 +863,7 @@ int RealRefineRod(LPCHARACTER ch, LPITEM item)
 		LPITEM pkNewItem = ITEM_MANAGER::instance().CreateItem(rod->GetValue(4), 1);
 		if (pkNewItem)
 		{
-			BYTE bCell = rod->GetCell();
+			WORD bCell = rod->GetCell();
 			// Success in improving fishing rods
 			ITEM_MANAGER::instance().RemoveItem(rod, "REMOVE (REFINE FISH_ROD)");
 			pkNewItem->AddToCharacter(ch, TItemPos(INVENTORY, bCell)); 

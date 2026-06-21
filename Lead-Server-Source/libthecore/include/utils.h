@@ -22,7 +22,7 @@ extern "C"
     extern int		filesize(FILE * fp);	// return file size
 
 #define core_dump()	core_dump_unix(__FILE__, __LINE__)
-    extern void		core_dump_unix(const char *who, WORD line);	// Force dump the core
+    extern void		core_dump_unix(const char *who, int line);	// Force dump the core
 
 #define TOKEN(string) if (!str_cmp(token_string, string))
     // src = token : value

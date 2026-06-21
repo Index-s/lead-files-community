@@ -81,7 +81,7 @@ void Frustum::BuildViewFrustum(const D3DXMATRIX & mat)
 void Frustum::BuildViewFrustum2(const D3DXMATRIX & mat, float fNear, float fFar, float fFov, float fAspect, const D3DXVECTOR3 & vCamera, const D3DXVECTOR3 & vLook)
 {
 	float fViewLen = fFar-fNear;
-	float fH = fViewLen * tan(fFov*0.5f);
+	float fH = fViewLen * tanf(fFov*0.5f);
 	float fW = fH*fAspect;
 	D3DXVECTOR3 P(0.0f, 0.0f, fNear+fViewLen*0.5f);
 	D3DXVECTOR3 Q(fW, fH, fViewLen);

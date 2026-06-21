@@ -50,7 +50,7 @@ namespace quest
 		return CQuestManager::instance().GetQuestIndexByName(GetCurrentQuestName());
 	}
 
-	void PC::SetFlag(const string& name, int value, bool bSkipSave)
+	void PC::SetFlag(const string& name, TimeT64 value, bool bSkipSave)
 	{
 		if ( test_server )
 			sys_log(0, "QUEST Setting flag %s %d", name.c_str(),value);
@@ -90,7 +90,7 @@ namespace quest
 		return false;
 	}
 
-	int PC::GetFlag(const string & name)
+	TimeT64 PC::GetFlag(const string & name)
 	{
 		TFlagMap::iterator it = m_FlagMap.find(name);
 
@@ -102,7 +102,7 @@ namespace quest
 		return 0;
 	}
 
-	void PC::SaveFlag(const string & name, int value)
+	void PC::SaveFlag(const string & name, TimeT64 value)
 	{
 		TFlagMap::iterator it = m_FlagSaveMap.find(name);
 
@@ -125,7 +125,7 @@ namespace quest
 
 	void PC::SetQuestState(const string& quest_name, int new_state_index)
 	{
-		int iNowState = GetFlag(quest_name + ".__status");
+		int iNowState = static_cast<int>(GetFlag(quest_name + ".__status"));
 
 		if (iNowState != new_state_index)
 			AddQuestStateChange(quest_name, iNowState, new_state_index);
@@ -530,13 +530,13 @@ namespace quest
 		while (it != m_FlagSaveMap.end())
 		{
 			const std::string & stComp = it->first;
-			long lValue = it->second;
+			TimeT64 lValue = it->second;
 
 			++it;
 
-			int iPos = stComp.find(".");
+			size_t iPos = stComp.find(".");
 
-			if (iPos < 0)
+			if (iPos == std::string::npos)
 			{
 				sys_err("quest::PC::Save : cannot find . in FlagMap");
 				continue;
@@ -554,7 +554,7 @@ namespace quest
 				continue;
 			}
 
-			sys_log(1, "QUEST Save Flag %s, %s %d (%d)", stName.c_str(), stState.c_str(), lValue, i);
+			sys_log(1, "QUEST Save Flag %s, %s %lld (%d)", stName.c_str(), stState.c_str(), lValue, i);
 
 			if (stName.length() >= QUEST_NAME_MAX_LEN)
 			{
@@ -667,7 +667,7 @@ namespace quest
 			if (it->first.size()>9 && it->first.compare(it->first.size()-9,9, ".__status") == 0)
 			{
 				DWORD dwQuestIndex = CQuestManager::instance().GetQuestIndexByName(it->first.substr(0, it->first.size()-9));
-				int state = it->second;
+				int state = static_cast<int>(it->second);
 				QuestState qs;
 				qs.st = state;
 
@@ -713,7 +713,7 @@ namespace quest
 			if (it->first.size()>9 && it->first.compare(it->first.size()-9,9, ".__status") == 0)
 			{
 				const string quest_name = it->first.substr(0, it->first.size()-9);
-				const char* state_name = CQuestManager::instance().GetQuestStateName(quest_name, it->second);
+				const char* state_name = CQuestManager::instance().GetQuestStateName(quest_name, static_cast<int>(it->second));
 				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s %s (%d)"), quest_name.c_str(), state_name, it->second);
 			}
 			else

@@ -28,7 +28,7 @@ bool CPythonNetworkStream::IsChatInsultIn(const char* c_szMsg)
 
 bool CPythonNetworkStream::IsInsultIn(const char* c_szMsg)
 {
-	return m_kInsultChecker.IsInsultIn(c_szMsg, strlen(c_szMsg));
+	return m_kInsultChecker.IsInsultIn(c_szMsg, static_cast<UINT>(strlen(c_szMsg)));
 }
 
 bool CPythonNetworkStream::LoadInsultList(const char* c_szInsultListFileName)

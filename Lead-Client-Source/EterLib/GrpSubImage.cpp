@@ -59,7 +59,7 @@ void CGraphicSubImage::SetRectReference(const RECT& c_rRect)
 
 void CGraphicSubImage::SetSearchPath(const char * c_szFileName)
 {
-	strncpy(m_SearchPath, c_szFileName, sizeof(m_SearchPath)-1);
+	strncpy_s(m_SearchPath, sizeof(m_SearchPath), c_szFileName, _TRUNCATE);
 }
 
 bool CGraphicSubImage::OnLoad(int iSize, const void* c_pvBuf)
@@ -103,8 +103,8 @@ bool CGraphicSubImage::OnLoad(int iSize, const void* c_pvBuf)
 	if ("2.0"==c_rstVersion)
 	{	
 		const std::string& c_rstSubFileName=GetFileNameString();
-		int nPos=c_rstSubFileName.find_last_of('\\', -1);
-		if (nPos>=0)
+		std::string::size_type nPos=c_rstSubFileName.find_last_of('\\', std::string::npos);
+		if (nPos!=std::string::npos)
 		{
 			nPos++;
 			memcpy(szFileName, c_rstSubFileName.c_str(), nPos);
@@ -119,15 +119,15 @@ bool CGraphicSubImage::OnLoad(int iSize, const void* c_pvBuf)
 	}
 	else
 	{
-		_snprintf(szFileName, sizeof(szFileName), "%s%s", m_SearchPath, c_rstImage.c_str());
+		_snprintf_s(szFileName, sizeof(szFileName), _TRUNCATE, "%s%s", m_SearchPath, c_rstImage.c_str());
 	}
 
 	SetImageFileName(szFileName);
 
-	SetRectPosition(atoi(c_rstLeft.c_str()),
-					atoi(c_rstTop.c_str()),
-					atoi(c_rstRight.c_str()),
-					atoi(c_rstBottom.c_str()));
+	SetRectPosition(static_cast<int>(atoi(c_rstLeft.c_str())),
+					static_cast<int>(atoi(c_rstTop.c_str())),
+					static_cast<int>(atoi(c_rstRight.c_str())),
+					static_cast<int>(atoi(c_rstBottom.c_str())));
 
 	return true;
 }

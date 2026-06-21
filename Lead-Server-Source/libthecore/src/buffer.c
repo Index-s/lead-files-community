@@ -279,7 +279,7 @@ void buffer_realloc(LPBUFFER& buffer, int length)
 	sys_log(0, "reallocating buffer to %d, current %d", temp->mem_size, buffer->mem_size);
 	thecore_memcpy(temp->mem_data, buffer->mem_data, buffer->mem_size);
 
-	read_point_pos = buffer->read_point - buffer->mem_data;
+	read_point_pos = (int) (buffer->read_point - buffer->mem_data);
 
 	// write_point and read_point reconnect .
 	temp->write_point = temp->mem_data + buffer->write_point_pos;

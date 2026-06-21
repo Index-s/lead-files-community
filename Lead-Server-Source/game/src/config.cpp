@@ -107,7 +107,7 @@ bool is_string_true(const char * string)
 	if (isnhdigit(*string))
 	{
 		str_to_number(result, string);
-		return result > 0 ? true : false;
+		return result;
 	}
 	else if (LOWER(*string) == 't')
 		return true;
@@ -182,25 +182,32 @@ bool GetIPInfo()
 #else
 	WSADATA wsa_data;
 	char host_name[100];
-	HOSTENT* host_ent;
-	int n = 0;
+	struct addrinfo hints;
+	struct addrinfo* addr_result = NULL;
+	struct addrinfo* addr_it = NULL;
 
 	if (WSAStartup(0x0101, &wsa_data)) {
 		return false;
 	}
 
 	gethostname(host_name, sizeof(host_name));
-	host_ent = gethostbyname(host_name);
-	if (host_ent == NULL) {
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+
+	if (0 != getaddrinfo(host_name, NULL, &hints, &addr_result)) {
+		WSACleanup();
 		return false;
 	}
-	for ( ; host_ent->h_addr_list[n] != NULL; ++n) {
-		struct sockaddr_in addr;
-		struct sockaddr_in* sai = &addr;
-		memcpy(&sai->sin_addr.s_addr, host_ent->h_addr_list[n], host_ent->h_length);
+
+	for (addr_it = addr_result; NULL != addr_it; addr_it = addr_it->ai_next) {
+		struct sockaddr_in* sai = (struct sockaddr_in*) addr_it->ai_addr;
 #endif
 
-		char * netip = inet_ntoa(sai->sin_addr);
+		char netip[INET_ADDRSTRLEN];
+		if (NULL == inet_ntop(AF_INET, &sai->sin_addr, netip, sizeof(netip)))
+			continue;
 
 		if (!strncmp(netip, "192.168", 7)) // ignore if address is starting with 192
 		{
@@ -234,6 +241,7 @@ bool GetIPInfo()
 #ifndef __WIN32__
 	freeifaddrs( ifaddrp );
 #else
+	freeaddrinfo(addr_result);
 	WSACleanup();
 #endif
 
@@ -928,7 +936,8 @@ static bool __LoadGeneralConfigurations(const char *configName)
 		{
 			str_to_number(g_GuildCreateFee, value_string);
 
-			g_GuildCreateFee = MINMAX(1, g_GuildCreateFee, GOLD_MAX);
+			if (g_GuildCreateFee < 1)
+				g_GuildCreateFee = 1;
 
 			fprintf(stderr, "GUILD_CREATE_FEE: %d\n", g_GuildCreateFee);
 		}
@@ -1025,12 +1034,6 @@ static bool __LoadDefaultCMDFile(const char *cmdName)
 
 void config_init(const string& st_localeServiceName)
 {
-	FILE	*fp;
-
-	char	buf[256];
-	char	token_string[256];
-	char	value_string[256];
-
 	// LOCALE_SERVICE
 	string	st_configFileName;
 
@@ -1139,7 +1142,11 @@ void LoadValidCRCList()
 			DWORD dwValidClientProcessCRC;
 			DWORD dwValidClientFileCRC;
 
+#ifdef _WIN32
+			sscanf_s(buf, " %u %u ", &dwValidClientProcessCRC, &dwValidClientFileCRC);
+#else
 			sscanf(buf, " %u %u ", &dwValidClientProcessCRC, &dwValidClientFileCRC);
+#endif
 
 			s_set_dwProcessCRC.insert(dwValidClientProcessCRC);
 			s_set_dwFileCRC.insert(dwValidClientFileCRC);
@@ -1158,7 +1165,11 @@ void LoadStateUserCount()
 	if (!fp)
 		return;
 
+#ifdef _WIN32
+	fscanf_s(fp, " %d %d ", &g_iFullUserCount, &g_iBusyUserCount);
+#else
 	fscanf(fp, " %d %d ", &g_iFullUserCount, &g_iBusyUserCount);
+#endif
 
 	fclose(fp);
 }

@@ -20,7 +20,7 @@ int socket_read(socket_t desc, char* read_point, size_t space_left)
 {
     int	ret;
 
-    ret = recv(desc, read_point, space_left, 0);
+    ret = recv(desc, read_point, (int) space_left, 0);
 
     if (ret > 0)
 	return ret;
@@ -109,7 +109,7 @@ int socket_write(socket_t desc, const char *data, size_t length)
 
     do
     {
-	if ((bytes_written = socket_write_tcp(desc, data, total)) < 0)
+	if ((bytes_written = socket_write_tcp(desc, data, (int) total)) < 0)
 	{
 #ifdef EWOULDBLOCK
 	    if (errno == EWOULDBLOCK)
@@ -142,7 +142,7 @@ int socket_bind(const char * ip, int port, int protocol)
     struct sockaddr_in  sa;
 #endif
 
-    if ((s = socket(AF_INET, protocol, 0)) < 0) 
+    if ((s = (int) socket(AF_INET, protocol, 0)) < 0)
     {
 	sys_err("socket: %s", strerror(errno));
 	return -1;
@@ -238,18 +238,23 @@ socket_t socket_connect(const char* host, WORD port)
     memset(&server_addr, 0, sizeof(server_addr));
 
     if (isdigit(*host))
-	server_addr.sin_addr.s_addr = inet_addr(host);
+	inet_pton(AF_INET, host, &server_addr.sin_addr);
     else
     {
-	struct hostent *hp;
+	struct addrinfo hints, * res = NULL;
 
-	if ((hp = gethostbyname(host)) == NULL)
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+
+	if (getaddrinfo(host, NULL, &hints, &res) != 0 || res == NULL)
 	{
 	    sys_err("socket_connect(): can not connect to %s:%d", host, port);
 	    return -1;
 	}
 
-	thecore_memcpy((char* ) &server_addr.sin_addr, hp->h_addr, sizeof(server_addr.sin_addr));
+	thecore_memcpy((char* ) &server_addr.sin_addr, &((struct sockaddr_in*) res->ai_addr)->sin_addr, sizeof(server_addr.sin_addr));
+	freeaddrinfo(res);
     }
 
     server_addr.sin_family = AF_INET;

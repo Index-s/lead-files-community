@@ -115,20 +115,20 @@ BOOL CEffectElementBase::LoadScript(CTextFileLoader & rTextFileLoader)
 		for (DWORD i = 0; i < pTokenVector->size(); ++dwIndex)
 		{
 			TEffectPosition EffectPosition;
-			EffectPosition.m_fTime = atof(pTokenVector->at(i++).c_str());
+			EffectPosition.m_fTime = static_cast<float>(atof(pTokenVector->at(i++).c_str()));
 			if (pTokenVector->at(i)=="MOVING_TYPE_BEZIER_CURVE")
 			{
 				i++;
 
 				EffectPosition.m_iMovingType = MOVING_TYPE_BEZIER_CURVE;
 
-				EffectPosition.m_vecPosition.x = atof(pTokenVector->at(i++).c_str());
-				EffectPosition.m_vecPosition.y = atof(pTokenVector->at(i++).c_str());
-				EffectPosition.m_vecPosition.z = atof(pTokenVector->at(i++).c_str());
+				EffectPosition.m_vecPosition.x = static_cast<float>(atof(pTokenVector->at(i++).c_str()));
+				EffectPosition.m_vecPosition.y = static_cast<float>(atof(pTokenVector->at(i++).c_str()));
+				EffectPosition.m_vecPosition.z = static_cast<float>(atof(pTokenVector->at(i++).c_str()));
 
-				EffectPosition.m_vecControlPoint.x = atof(pTokenVector->at(i++).c_str());
-				EffectPosition.m_vecControlPoint.y = atof(pTokenVector->at(i++).c_str());
-				EffectPosition.m_vecControlPoint.z = atof(pTokenVector->at(i++).c_str());
+				EffectPosition.m_vecControlPoint.x = static_cast<float>(atof(pTokenVector->at(i++).c_str()));
+				EffectPosition.m_vecControlPoint.y = static_cast<float>(atof(pTokenVector->at(i++).c_str()));
+				EffectPosition.m_vecControlPoint.z = static_cast<float>(atof(pTokenVector->at(i++).c_str()));
 			}
 			else if (pTokenVector->at(i) == "MOVING_TYPE_DIRECT")
 			{
@@ -136,9 +136,9 @@ BOOL CEffectElementBase::LoadScript(CTextFileLoader & rTextFileLoader)
 
 				EffectPosition.m_iMovingType = MOVING_TYPE_DIRECT;
 
-				EffectPosition.m_vecPosition.x = atof(pTokenVector->at(i++).c_str());
-				EffectPosition.m_vecPosition.y = atof(pTokenVector->at(i++).c_str());
-				EffectPosition.m_vecPosition.z = atof(pTokenVector->at(i++).c_str());
+				EffectPosition.m_vecPosition.x = static_cast<float>(atof(pTokenVector->at(i++).c_str()));
+				EffectPosition.m_vecPosition.y = static_cast<float>(atof(pTokenVector->at(i++).c_str()));
+				EffectPosition.m_vecPosition.z = static_cast<float>(atof(pTokenVector->at(i++).c_str()));
 
 				EffectPosition.m_vecControlPoint = D3DXVECTOR3(0.0f,0.0f,0.0f);
 			}

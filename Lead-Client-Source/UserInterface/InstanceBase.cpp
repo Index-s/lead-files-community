@@ -756,7 +756,7 @@ bool CInstanceBase::Create(const SCreateData& c_rkCreateData)
 
 		c_rkCreateData.m_kAffectFlags.ConvertToPosition(&center_x, &center_y);
 		
-		float center_z = __GetBackgroundHeight(center_x, center_y);
+		float center_z = __GetBackgroundHeight(static_cast<float>(center_x), static_cast<float>(center_y));
 		NEW_SetPixelPosition(TPixelPosition(float(c_rkCreateData.m_lPosX), float(c_rkCreateData.m_lPosY), center_z));
 	}
 	else
@@ -878,7 +878,7 @@ void CInstanceBase::__Create_SetName(const SCreateData& c_rkCreateData)
 		return;
 	}
 
-	SetNameString(c_rkCreateData.m_stName.c_str(), c_rkCreateData.m_stName.length());
+	SetNameString(c_rkCreateData.m_stName.c_str(), static_cast<int>(c_rkCreateData.m_stName.length()));
 }
 
 void CInstanceBase::__Create_SetWarpName(const SCreateData& c_rkCreateData)
@@ -887,16 +887,16 @@ void CInstanceBase::__Create_SetWarpName(const SCreateData& c_rkCreateData)
 	if (CPythonNonPlayer::Instance().GetName(c_rkCreateData.m_dwRace, &c_szName))
 	{
 		std::string strName = c_szName;
-		int iFindingPos = strName.find_first_of(" ", 0);
+		int iFindingPos = static_cast<int>(strName.find_first_of(" ", 0));
 		if (iFindingPos > 0)
 		{
 			strName.resize(iFindingPos);
 		}
-		SetNameString(strName.c_str(), strName.length());
+		SetNameString(strName.c_str(), static_cast<int>(strName.length()));
 	}
 	else
 	{
-		SetNameString(c_rkCreateData.m_stName.c_str(), c_rkCreateData.m_stName.length());
+		SetNameString(c_rkCreateData.m_stName.c_str(), static_cast<int>(c_rkCreateData.m_stName.length()));
 	}
 }
 
@@ -987,8 +987,8 @@ void CInstanceBase::DismountHorse()
 void CInstanceBase::GetInfo(std::string* pstInfo)
 {
 	char szInfo[256];
-	sprintf(szInfo, "Inst - UC %d, RC %d Pool - %d ", 
-		ms_dwUpdateCounter, 
+	sprintf_s(szInfo, sizeof(szInfo), "Inst - UC %d, RC %d Pool - %d ",
+		ms_dwUpdateCounter,
 		ms_dwRenderCounter,
 		ms_kPool.GetCapacity()
 	);
@@ -2867,7 +2867,7 @@ void CInstanceBase::RefreshState(DWORD dwMotIndex, bool isLoop)
 	if (rkItemMgr.GetItemDataPointer(dwPartItemID, &pItemData))
 	{
 		byItemType = pItemData->GetType();
-		bySubType = pItemData->GetWeaponType();
+		bySubType = static_cast<BYTE>(pItemData->GetWeaponType());
 	}
 
 	if (IsPoly())

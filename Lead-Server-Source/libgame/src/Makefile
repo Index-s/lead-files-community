@@ -3,7 +3,7 @@ BIN_DIR = ../lib
 BIN = $(BIN_DIR)/libgame.a
 SHARED_SRC = ../../../Lead-Shared-Source
 
-CFLAGS = -m32 -march=i686 -msse2 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -fno-stack-protector -fno-strict-aliasing -I../include -I../../libthecore/include -I$(SHARED_SRC)
+CFLAGS = -m64 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -fno-stack-protector -fno-strict-aliasing -I../include -I../../libthecore/include -I$(SHARED_SRC)
 
 SRCS = $(wildcard *.cc)
 OBJFILES = $(SRCS:.cc=.o)

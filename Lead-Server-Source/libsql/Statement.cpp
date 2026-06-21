@@ -42,7 +42,7 @@ bool CStmt::Prepare(CAsyncSQL * sql, const char * c_pszQuery)
 	m_pkStmt = mysql_stmt_init(sql->GetSQLHandle());
 	m_stQuery = c_pszQuery;
 
-	if (mysql_stmt_prepare(m_pkStmt, m_stQuery.c_str(), m_stQuery.length()))
+	if (mysql_stmt_prepare(m_pkStmt, m_stQuery.c_str(), static_cast<unsigned long>(m_stQuery.length())))
 	{
 		Error("mysql_stmt_prepare");
 		return false;
@@ -131,7 +131,7 @@ int CStmt::Execute()
 
 		if (bind->buffer_type == MYSQL_TYPE_STRING)
 		{
-			*(m_puiParamLen + i) = strlen((const char *) bind->buffer);
+			*(m_puiParamLen + i) = static_cast<unsigned long>(strlen((const char *) bind->buffer));
 			sys_log(0, "param %d len %d buf %s", i, *m_puiParamLen, (const char *) bind->buffer);
 		}
 	}
@@ -148,7 +148,7 @@ int CStmt::Execute()
 		return 0;
 	}
 
-	iRows = mysql_stmt_num_rows(m_pkStmt);
+	iRows = static_cast<int>(mysql_stmt_num_rows(m_pkStmt));
 	return true;
 }
 

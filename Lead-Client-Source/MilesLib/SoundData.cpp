@@ -4,6 +4,9 @@
 #include "../EterPack/EterPackManager.h"
 #include "../eterBase/Timer.h"
 
+#include <string>
+#include <string.h>
+
 bool CSoundData::ms_isSoundFile[SOUND_FILE_MAX_NUM];
 CMappedFile CSoundData::ms_SoundFile[SOUND_FILE_MAX_NUM];
 
@@ -16,7 +19,7 @@ void CSoundData::Assign(const char* filename)
 {
 	assert(m_assigned == false);
 
-	strncpy(m_filename, filename, sizeof(m_filename)-1);
+	strncpy_s(m_filename, sizeof(m_filename), filename, _TRUNCATE);
 	m_assigned = true;
 }
 
@@ -110,7 +113,7 @@ bool CSoundData::ReadFromDisk()
 	return true;
 }
 
-bool CSoundData::isSlotIndex(DWORD dwIndex)
+bool CSoundData::isSlotIndex(UINTa dwIndex)
 {
 	if (dwIndex >= SOUND_FILE_MAX_NUM)
 		return false;
@@ -132,7 +135,7 @@ int CSoundData::GetEmptySlotIndex()
 	return -1;
 }
 
-U32 AILCALLBACK CSoundData::open_callback(char const * filename, U32 *file_handle)
+U32 AILCALLBACK CSoundData::open_callback(char const * filename, UINTa *file_handle)
 {
 	int iIndex = GetEmptySlotIndex();
 
@@ -140,8 +143,26 @@ U32 AILCALLBACK CSoundData::open_callback(char const * filename, U32 *file_handl
 		return 0;
 
 	LPCVOID	pMap;
-	
-	if (!CEterPackManager::Instance().Get(ms_SoundFile[iIndex], filename, &pMap))
+
+	// Motion/effect/monster data request sounds as ".mss", but the x64 Miles runtime
+	// cannot decode the legacy .mss sample format, so the packs ship raw ".wav"
+	// waveforms. Prefer the ".wav" twin for ANY ".mss" request whenever one exists --
+	// even when the .mss is also present. The earlier guard only fell back when the
+	// .mss was MISSING, which worked for effect sounds (their .mss are usually absent)
+	// but NOT for monster sounds, which ship BOTH .mss and .wav: the .mss got loaded
+	// and then played silently. isExist() probes quietly (no CANNOT_FIND_PACK_FILE log).
+	const char * c_szLoadName = filename;
+	std::string strFallback;
+	const char * pcExt = strrchr(filename, '.');
+	if (pcExt && 0 == _stricmp(pcExt, ".mss"))
+	{
+		strFallback.assign(filename, pcExt - filename);
+		strFallback += ".wav";
+		if (CEterPackManager::Instance().isExist(strFallback.c_str()))
+			c_szLoadName = strFallback.c_str();
+	}
+
+	if (!CEterPackManager::Instance().Get(ms_SoundFile[iIndex], c_szLoadName, &pMap))
 		return 0;
 
 	ms_isSoundFile[iIndex] = true;
@@ -150,7 +171,7 @@ U32 AILCALLBACK CSoundData::open_callback(char const * filename, U32 *file_handl
 	return 1;
 }
 
-void AILCALLBACK CSoundData::close_callback(U32 file_handle)
+void AILCALLBACK CSoundData::close_callback(UINTa file_handle)
 {
 	if (!isSlotIndex(file_handle))
 		return;
@@ -159,7 +180,7 @@ void AILCALLBACK CSoundData::close_callback(U32 file_handle)
 	ms_isSoundFile[file_handle] = false;
 }
 
-S32 AILCALLBACK CSoundData::seek_callback(U32 file_handle, S32 offset, U32 type)
+S32 AILCALLBACK CSoundData::seek_callback(UINTa file_handle, S32 offset, U32 type)
 {
 	if (!isSlotIndex(file_handle))
 		return 0;
@@ -167,7 +188,7 @@ S32 AILCALLBACK CSoundData::seek_callback(U32 file_handle, S32 offset, U32 type)
 	return ms_SoundFile[file_handle].Seek(offset, type);
 }
 
-U32 AILCALLBACK CSoundData::read_callback(U32 file_handle, void * buffer, U32 bytes)
+U32 AILCALLBACK CSoundData::read_callback(UINTa file_handle, void * buffer, U32 bytes)
 {
 	if (!isSlotIndex(file_handle))
 		return 0;

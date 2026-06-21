@@ -33,7 +33,7 @@ int CGraphicTextInstance::Hyperlink_GetText(char* buf, int len)
 
 	int codePage = GetDefaultCodePage();
 
-	return Ymir_WideCharToMultiByte(codePage, 0, gs_hyperlinkText.c_str(), gs_hyperlinkText.length(), buf, len, NULL, NULL);	
+	return Ymir_WideCharToMultiByte(codePage, 0, gs_hyperlinkText.c_str(), static_cast<int>(gs_hyperlinkText.length()), buf, len, NULL, NULL);
 }
 
 int CGraphicTextInstance::__DrawCharacter(CGraphicFontTexture * pFontTexture, WORD codePage, wchar_t text, DWORD dwColor)
@@ -45,9 +45,9 @@ int CGraphicTextInstance::__DrawCharacter(CGraphicFontTexture * pFontTexture, WO
 		m_dwColorInfoVector.push_back(dwColor);
 		m_pCharInfoVector.push_back(pInsCharInfo);
 
-		m_textWidth += pInsCharInfo->advance;
+		m_textWidth += static_cast<WORD>(pInsCharInfo->advance);
 		m_textHeight = max(pInsCharInfo->height, m_textHeight);
-		return pInsCharInfo->advance;
+		return static_cast<int>(pInsCharInfo->advance);
 	}
 	
 	return 0;
@@ -55,7 +55,7 @@ int CGraphicTextInstance::__DrawCharacter(CGraphicFontTexture * pFontTexture, WO
 
 void CGraphicTextInstance::__GetTextPos(DWORD index, float* x, float* y)
 {
-	index = min(index, m_pCharInfoVector.size());
+	index = min(index, static_cast<DWORD>(m_pCharInfoVector.size()));
 
 	float sx = 0;
 	float sy = 0;
@@ -158,7 +158,7 @@ void CGraphicTextInstance::Update()
 	const char* begin = m_stText.c_str();
 	const char* end = begin + m_stText.length();
 
-	int wTextMax = (end - begin) * 2;
+	int wTextMax = static_cast<int>((end - begin) * 2);
 	wchar_t* wText = (wchar_t*)_alloca(sizeof(wchar_t)*wTextMax);
 
 	DWORD dwColor = m_dwTextColor;
@@ -168,7 +168,7 @@ void CGraphicTextInstance::Update()
 	{
 		const char * token = FindToken(begin, end);
 
-		int wTextLen = Ymir_MultiByteToWideChar(dataCodePage, 0, begin, token - begin, wText, wTextMax);
+		int wTextLen = Ymir_MultiByteToWideChar(dataCodePage, 0, begin, static_cast<int>(token - begin), wText, wTextMax);
 
 		if (m_isSecret)
 		{
@@ -181,7 +181,7 @@ void CGraphicTextInstance::Update()
 			{
 
 				wchar_t* wArabicText = (wchar_t*)_alloca(sizeof(wchar_t) * wTextLen);
-				int wArabicTextLen = Arabic_MakeShape(wText, wTextLen, wArabicText, wTextLen);
+				int wArabicTextLen = static_cast<int>(Arabic_MakeShape(wText, wTextLen, wArabicText, wTextLen));
 
 				bool isEnglish = true;
 				int nEnglishBase = wArabicTextLen - 1;
@@ -864,8 +864,8 @@ void CGraphicTextInstance::Render(RECT * pClipRect)
 	// The part that displays the Diamond Sutra link.
 	if (m_hyperlinkVector.size() != 0)
 	{
-		int lx = gs_mx - m_v3Position.x;
-		int ly = gs_my - m_v3Position.y;
+		int lx = static_cast<int>(gs_mx - m_v3Position.x);
+		int ly = static_cast<int>(gs_my - m_v3Position.y);
 
 		// Arab changes the coordinate signs.
 		if (GetDefaultCodePage() == CP_ARABIC) {

@@ -85,7 +85,7 @@ END_OF_TIMER_EVENT:
 
 	LPEVENT quest_create_server_timer_event(const char * name, double when, unsigned int timernpc, bool loop, unsigned int arg)
 	{
-		const int nameCapacity = strlen(name) + 1;
+		const int nameCapacity = static_cast<int>(strlen(name) + 1);
 
 		long ltime_cycle = (long) (rint(PASSES_PER_SEC(when)));
 
@@ -104,7 +104,7 @@ END_OF_TIMER_EVENT:
 
 	LPEVENT quest_create_timer_event(const char * name, unsigned int player_id, double when, unsigned int npc_id, bool loop)
 	{
-		const int nameCapacity = strlen(name) + 1;
+		const int nameCapacity = static_cast<int>(strlen(name) + 1);
 
 		long ltime_cycle = (int) (rint(PASSES_PER_SEC(when)));
 

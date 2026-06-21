@@ -36,8 +36,8 @@ class CItem : public CEntity
 		void			SetProto(const TItemTable * table);
 		TItemTable const *	GetProto()	{ return m_pProto; }
 
-		int		GetGold();
-		int		GetShopBuyPrice();
+		GoldType	GetGold();
+		GoldType	GetShopBuyPrice();
 		const char *	GetName()		{ return m_pProto ? m_pProto->szLocaleName : NULL; }
 		const char *	GetBaseName()		{ return m_pProto ? m_pProto->szName : NULL; }
 		BYTE		GetSize()		{ return m_pProto ? m_pProto->bSize : 0;	}
@@ -94,11 +94,11 @@ class CItem : public CEntity
 		void		ModifyPoints(bool bAdd);	// Gives the effect of an item to the character . bAdd go false This side is removed.
 
 		bool		CreateSocket(BYTE bSlot, BYTE bGold);
-		const int32_t *	GetSockets()		{ return &m_alSockets[0];	}
-		int32_t		GetSocket(int i)	{ return m_alSockets[i];	}
+		const TimeT64 *	GetSockets()		{ return &m_alSockets[0];	}
+		TimeT64		GetSocket(int i)	{ return m_alSockets[i];	}
 
-		void		SetSockets(const int32_t * al);
-		void		SetSocket(int i, int32_t v, bool bLog = true);
+		void		SetSockets(const TimeT64 * al);
+		void		SetSocket(int i, TimeT64 v, bool bLog = true);
 
 		int		GetSocketCount();
 		bool		AddSocket();
@@ -246,7 +246,7 @@ class CItem : public CEntity
 
 		bool		m_bExchanging;	///< Currently exchanging status 
 
-		int32_t		m_alSockets[ITEM_SOCKET_MAX_NUM];	// Item Socket
+		TimeT64		m_alSockets[ITEM_SOCKET_MAX_NUM];	// Item Socket
 		TPlayerItemAttribute	m_aAttr[ITEM_ATTRIBUTE_MAX_NUM];
 
 		LPEVENT		m_pkDestroyEvent;

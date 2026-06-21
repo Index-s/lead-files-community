@@ -27,7 +27,7 @@ CEterPack* CEterPackManager::FindPack(const char* c_szPathName)
 			const std::string & c_rstrName = itor->first;
 			CEterPack * pEterPack = itor->second;
 
-			if (CompareName(c_rstrName.c_str(), c_rstrName.length(), strFileName.c_str()))
+			if (CompareName(c_rstrName.c_str(), static_cast<DWORD>(c_rstrName.length()), strFileName.c_str()))
 			{
 				return pEterPack;
 			}
@@ -560,7 +560,7 @@ void CEterPackManager::WriteHybridCryptPackInfo(const char* pFileName)
 
 		std::string noPathName = CFileNameHelper::NoPath(std::string(cit->first));
 
-		DWORD dwPackNamehash = stringhash().GetHash(noPathName);
+		DWORD dwPackNamehash = static_cast<DWORD>(stringhash().GetHash(noPathName));
 
 		CMakePackLog::GetSingleton().Writef("CEterPackManager::WriteHybridCryptPackInfo PackName : %s, Hash : %x", noPathName.c_str(), dwPackNamehash);
 		keyFile.Write( &dwPackNamehash, sizeof(DWORD) );
@@ -584,7 +584,7 @@ void CEterPackManager::WriteHybridCryptPackInfo(const char* pFileName)
 
 		std::string noPathName = CFileNameHelper::NoPath(std::string(cit->first));
 
-		DWORD dwPackNamehash = stringhash().GetHash(noPathName);
+		DWORD dwPackNamehash = static_cast<DWORD>(stringhash().GetHash(noPathName));
 		keyFile.Write( &dwPackNamehash, sizeof(DWORD) );
 
 		int iSDBSizeWriteOffset = keyFile.GetPosition();

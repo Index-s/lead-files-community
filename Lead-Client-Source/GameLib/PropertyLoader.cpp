@@ -28,7 +28,7 @@ DWORD CPropertyLoader::RegisterFile(const char * c_szPathName, const char * c_sz
 	strFileName += c_szFileName;
 
 	std::string stExt;
-	GetFileExtension(strFileName.c_str(), strFileName.length(), &stExt);
+	GetFileExtension(strFileName.c_str(), static_cast<int>(strFileName.length()), &stExt);
 
 	stl_lowers(stExt);
 	stl_lowers(strFileName);

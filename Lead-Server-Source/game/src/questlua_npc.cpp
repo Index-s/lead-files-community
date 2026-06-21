@@ -77,7 +77,7 @@ namespace quest
 			lua_pushnumber(L, 0);
 			return 1;
 		}
-		lua_pushnumber(L, MAX(0, npc->GetPoint(POINT_ATT_GRADE_BONUS)));
+		lua_pushnumber(L, static_cast<lua_Number>(MAX<GoldType>(0, npc->GetPoint(POINT_ATT_GRADE_BONUS))));
 		return 1;
 	}
 
@@ -88,7 +88,7 @@ namespace quest
 		{
 			return 0;
 		}
-		npc->SetPoint(POINT_ATT_GRADE_BONUS, MAX(0, npc->GetPoint(POINT_ATT_GRADE_BONUS)-1));
+		npc->SetPoint(POINT_ATT_GRADE_BONUS, MAX<GoldType>(0, npc->GetPoint(POINT_ATT_GRADE_BONUS)-1));
 		return 0;
 	}
 
@@ -100,7 +100,7 @@ namespace quest
 			lua_pushnumber(L, 0);
 			return 1;
 		}
-		lua_pushnumber(L, MAX(0, npc->GetPoint(POINT_DEF_GRADE_BONUS)));
+		lua_pushnumber(L, static_cast<lua_Number>(MAX<GoldType>(0, npc->GetPoint(POINT_DEF_GRADE_BONUS))));
 		return 1;
 	}
 
@@ -111,7 +111,7 @@ namespace quest
 		{
 			return 0;
 		}
-		npc->SetPoint(POINT_DEF_GRADE_BONUS, MAX(0, npc->GetPoint(POINT_DEF_GRADE_BONUS)-1));
+		npc->SetPoint(POINT_DEF_GRADE_BONUS, MAX<GoldType>(0, npc->GetPoint(POINT_DEF_GRADE_BONUS)-1));
 		return 0;
 	}
 
@@ -293,7 +293,7 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 
 		lua_Number vid = lua_tonumber(L, 1);
-		LPCHARACTER targetChar = CHARACTER_MANAGER::instance().Find(vid);
+		LPCHARACTER targetChar = CHARACTER_MANAGER::instance().Find(static_cast<DWORD>(vid));
 
 		if (targetChar)
 			lua_pushnumber(L, targetChar->GetAttMul());
@@ -311,10 +311,10 @@ namespace quest
 		lua_Number vid = lua_tonumber(L, 1);
 		lua_Number attack_mul = lua_tonumber(L, 2);
 
-		LPCHARACTER targetChar = CHARACTER_MANAGER::instance().Find(vid);
+		LPCHARACTER targetChar = CHARACTER_MANAGER::instance().Find(static_cast<DWORD>(vid));
 
 		if (targetChar)
-			targetChar->SetAttMul(attack_mul);
+			targetChar->SetAttMul(static_cast<float>(attack_mul));
 
 		return 0;
 	}
@@ -324,7 +324,7 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 
 		lua_Number vid = lua_tonumber(L, 1);
-		LPCHARACTER targetChar = CHARACTER_MANAGER::instance().Find(vid);
+		LPCHARACTER targetChar = CHARACTER_MANAGER::instance().Find(static_cast<DWORD>(vid));
 
 		if (targetChar)
 			lua_pushnumber(L, targetChar->GetDamMul());
@@ -342,10 +342,10 @@ namespace quest
 		lua_Number vid = lua_tonumber(L, 1);
 		lua_Number damage_mul = lua_tonumber(L, 2);
 
-		LPCHARACTER targetChar = CHARACTER_MANAGER::instance().Find(vid);
+		LPCHARACTER targetChar = CHARACTER_MANAGER::instance().Find(static_cast<DWORD>(vid));
 
 		if (targetChar)
-			targetChar->SetDamMul(damage_mul);
+			targetChar->SetDamMul(static_cast<float>(damage_mul));
 
 		return 0;
 	}

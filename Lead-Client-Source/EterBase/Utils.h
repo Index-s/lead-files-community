@@ -53,8 +53,8 @@ extern const char * CreateTempFileName(const char * c_pszPrefix = NULL);
 extern void			GetFilePathNameExtension(const char* c_szFile, int len, std::string* pstPath, std::string* pstName, std::string* pstExt);
 extern void			GetFileExtension(const char* c_szFile, int len, std::string* pstExt);
 extern void			GetFileNameParts(const char* c_szFile, int len, char* pszPath, char* pszName, char* pszExt);
-extern void			GetOldIndexingName(char * szName, int Index);
-extern void			GetIndexingName(char * szName, DWORD Index);
+extern void			GetOldIndexingName(char * szName, size_t szNameSize, int Index);
+extern void			GetIndexingName(char * szName, size_t szNameSize, DWORD Index);
 extern void			stl_lowers(std::string& rstRet);
 extern void			GetOnlyFileName(const char * sz_Name, std::string & strFileName);
 extern void			GetOnlyPathName(const char * sz_Name, std::string & OnlyPathName);
@@ -115,7 +115,7 @@ T ELRightCoord_ConvertToPlainCoordDegree(T srcDegree)
 template<typename C>
 void string_join(const std::string& sep, const C& container, std::string* ret)
 {
-	unsigned int capacity = sep.length() * container.size() - 1;
+	size_t capacity = sep.length() * container.size() - 1;
     
     // calculate string sequence
     {

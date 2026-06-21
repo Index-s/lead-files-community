@@ -26,8 +26,8 @@ LIBDIR = -L$(EXTERN_DIR)/lib \
          -L../../liblua/lib \
          -L/usr/local/lib
 
-#CFLAGS = -m32 -g -Wall -O2 -pipe -fexceptions -fno-stack-protector -pthread -D_THREAD_SAFE -DNDEBUG
-CFLAGS = -m32 -march=i686 -msse2 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -DBOOST_BIND_GLOBAL_PLACEHOLDERS -fno-stack-protector -fno-strict-aliasing
+#CFLAGS = -m64 -g -Wall -O2 -pipe -fexceptions -fno-stack-protector -pthread -D_THREAD_SAFE -DNDEBUG
+CFLAGS = -m64 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -DBOOST_BIND_GLOBAL_PLACEHOLDERS -fno-stack-protector -fno-strict-aliasing
 
 # RE-ORDERED LIBS: Higher level libs first, base libs last
 LIBS = $(EXTERN_DIR)/lib/libIL.a \
@@ -41,7 +41,7 @@ LIBS = $(EXTERN_DIR)/lib/libIL.a \
        ../../libgame/lib/libgame.a \
        ../../libpoly/libpoly.a \
        $(EXTERN_DIR)/lib/mysqlclient.a \
-       /usr/lib32/libssl.a /usr/lib32/libcrypto.a \
+       /usr/lib/libssl.a /usr/lib/libcrypto.a \
        ../../libthecore/lib/libthecore.a \
        -lz -lm -lmd -pthread
 

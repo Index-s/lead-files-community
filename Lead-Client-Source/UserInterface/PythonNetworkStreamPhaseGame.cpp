@@ -902,7 +902,7 @@ bool CPythonNetworkStream::__SendHack(const char* c_szMsg)
 	
 	TPacketCGHack kPacketHack;
 	kPacketHack.bHeader=HEADER_CG_HACK;
-	strncpy(kPacketHack.szBuf, c_szMsg, sizeof(kPacketHack.szBuf)-1);
+	strncpy_s(kPacketHack.szBuf, sizeof(kPacketHack.szBuf), c_szMsg, sizeof(kPacketHack.szBuf)-1);
 
 	if (!Send(sizeof(kPacketHack), &kPacketHack))
 		return false;
@@ -930,7 +930,7 @@ bool CPythonNetworkStream::SendMessengerAddByNamePacket(const char * c_szName)
 	if (!Send(sizeof(packet), &packet))
 		return false;
 	char szName[CHARACTER_NAME_MAX_LEN];
-	strncpy(szName, c_szName, CHARACTER_NAME_MAX_LEN-1);
+	strncpy_s(szName, sizeof(szName), c_szName, CHARACTER_NAME_MAX_LEN-1);
 	szName[CHARACTER_NAME_MAX_LEN-1] = '\0'; // #720: Fixed buffer overflow bug related to messenger name.
 
 	if (!Send(sizeof(szName), &szName))
@@ -947,7 +947,7 @@ bool CPythonNetworkStream::SendMessengerRemovePacket(const char * c_szKey, const
 	if (!Send(sizeof(packet), &packet))
 		return false;
 	char szKey[CHARACTER_NAME_MAX_LEN];
-	strncpy(szKey, c_szKey, CHARACTER_NAME_MAX_LEN-1);
+	strncpy_s(szKey, sizeof(szKey), c_szKey, CHARACTER_NAME_MAX_LEN-1);
 	if (!Send(sizeof(szKey), &szKey))
 		return false;
 	__RefreshTargetBoardByName(c_szName);
@@ -970,7 +970,7 @@ bool CPythonNetworkStream::SendCharacterStatePacket(const TPixelPosition& c_rkPP
 	kStatePacket.bHeader = HEADER_CG_MOVE;
 	kStatePacket.bFunc = eFunc;
 	kStatePacket.bArg = uArg;
-	kStatePacket.bRot = fDstRot/5.0f;
+	kStatePacket.bRot = static_cast<BYTE>(fDstRot/5.0f);
 	kStatePacket.lX = int32_t(c_rkPPosDst.x);
 	kStatePacket.lY = int32_t(c_rkPPosDst.y);
 	kStatePacket.dwTime = ELTimer_GetServerMSec();
@@ -1034,10 +1034,10 @@ bool CPythonNetworkStream::SendChatPacket(const char * c_szChat, BYTE byType)
 	if (ClientCommand(c_szChat))
 		return true;
 
-	int iTextLen = strlen(c_szChat) + 1;
+	int iTextLen = static_cast<int>(strlen(c_szChat) + 1);
 	TPacketCGChat ChatPacket;
 	ChatPacket.header = HEADER_CG_CHAT;
-	ChatPacket.size = sizeof(ChatPacket) + iTextLen;
+	ChatPacket.size = static_cast<WORD>(sizeof(ChatPacket) + iTextLen);
 	ChatPacket.type = byType;
 
 	if (!Send(sizeof(ChatPacket), &ChatPacket))
@@ -1198,11 +1198,11 @@ bool CPythonNetworkStream::RecvChatPacket()
 					{
 						if (false == pkInstChatter->IsNPC() && false == pkInstChatter->IsEnemy())
 						{
-							__FilterInsult(p, strlen(p));
+							__FilterInsult(p, static_cast<UINT>(strlen(p)));
 						}
 					}
 
-					_snprintf(line, sizeof(line), "%s", p);
+					_snprintf_s(line, sizeof(line), _TRUNCATE, "%s", p);
 				}
 			}
 			break;
@@ -1212,7 +1212,7 @@ bool CPythonNetworkStream::RecvChatPacket()
 		case CHAT_TYPE_BIG_NOTICE:
 		case CHAT_TYPE_MAX_NUM:
 		default:
-			_snprintf(line, sizeof(line), "%s", buf);
+			_snprintf_s(line, sizeof(line), _TRUNCATE, "%s", buf);
 			break;
 		}
 
@@ -1241,7 +1241,7 @@ bool CPythonNetworkStream::RecvChatPacket()
 			if (p)
 			{
 				if (m_isEnableChatInsultFilter)
-					__FilterInsult(p, strlen(p));
+					__FilterInsult(p, static_cast<UINT>(strlen(p)));
 			}
 		}
 
@@ -1269,7 +1269,7 @@ bool CPythonNetworkStream::RecvWhisperPacket()
 	static char line[256];
 	if (CPythonChat::WHISPER_TYPE_CHAT == whisperPacket.bType || CPythonChat::WHISPER_TYPE_GM == whisperPacket.bType)
 	{		
-		_snprintf(line, sizeof(line), "%s : %s", whisperPacket.szNameFrom, buf);
+		_snprintf_s(line, sizeof(line), _TRUNCATE, "%s : %s", whisperPacket.szNameFrom, buf);
 		PyCallClassMemberFunc(m_apoPhaseWnd[PHASE_WINDOW_GAME], "OnRecvWhisper", Py_BuildValue("(iss)", (int) whisperPacket.bType, whisperPacket.szNameFrom, line));
 	}
 	else if (CPythonChat::WHISPER_TYPE_SYSTEM == whisperPacket.bType || CPythonChat::WHISPER_TYPE_ERROR == whisperPacket.bType)
@@ -1289,12 +1289,12 @@ bool CPythonNetworkStream::SendWhisperPacket(const char * name, const char * c_s
 	if (strlen(c_szChat) >= 255)
 		return true;
 
-	int iTextLen = strlen(c_szChat) + 1;
+	int iTextLen = static_cast<int>(strlen(c_szChat) + 1);
 	TPacketCGWhisper WhisperPacket;
 	WhisperPacket.bHeader = HEADER_CG_WHISPER;
-	WhisperPacket.wSize = sizeof(WhisperPacket) + iTextLen;
+	WhisperPacket.wSize = static_cast<WORD>(sizeof(WhisperPacket) + iTextLen);
 
-	strncpy(WhisperPacket.szNameTo, name, sizeof(WhisperPacket.szNameTo) - 1);
+	strncpy_s(WhisperPacket.szNameTo, sizeof(WhisperPacket.szNameTo), name, sizeof(WhisperPacket.szNameTo) - 1);
 
 	if (!Send(sizeof(WhisperPacket), &WhisperPacket))
 		return false;
@@ -1368,7 +1368,7 @@ bool CPythonNetworkStream::RecvPointChange()
 		{
 			CInstanceBase* pOtherInstance = CPythonCharacterManager::Instance().GetInstancePtr(PointChange.dwVID);
 			if (pOtherInstance)
-				pOtherInstance->UpdateTextTailLevel(PointChange.value);
+				pOtherInstance->UpdateTextTailLevel(static_cast<DWORD>(PointChange.value));
 		}
 	}
 
@@ -1625,7 +1625,7 @@ bool CPythonNetworkStream::RecvExchangePacket()
 			CPythonExchange::Instance().SetSelfName(CPythonPlayer::Instance().GetName());
 
 			{
-				CInstanceBase * pCharacterInstance = CPythonCharacterManager::Instance().GetInstancePtr(exchange_packet.arg1);
+				CInstanceBase * pCharacterInstance = CPythonCharacterManager::Instance().GetInstancePtr(static_cast<DWORD>(exchange_packet.arg1));
 
 				if (pCharacterInstance)
 					CPythonExchange::Instance().SetTargetName(pCharacterInstance->GetNameString());
@@ -1638,18 +1638,18 @@ bool CPythonNetworkStream::RecvExchangePacket()
 			if (exchange_packet.is_me)
 			{
 				int iSlotIndex = exchange_packet.arg2.cell;
-				CPythonExchange::Instance().SetItemToSelf(iSlotIndex, exchange_packet.arg1, (ItemStackType) exchange_packet.arg3);
+				CPythonExchange::Instance().SetItemToSelf(iSlotIndex, static_cast<DWORD>(exchange_packet.arg1), (ItemStackType) exchange_packet.arg3);
 				for (int i = 0; i < ITEM_SOCKET_SLOT_MAX_NUM; ++i)
-					CPythonExchange::Instance().SetItemMetinSocketToSelf(iSlotIndex, i, exchange_packet.alSockets[i]);
+					CPythonExchange::Instance().SetItemMetinSocketToSelf(iSlotIndex, i, static_cast<DWORD>(exchange_packet.alSockets[i]));
 				for (int j = 0; j < ITEM_ATTRIBUTE_SLOT_MAX_NUM; ++j)
 					CPythonExchange::Instance().SetItemAttributeToSelf(iSlotIndex, j, exchange_packet.aAttr[j].bType, exchange_packet.aAttr[j].sValue);
 			}
 			else
 			{
 				int iSlotIndex = exchange_packet.arg2.cell;
-				CPythonExchange::Instance().SetItemToTarget(iSlotIndex, exchange_packet.arg1, (ItemStackType) exchange_packet.arg3);
+				CPythonExchange::Instance().SetItemToTarget(iSlotIndex, static_cast<DWORD>(exchange_packet.arg1), (ItemStackType) exchange_packet.arg3);
 				for (int i = 0; i < ITEM_SOCKET_SLOT_MAX_NUM; ++i)
-					CPythonExchange::Instance().SetItemMetinSocketToTarget(iSlotIndex, i, exchange_packet.alSockets[i]);
+					CPythonExchange::Instance().SetItemMetinSocketToTarget(iSlotIndex, i, static_cast<DWORD>(exchange_packet.alSockets[i]));
 				for (int j = 0; j < ITEM_ATTRIBUTE_SLOT_MAX_NUM; ++j)
 					CPythonExchange::Instance().SetItemAttributeToTarget(iSlotIndex, j, exchange_packet.aAttr[j].bType, exchange_packet.aAttr[j].sValue);
 			}
@@ -2105,7 +2105,7 @@ bool CPythonNetworkStream::SendAnswerMakeGuildPacket(const char * c_szName)
 	TPacketCGAnswerMakeGuild Packet;
 
 	Packet.header = HEADER_CG_ANSWER_MAKE_GUILD;
-	strncpy(Packet.guild_name, c_szName, GUILD_NAME_MAX_LEN);
+	strncpy_s(Packet.guild_name, sizeof(Packet.guild_name), c_szName, GUILD_NAME_MAX_LEN);
 	Packet.guild_name[GUILD_NAME_MAX_LEN] = '\0';
 
 	if (!Send(sizeof(Packet), &Packet))
@@ -2122,7 +2122,7 @@ bool CPythonNetworkStream::SendQuestInputStringPacket(const char * c_szString)
 {
 	TPacketCGQuestInputString Packet;
 	Packet.header = HEADER_CG_QUEST_INPUT_STRING;
-	strncpy(Packet.msg, c_szString, QUEST_INPUT_STRING_MAX_NUM);
+	strncpy_s(Packet.msg, sizeof(Packet.msg), c_szString, QUEST_INPUT_STRING_MAX_NUM);
 
 	if (!Send(sizeof(Packet), &Packet))
 	{
@@ -2368,8 +2368,8 @@ bool CPythonNetworkStream::RecvAddFlyTargetingPacket()
 	}
 	else
 	{
-		float h = CPythonBackground::Instance().GetHeight(kPacket.x,kPacket.y) + 60.0f; // TEMPORARY HEIGHT
-		pShooter->GetGraphicThingInstancePtr()->AddFlyTarget(D3DXVECTOR3(kPacket.x,kPacket.y,h));
+		float h = CPythonBackground::Instance().GetHeight(static_cast<float>(kPacket.x),static_cast<float>(kPacket.y)) + 60.0f; // TEMPORARY HEIGHT
+		pShooter->GetGraphicThingInstancePtr()->AddFlyTarget(D3DXVECTOR3(static_cast<float>(kPacket.x),static_cast<float>(kPacket.y),h));
 		//pShooter->GetGraphicThingInstancePtr()->SetFlyTarget(kPacket.kPPosTarget.x,kPacket.kPPosTarget.y,);
 	}
 
@@ -2406,8 +2406,8 @@ bool CPythonNetworkStream::RecvFlyTargetingPacket()
 	}
 	else
 	{
-		float h = CPythonBackground::Instance().GetHeight(kPacket.x, kPacket.y) + 60.0f; // TEMPORARY HEIGHT
-		pShooter->GetGraphicThingInstancePtr()->SetFlyTarget(D3DXVECTOR3(kPacket.x,kPacket.y,h));
+		float h = CPythonBackground::Instance().GetHeight(static_cast<float>(kPacket.x), static_cast<float>(kPacket.y)) + 60.0f; // TEMPORARY HEIGHT
+		pShooter->GetGraphicThingInstancePtr()->SetFlyTarget(D3DXVECTOR3(static_cast<float>(kPacket.x),static_cast<float>(kPacket.y),h));
 		//pShooter->GetGraphicThingInstancePtr()->SetFlyTarget(kPacket.kPPosTarget.x,kPacket.kPPosTarget.y,);
 	}
 
@@ -2437,8 +2437,8 @@ bool CPythonNetworkStream::SendAddFlyTargetingPacket(DWORD dwTargetVID, const TP
 
 	packet.bHeader	= HEADER_CG_ADD_FLY_TARGETING;
 	packet.dwTargetVID = dwTargetVID;
-	packet.x = kPPosTarget.x;
-	packet.y = kPPosTarget.y;
+	packet.x = static_cast<int32_t>(kPPosTarget.x);
+	packet.y = static_cast<int32_t>(kPPosTarget.y);
 
 	__LocalPositionToGlobalPosition(packet.x, packet.y);
 	
@@ -2460,8 +2460,8 @@ bool CPythonNetworkStream::SendFlyTargetingPacket(DWORD dwTargetVID, const TPixe
 
 	packet.bHeader	= HEADER_CG_FLY_TARGETING;
 	packet.dwTargetVID = dwTargetVID;
-	packet.x = kPPosTarget.x;
-	packet.y = kPPosTarget.y;
+	packet.x = static_cast<int32_t>(kPPosTarget.x);
+	packet.y = static_cast<int32_t>(kPPosTarget.y);
 
 	__LocalPositionToGlobalPosition(packet.x, packet.y);
 	
@@ -2862,7 +2862,7 @@ bool CPythonNetworkStream::SendGuildChangeGradeNamePacket(BYTE byGradeNumber, co
 		return false;
 
 	char szName[GUILD_GRADE_NAME_MAX_LEN+1];
-	strncpy(szName, c_szName, GUILD_GRADE_NAME_MAX_LEN);
+	strncpy_s(szName, sizeof(szName), c_szName, GUILD_GRADE_NAME_MAX_LEN);
 	szName[GUILD_GRADE_NAME_MAX_LEN] = '\0';
 
 	if (!Send(sizeof(szName), &szName))
@@ -3135,7 +3135,7 @@ bool CPythonNetworkStream::RecvGuild()
 					CPythonGuild::TGuildMemberData * pMemberData;
 					if (CPythonGuild::Instance().GetMemberDataPtrByPID(memberPacket.pid, &pMemberData))
 					{
-						strncpy(szName, pMemberData->strName.c_str(), CHARACTER_NAME_MAX_LEN);
+						strncpy_s(szName, sizeof(szName), pMemberData->strName.c_str(), CHARACTER_NAME_MAX_LEN);
 					}
 				}
 
@@ -3230,7 +3230,7 @@ bool CPythonNetworkStream::RecvGuild()
 
 			CPythonGuild::Instance().EnableGuild();
 			CPythonGuild::TGuildInfo & rGuildInfo = CPythonGuild::Instance().GetGuildInfoRef();
-			strncpy(rGuildInfo.szGuildName, GuildInfo.name, GUILD_NAME_MAX_LEN);
+			strncpy_s(rGuildInfo.szGuildName, sizeof(rGuildInfo.szGuildName), GuildInfo.name, GUILD_NAME_MAX_LEN);
 			rGuildInfo.szGuildName[GUILD_NAME_MAX_LEN] = '\0';
 
 			rGuildInfo.dwGuildID = GuildInfo.guild_id;
@@ -3386,6 +3386,24 @@ bool CPythonNetworkStream::RecvGuild()
 					CPythonGuild::Instance().EndGuildWar(kGuildWar.dwGuildOpp);
 					break;
 			}
+			break;
+		}
+		case GUILD_SUBHEADER_GC_WAR_SCORE:
+		{
+			// The stock client has no handler for this guild-war sub-packet, so its body was
+			// never consumed and the following packet got mis-parsed ("Unknown packet header"
+			// -> PostQuitMessage), disconnecting any guild member who logged in during an
+			// active war. The server (guild_war.cpp / war_map.cpp) sends DWORD guildSelf,
+			// DWORD guildOpp, int32 score; consume them to keep the byte stream aligned.
+			DWORD dwGuildSelf, dwGuildOpp;
+			int lScore;
+			if (!Recv(sizeof(dwGuildSelf), &dwGuildSelf))
+				return false;
+			if (!Recv(sizeof(dwGuildOpp), &dwGuildOpp))
+				return false;
+			if (!Recv(sizeof(lScore), &lScore))
+				return false;
+
 			break;
 		}
 		case GUILD_SUBHEADER_GC_GUILD_NAME:
@@ -3629,7 +3647,7 @@ bool CPythonNetworkStream::SendBuildPrivateShopPacket(const char * c_szName, con
 {
 	TPacketCGMyshop packet;
 	packet.bHeader = HEADER_CG_MYSHOP;
-	strncpy(packet.szSign, c_szName, SHOP_SIGN_MAX_LEN);
+	strncpy_s(packet.szSign, sizeof(packet.szSign), c_szName, SHOP_SIGN_MAX_LEN);
 	packet.bCount = static_cast<BYTE>(c_rSellingItemStock.size());
 	if (!Send(sizeof(packet), &packet))
 		return false;
@@ -4119,11 +4137,11 @@ bool CPythonNetworkStream::RecvSwitchbotPacket()
 		TItemPos pos(SWITCHBOT, update.slot);
 
 		IAbstractPlayer& rkPlayer = IAbstractPlayer::GetSingleton();
-		rkPlayer.SetItemCount(pos, update.count);
+		rkPlayer.SetItemCount(pos, static_cast<ItemStackType>(update.count));
 
 		for (int i = 0; i < ITEM_SOCKET_SLOT_MAX_NUM; ++i)
 		{
-			rkPlayer.SetItemMetinSocket(pos, i, update.alSockets[i]);
+			rkPlayer.SetItemMetinSocket(pos, i, static_cast<DWORD>(update.alSockets[i]));
 
 		}
 
@@ -4145,7 +4163,7 @@ bool CPythonNetworkStream::RecvSwitchbotPacket()
 			const int test = sizeof(CPythonSwitchbot::TSwitchbottAttributeTable);
 
 			CPythonSwitchbot::TSwitchbottAttributeTable table;
-			if (!Recv(table_size, &table))
+			if (!Recv(static_cast<int>(table_size), &table))
 			{
 				return false;
 			}

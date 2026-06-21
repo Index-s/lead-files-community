@@ -46,7 +46,8 @@ void CItem::Initialize()
 	m_pOwner = NULL;
 	m_dwID = 0;
 	m_bEquipped = false;
-	m_dwVID = m_wCell = m_dwCount = m_lFlag = 0;
+	m_wCell = 0;
+	m_dwVID = m_dwCount = m_lFlag = 0;
 	m_pProto = NULL;
 	m_bExchanging = false;
 	memset(&m_alSockets, 0, sizeof(m_alSockets));
@@ -202,7 +203,7 @@ void CItem::UpdatePacket()
 
 	pack.header = HEADER_GC_ITEM_UPDATE;
 	pack.Cell = TItemPos(GetWindow(), m_wCell);
-	pack.count	= m_dwCount;
+	pack.count	= static_cast<ItemStackType>(m_dwCount);
 
 	for (int i = 0; i < ITEM_SOCKET_MAX_NUM; ++i)
 		pack.alSockets[i] = m_alSockets[i];
@@ -248,11 +249,11 @@ bool CItem::SetCount(DWORD count)
 
 				if (NULL != pItem)
 				{
-					pOwner->ChainQuickslotItem(pItem, QUICKSLOT_TYPE_ITEM, wCell);
+					pOwner->ChainQuickslotItem(pItem, QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(wCell));
 				}
 				else
 				{
-					pOwner->SyncQuickslot(QUICKSLOT_TYPE_ITEM, wCell, 255);
+					pOwner->SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(wCell), 255);
 				}
 			}
 
@@ -262,7 +263,7 @@ bool CItem::SetCount(DWORD count)
 		{
 			if (!IsDragonSoul())
 			{
-				m_pOwner->SyncQuickslot(QUICKSLOT_TYPE_ITEM, m_wCell, 255);
+				m_pOwner->SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(m_wCell), 255);
 			}
 			M2_DESTROY_ITEM(RemoveFromCharacter());
 		}
@@ -610,7 +611,7 @@ void CItem::ModifyPoints(bool bAdd)
 			{
 				DWORD dwVnum;
 
-				if ((dwVnum = GetSocket(i)) <= 2)
+				if ((dwVnum = static_cast<DWORD>(GetSocket(i))) <= 2)
 					continue;
 
 				TItemTable * p = ITEM_MANAGER::instance().GetTable(dwVnum);
@@ -699,7 +700,7 @@ void CItem::ModifyPoints(bool bAdd)
 				if (bAdd)
 				{
 					if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
-						m_pOwner->SetPart(PART_WEAPON, GetVnum());
+						m_pOwner->SetPart(PART_WEAPON, static_cast<WORD>(GetVnum()));
 				}
 				else
 				{
@@ -714,7 +715,7 @@ void CItem::ModifyPoints(bool bAdd)
 				if (bAdd)
 				{
 					if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
-						m_pOwner->SetPart(PART_WEAPON, GetVnum());
+						m_pOwner->SetPart(PART_WEAPON, static_cast<WORD>(GetVnum()));
 				}
 				else
 				{
@@ -735,7 +736,7 @@ void CItem::ModifyPoints(bool bAdd)
 					if (bAdd)
 					{
 						if (GetProto()->bSubType == ARMOR_BODY)
-							m_pOwner->SetPart(PART_MAIN, GetVnum());
+							m_pOwner->SetPart(PART_MAIN, static_cast<WORD>(GetVnum()));
 					}
 					else
 					{
@@ -778,7 +779,7 @@ void CItem::ModifyPoints(bool bAdd)
 
 				if (PART_MAX_NUM != toSetPart)
 				{
-					m_pOwner->SetPart((BYTE)toSetPart, toSetValue);
+					m_pOwner->SetPart((BYTE)toSetPart, static_cast<WORD>(toSetValue));
 					m_pOwner->UpdatePacket();
 				}
 			}
@@ -796,7 +797,7 @@ void CItem::ModifyPoints(bool bAdd)
 						break;
 					for (itertype (pAttrGroup->m_vecAttrs) it = pAttrGroup->m_vecAttrs.begin(); it != pAttrGroup->m_vecAttrs.end(); it++)
 					{
-						m_pOwner->ApplyPoint(it->apply_type, bAdd ? it->apply_value : -it->apply_value);
+						m_pOwner->ApplyPoint(static_cast<BYTE>(it->apply_type), bAdd ? static_cast<int>(it->apply_value) : -static_cast<int>(it->apply_value));
 					}
 				}
 			}
@@ -1005,23 +1006,23 @@ bool CItem::CreateSocket(BYTE bSlot, BYTE bGold)
 	return true;
 }
 
-void CItem::SetSockets(const int32_t * c_al)
+void CItem::SetSockets(const TimeT64 * c_al)
 {
 	thecore_memcpy(m_alSockets, c_al, sizeof(m_alSockets));
 	Save();
 }
 
-void CItem::SetSocket(int i, int32_t v, bool bLog)
+void CItem::SetSocket(int i, TimeT64 v, bool bLog)
 {
 	assert(i < ITEM_SOCKET_MAX_NUM);
 	m_alSockets[i] = v;
 	UpdatePacket();
 	Save();
 	if (bLog)
-		LogManager::instance().ItemLog(i, v, 0, GetID(), "SET_SOCKET", "", "", GetVnum());
+		LogManager::instance().ItemLog(i, static_cast<DWORD>(v), 0, GetID(), "SET_SOCKET", "", "", GetVnum());
 }
 
-int CItem::GetGold()
+GoldType CItem::GetGold()
 {
 	if (IS_SET(GetFlag(), ITEM_FLAG_COUNT_PER_1GOLD))
 	{
@@ -1034,7 +1035,7 @@ int CItem::GetGold()
 		return GetProto()->dwGold;
 }
 
-int CItem::GetShopBuyPrice()
+GoldType CItem::GetShopBuyPrice()
 {
 	return GetProto()->dwShopBuyPrice;
 }
@@ -1296,8 +1297,8 @@ EVENTFUNC(unique_expire_event)
 	}
 	else
 	{
-		uint32_t cur = get_global_time();
-		
+		TimeT64 cur = get_global_time();
+
 		if (pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME) <= cur)
 		{
 			pkItem->SetUniqueExpireEvent(NULL);
@@ -1310,7 +1311,7 @@ EVENTFUNC(unique_expire_event)
 			// correction
 			// by rtsummit
 			if (pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME) - cur < 600)
-				return PASSES_PER_SEC(pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME) - cur);
+				return PASSES_PER_SEC(static_cast<int>(pkItem->GetSocket(ITEM_SOCKET_UNIQUE_REMAIN_TIME) - cur));
 			else
 				return PASSES_PER_SEC(600);
 		}
@@ -1331,7 +1332,7 @@ EVENTFUNC(timer_based_on_wear_expire_event)
 	}
 
 	LPITEM pkItem = info->item;
-	int remain_time = pkItem->GetSocket(ITEM_SOCKET_REMAIN_SEC) - processing_time/passes_per_sec;
+	int remain_time = static_cast<int>(pkItem->GetSocket(ITEM_SOCKET_REMAIN_SEC)) - processing_time/passes_per_sec;
 	if (remain_time <= 0)
 	{
 		sys_log(0, "ITEM EXPIRED : expired %s %u", pkItem->GetName(), pkItem->GetID());
@@ -1375,18 +1376,14 @@ EVENTFUNC(real_time_expire_event)
 	if (NULL == item)
 		return 0;
 
-	const uint32_t current = get_global_time();
+	const TimeT64 current = get_global_time();
 
 	if (current > item->GetSocket(0))
 	{
-		switch (item->GetVnum())
+		if(item->IsNewMountItem())
 		{
-			if(item->IsNewMountItem())
-			{
-				if (item->GetSocket(2) != 0)
-					item->ClearMountAttributeAndAffect();
-			}
-			break;
+			if (item->GetSocket(2) != 0)
+				item->ClearMountAttributeAndAffect();
 		}
 
 		ITEM_MANAGER::instance().RemoveItem(item, "REAL_TIME_EXPIRE");
@@ -1445,7 +1442,7 @@ void CItem::StartUniqueExpireEvent()
 	if (GetVnum() == UNIQUE_ITEM_HIDE_ALIGNMENT_TITLE)
 		m_pOwner->ShowAlignment(false);
 
-	int iSec = GetSocket(ITEM_SOCKET_UNIQUE_SAVE_TIME);
+	int iSec = static_cast<int>(GetSocket(ITEM_SOCKET_UNIQUE_SAVE_TIME));
 
 	if (iSec == 0)
 		iSec = 60;
@@ -1474,8 +1471,8 @@ void CItem::StartTimerBasedOnWearExpireEvent()
 	if (-1 == GetProto()->cLimitTimerBasedOnWearIndex)
 		return;
 
-	int iSec = GetSocket(0);
-	
+	int iSec = static_cast<int>(GetSocket(0));
+
 	// To cut off the remaining time by minutes ...
 	if (0 != iSec)
 	{
@@ -1513,7 +1510,7 @@ void CItem::StopTimerBasedOnWearExpireEvent()
 	if (!m_pkTimerBasedOnWearExpireEvent)
 		return;
 
-	int remain_time = GetSocket(ITEM_SOCKET_REMAIN_SEC) - event_processing_time(m_pkTimerBasedOnWearExpireEvent) / passes_per_sec;
+	int remain_time = static_cast<int>(GetSocket(ITEM_SOCKET_REMAIN_SEC)) - event_processing_time(m_pkTimerBasedOnWearExpireEvent) / passes_per_sec;
 
 	SetSocket(ITEM_SOCKET_REMAIN_SEC, remain_time);
 	event_cancel(&m_pkTimerBasedOnWearExpireEvent);
@@ -1886,17 +1883,17 @@ void CItem::CopySocketTo(LPITEM pItem)
 
 int CItem::GetAccessorySocketGrade()
 {
-   	return MINMAX(0, GetSocket(0), GetAccessorySocketMaxGrade()); 
+   	return MINMAX(0, static_cast<int>(GetSocket(0)), GetAccessorySocketMaxGrade());
 }
 
 int CItem::GetAccessorySocketMaxGrade()
 {
-   	return MINMAX(0, GetSocket(1), ITEM_ACCESSORY_SOCKET_MAX_NUM);
+   	return MINMAX(0, static_cast<int>(GetSocket(1)), ITEM_ACCESSORY_SOCKET_MAX_NUM);
 }
 
 int CItem::GetAccessorySocketDownGradeTime()
 {
-	return MINMAX(0, GetSocket(2), aiAccessorySocketDegradeTime[GetAccessorySocketGrade()]);
+	return MINMAX(0, static_cast<int>(GetSocket(2)), aiAccessorySocketDegradeTime[GetAccessorySocketGrade()]);
 }
 
 void CItem::AttrLog()
@@ -1910,7 +1907,7 @@ void CItem::AttrLog()
 	{
 		if (m_alSockets[i])
 		{
-			LogManager::instance().ItemLog(i, m_alSockets[i], 0, GetID(), "INFO_SOCKET", "", pszIP ? pszIP : "", GetVnum());
+			LogManager::instance().ItemLog(i, static_cast<DWORD>(m_alSockets[i]), 0, GetID(), "INFO_SOCKET", "", pszIP ? pszIP : "", GetVnum());
 		}
 	}
 
@@ -1961,11 +1958,11 @@ int CItem::GiveMoreTime_Per(float fPercent)
 	if (IsDragonSoul())
 	{
 		DWORD duration = DSManager::instance().GetDuration(this);
-		int remain_sec = GetSocket(ITEM_SOCKET_REMAIN_SEC);
-		int given_time = fPercent * duration / 100;
+		int remain_sec = static_cast<int>(GetSocket(ITEM_SOCKET_REMAIN_SEC));
+		int given_time = static_cast<int>(fPercent * duration / 100);
 		if (remain_sec == duration)
 			return false;
-		if ((given_time + remain_sec) >= duration)
+		if ((given_time + remain_sec) >= static_cast<int>(duration))
 		{
 			SetSocket(ITEM_SOCKET_REMAIN_SEC, duration);
 			return duration - remain_sec;
@@ -1986,7 +1983,7 @@ int CItem::GiveMoreTime_Fix(DWORD dwTime)
 	if (IsDragonSoul())
 	{
 		DWORD duration = DSManager::instance().GetDuration(this);
-		int remain_sec = GetSocket(ITEM_SOCKET_REMAIN_SEC);
+		int remain_sec = static_cast<int>(GetSocket(ITEM_SOCKET_REMAIN_SEC));
 		if (remain_sec == duration)
 			return false;
 		if ((dwTime + remain_sec) >= duration)

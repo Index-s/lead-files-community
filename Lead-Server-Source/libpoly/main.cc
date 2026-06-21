@@ -20,7 +20,7 @@ int main(int argc, char ** argv)
 #ifndef __WIN32__
 	srandom(time(0) + getpid());
 #else
-	srand(time(0) + GetCurrentProcessId());
+	srand(static_cast<unsigned int>(time(0) + GetCurrentProcessId()));
 #endif
 
     if (argc != 3)

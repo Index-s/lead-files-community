@@ -1,6 +1,8 @@
 ﻿#pragma once
 
-template <typename T> 
+#include <stdint.h>
+
+template <typename T>
 class TAbstractSingleton
 { 
 	static T * ms_singleton;
@@ -9,8 +11,8 @@ public:
 	TAbstractSingleton()
 	{ 
 		assert(!ms_singleton);
-		int offset = (int) (T*) 1 - (int) (CSingleton <T>*) (T*) 1; 
-		ms_singleton = (T*) ((int) this + offset);
+		intptr_t offset = (intptr_t) (T*) 1 - (intptr_t) (CSingleton <T>*) (T*) 1;
+		ms_singleton = (T*) ((intptr_t) this + offset);
 	} 
 
 	virtual ~TAbstractSingleton()

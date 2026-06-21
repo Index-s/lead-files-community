@@ -371,7 +371,7 @@ void CGraphicObjectInstance::UpdateCollisionData(const CStaticCollisionDataVecto
 
 DWORD CGraphicObjectInstance::GetCollisionInstanceCount()
 {
-	return m_StaticCollisionInstanceVector.size();
+	return static_cast<DWORD>(m_StaticCollisionInstanceVector.size());
 }
 
 CBaseCollisionInstance * CGraphicObjectInstance::GetCollisionInstanceData(DWORD dwIndex)

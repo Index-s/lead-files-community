@@ -241,7 +241,7 @@ void CMapManager::BeginEnvironment()
 	{
 		ms_lpd3dDevice->LightEnable(0, TRUE);
 
-		rkMap.ApplyLight((DWORD)mc_pcurEnvironmentData, mc_pcurEnvironmentData->DirLights[ENV_DIRLIGHT_BACKGROUND]);		
+		rkMap.ApplyLight((DWORD_PTR)mc_pcurEnvironmentData, mc_pcurEnvironmentData->DirLights[ENV_DIRLIGHT_BACKGROUND]);
 	}
 	else
 		ms_lpd3dDevice->LightEnable(0, FALSE);
@@ -612,8 +612,8 @@ void CMapManager::__LoadMapInfoVector()
 	for (UINT uLineIndex=0; uLineIndex<textFileLoader.GetLineCount(); ++uLineIndex)
 	{
 		const std::string& c_rstLine=textFileLoader.GetLineString(uLineIndex);
-		sscanf(c_rstLine.c_str(), "%s %d %d %d %d", 
-			szMapName, 
+		sscanf_s(c_rstLine.c_str(), "%s %d %d %d %d",
+			szMapName, (unsigned)sizeof(szMapName),
 			&x, &y, &width, &height);
 
 		if ('\0'==szMapName[0])

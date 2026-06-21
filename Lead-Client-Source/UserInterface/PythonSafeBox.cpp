@@ -49,7 +49,7 @@ GoldType CPythonSafeBox::GetMoney()
 
 int CPythonSafeBox::GetCurrentSafeBoxSize()
 {
-	return m_ItemInstanceVector.size();
+	return static_cast<int>(m_ItemInstanceVector.size());
 }
 
 BOOL CPythonSafeBox::GetSlotItemID(DWORD dwSlotIndex, DWORD* pdwItemID)
@@ -141,7 +141,7 @@ BOOL CPythonSafeBox::GetSlotMallItemID(DWORD dwSlotIndex, DWORD * pdwItemID)
 
 DWORD CPythonSafeBox::GetMallSize()
 {
-	return m_MallItemInstanceVector.size();
+	return static_cast<DWORD>(m_MallItemInstanceVector.size());
 }
 
 CPythonSafeBox::CPythonSafeBox()
@@ -213,7 +213,7 @@ PyObject * safeboxGetItemMetinSocket(PyObject * poSelf, PyObject * poArgs)
 	if (!CPythonSafeBox::Instance().GetItemDataPtr(iSlotIndex, &pItemData))
 		return Py_BuildException();
 
-	return Py_BuildValue("i", pItemData->alSockets[iSocketIndex]);
+	return Py_BuildValue("i", (int)pItemData->alSockets[iSocketIndex]);
 }
 
 PyObject * safeboxGetItemAttribute(PyObject * poSelf, PyObject * poArgs)
@@ -282,7 +282,7 @@ PyObject * safeboxGetMallItemMetinSocket(PyObject * poSelf, PyObject * poArgs)
 	if (!CPythonSafeBox::Instance().GetMallItemDataPtr(iSlotIndex, &pItemData))
 		return Py_BuildException();
 
-	return Py_BuildValue("i", pItemData->alSockets[iSocketIndex]);
+	return Py_BuildValue("i", (int)pItemData->alSockets[iSocketIndex]);
 }
 
 PyObject * safeboxGetMallItemAttribute(PyObject * poSelf, PyObject * poArgs)

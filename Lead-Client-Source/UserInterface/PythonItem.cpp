@@ -15,7 +15,7 @@ std::string CPythonItem::TGroundItemInstance::ms_astDropSoundFileName[DROPSOUND_
 void CPythonItem::GetInfo(std::string* pstInfo)
 {
 	char szInfo[256];
-	sprintf(szInfo, "Item: Inst %d, Pool %d", m_GroundItemInstanceMap.size(), m_GroundItemInstancePool.GetCapacity());
+	sprintf_s(szInfo, sizeof(szInfo), "Item: Inst %zu, Pool %d", m_GroundItemInstanceMap.size(), m_GroundItemInstancePool.GetCapacity());
 
 	pstInfo->append(szInfo);
 }
@@ -672,7 +672,7 @@ void CPythonItem::BuildNoGradeNameData(int iType)
 
 DWORD CPythonItem::GetNoGradeNameDataCount()
 {
-	return m_NoGradeNameItemData.size();
+	return static_cast<DWORD>(m_NoGradeNameItemData.size());
 }
 
 CItemData * CPythonItem::GetNoGradeNameDataPtr(DWORD dwIndex)

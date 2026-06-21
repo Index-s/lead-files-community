@@ -266,7 +266,7 @@ void CHARACTER::SetItem(TItemPos Cell, LPITEM pItem, bool bWereMine)
 {
 	ItemCellType wCell = Cell.cell;
 	BYTE window_type = Cell.window_type;
-	if ((unsigned long)((CItem*)pItem) == 0xff || (unsigned long)((CItem*)pItem) == 0xffffffff)
+	if ((uintptr_t)((CItem*)pItem) == 0xff || (uintptr_t)((CItem*)pItem) == 0xffffffff)
 	{
 		sys_err("!!! FATAL ERROR !!! item == 0xff (char: %s cell: %u)", GetName(), wCell);
 		core_dump();
@@ -431,7 +431,7 @@ void CHARACTER::SetItem(TItemPos Cell, LPITEM pItem, bool bWereMine)
 			pack.header = HEADER_GC_ITEM_SET;
 			pack.Cell = Cell;
 
-			pack.count = pItem->GetCount();
+			pack.count = static_cast<ItemStackType>(pItem->GetCount());
 			pack.vnum = pItem->GetVnum();
 			pack.flags = pItem->GetFlag();
 			pack.anti_flags	= pItem->GetAntiFlag();
@@ -809,7 +809,7 @@ void TransformRefineItem(LPITEM pkOldItem, LPITEM pkNewItem)
 
 		for (int i = 0; i < ITEM_SOCKET_MAX_NUM; ++i)
 		{
-			long socket = pkOldItem->GetSocket(i);
+			long socket = static_cast<long>(pkOldItem->GetSocket(i));
 
 			if (socket > 2 && socket != ITEM_BROKEN_METIN_VNUM)
 				pkNewItem->SetSocket(slot++, socket);
@@ -882,7 +882,7 @@ bool CHARACTER::DoRefine(LPITEM item, bool bMoneyOnly)
 	// REFINE_COST
 	int cost = ComputeRefineFee(prt->cost);
 
-	int RefineChance = GetQuestFlag("main_quest_lv7.refine_chance");
+	int RefineChance = static_cast<int>(GetQuestFlag("main_quest_lv7.refine_chance"));
 
 	if (RefineChance > 0)
 	{
@@ -1427,7 +1427,7 @@ bool CHARACTER::RefineItem(LPITEM pkItem, LPITEM pkTarget)
 
 		for (int i = 0; i < ITEM_SOCKET_MAX_NUM; i++)
 		{
-			long socket = pkTarget->GetSocket(i);
+			long socket = static_cast<long>(pkTarget->GetSocket(i));
 			if (socket > 2 && socket != ITEM_BROKEN_METIN_VNUM)
 			{
 				bHasMetinStone = true;
@@ -1439,7 +1439,7 @@ bool CHARACTER::RefineItem(LPITEM pkItem, LPITEM pkTarget)
 		{
 			for (int i = 0; i < ITEM_SOCKET_MAX_NUM; ++i)
 			{
-				long socket = pkTarget->GetSocket(i);
+				long socket = static_cast<long>(pkTarget->GetSocket(i));
 				if (socket > 2 && socket != ITEM_BROKEN_METIN_VNUM)
 				{
 					AutoGiveItem(socket);
@@ -1543,7 +1543,7 @@ void CHARACTER::ProcessRecallItem(LPITEM item)
 {
 	int idx;
 
-	if ((idx = SECTREE_MANAGER::instance().GetMapIndex(item->GetSocket(0), item->GetSocket(1))) == 0)
+	if ((idx = SECTREE_MANAGER::instance().GetMapIndex(static_cast<int32_t>(item->GetSocket(0)), static_cast<int32_t>(item->GetSocket(1)))) == 0)
 		return;
 
 	int iEmpireByMapIndex = -1;
@@ -1586,7 +1586,7 @@ void CHARACTER::ProcessRecallItem(LPITEM item)
 	else
 	{
 		sys_log(1, "Recall: %s %d %d -> %d %d", GetName(), GetX(), GetY(), item->GetSocket(0), item->GetSocket(1));
-		WarpSet(item->GetSocket(0), item->GetSocket(1));
+		WarpSet(static_cast<int32_t>(item->GetSocket(0)), static_cast<int32_t>(item->GetSocket(1)));
 		item->SetCount(item->GetCount() - 1);
 	}
 }
@@ -1740,7 +1740,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 	{
 		if (0 == item->GetSocket(1))
 		{
-			long duration = (0 != item->GetSocket(0)) ? item->GetSocket(0) : item->GetProto()->aLimits[iLimitRealtimeStartFirstUseFlagIndex].lValue;
+			TimeT64 duration = (0 != item->GetSocket(0)) ? item->GetSocket(0) : item->GetProto()->aLimits[iLimitRealtimeStartFirstUseFlagIndex].lValue;
 
 			if (0 == duration)
 				duration = 60 * 60 * 24 * 7;
@@ -2108,7 +2108,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 					return false;
 				}
 
-				DWORD dwVnum = item->GetSocket(0);
+				DWORD dwVnum = static_cast<DWORD>(item->GetSocket(0));
 
 				if (SkillLevelDown(dwVnum))
 				{
@@ -2132,7 +2132,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 
 				if (item->GetVnum() == 50300)
 				{
-					dwVnum = item->GetSocket(0);
+					dwVnum = static_cast<DWORD>(item->GetSocket(0));
 				}
 				else
 				{
@@ -2369,11 +2369,11 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 								{
 									if (item->GetVnum() == DRAGON_HEART_VNUM)
 									{
-										sprintf(buf, "Inc %ds by item{VN:%d SOC%d:%d}", ret, item->GetVnum(), ITEM_SOCKET_CHARGING_AMOUNT_IDX, item->GetSocket(ITEM_SOCKET_CHARGING_AMOUNT_IDX));
+										snprintf(buf, sizeof(buf), "Inc %ds by item{VN:%d SOC%d:%lld}", ret, item->GetVnum(), ITEM_SOCKET_CHARGING_AMOUNT_IDX, (long long) item->GetSocket(ITEM_SOCKET_CHARGING_AMOUNT_IDX));
 									}
 									else
 									{
-										sprintf(buf, "Inc %ds by item{VN:%d VAL%d:%ld}", ret, item->GetVnum(), ITEM_VALUE_CHARGING_AMOUNT_IDX, item->GetValue(ITEM_VALUE_CHARGING_AMOUNT_IDX));
+										snprintf(buf, sizeof(buf), "Inc %ds by item{VN:%d VAL%d:%ld}", ret, item->GetVnum(), ITEM_VALUE_CHARGING_AMOUNT_IDX, item->GetValue(ITEM_VALUE_CHARGING_AMOUNT_IDX));
 									}
 
 									ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Charged for %d seconds."), ret);
@@ -2385,11 +2385,11 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 								{
 									if (item->GetVnum() == DRAGON_HEART_VNUM)
 									{
-										sprintf(buf, "No change by item{VN:%d SOC%d:%d}", item->GetVnum(), ITEM_SOCKET_CHARGING_AMOUNT_IDX, item->GetSocket(ITEM_SOCKET_CHARGING_AMOUNT_IDX));
+										snprintf(buf, sizeof(buf), "No change by item{VN:%d SOC%d:%lld}", item->GetVnum(), ITEM_SOCKET_CHARGING_AMOUNT_IDX, (long long) item->GetSocket(ITEM_SOCKET_CHARGING_AMOUNT_IDX));
 									}
 									else
 									{
-										sprintf(buf, "No change by item{VN:%d VAL%d:%ld}", item->GetVnum(), ITEM_VALUE_CHARGING_AMOUNT_IDX, item->GetValue(ITEM_VALUE_CHARGING_AMOUNT_IDX));
+										snprintf(buf, sizeof(buf), "No change by item{VN:%d VAL%d:%ld}", item->GetVnum(), ITEM_VALUE_CHARGING_AMOUNT_IDX, item->GetValue(ITEM_VALUE_CHARGING_AMOUNT_IDX));
 									}
 
 									ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Charging is not possible."));
@@ -2416,7 +2416,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 								if (ret)
 								{
 									ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Charged for %d seconds."), ret);
-									sprintf(buf, "Increase %ds by item{VN:%d VAL%d:%ld}", ret, item->GetVnum(), ITEM_VALUE_CHARGING_AMOUNT_IDX, item->GetValue(ITEM_VALUE_CHARGING_AMOUNT_IDX));
+									snprintf(buf, sizeof(buf), "Increase %ds by item{VN:%d VAL%d:%ld}", ret, item->GetVnum(), ITEM_VALUE_CHARGING_AMOUNT_IDX, item->GetValue(ITEM_VALUE_CHARGING_AMOUNT_IDX));
 									LogManager::instance().ItemLog(this, item, "DS_CHARGING_SUCCESS", buf);
 									item->SetCount(item->GetCount() - 1);
 									return true;
@@ -2424,7 +2424,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 								else
 								{
 									ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Charging is not possible."));
-									sprintf(buf, "No change by item{VN:%d VAL%d:%ld}", item->GetVnum(), ITEM_VALUE_CHARGING_AMOUNT_IDX, item->GetValue(ITEM_VALUE_CHARGING_AMOUNT_IDX));
+									snprintf(buf, sizeof(buf), "No change by item{VN:%d VAL%d:%ld}", item->GetVnum(), ITEM_VALUE_CHARGING_AMOUNT_IDX, item->GetValue(ITEM_VALUE_CHARGING_AMOUNT_IDX));
 									LogManager::instance().ItemLog(this, item, "DS_CHARGING_FAILED", buf);
 									return false;
 								}
@@ -2607,7 +2607,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 									}
 									else
 									{
-										AutoGiveItem(dwRewardVnum, dwRewardCount);
+										AutoGiveItem(dwRewardVnum, static_cast<ItemStackType>(dwRewardCount));
 									}
 									ITEM_MANAGER::instance().RemoveItem(item);
 								}
@@ -2640,7 +2640,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 									}
 
 									int dist = 0;
-									float distance = (DISTANCE_SQRT(GetX()-item->GetSocket(1), GetY()-item->GetSocket(2)));
+									float distance = (DISTANCE_SQRT(GetX()-static_cast<long>(item->GetSocket(1)), GetY()-static_cast<long>(item->GetSocket(2))));
 
 									if (distance < 1000.0f)
 									{
@@ -2756,7 +2756,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 
 										TPacketGCChat pack_chat;
 										pack_chat.header	= HEADER_GC_CHAT;
-										pack_chat.size		= sizeof(TPacketGCChat) + len;
+										pack_chat.size		= static_cast<WORD>(sizeof(TPacketGCChat) + len);
 										pack_chat.type		= CHAT_TYPE_COMMAND;
 										pack_chat.id		= 0;
 										pack_chat.bEmpire	= GetDesc()->GetEmpire();
@@ -2793,7 +2793,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										char chatbuf[CHAT_MAX_LEN + 1];
 										int len = snprintf(chatbuf, sizeof(chatbuf),
 												"StoneDetect %u %d %d",
-											   	(DWORD)GetVID(), dist, (int)GetDegreeFromPositionXY(GetX(), item->GetSocket(2), item->GetSocket(1), GetY()));
+											   	(DWORD)GetVID(), dist, (int)GetDegreeFromPositionXY(GetX(), static_cast<long>(item->GetSocket(2)), static_cast<long>(item->GetSocket(1)), GetY()));
 
 										if (len < 0 || len >= (int) sizeof(chatbuf))
 											len = sizeof(chatbuf) - 1;
@@ -2802,7 +2802,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 
 										TPacketGCChat pack_chat;
 										pack_chat.header	= HEADER_GC_CHAT;
-										pack_chat.size		= sizeof(TPacketGCChat) + len;
+										pack_chat.size		= static_cast<WORD>(sizeof(TPacketGCChat) + len);
 										pack_chat.type		= CHAT_TYPE_COMMAND;
 										pack_chat.id		= 0;
 										pack_chat.bEmpire	= GetDesc()->GetEmpire();
@@ -2965,7 +2965,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 							case 50104:
 							case 50105:
 							case 50106:
-								CreateFly(item->GetVnum() - 50100 + FLY_FIREWORK1, this);
+								CreateFly(static_cast<BYTE>(item->GetVnum() - 50100 + FLY_FIREWORK1), this);
 								item->SetCount(item->GetCount() - 1);
 								break;
 
@@ -3274,7 +3274,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 										}
 										else
 										{
-											SkillLearnWaitMoreTimeMessage(GetSkillNextReadTime(dwSkillVnum) - get_global_time());
+											SkillLearnWaitMoreTimeMessage(static_cast<DWORD>(GetSkillNextReadTime(dwSkillVnum) - get_global_time()));
 											return false;
 										}
 									}
@@ -3333,7 +3333,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 									int val = item->GetValue(0);
 									int interval = item->GetValue(1);
 									quest::PC* pPC = quest::CQuestManager::instance().GetPC(GetPlayerID());
-									int last_use_time = pPC->GetFlag("mythical_peach.last_use_time");
+									TimeT64 last_use_time = pPC->GetFlag("mythical_peach.last_use_time");
 
 									if (get_global_time() - last_use_time < interval * 60 * 60)
 									{
@@ -3411,7 +3411,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 									std::stack<long> socket;
 
 									for (int i = 0; i < ITEM_SOCKET_MAX_NUM; ++i)
-										socket.push(item2->GetSocket(i));
+										socket.push(static_cast<long>(item2->GetSocket(i)));
 
 									int idx = ITEM_SOCKET_MAX_NUM - 1;
 
@@ -3466,13 +3466,13 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 
 										if (pPC)
 										{
-											int last_dye_level = pPC->GetFlag("dyeing_hair.last_dye_level");
+											int last_dye_level = static_cast<int>(pPC->GetFlag("dyeing_hair.last_dye_level"));
 
 											if (last_dye_level == 0 ||
 													last_dye_level+3 <= GetLevel() ||
 													item->GetVnum() == 70201)
 											{
-												SetPart(PART_HAIR, item->GetVnum() - 70201);
+												SetPart(PART_HAIR, static_cast<WORD>(item->GetVnum() - 70201));
 
 												if (item->GetVnum() == 70201)
 													pPC->SetFlag("dyeing_hair.last_dye_level", 0);
@@ -3679,7 +3679,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 
 							case ITEM_ELK_VNUM: // bundle of money
 								{
-									int iGold = item->GetSocket(0);
+									int iGold = static_cast<int>(item->GetSocket(0));
 									ITEM_MANAGER::instance().RemoveItem(item);
 									ChatPacket(CHAT_TYPE_INFO, LC_TEXT("You have received %d Yang."), iGold);
 									PointChange(POINT_GOLD, iGold);
@@ -3954,7 +3954,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 
 								if (pPC != NULL)
 								{
-									int last_use_time = pPC->GetFlag("mirror_of_disapper.last_use_time");
+									TimeT64 last_use_time = pPC->GetFlag("mirror_of_disapper.last_use_time");
 
 									if (get_global_time() - last_use_time < 10*60)
 									{
@@ -4108,7 +4108,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 								return false;
 							}
 
-							PointChange(POINT_SP_RECOVERY, item->GetValue(1) * MIN(200, (100 + GetPoint(POINT_POTION_BONUS))) / 100);
+							PointChange(POINT_SP_RECOVERY, item->GetValue(1) * MIN(200, static_cast<int>(100 + GetPoint(POINT_POTION_BONUS))) / 100);
 							StartAffectEvent();
 							EffectPacket(SE_SPUP_BLUE);
 						}
@@ -4120,7 +4120,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 								return false;
 							}
 
-							PointChange(POINT_HP_RECOVERY, item->GetValue(0) * MIN(200, (100 + GetPoint(POINT_POTION_BONUS))) / 100);
+							PointChange(POINT_HP_RECOVERY, item->GetValue(0) * MIN(200, static_cast<int>(100 + GetPoint(POINT_POTION_BONUS))) / 100);
 							StartAffectEvent();
 							EffectPacket(SE_HPUP_RED);
 						}
@@ -4438,14 +4438,14 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 
 										if (pPC)
 										{
-											DWORD dwNowMin = get_global_time() / 60;
+											TimeT64 dwNowMin = get_global_time() / 60;
 
-											DWORD dwLastChangeItemAttrMin = pPC->GetFlag(msc_szLastChangeItemAttrFlag);
+											TimeT64 dwLastChangeItemAttrMin = pPC->GetFlag(msc_szLastChangeItemAttrFlag);
 
 											if (dwLastChangeItemAttrMin + dwChangeItemAttrCycle > dwNowMin)
 											{
 												ChatPacket(CHAT_TYPE_INFO, LC_TEXT("You can only do this %d minutes after an upgrade. (%d minutes left)"),
-														dwChangeItemAttrCycle, dwChangeItemAttrCycle - (dwNowMin - dwLastChangeItemAttrMin));
+														dwChangeItemAttrCycle, static_cast<int>(dwChangeItemAttrCycle - (dwNowMin - dwLastChangeItemAttrMin)));
 												return false;
 											}
 
@@ -4867,7 +4867,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 				{
 					DWORD dwVnum;   
 
-					if ((dwVnum = item2->GetSocket(i)) <= 2)
+					if ((dwVnum = static_cast<DWORD>(item2->GetSocket(i))) <= 2)
 						continue;
 
 					TItemTable * p = ITEM_MANAGER::instance().GetTable(dwVnum);
@@ -4954,8 +4954,8 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 					return false;
 				}
 				int		apply_type		= aApplyInfo[item->GetSocket(0)].bPointType;
-				int		apply_value		= item->GetSocket(1);
-				int		apply_duration	= item->GetSocket(2);
+				int		apply_value		= static_cast<int>(item->GetSocket(1));
+				int		apply_duration	= static_cast<int>(item->GetSocket(2));
 				
 				if (FindAffect(affect_type, apply_type))
 				{
@@ -5038,7 +5038,7 @@ bool CHARACTER::UseItem(TItemPos Cell, TItemPos DestCell)
 	if (Cell.IsSwitchbotPosition())
 	{
 		CSwitchbot* pkSwitchbot = CSwitchbotManager::Instance().FindSwitchbot(GetPlayerID());
-		if (pkSwitchbot && pkSwitchbot->IsActive(Cell.cell))
+		if (pkSwitchbot && pkSwitchbot->IsActive(static_cast<BYTE>(Cell.cell)))
 		{
 			return false;
 		}
@@ -5051,7 +5051,7 @@ bool CHARACTER::UseItem(TItemPos Cell, TItemPos DestCell)
 			return false;
 		}
 
-		MoveItem(Cell, TItemPos(INVENTORY, iEmptyCell), item->GetCount());
+		MoveItem(Cell, TItemPos(INVENTORY, iEmptyCell), static_cast<ItemStackType>(item->GetCount()));
 		return true;
 	}
 
@@ -5135,8 +5135,8 @@ bool CHARACTER::UseItem(TItemPos Cell, TItemPos DestCell)
 			// return memory 
 			if (item->GetVnum() == 22010)
 			{
-				x = item->GetSocket(0) - GetX();
-				y = item->GetSocket(1) - GetY();
+				x = static_cast<int>(item->GetSocket(0)) - GetX();
+				y = static_cast<int>(item->GetSocket(1)) - GetY();
 			}
 			// return department
 			else if (item->GetVnum() == 22000) 
@@ -5150,8 +5150,8 @@ bool CHARACTER::UseItem(TItemPos Cell, TItemPos DestCell)
 				}
 				else
 				{
-					x = item->GetSocket(0) - GetX();
-					y = item->GetSocket(1) - GetY();
+					x = static_cast<int>(item->GetSocket(0)) - GetX();
+					y = static_cast<int>(item->GetSocket(1)) - GetY();
 				}
 			}
 
@@ -5178,7 +5178,7 @@ bool CHARACTER::UseItem(TItemPos Cell, TItemPos DestCell)
 	}
 
 	// Check transaction window restrictions when using bundle silk 
-	if (item->GetVnum() == 50200 | item->GetVnum() == 71049)
+	if (item->GetVnum() == 50200 || item->GetVnum() == 71049)
 	{
 		if (GetExchange() || GetMyShop() || GetShopOwner() || IsOpenSafebox() || IsCubeOpen())
 		{
@@ -5251,9 +5251,9 @@ bool CHARACTER::DropItem(TItemPos Cell, ItemStackType bCount)
 	}
 
 	if (bCount == 0 || bCount > item->GetCount())
-		bCount = item->GetCount();
+		bCount = static_cast<ItemStackType>(item->GetCount());
 
-	SyncQuickslot(QUICKSLOT_TYPE_ITEM, Cell.cell, 255);	// Quickslot erased from
+	SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(Cell.cell), 255);	// Quickslot erased from
 
 	LPITEM pkItemToDrop;
 
@@ -5321,7 +5321,7 @@ bool CHARACTER::DropGold(GoldType gold)
 
 	m_dwLastGoldDropTime = get_dword_time();
 
-	LPITEM item = ITEM_MANAGER::instance().CreateItem(1, gold);
+	LPITEM item = ITEM_MANAGER::instance().CreateItem(1, static_cast<DWORD>(gold));
 
 	if (item)
 	{
@@ -5390,7 +5390,7 @@ bool CHARACTER::MoveItem(TItemPos Cell, TItemPos DestCell, ItemStackType count)
 		return false;
 	}
 
-	if (Cell.IsSwitchbotPosition() && CSwitchbotManager::Instance().IsActive(GetPlayerID(), Cell.cell))
+	if (Cell.IsSwitchbotPosition() && CSwitchbotManager::Instance().IsActive(GetPlayerID(), static_cast<BYTE>(Cell.cell)))
 	{
 		ChatPacket(CHAT_TYPE_INFO, LC_TEXT("Cannot move active switchbot item."));
 		return false;
@@ -5463,7 +5463,7 @@ bool CHARACTER::MoveItem(TItemPos Cell, TItemPos DestCell, ItemStackType count)
 					return false;
 
 			if (count == 0)
-				count = item->GetCount();
+				count = static_cast<ItemStackType>(item->GetCount());
 
 			sys_log(0, "%s: ITEM_STACK %s (window: %d, cell : %d) -> (window:%d, cell %d) count %d", GetName(), item->GetName(), Cell.window_type, Cell.cell, 
 				DestCell.window_type, DestCell.cell, count);
@@ -5487,7 +5487,7 @@ bool CHARACTER::MoveItem(TItemPos Cell, TItemPos DestCell, ItemStackType count)
 			SetItem(DestCell, item, true);
 
 			if (INVENTORY == Cell.window_type && INVENTORY == DestCell.window_type)
-				SyncQuickslot(QUICKSLOT_TYPE_ITEM, Cell.cell, DestCell.cell);
+				SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(Cell.cell), static_cast<BYTE>(DestCell.cell));
 		}
 		else if (count < item->GetCount())
 		{
@@ -5552,9 +5552,9 @@ namespace NPartyPickupDistribute
 		int		total;
 		LPCHARACTER	c;
 		int		x, y;
-		int		iMoney;
+		GoldType	iMoney;
 
-		FMoneyDistributor(LPCHARACTER center, int iMoney) 
+		FMoneyDistributor(LPCHARACTER center, GoldType iMoney)
 			: total(0), c(center), x(center->GetX()), y(center->GetY()), iMoney(iMoney) 
 		{
 		}
@@ -5644,7 +5644,7 @@ bool CHARACTER::PickupItem(DWORD dwVID)
 			{
 				if (item->IsStackable() && !IS_SET(item->GetAntiFlag(), ITEM_ANTIFLAG_STACK))
 				{
-					ItemStackType bCount = item->GetCount();
+					ItemStackType bCount = static_cast<ItemStackType>(item->GetCount());
 
 					for (int i = 0; i < INVENTORY_MAX_NUM; ++i)
 					{
@@ -5852,7 +5852,7 @@ bool CHARACTER::SwapItem(ItemCellType bCell, ItemCellType bDestCell)
 
 		item2->RemoveFromCharacter();
 
-		if (item1->EquipTo(this, bEquipCell))
+		if (item1->EquipTo(this, static_cast<BYTE>(bEquipCell)))
 			item2->AddToCharacter(this, TItemPos(INVENTORY, bInvenCell));
 		else
 			sys_err("SwapItem cannot equip %s! item1 %s", item2->GetName(), item1->GetName());
@@ -5993,7 +5993,7 @@ bool CHARACTER::EquipItem(LPITEM item, int iCandidateCell)
 
 			if (item->EquipTo(this, iWearCell))
 			{
-				SyncQuickslot(QUICKSLOT_TYPE_ITEM, bOldCell, iWearCell);
+				SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(bOldCell), static_cast<BYTE>(iWearCell));
 			}
 		}
 	}
@@ -6007,7 +6007,7 @@ bool CHARACTER::EquipItem(LPITEM item, int iCandidateCell)
 			if (0 == item->GetSocket(1))
 			{
 				// Available time is Default by value Limit Value Use the value , Socket0 If there is a value, use that value. . ( Unit is seconds )
-				long duration = (0 != item->GetSocket(0)) ? item->GetSocket(0) : item->GetProto()->aLimits[item->GetProto()->cLimitRealTimeFirstUseIndex].lValue;
+				TimeT64 duration = (0 != item->GetSocket(0)) ? item->GetSocket(0) : item->GetProto()->aLimits[item->GetProto()->cLimitRealTimeFirstUseIndex].lValue;
 
 				if (0 == duration)
 					duration = 60 * 60 * 24 * 7;
@@ -6911,7 +6911,7 @@ bool CHARACTER::GiveItemFromSpecialItemGroup(DWORD dwGroupNum, std::vector<DWORD
 				break;
 			default:
 				{
-					item_get = AutoGiveItem(dwVnum, dwCount, iRarePct);
+					item_get = AutoGiveItem(dwVnum, static_cast<ItemStackType>(dwCount), iRarePct);
 
 					if (item_get)
 					{
@@ -6980,7 +6980,7 @@ bool CHARACTER::ItemProcess_Hair(LPITEM item, int iDestCell)
 
 	item->SetCount(item->GetCount() - 1);
 
-	SetPart(PART_HAIR, hair);
+	SetPart(PART_HAIR, static_cast<WORD>(hair));
 	UpdatePacket();
 
 	return true;
@@ -7001,7 +7001,7 @@ bool CHARACTER::ItemProcess_Polymorph(LPITEM item)
 		return false;
 	}
 
-	DWORD dwVnum = item->GetSocket(0);
+	DWORD dwVnum = static_cast<DWORD>(item->GetSocket(0));
 
 	if (dwVnum == 0)
 	{
@@ -7143,12 +7143,12 @@ void CHARACTER::AutoRecoveryItemProcess(const EAffectTypes type)
 	{
 		LPITEM pItem = FindItemByID(pAffect->dwFlag);
 
-		if (NULL != pItem && true == pItem->GetSocket(0))
+		if (NULL != pItem && 0 != pItem->GetSocket(0))
 		{
 			if (false == CArenaManager::instance().IsArenaMap(GetMapIndex()))
 			{
-				const long amount_of_used = pItem->GetSocket(idx_of_amount_of_used);
-				const long amount_of_full = pItem->GetSocket(idx_of_amount_of_full);
+				const long amount_of_used = static_cast<long>(pItem->GetSocket(idx_of_amount_of_used));
+				const long amount_of_full = static_cast<long>(pItem->GetSocket(idx_of_amount_of_full));
 				
 				const int32_t avail = amount_of_full - amount_of_used;
 
@@ -7156,11 +7156,11 @@ void CHARACTER::AutoRecoveryItemProcess(const EAffectTypes type)
 
 				if (AFFECT_AUTO_HP_RECOVERY == type)
 				{
-					amount = GetMaxHP() - (GetHP() + GetPoint(POINT_HP_RECOVERY));
+					amount = static_cast<int32_t>(GetMaxHP() - (GetHP() + GetPoint(POINT_HP_RECOVERY)));
 				}
 				else if (AFFECT_AUTO_SP_RECOVERY == type)
 				{
-					amount = GetMaxSP() - (GetSP() + GetPoint(POINT_SP_RECOVERY));
+					amount = static_cast<int32_t>(GetMaxSP() - (GetSP() + GetPoint(POINT_SP_RECOVERY)));
 				}
 
 				if (amount > 0)

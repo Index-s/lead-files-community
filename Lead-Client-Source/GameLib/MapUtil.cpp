@@ -156,15 +156,15 @@ bool Environment_Load(SEnvironmentData& envData, const char* envFileName)
 		if(textLoader.GetTokenVector("cloudcolor", &pTokenVectorCloudColor))
 		if ( 0 == pTokenVectorCloudColor->size()%8)
 		{
-			envData.CloudGradientColor.m_FirstColor.r = atof(pTokenVectorCloudColor->at(0).c_str());
-			envData.CloudGradientColor.m_FirstColor.g = atof(pTokenVectorCloudColor->at(1).c_str());
-			envData.CloudGradientColor.m_FirstColor.b = atof(pTokenVectorCloudColor->at(2).c_str());
-			envData.CloudGradientColor.m_FirstColor.a = atof(pTokenVectorCloudColor->at(3).c_str());
+			envData.CloudGradientColor.m_FirstColor.r = static_cast<float>(atof(pTokenVectorCloudColor->at(0).c_str()));
+			envData.CloudGradientColor.m_FirstColor.g = static_cast<float>(atof(pTokenVectorCloudColor->at(1).c_str()));
+			envData.CloudGradientColor.m_FirstColor.b = static_cast<float>(atof(pTokenVectorCloudColor->at(2).c_str()));
+			envData.CloudGradientColor.m_FirstColor.a = static_cast<float>(atof(pTokenVectorCloudColor->at(3).c_str()));
 
-			envData.CloudGradientColor.m_SecondColor.r = atof(pTokenVectorCloudColor->at(4).c_str());
-			envData.CloudGradientColor.m_SecondColor.g = atof(pTokenVectorCloudColor->at(5).c_str());
-			envData.CloudGradientColor.m_SecondColor.b = atof(pTokenVectorCloudColor->at(6).c_str());
-			envData.CloudGradientColor.m_SecondColor.a = atof(pTokenVectorCloudColor->at(7).c_str());
+			envData.CloudGradientColor.m_SecondColor.r = static_cast<float>(atof(pTokenVectorCloudColor->at(4).c_str()));
+			envData.CloudGradientColor.m_SecondColor.g = static_cast<float>(atof(pTokenVectorCloudColor->at(5).c_str()));
+			envData.CloudGradientColor.m_SecondColor.b = static_cast<float>(atof(pTokenVectorCloudColor->at(6).c_str()));
+			envData.CloudGradientColor.m_SecondColor.a = static_cast<float>(atof(pTokenVectorCloudColor->at(7).c_str()));
 		}
 
 		BYTE byGradientCount = envData.bySkyBoxGradientLevelUpper+envData.bySkyBoxGradientLevelLower;
@@ -177,15 +177,15 @@ bool Environment_Load(SEnvironmentData& envData, const char* envFileName)
 			envData.SkyBoxGradientColorVector.resize(byGradientCount);
 			for (DWORD i = 0; i < byGradientCount; ++i)
 			{
-				envData.SkyBoxGradientColorVector[i].m_FirstColor.r = atof(pTokenVector->at(i*8+0).c_str());
-				envData.SkyBoxGradientColorVector[i].m_FirstColor.g = atof(pTokenVector->at(i*8+1).c_str());
-				envData.SkyBoxGradientColorVector[i].m_FirstColor.b = atof(pTokenVector->at(i*8+2).c_str());
-				envData.SkyBoxGradientColorVector[i].m_FirstColor.a = atof(pTokenVector->at(i*8+3).c_str());
+				envData.SkyBoxGradientColorVector[i].m_FirstColor.r = static_cast<float>(atof(pTokenVector->at(i*8+0).c_str()));
+				envData.SkyBoxGradientColorVector[i].m_FirstColor.g = static_cast<float>(atof(pTokenVector->at(i*8+1).c_str()));
+				envData.SkyBoxGradientColorVector[i].m_FirstColor.b = static_cast<float>(atof(pTokenVector->at(i*8+2).c_str()));
+				envData.SkyBoxGradientColorVector[i].m_FirstColor.a = static_cast<float>(atof(pTokenVector->at(i*8+3).c_str()));
 
-				envData.SkyBoxGradientColorVector[i].m_SecondColor.r = atof(pTokenVector->at(i*8+4).c_str());
-				envData.SkyBoxGradientColorVector[i].m_SecondColor.g = atof(pTokenVector->at(i*8+5).c_str());
-				envData.SkyBoxGradientColorVector[i].m_SecondColor.b = atof(pTokenVector->at(i*8+6).c_str());
-				envData.SkyBoxGradientColorVector[i].m_SecondColor.a = atof(pTokenVector->at(i*8+7).c_str());
+				envData.SkyBoxGradientColorVector[i].m_SecondColor.r = static_cast<float>(atof(pTokenVector->at(i*8+4).c_str()));
+				envData.SkyBoxGradientColorVector[i].m_SecondColor.g = static_cast<float>(atof(pTokenVector->at(i*8+5).c_str()));
+				envData.SkyBoxGradientColorVector[i].m_SecondColor.b = static_cast<float>(atof(pTokenVector->at(i*8+6).c_str()));
+				envData.SkyBoxGradientColorVector[i].m_SecondColor.a = static_cast<float>(atof(pTokenVector->at(i*8+7).c_str()));
 			}
 		}
 
@@ -217,20 +217,20 @@ float GetLinearInterpolation(float begin, float end, float curRate)
 
 void PixelPositionToAttributeCellPosition(TPixelPosition PixelPosition, TCellPosition * pAttrCellPosition)
 {
-	pAttrCellPosition->x = PixelPosition.x / c_Section_xAttributeCellSize;
-	pAttrCellPosition->y = PixelPosition.y / c_Section_yAttributeCellSize;
+	pAttrCellPosition->x = static_cast<int>(PixelPosition.x / c_Section_xAttributeCellSize);
+	pAttrCellPosition->y = static_cast<int>(PixelPosition.y / c_Section_yAttributeCellSize);
 }
 
 void AttributeCellPositionToPixelPosition(TCellPosition AttrCellPosition, TPixelPosition * pPixelPosition)
 {
-	pPixelPosition->x = AttrCellPosition.x * c_Section_xAttributeCellSize;
-	pPixelPosition->y = AttrCellPosition.y * c_Section_yAttributeCellSize;
+	pPixelPosition->x = static_cast<float>(AttrCellPosition.x * c_Section_xAttributeCellSize);
+	pPixelPosition->y = static_cast<float>(AttrCellPosition.y * c_Section_yAttributeCellSize);
 }
 
 float GetPixelPositionDistance(const TPixelPosition & c_rsrcPosition, const TPixelPosition & c_rdstPosition)
 {
-	int idx = c_rsrcPosition.x - c_rdstPosition.x;
-	int idy = c_rsrcPosition.y - c_rdstPosition.y;
+	int idx = static_cast<int>(c_rsrcPosition.x - c_rdstPosition.x);
+	int idy = static_cast<int>(c_rsrcPosition.y - c_rdstPosition.y);
 
 	return sqrtf(float(idx*idx + idy*idy));
 }

@@ -318,7 +318,7 @@ void log_file_delete_old(const char *filename)
 	if (!S_ISDIR(sb.st_mode))
 		return;
 
-	new_tm = *tm_calc(NULL, -log_keep_days);
+	new_tm = *tm_calc(NULL, -(int) log_keep_days);
 	sprintf(buf, "%04d%02d%02d", new_tm.tm_year + 1900, new_tm.tm_mon + 1, new_tm.tm_mday);
 	num1 = atoi(buf);
 #ifndef __WIN32__

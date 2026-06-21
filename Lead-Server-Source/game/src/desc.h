@@ -113,8 +113,8 @@ class DESC
 
 		// handshake ( time synchronization )
 		void			StartHandshake(DWORD _dw);
-		void			SendHandshake(DWORD dwCurTime, long lNewDelta);
-		bool			HandshakeProcess(DWORD dwTime, long lDelta, bool bInfiniteRetry=false);
+		void			SendHandshake(DWORD dwCurTime, int lNewDelta);
+		bool			HandshakeProcess(DWORD dwTime, int lDelta, bool bInfiniteRetry=false);
 		bool			IsHandshaking();
 
 		DWORD			GetHandshake() const	{ return m_dwHandshake; }

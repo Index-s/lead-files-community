@@ -217,7 +217,7 @@ void CPythonMiniMap::Update(float fCenterX, float fCenterY)
 				{
 					TPixelPosition kPixelPosition;
 					pInstance->NEW_GetPixelPosition(&kPixelPosition);
-					__UpdateWayPoint(&rAtlasMarkInfo, kPixelPosition.x, kPixelPosition.y);
+					__UpdateWayPoint(&rAtlasMarkInfo, static_cast<int>(kPixelPosition.x), static_cast<int>(kPixelPosition.y));
 				}
 			}
 
@@ -380,7 +380,7 @@ void CPythonMiniMap::Render(float fScreenX, float fScreenY)
 		// Party PC
 		if (!m_PartyPCPositionVector.empty())
 		{
-			float v = (1+sinf(CTimer::Instance().GetCurrentSecond()*6))/5+0.6;
+			float v = (1+sinf(CTimer::Instance().GetCurrentSecond()*6))/5+0.6f;
 			D3DXCOLOR c(CInstanceBase::GetIndexedNameColor(CInstanceBase::NAMECOLOR_PARTY));//(m_MarkTypeToColorMap[TYPE_PARTY]);
 			D3DXCOLOR d(v,v,v,1);
 			D3DXColorModulate(&c,&c,&d);
@@ -464,7 +464,7 @@ void CPythonMiniMap::Render(float fScreenX, float fScreenY)
 			if (rAtlasMarkInfo.m_fMiniMapY <= 0.0f)
 				continue;
 
-			__RenderTargetMark(rAtlasMarkInfo.m_fMiniMapX, rAtlasMarkInfo.m_fMiniMapY);
+			__RenderTargetMark(static_cast<int>(rAtlasMarkInfo.m_fMiniMapX), static_cast<int>(rAtlasMarkInfo.m_fMiniMapY));
 		}
 	}
 
@@ -550,19 +550,19 @@ bool CPythonMiniMap::Create()
 	char buf[256];
 	for (int i = 0; i < MINI_WAYPOINT_IMAGE_COUNT; ++i)
 	{
-		sprintf(buf, "%sminimap/mini_waypoint%02d.sub", strImageRoot.c_str(), i+1);
+		sprintf_s(buf, sizeof(buf), "%sminimap/mini_waypoint%02d.sub", strImageRoot.c_str(), i+1);
 		m_MiniWayPointGraphicImageInstances[i].SetImagePointer((CGraphicSubImage *) CResourceManager::Instance().GetResourcePointer(buf));
 		m_MiniWayPointGraphicImageInstances[i].SetRenderingMode(CGraphicExpandedImageInstance::RENDERING_MODE_SCREEN);
 	}
 	for (int j = 0; j < WAYPOINT_IMAGE_COUNT; ++j)
 	{
-		sprintf(buf, "%sminimap/waypoint%02d.sub", strImageRoot.c_str(), j+1);
+		sprintf_s(buf, sizeof(buf), "%sminimap/waypoint%02d.sub", strImageRoot.c_str(), j+1);
 		m_WayPointGraphicImageInstances[j].SetImagePointer((CGraphicSubImage *) CResourceManager::Instance().GetResourcePointer(buf));
 		m_WayPointGraphicImageInstances[j].SetRenderingMode(CGraphicExpandedImageInstance::RENDERING_MODE_SCREEN);
 	}
 	for (int k = 0; k < TARGET_MARK_IMAGE_COUNT; ++k)
 	{
-		sprintf(buf, "%sminimap/targetmark%02d.sub", strImageRoot.c_str(), k+1);
+		sprintf_s(buf, sizeof(buf), "%sminimap/targetmark%02d.sub", strImageRoot.c_str(), k+1);
 		m_TargetMarkGraphicImageInstances[k].SetImagePointer((CGraphicSubImage *) CResourceManager::Instance().GetResourcePointer(buf));
 		m_TargetMarkGraphicImageInstances[k].SetRenderingMode(CGraphicExpandedImageInstance::RENDERING_MODE_SCREEN);
 	}
@@ -715,8 +715,8 @@ void CPythonMiniMap::RegisterAtlasMark(BYTE byType, const char * c_szName, long 
 		case CActorInstance::TYPE_WARP:
 			aAtlasMarkInfo.m_byType = TYPE_WARP;
 			{
-				int iPos = aAtlasMarkInfo.m_strText.find(" ");
-				if (iPos >= 0)
+				size_t iPos = aAtlasMarkInfo.m_strText.find(" ");
+				if (iPos != std::string::npos)
 					aAtlasMarkInfo.m_strText[iPos]=0;
 				
 			}
@@ -812,7 +812,7 @@ void CPythonMiniMap::__LoadAtlasMarkInfo()
 
 	// LOCALE
 	char szAtlasMarkInfoFileName[64+1];
-	_snprintf(szAtlasMarkInfoFileName, sizeof(szAtlasMarkInfoFileName), "%s/map/%s_point.txt", LocaleService_GetLocalePath(), rkMap.GetName().c_str());
+	_snprintf_s(szAtlasMarkInfoFileName, sizeof(szAtlasMarkInfoFileName), _TRUNCATE, "%s/map/%s_point.txt", LocaleService_GetLocalePath(), rkMap.GetName().c_str());
 	// END_OF_LOCALE
 
 	CTokenVectorMap stTokenVectorMap;
@@ -828,7 +828,7 @@ void CPythonMiniMap::__LoadAtlasMarkInfo()
 	for (DWORD i = 0; i < stTokenVectorMap.size(); ++i)
 	{
 		char szMarkInfoName[32+1];
-		_snprintf(szMarkInfoName, sizeof(szMarkInfoName), "%d", i);
+		_snprintf_s(szMarkInfoName, sizeof(szMarkInfoName), _TRUNCATE, "%d", i);
 
 		if (stTokenVectorMap.end() == stTokenVectorMap.find(szMarkInfoName))
 			continue;
@@ -847,8 +847,8 @@ void CPythonMiniMap::__LoadAtlasMarkInfo()
 			if (0 == c_rstrType.compare(strType[i]))
 				aAtlasMarkInfo.m_byType = (BYTE)i;
 		}
-		aAtlasMarkInfo.m_fX = atof(c_rstrPositionX.c_str());
-		aAtlasMarkInfo.m_fY = atof(c_rstrPositionY.c_str());
+		aAtlasMarkInfo.m_fX = static_cast<float>(atof(c_rstrPositionX.c_str()));
+		aAtlasMarkInfo.m_fY = static_cast<float>(atof(c_rstrPositionY.c_str()));
 		aAtlasMarkInfo.m_strText = c_rstrText;
 
 		aAtlasMarkInfo.m_fScreenX = aAtlasMarkInfo.m_fX / m_fAtlasMaxX * m_fAtlasImageSizeX - (float)m_WhiteMark.GetWidth() / 2.0f;
@@ -1013,11 +1013,11 @@ void CPythonMiniMap::RenderAtlas(float fScreenX, float fScreenY)
 
 		if (TYPE_TARGET == rAtlasMarkInfo.m_byType)
 		{
-			__RenderMiniWayPointMark(rAtlasMarkInfo.m_fScreenX, rAtlasMarkInfo.m_fScreenY);
+			__RenderMiniWayPointMark(static_cast<int>(rAtlasMarkInfo.m_fScreenX), static_cast<int>(rAtlasMarkInfo.m_fScreenY));
 		}
 		else
 		{
-			__RenderWayPointMark(rAtlasMarkInfo.m_fScreenX, rAtlasMarkInfo.m_fScreenY);
+			__RenderWayPointMark(static_cast<int>(rAtlasMarkInfo.m_fScreenX), static_cast<int>(rAtlasMarkInfo.m_fScreenY));
 		}
 	}
 
@@ -1209,8 +1209,8 @@ bool CPythonMiniMap::GetAtlasInfo(float fScreenX, float fScreenY, std::string & 
 				rReturnString = "empty_guild_area";
 			}
 
-			*pReturnPosX = rInfo.lx + rInfo.lwidth/2;
-			*pReturnPosY = rInfo.ly + rInfo.lheight/2;
+			*pReturnPosX = static_cast<float>(rInfo.lx + rInfo.lwidth/2);
+			*pReturnPosY = static_cast<float>(rInfo.ly + rInfo.lheight/2);
 			*pdwTextColor = CInstanceBase::GetIndexedNameColor(CInstanceBase::NAMECOLOR_PARTY);
 			return true;
 		}
@@ -1258,7 +1258,7 @@ void CPythonMiniMap::AddWayPoint(BYTE byType, DWORD dwID, float fX, float fY, st
 	aAtlasMarkInfo.m_fMiniMapY = 0.0f;
 	aAtlasMarkInfo.m_strText = strText;
 	aAtlasMarkInfo.m_dwChrVID = dwChrVID;
-	__UpdateWayPoint(&aAtlasMarkInfo, fX, fY);
+	__UpdateWayPoint(&aAtlasMarkInfo, static_cast<int>(fX), static_cast<int>(fY));
 	m_AtlasWayPointInfoVector.push_back(aAtlasMarkInfo);
 	
 }
@@ -1310,7 +1310,7 @@ void CPythonMiniMap::__RenderWayPointMark(int ixCenter, int iyCenter)
 	int iNum = (ELTimer_GetMSec() / 67) % WAYPOINT_IMAGE_COUNT;
 
 	CGraphicImageInstance & rInstance = m_WayPointGraphicImageInstances[iNum];
-	rInstance.SetPosition(ixCenter - rInstance.GetWidth()/2, iyCenter - rInstance.GetHeight()/2);
+	rInstance.SetPosition(static_cast<float>(ixCenter - rInstance.GetWidth()/2), static_cast<float>(iyCenter - rInstance.GetHeight()/2));
 	rInstance.Render();
 }
 
@@ -1319,7 +1319,7 @@ void CPythonMiniMap::__RenderMiniWayPointMark(int ixCenter, int iyCenter)
 	int iNum = (ELTimer_GetMSec() / 67) % MINI_WAYPOINT_IMAGE_COUNT;
 
 	CGraphicImageInstance & rInstance = m_MiniWayPointGraphicImageInstances[iNum];
-	rInstance.SetPosition(ixCenter - rInstance.GetWidth()/2, iyCenter - rInstance.GetHeight()/2);
+	rInstance.SetPosition(static_cast<float>(ixCenter - rInstance.GetWidth()/2), static_cast<float>(iyCenter - rInstance.GetHeight()/2));
 	rInstance.Render();
 }
 
@@ -1328,7 +1328,7 @@ void CPythonMiniMap::__RenderTargetMark(int ixCenter, int iyCenter)
 	int iNum = (ELTimer_GetMSec() / 80) % TARGET_MARK_IMAGE_COUNT;
 
 	CGraphicImageInstance & rInstance = m_TargetMarkGraphicImageInstances[iNum];
-	rInstance.SetPosition(ixCenter - rInstance.GetWidth()/2, iyCenter - rInstance.GetHeight()/2);
+	rInstance.SetPosition(static_cast<float>(ixCenter - rInstance.GetWidth()/2), static_cast<float>(iyCenter - rInstance.GetHeight()/2));
 	rInstance.Render();
 }
 

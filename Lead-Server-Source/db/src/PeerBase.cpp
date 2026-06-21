@@ -52,7 +52,8 @@ bool CPeerBase::Accept(socket_t fd_accept)
 	socket_sndbuf(m_fd, 233016);
 	socket_rcvbuf(m_fd, 233016);
 
-	strlcpy(m_host, inet_ntoa(peer.sin_addr), sizeof(m_host));
+	if (NULL == inet_ntop(AF_INET, &peer.sin_addr, m_host, sizeof(m_host)))
+		m_host[0] = '\0';
 	m_outBuffer = buffer_new(DEFAULT_PACKET_BUFFER_SIZE);
 	m_inBuffer = buffer_new(MAX_INPUT_LEN);
 
@@ -65,7 +66,7 @@ bool CPeerBase::Accept(socket_t fd_accept)
 	fdwatch_add_fd(m_fdWatcher, m_fd, this, FDW_READ, false);
 
 	OnAccept();
-	sys_log(0, "ACCEPT FROM %s", inet_ntoa(peer.sin_addr));
+	sys_log(0, "ACCEPT FROM %s", m_host);
 	return true;
 }
 
@@ -157,13 +158,19 @@ int CPeerBase::Recv()
 
 	if (bytes_read < 0)
 	{
+#ifdef _WIN32
+		char _ebuf[256];
+		strerror_s(_ebuf, sizeof(_ebuf), errno);
+		sys_err("socket_read failed %s", _ebuf);
+#else
 		sys_err("socket_read failed %s", strerror(errno));
+#endif
 		return -1;
 	}
 	else if (bytes_read == 0)
 		return 0;
 
-	buffer_write_proceed(m_inBuffer, bytes_read);
+	buffer_write_proceed(m_inBuffer, static_cast<int>(bytes_read));
 	m_BytesRemain = buffer_size(m_inBuffer);
 	return 1;
 }

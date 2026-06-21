@@ -178,7 +178,7 @@ void CSnowEnvironment::Render()
 
 	__BeginBlur();
 
-	DWORD dwParticleCount = min(m_dwParticleMaxNum, m_kVct_pkParticleSnow.size());
+	DWORD dwParticleCount = static_cast<DWORD>(min(static_cast<size_t>(m_dwParticleMaxNum), m_kVct_pkParticleSnow.size()));
 
 	CCamera * pCamera = CCameraManager::Instance().GetCurrentCamera();
 	if (!pCamera)

@@ -161,7 +161,7 @@ CPythonGuild::TGuildInfo & CPythonGuild::GetGuildInfoRef()
 
 BOOL CPythonGuild::GetGradeDataPtr(DWORD dwGradeNumber, TGuildGradeData ** ppData)
 {
-	TGradeDataMap::iterator itor = m_GradeDataMap.find(dwGradeNumber);
+	TGradeDataMap::iterator itor = m_GradeDataMap.find(static_cast<BYTE>(dwGradeNumber));
 	if (m_GradeDataMap.end() == itor)
 		return FALSE;
 
@@ -177,7 +177,7 @@ const CPythonGuild::TGuildBoardCommentDataVector & CPythonGuild::GetGuildBoardCo
 
 DWORD CPythonGuild::GetMemberCount()
 {
-	return m_GuildMemberDataVector.size();
+	return static_cast<DWORD>(m_GuildMemberDataVector.size());
 }
 
 BOOL CPythonGuild::GetMemberDataPtr(DWORD dwIndex, TGuildMemberData ** ppData)
@@ -321,7 +321,7 @@ void CPythonGuild::__CalculateLevelAverage()
 	}
 
 	assert(!m_GuildMemberDataVector.empty());
-	m_dwMemberLevelAverage = m_dwMemberLevelSummary / m_GuildMemberDataVector.size();
+	m_dwMemberLevelAverage = static_cast<DWORD>(m_dwMemberLevelSummary / m_GuildMemberDataVector.size());
 }
 
 struct CPythonGuild_SLessMemberGrade

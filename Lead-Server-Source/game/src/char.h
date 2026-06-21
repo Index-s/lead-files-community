@@ -1170,8 +1170,8 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 		int					GetSkillMasterType(DWORD dwVnum) const;
 		int					GetSkillPower(DWORD dwVnum, BYTE bLevel = 0) const;
 
-		uint32_t			GetSkillNextReadTime(DWORD dwVnum) const;
-		void				SetSkillNextReadTime(DWORD dwVnum, uint32_t time);
+		TimeT64				GetSkillNextReadTime(DWORD dwVnum) const;
+		void				SetSkillNextReadTime(DWORD dwVnum, TimeT64 time);
 		void				SkillLearnWaitMoreTimeMessage(DWORD dwVnum);
 
 		void				ComputePassiveSkill(DWORD dwVnum);
@@ -1447,8 +1447,8 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 		void				SetQuestBy(DWORD dwQuestVnum)	{ m_dwQuestByVnum = dwQuestVnum; }
 		DWORD				GetQuestBy() const			{ return m_dwQuestByVnum; }
 
-		int					GetQuestFlag(const std::string& flag) const;
-		void				SetQuestFlag(const std::string& flag, int value);
+		TimeT64				GetQuestFlag(const std::string& flag) const;
+		void				SetQuestFlag(const std::string& flag, TimeT64 value);
 
 		void				ConfirmWithMsg(const char* szMsg, int iTimeout, DWORD dwRequestPID);
 
@@ -1531,7 +1531,7 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 		int				GetPremiumRemainSeconds(BYTE bType) const;
 
 	private:
-		int				m_aiPremiumTimes[PREMIUM_MAX_NUM];
+		TimeT64				m_aiPremiumTimes[PREMIUM_MAX_NUM];
 
 		// CHANGE_ITEM_ATTRIBUTES
 		static const DWORD		msc_dwDefaultChangeItemAttrCycle;	///< Default item attribute change period
@@ -1735,7 +1735,7 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 		char*		 GetItemAward_cmd() { return itemAward_cmd;	  }
 		//bool		 GetItemAward_flag() { return itemAward_flag; }
 		void		 SetItemAward_vnum(unsigned int vnum) { itemAward_vnum = vnum; }
-		void		 SetItemAward_cmd(char* cmd) { strcpy(itemAward_cmd,cmd); }
+		void		 SetItemAward_cmd(char* cmd) { strlcpy(itemAward_cmd,cmd,sizeof(itemAward_cmd)); }
 		//void		 SetItemAward_flag(bool flag) { itemAward_flag = flag; }
 
 	public:

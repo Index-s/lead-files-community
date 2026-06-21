@@ -2,6 +2,7 @@
 #define __INC_ETERLIB_SINGLETON_H__
 
 #include <assert.h>
+#include <stdint.h>
 
 template <typename T> class CSingleton 
 { 
@@ -11,8 +12,8 @@ public:
 	CSingleton()
 	{ 
 		assert(!ms_singleton);
-		int offset = (int) (T*) 1 - (int) (CSingleton <T>*) (T*) 1; 
-		ms_singleton = (T*) ((int) this + offset);
+		intptr_t offset = (intptr_t) (T*) 1 - (intptr_t) (CSingleton <T>*) (T*) 1;
+		ms_singleton = (T*) ((intptr_t) this + offset);
 	} 
 
 	virtual ~CSingleton()
@@ -52,8 +53,8 @@ public:
 	singleton()
 	{ 
 		assert(!ms_singleton);
-		int offset = (int) (T*) 1 - (int) (singleton <T>*) (T*) 1; 
-		ms_singleton = (T*) ((int) this + offset);
+		intptr_t offset = (intptr_t) (T*) 1 - (intptr_t) (singleton <T>*) (T*) 1;
+		ms_singleton = (T*) ((intptr_t) this + offset);
 	} 
 
 	virtual ~singleton()

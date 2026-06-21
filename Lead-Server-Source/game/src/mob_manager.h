@@ -106,7 +106,7 @@ class CMobGroup
 
 		int GetMemberCount()
 		{   
-			return m_vec_dwMemberVnum.size();
+			return static_cast<int>(m_vec_dwMemberVnum.size());
 		}
 
 		void AddMember(DWORD dwVnum)

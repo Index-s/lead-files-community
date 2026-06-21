@@ -176,10 +176,10 @@ void CGraphicExpandedImageInstance::SetRenderingRect(float fLeft, float fTop, fl
 	float fWidth = float(GetWidth());
 	float fHeight = float(GetHeight());
 
-	m_RenderingRect.left = fWidth * fLeft;
-	m_RenderingRect.top = fHeight * fTop;
-	m_RenderingRect.right = fWidth * fRight;
-	m_RenderingRect.bottom = fHeight * fBottom;
+	m_RenderingRect.left = static_cast<LONG>(fWidth * fLeft);
+	m_RenderingRect.top = static_cast<LONG>(fHeight * fTop);
+	m_RenderingRect.right = static_cast<LONG>(fWidth * fRight);
+	m_RenderingRect.bottom = static_cast<LONG>(fHeight * fBottom);
 }
 
 void CGraphicExpandedImageInstance::SetRenderingMode(int iMode)

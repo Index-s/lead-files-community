@@ -82,7 +82,7 @@ int FindPointType(const char * c_sz)
 {
 	for (int i = 0; *kPointOnTypes[i].c_pszName != '\n'; ++i)
 	{
-		if (!strcasecmp(c_sz, kPointOnTypes[i].c_pszName))
+		if (!_stricmp(c_sz, kPointOnTypes[i].c_pszName))
 			return kPointOnTypes[i].iPointOn;
 	}
 	return -1;
@@ -340,7 +340,7 @@ CSkillProto * CSkillManager::Get(const char * c_pszSkillName)
 
 	while (it != m_map_pkSkillProto.end())
 	{
-		if (!strcasecmp(it->second->szName, c_pszSkillName))
+		if (!_stricmp(it->second->szName, c_pszSkillName))
 			return it->second;
 
 		it++;

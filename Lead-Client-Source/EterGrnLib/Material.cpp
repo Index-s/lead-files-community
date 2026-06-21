@@ -197,16 +197,16 @@ CGraphicImage* CGrannyMaterial::__GetImagePointer(const char* fileName)
 	CResourceManager& rkResMgr = CResourceManager::Instance();
 
 	// SUPPORT_LOCAL_TEXTURE
-	int fileName_len = strlen(fileName);
+	size_t fileName_len = strlen(fileName);
 	if (fileName_len > 2 && fileName[1] != ':')
 	{
-		char localFileName[256];		
+		char localFileName[256];
 		const std::string& modelLocalPath = GetModelLocalPath();
 
-		int localFileName_len = modelLocalPath.length() + 1 + fileName_len;
+		size_t localFileName_len = modelLocalPath.length() + 1 + fileName_len;
 		if (localFileName_len < sizeof(localFileName) - 1)
 		{
-			_snprintf(localFileName, sizeof(localFileName), "%s%s", GetModelLocalPath().c_str(), fileName);
+			_snprintf_s(localFileName, sizeof(localFileName), _TRUNCATE, "%s%s", GetModelLocalPath().c_str(), fileName);
 			CResource* pResource = rkResMgr.GetResourcePointer(localFileName);
 			return static_cast<CGraphicImage*>(pResource);
 		}		
@@ -227,7 +227,7 @@ bool CGrannyMaterial::CreateFromGrannyMaterialPointer(granny_material * pgrnMate
 
 	if (pgrnMaterial)
 	{
-		if (pgrnMaterial->MapCount > 1 && !strnicmp(pgrnMaterial->Name, "Blend", 5))
+		if (pgrnMaterial->MapCount > 1 && !_strnicmp(pgrnMaterial->Name, "Blend", 5))
 		{
 			pgrnDiffuseTexture = GrannyGetMaterialTextureByType(pgrnMaterial->Maps[0].Material, GrannyDiffuseColorTexture);
 			pgrnOpacityTexture = GrannyGetMaterialTextureByType(pgrnMaterial->Maps[1].Material, GrannyDiffuseColorTexture);
@@ -406,8 +406,8 @@ CGrannyMaterial& CGrannyMaterialPalette::GetMaterialRef(DWORD mtrlIndex)
 
 void CGrannyMaterialPalette::SetMaterialImagePointer(const char* c_szImageName, CGraphicImage* pImage)
 {
-	DWORD size=m_mtrlVector.size();
-	DWORD i;
+	size_t size=m_mtrlVector.size();
+	size_t i;
 	for (i=0; i<size; ++i)
 	{
 		CGrannyMaterial::TRef& roMtrl=m_mtrlVector[i];
@@ -460,8 +460,8 @@ void CGrannyMaterialPalette::SetMaterialData(const char* c_szMtrlName, const SMa
 
 void CGrannyMaterialPalette::SetSpecularInfo(const char* c_szMtrlName, BOOL bEnable, float fPower)
 {
-	DWORD size=m_mtrlVector.size();
-	DWORD i;
+	size_t size=m_mtrlVector.size();
+	size_t i;
 	if (c_szMtrlName)
 	{
 		for (i=0; i<size; ++i)
@@ -488,25 +488,25 @@ void CGrannyMaterialPalette::SetSpecularInfo(const char* c_szMtrlName, BOOL bEna
 
 DWORD CGrannyMaterialPalette::RegisterMaterial(granny_material* pgrnMaterial)
 {
-	DWORD size=m_mtrlVector.size();
-	DWORD i;
+	size_t size=m_mtrlVector.size();
+	size_t i;
 	for (i=0; i<size; ++i)
 	{
 		CGrannyMaterial::TRef& roMtrl=m_mtrlVector[i];
 		if (roMtrl->IsEqual(pgrnMaterial))
-			return i;
+			return static_cast<DWORD>(i);
 	}
 
 	CGrannyMaterial* pkNewMtrl=new CGrannyMaterial;
 	pkNewMtrl->CreateFromGrannyMaterialPointer(pgrnMaterial);
 	m_mtrlVector.push_back(pkNewMtrl);
-	
-	return size;
+
+	return static_cast<DWORD>(size);
 }
 
 DWORD CGrannyMaterialPalette::GetMaterialCount() const
 {
-	return m_mtrlVector.size();
+	return static_cast<DWORD>(m_mtrlVector.size());
 }
 
 /*

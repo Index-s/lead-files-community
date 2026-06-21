@@ -255,11 +255,11 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 		{
 			if (item->GetLimitValue(i))
 			{
-				item->SetSocket(0, time(0) + item->GetLimitValue(i)); 
+				item->SetSocket(0, time(0) + item->GetLimitValue(i));
 			}
 			else
 			{
-				item->SetSocket(0, time(0) + 60*60*24*7); 
+				item->SetSocket(0, time(0) + 60*60*24*7);
 			}
 
 			item->StartRealTimeExpireEvent();
@@ -276,7 +276,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 			}
 			else if(0 == id)
 			{
-				long duration = item->GetSocket(0);
+				TimeT64 duration = item->GetSocket(0);
 				if (0 == duration)
 					duration = item->GetLimitValue(i);
 
@@ -471,7 +471,7 @@ void ITEM_MANAGER::RemoveItem(LPITEM item, const char * c_pszReason)
 		// END_OF_SAFEBOX_TIME_LIMIT_ITEM_BUG_FIX
 		else
 		{
-			o->SyncQuickslot(QUICKSLOT_TYPE_ITEM, item->GetCell(), 255);
+			o->SyncQuickslot(QUICKSLOT_TYPE_ITEM, static_cast<BYTE>(item->GetCell()), 255);
 			item->RemoveFromCharacter();
 		}
 	}
@@ -571,7 +571,7 @@ int ITEM_MANAGER::RealNumber(DWORD vnum)
 	int bot, top, mid;
 
 	bot = 0;
-	top = m_vec_prototype.size();
+	top = static_cast<int>(m_vec_prototype.size());
 
 	TItemTable * pTable = &m_vec_prototype[0];
 
@@ -600,13 +600,13 @@ bool ITEM_MANAGER::IsItemMetin(const DWORD& vnum)
 
 bool ITEM_MANAGER::GetVnum(const char * c_pszName, DWORD & r_dwVnum)
 {
-	int len = strlen(c_pszName);
+	int len = static_cast<int>(strlen(c_pszName));
 
 	TItemTable * pTable = &m_vec_prototype[0];
 
 	for (DWORD i = 0; i < m_vec_prototype.size(); ++i, ++pTable)
 	{
-		if (!strncasecmp(c_pszName, pTable->szLocaleName, len))
+		if (!_strnicmp(c_pszName, pTable->szLocaleName, len))
 		{
 			r_dwVnum = pTable->dwVnum;
 			return true;
@@ -618,13 +618,13 @@ bool ITEM_MANAGER::GetVnum(const char * c_pszName, DWORD & r_dwVnum)
 
 bool ITEM_MANAGER::GetVnumByOriginalName(const char * c_pszName, DWORD & r_dwVnum)
 {
-	int len = strlen(c_pszName);
+	int len = static_cast<int>(strlen(c_pszName));
 
 	TItemTable * pTable = &m_vec_prototype[0];
 
 	for (DWORD i = 0; i < m_vec_prototype.size(); ++i, ++pTable)
 	{
-		if (!strncasecmp(c_pszName, pTable->szName, len))
+		if (!_strnicmp(c_pszName, pTable->szName, len))
 		{
 			r_dwVnum = pTable->dwVnum;
 			return true;
@@ -1529,7 +1529,7 @@ void ITEM_MANAGER::CopyAllAttrTo(LPITEM pkOldItem, LPITEM pkNewItem)
 
 		for (int i = 0; i < ITEM_SOCKET_MAX_NUM; ++i)
 		{
-			long socket = pkOldItem->GetSocket(i);
+			TimeT64 socket = pkOldItem->GetSocket(i);
 			const int ITEM_BROKEN_METIN_VNUM = 28960; // This is the same constant 3 Are there any places? ... Let’s make it one T_T I’m going to pass Hong.
 			if (socket > 2 && socket != ITEM_BROKEN_METIN_VNUM)
 				pkNewItem->SetSocket(slot++, socket);
@@ -1545,7 +1545,7 @@ bool ITEM_MANAGER::GetVnumRangeByString(const std::string& stVnumRange, DWORD& r
 {
 	int iPos;
 
-	if ((iPos = stVnumRange.find("~")) > 0)
+	if ((iPos = static_cast<int>(stVnumRange.find("~"))) > 0)
 	{
 		std::string vnum_start, vnum_end;
 		vnum_start.assign(stVnumRange, 0, iPos);

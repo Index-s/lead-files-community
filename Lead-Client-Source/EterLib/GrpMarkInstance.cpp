@@ -61,9 +61,14 @@ void CGraphicMarkInstance::OnRender()
 	UINT uCol = m_uIndex % uColCount;
 	UINT uRow = m_uIndex / uColCount;
 
+	// The guild-mark cache image is authored bottom-up: CGuildMarkImage writes each mark
+	// with DevIL ilSetPixels (lower-left origin), so markID 0 sits in the BOTTOM-most mark
+	// row of the texture, not the top. The upgraded DevIL 1.8.0 then saves the .tga
+	// top-origin, so a naive top-down row (uRow*MARK_HEIGHT) samples the empty top strip and
+	// every guild sign renders blank/white. Flip the sampled row to where the mark is stored.
 	RECT kRect;
 	kRect.left=uCol*MARK_WIDTH;
-	kRect.top=uRow*MARK_HEIGHT;
+	kRect.top=pImage->GetHeight() - MARK_HEIGHT - uRow*MARK_HEIGHT;
 	kRect.right=kRect.left+MARK_WIDTH;
 	kRect.bottom=kRect.top+MARK_HEIGHT;
 

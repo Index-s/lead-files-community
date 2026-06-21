@@ -164,7 +164,7 @@ void CAttributeInstance::RefreshObject(const D3DXMATRIX & c_rmatGlobal)
 		if (!m_roAttributeData->GetHeightDataPointer(i, &c_pHeightData))
 			continue;
 
-		DWORD dwVertexCount = c_pHeightData->v3VertexVector.size();
+		size_t dwVertexCount = c_pHeightData->v3VertexVector.size();
 		m_v3HeightDataVector[i].clear();
 		m_v3HeightDataVector[i].resize(dwVertexCount);
 		for (DWORD j = 0; j < dwVertexCount; ++j)

@@ -46,8 +46,8 @@ void CGraphicImageInstance::OnRender()
 	CGraphicImage * pImage = m_roImage.GetPointer();
 	CGraphicTexture * pTexture = pImage->GetTexturePointer();
 
-	float fimgWidth = pImage->GetWidth();
-	float fimgHeight = pImage->GetHeight();
+	float fimgWidth = static_cast<float>(pImage->GetWidth());
+	float fimgHeight = static_cast<float>(pImage->GetHeight());
 
 	const RECT& c_rRect = pImage->GetRectReference();
 	float texReverseWidth = 1.0f / float(pTexture->GetWidth());

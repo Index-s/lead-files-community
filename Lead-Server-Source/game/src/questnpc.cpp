@@ -57,7 +57,7 @@ namespace quest
 					if (pde->d_name[0] == '.')
 						continue;
 
-					if (!strncasecmp(pde->d_name, "CVS", 3))
+					if (!_strnicmp(pde->d_name, "CVS", 3))
 						continue;
 
 					sys_log(1, "QUEST reading %s", pde->d_name);
@@ -159,7 +159,7 @@ namespace quest
 
 			istreambuf_iterator<char> ib(inf), ie;
 
-			m_mapOwnArgQuest[event_index][quest_index][state_index].resize(MAX(index + 1, m_mapOwnArgQuest[event_index][quest_index][state_index].size()));
+			m_mapOwnArgQuest[event_index][quest_index][state_index].resize(MAX(index + 1, static_cast<int>(m_mapOwnArgQuest[event_index][quest_index][state_index].size())));
 
 			if (type_name == "when")
 			{
@@ -227,7 +227,7 @@ namespace quest
 
 		vector<AArgScript>::iterator it_vec = it->second.begin();
 
-		int iTargetLen = strlen(c_pszTargetName);
+		int iTargetLen = static_cast<int>(strlen(c_pszTargetName));
 
 		while (it_vec != it->second.end())
 		{
@@ -250,7 +250,7 @@ namespace quest
 			if (argScript.when_condition.size() > 0)
 				sys_log(1, "OnTarget when %s size %d", &argScript.when_condition[0], argScript.when_condition.size());
 	
-			if (argScript.when_condition.size() != 0 && !IsScriptTrue(&argScript.when_condition[0], argScript.when_condition.size()))
+			if (argScript.when_condition.size() != 0 && !IsScriptTrue(&argScript.when_condition[0], static_cast<int>(argScript.when_condition.size())))
 				continue;
 
 			sys_log(1, "OnTarget execute qi %u st %d code %s", dwQuestIndex, iState, (const char *) argScript.script.GetCode());
@@ -848,7 +848,7 @@ namespace quest
 				for (i = 0; i < itQuestMap->second[QUEST_START_STATE_INDEX].size(); ++i)
 				{
 					if (itQuestMap->second[QUEST_START_STATE_INDEX][i].when_condition.size() == 0 || 
-							IsScriptTrue(&itQuestMap->second[QUEST_START_STATE_INDEX][i].when_condition[0], itQuestMap->second[QUEST_START_STATE_INDEX][i].when_condition.size()))
+							IsScriptTrue(&itQuestMap->second[QUEST_START_STATE_INDEX][i].when_condition[0], static_cast<int>(itQuestMap->second[QUEST_START_STATE_INDEX][i].when_condition.size())))
 						rAvailScript.push_back(&itQuestMap->second[QUEST_START_STATE_INDEX][i]);
 				}
 			}
@@ -873,7 +873,7 @@ namespace quest
 				for (i = 0; i < itQuestMap->second[iState].size(); i++)
 				{
 					if ( itQuestMap->second[iState][i].when_condition.size() == 0 ||
-							IsScriptTrue(&itQuestMap->second[iState][i].when_condition[0], itQuestMap->second[iState][i].when_condition.size()))
+							IsScriptTrue(&itQuestMap->second[iState][i].when_condition[0], static_cast<int>(itQuestMap->second[iState][i].when_condition.size())))
 						rAvailScript.push_back(&itQuestMap->second[iState][i]);
 				}
 			}
@@ -921,7 +921,7 @@ namespace quest
 			os << ", '"<<LC_TEXT("Close")<<"'";
 			os << ")";
 
-			CQuestManager::ExecuteQuestScript(pc, "QUEST_CHAT_TEMP_QUEST", 0, os.str().c_str(), os.str().size(), &AvailScript, false);
+			CQuestManager::ExecuteQuestScript(pc, "QUEST_CHAT_TEMP_QUEST", 0, os.str().c_str(), static_cast<int>(os.str().size()), &AvailScript, false);
 		}
 
 		return true;

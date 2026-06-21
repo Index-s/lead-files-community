@@ -5,9 +5,9 @@
  * description : 
  */
 
+#include "stdafx.h"
 #define _dev_log_cpp_
 
-#include "stdafx.h"
 #include "dev_log.h"
 
 #ifndef IS_SET
@@ -51,7 +51,8 @@ void dev_log(const char *file, int line, const char *function, int level, const 
 #ifndef __WIN32__
 	fd = ::open("DEV_LOG.log", O_WRONLY|O_APPEND|O_CREAT, 0666);
 #else
-	fd = ::_open("DEV_LOG.log", _O_WRONLY|_O_APPEND|_O_CREAT, 0666);
+	if (::_sopen_s(&fd, "DEV_LOG.log", _O_WRONLY|_O_APPEND|_O_CREAT, _SH_DENYNO, _S_IREAD|_S_IWRITE) != 0)
+		fd = -1;
 #endif
 
 	if (fd < 0)
@@ -131,8 +132,8 @@ void dev_log(const char *file, int line, const char *function, int level, const 
 	buf[nlen++] = '\n';
 	buf[nlen] = 0;
 
-	::write(fd, buf, nlen);
-	::close(fd);
+	::_write(fd, buf, nlen);
+	::_close(fd);
 }
 
 void dev_log_add_level(int level)

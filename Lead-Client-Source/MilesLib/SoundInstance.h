@@ -80,8 +80,22 @@ class CSoundInstance3D : public ISoundInstance
 		void	UpdatePosition(float fElapsedTime);
 
 	private:
-		H3DSAMPLE		m_sample;
+		void	__ApplyVolumePan() const;
+
+		HSAMPLE			m_sample;
 		CSoundData *		m_pSoundData;
+
+		// Miles 9.3 (x64) digital-driver 3D spatialisation produces no audible
+		// output for manually-allocated sample handles (samples load fine and
+		// AIL_start_sample reports PLAYING, but nothing reaches the speakers once
+		// AIL_set_sample_is_3D is on -- while 2D samples and streamed music on the
+		// SAME driver are audible). So this "3D" instance is played as an ordinary
+		// 2D sample and positioned MANUALLY: distance controls volume, the
+		// listener-relative X controls stereo pan. The ISoundInstance setters are
+		// const, so the cached positional state is mutable.
+		mutable float	m_fBaseVolume;		// last master volume from SetVolume()
+		mutable float	m_fDistanceScale;	// 0..1 distance attenuation from SetPosition()
+		mutable float	m_fPan;				// 0(L)..0.5(C)..1(R) from SetPosition()
 };
 
 class CSoundInstanceStream : public ISoundInstance
