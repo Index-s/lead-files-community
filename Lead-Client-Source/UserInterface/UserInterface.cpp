@@ -37,7 +37,11 @@ volatile int _AVOID_FLOATING_POINT_LIBRARY_BUG = _fltused;
 #pragma comment( lib, "winmm.lib" )
 #pragma comment( lib, "imm32.lib" )
 #pragma comment( lib, "oldnames.lib" )
+#ifdef _DEBUG
 #pragma comment( lib, "SpeedTreeRT.lib" )
+#else
+#pragma comment( lib, "SpeedTreeRT-Release.lib" )
+#endif
 #pragma comment( lib, "dinput8.lib" )
 #pragma comment( lib, "dxguid.lib" )
 #pragma comment( lib, "d3d9.lib" )
