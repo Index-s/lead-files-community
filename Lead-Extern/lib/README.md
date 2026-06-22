@@ -6,10 +6,13 @@ the x64 port: `lib/` now holds the x64 libs directly (the 32-bit versions were
 removed), and the x64 projects reference this directory in
 `AdditionalLibraryDirectories`.
 
-The binaries themselves are **not committed** (large / rebuildable) — see
-`.gitignore`. Rebuild them with the steps below. All built with VS 2026 (v145
-toolset), x64, Debug, `/MTd` runtime (to match the server's MultiThreadedDebug)
-except DevIL which is a DLL (CRT-isolated).
+Most binaries **are committed** so the repo builds out of the box (incl.
+`cryptlib-Release.lib`, ~42 MB). The sole exception is **`cryptlib-Debug.lib`**
+(~158 MB): it exceeds GitHub's 100 MB blob limit and LFS uploads are blocked on
+public forks, so it can't be vendored here — rebuild it from the steps below (or
+attach it to a GitHub Release). All built with VS 2026 (v145 toolset), x64; Debug
+libs use the `/MTd` runtime (to match the server's MultiThreadedDebug), Release
+libs `/MT` — except DevIL which is a DLL (CRT-isolated).
 
 | File | Source | How it was built |
 |---|---|---|
@@ -51,7 +54,7 @@ configuration (Debug keeps using the existing `/MTd` libs unchanged).
 
 | File | Source | How it was built |
 |---|---|---|
-| `cryptlib-Release.lib` | Crypto++ **8.9.0** (`git clone -b CRYPTOPP_8_9_0 weidai11/cryptopp`, matches the vendored 8.9.0 headers) | `msbuild cryptlib.vcxproj /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v145 /p:WholeProgramOptimization=false` — Crypto++'s Release config is already `/MT`+`NDEBUG`. Same modern-MSVC `.cpp` patch as the Debug lib: cap the `integer.cpp` (`>=1500`) and `zdeflate.cpp` (`>=1600`) version guards with `&& CRYPTOPP_MSC_VERSION < 1930` so the non-`stdext` fallback branches are taken (`stdext::*checked_array_iterator` were removed from the 14.51 STL). `.cpp`-only ⇒ ABI-compatible with the vendored headers. Output `x64/Output/Release/cryptlib.lib` → `cryptlib-Release.lib`. **gitignored** (42 MB). |
+| `cryptlib-Release.lib` | Crypto++ **8.9.0** (`git clone -b CRYPTOPP_8_9_0 weidai11/cryptopp`, matches the vendored 8.9.0 headers) | `msbuild cryptlib.vcxproj /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v145 /p:WholeProgramOptimization=false` — Crypto++'s Release config is already `/MT`+`NDEBUG`. Same modern-MSVC `.cpp` patch as the Debug lib: cap the `integer.cpp` (`>=1500`) and `zdeflate.cpp` (`>=1600`) version guards with `&& CRYPTOPP_MSC_VERSION < 1930` so the non-`stdext` fallback branches are taken (`stdext::*checked_array_iterator` were removed from the 14.51 STL). `.cpp`-only ⇒ ABI-compatible with the vendored headers. Output `x64/Output/Release/cryptlib.lib` → `cryptlib-Release.lib`. **Committed** (~42 MB; under GitHub's 100 MB limit). |
 | `SpeedTreeRT-Release.lib` | SpeedTreeRT 1.6 SDK (same drop as the Debug lib) | `msbuild SpeedTreeRT.vcxproj /p:Configuration=Release /p:Platform=x64 /p:WholeProgramOptimization=false` (the project's Release\|x64 config is `/MT`+`NDEBUG`; `/GL` off so the lib carries readable, toolset-portable directives). `d3d9.h` resolves from the Windows 10 SDK; the dead Oct-2004 DXSDK include path is harmless. The client pragma was made config-specific — `_DEBUG` → `SpeedTreeRT.lib` (`/MTd`), else `SpeedTreeRT-Release.lib` (`/MT`) — since the SDK lib is referenced by a single hard-coded name. |
 | `lzo-2.10MT.lib` | lzo 2.10 (oberhumer.com) | `cl /c /MT /O2 /DNDEBUG /I include src\*.c` then `lib /out:lzo-2.10MT.lib *.obj` in an x64 dev shell (Release twin of `lzo-2.10MT_d.lib`; `lzoLibLink.h` auto-links `lzo-2.10`+`MT`+(`_d` iff `_DEBUG`)). |
 | `libjpeg-9fMT.lib` | IJG libjpeg 9f (`ijg.org/files/jpegsr9f.zip`) | `jconfig.vc`→`jconfig.h`, then `cl /c /MT /O2 /DNDEBUG` the `j*.c` core (the libjpeg object set, minus the cjpeg/djpeg/jpegtran app `main()`s; keep `jmemnobs`) and `lib` into this exact name (`jpegLibLink.h` builds `libjpeg-9f`+runtime-model+(`_d` iff `_DEBUG`)). Release twin of `libjpeg-9fMT_d.lib`. |
