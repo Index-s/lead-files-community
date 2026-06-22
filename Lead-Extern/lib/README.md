@@ -36,3 +36,22 @@ ones above. Built/fetched VS 2026 (v145), x64, `/MTd` to match the client.
 
 Runtime DLLs are staged next to the exe in `Lead-Client/`: granny2_x64, mss64,
 python27, WebView2Loader, D3DX9_43, DevIL.
+
+## Release (`/MT`) client libs
+
+The **Release\|x64** client (`metin2client.exe`) is built with the non-debug static
+CRT (`/MT`, `NDEBUG`, `_ITERATOR_DEBUG_LEVEL=0`). A `/MT` object cannot link against a
+`/MTd` static lib (`LNK2038`), so the few **statically-linked** third-party libs need a
+`/MT` Release counterpart alongside the `/MTd` Debug one. The import-lib deps (granny2,
+mss64, python27, DevIL, WebView2Loader, d3d9/d3dx9) are CRT-isolated and unchanged. All
+four below are x64, `/MT`, `NDEBUG`; verified with `dumpbin -directives` ⇒ `LIBCMT`
+(never `LIBCMTD`/`MSVCRT`). They live in this same `lib/` dir with distinct names so the
+config-specific `#pragma comment(lib,…)` / auto-link headers pick the right one per
+configuration (Debug keeps using the existing `/MTd` libs unchanged).
+
+| File | Source | How it was built |
+|---|---|---|
+| `cryptlib-Release.lib` | Crypto++ **8.9.0** (`git clone -b CRYPTOPP_8_9_0 weidai11/cryptopp`, matches the vendored 8.9.0 headers) | `msbuild cryptlib.vcxproj /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v145 /p:WholeProgramOptimization=false` — Crypto++'s Release config is already `/MT`+`NDEBUG`. Same modern-MSVC `.cpp` patch as the Debug lib: cap the `integer.cpp` (`>=1500`) and `zdeflate.cpp` (`>=1600`) version guards with `&& CRYPTOPP_MSC_VERSION < 1930` so the non-`stdext` fallback branches are taken (`stdext::*checked_array_iterator` were removed from the 14.51 STL). `.cpp`-only ⇒ ABI-compatible with the vendored headers. Output `x64/Output/Release/cryptlib.lib` → `cryptlib-Release.lib`. **gitignored** (42 MB). |
+| `SpeedTreeRT-Release.lib` | SpeedTreeRT 1.6 SDK (same drop as the Debug lib) | `msbuild SpeedTreeRT.vcxproj /p:Configuration=Release /p:Platform=x64 /p:WholeProgramOptimization=false` (the project's Release\|x64 config is `/MT`+`NDEBUG`; `/GL` off so the lib carries readable, toolset-portable directives). `d3d9.h` resolves from the Windows 10 SDK; the dead Oct-2004 DXSDK include path is harmless. The client pragma was made config-specific — `_DEBUG` → `SpeedTreeRT.lib` (`/MTd`), else `SpeedTreeRT-Release.lib` (`/MT`) — since the SDK lib is referenced by a single hard-coded name. |
+| `lzo-2.10MT.lib` | lzo 2.10 (oberhumer.com) | `cl /c /MT /O2 /DNDEBUG /I include src\*.c` then `lib /out:lzo-2.10MT.lib *.obj` in an x64 dev shell (Release twin of `lzo-2.10MT_d.lib`; `lzoLibLink.h` auto-links `lzo-2.10`+`MT`+(`_d` iff `_DEBUG`)). |
+| `libjpeg-9fMT.lib` | IJG libjpeg 9f (`ijg.org/files/jpegsr9f.zip`) | `jconfig.vc`→`jconfig.h`, then `cl /c /MT /O2 /DNDEBUG` the `j*.c` core (the libjpeg object set, minus the cjpeg/djpeg/jpegtran app `main()`s; keep `jmemnobs`) and `lib` into this exact name (`jpegLibLink.h` builds `libjpeg-9f`+runtime-model+(`_d` iff `_DEBUG`)). Release twin of `libjpeg-9fMT_d.lib`. |

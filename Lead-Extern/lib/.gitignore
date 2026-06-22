@@ -1,9 +1,10 @@
 # Precompiled x64 dependency .lib files ARE committed so the repo builds out of the box
 # (matching how the 32-bit libs were tracked). Exceptions kept out of git:
-#   - cryptlib-Debug.lib : 158 MB, over GitHub's 100 MB per-file limit (rebuild from
-#     Lead-Extern/README.md, or pull via Git LFS).
+#   - cryptlib-Debug.lib (158 MB) / cryptlib-Release.lib (42 MB) : large Crypto++ static
+#     libs. Rebuild from Lead-Extern/lib/README.md, or pull via Git LFS.
 #   - DLLs / PDBs / export libs : runtime/debug artifacts, not needed to build.
 cryptlib-Debug.lib
+cryptlib-Release.lib
 *.dll
 *.pdb
 *.exp
