@@ -142,7 +142,7 @@
 		}
 
 		void	OnSetup(CPeer * peer);
-		bool	Bet(const char * pszLogin, DWORD dwGold, DWORD dwGuild);
+		bool	Bet(const char * pszLogin, GoldType dwGold, DWORD dwGuild);
 		void	Draw();
 		void	End(int iScoreFrom, int iScoreTo);
 
@@ -154,7 +154,7 @@
 
 		TGuildWarReserve				m_data;
 		// <login, <guild, gold>>
-		std::map<std::string, std::pair<DWORD, DWORD> > mapBet;
+		std::map<std::string, std::pair<DWORD, GoldType> > mapBet;
 		int						m_iLastNoticeMin;
 	};
 
@@ -206,7 +206,7 @@
 		void	BootReserveWar();
 		bool	ReserveWar(TPacketGuildWar * p);
 		void	ProcessReserveWar();
-		bool	Bet(DWORD dwID, const char * c_pszLogin, DWORD dwGold, DWORD dwGuild);
+		bool	Bet(DWORD dwID, const char * c_pszLogin, GoldType dwGold, DWORD dwGuild);
 
 		void	CancelWar(DWORD GID1, DWORD GID2);
 

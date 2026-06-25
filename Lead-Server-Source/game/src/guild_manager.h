@@ -10,7 +10,7 @@ class CGuildWarReserveForGame
 {
 	public:
 		TGuildWarReserve				data;
-		std::map<std::string, std::pair<DWORD, DWORD> > mapBet;
+		std::map<std::string, std::pair<DWORD, GoldType> > mapBet;
 };
 
 class CGuildManager : public singleton<CGuildManager>
