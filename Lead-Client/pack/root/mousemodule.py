@@ -16,7 +16,7 @@ import systemSetting
 import localeInfo
 
 ## Mouse Controler
-## 마우스 커서를 제어하며 마우스 커서에 Attach되어 움직이는 Object들까지 제어할 수 있다.
+## Controls the mouse cursor and also controls the Objects attached to the cursor that move with it.
 
 class CursorImage(object):
 	def __init__(self):
@@ -157,7 +157,7 @@ class CMouseController(object):
 				self.curCursorImage = self.cursorDict[app.NORMAL]
 
 		except KeyError:
-			dbg.TraceError("mouseModule.MouseController.SetCursor - 잘못된 커서 번호 [%d]" % cursorNum)
+			dbg.TraceError("mouseModule.MouseController.SetCursor - invalid cursor number [%d]" % cursorNum)
 			self.curCursorName = app.NORMAL
 			self.curCursorImage = self.cursorDict[app.NORMAL]
 

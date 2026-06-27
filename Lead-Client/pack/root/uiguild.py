@@ -647,7 +647,7 @@ class CommentSlot(ui.Window):
 
 		self.slotSimpleText = ui.MakeTextLine(self)
 		self.slotSimpleText.SetPosition(2, 0)
-		## 13.12.02 아랍수정
+		## 13.12.02 Arabic fix
 		if localeInfo.IsARABIC() :
 			self.slotSimpleText.SetWindowHorizontalAlignCenter()
 			self.slotSimpleText.SetHorizontalAlignCenter()
@@ -839,7 +839,7 @@ class GuildWindow(ui.ScriptWindow):
 					"SKILL"			: self.PageWindow(self, "uiscript/guildwindow_guildskillpage.py"),
 					"GRADE"			: self.PageWindow(self, "uiscript/guildwindow_gradepage.py"),
 				}
-			elif localeInfo.IsVIETNAM() :   # 다표시 
+			elif localeInfo.IsVIETNAM() :   # multi display 
 				self.pageWindow = {
 					"GUILD_INFO"	: self.PageWindow(self, "uiscript/guildwindow_guildinfopage_eu.py"),
 					"BOARD"			: self.PageWindow(self, "uiscript/guildwindow_boardpage.py"),
@@ -1035,7 +1035,7 @@ class GuildWindow(ui.ScriptWindow):
 			page.Children.append(noticeMarkImage)
 
 			## Name
-			## 13.12.02 아랍수정
+			## 13.12.02 Arabic fix
 			if localeInfo.IsJAPAN():
 				nameSlotImage = ui.MakeImageBox(page, "d:/ymir work/ui/public/Parameter_Slot_100x18.sub", 9, yPos)
 			elif localeInfo.IsARABIC():
@@ -1055,7 +1055,7 @@ class GuildWindow(ui.ScriptWindow):
 			page.Children.append(deleteButton)
 
 			## Comment
-			## 13.12.02 아랍수정
+			## 13.12.02 Arabic fix
 			commentSlot = CommentSlot()
 			commentSlot.SetParent(page)
 			if localeInfo.IsARABIC():
@@ -1072,7 +1072,7 @@ class GuildWindow(ui.ScriptWindow):
 			page.boardDict[i] = boardSlotList
 
 		## PostComment - Have to make this here for that fit tooltip's position.
-		## 13.12.02 아랍수정
+		## 13.12.02 Arabic fix
 		if localeInfo.IsARABIC():
 			postCommentButton = ui.MakeButton(page, 3, 273, localeInfo.GUILD_COMMENT, "d:/ymir work/ui/game/taskbar/", "Send_Chat_Button_01.sub", "Send_Chat_Button_02.sub", "Send_Chat_Button_03.sub")
 		else:
@@ -1091,7 +1091,7 @@ class GuildWindow(ui.ScriptWindow):
 
 			inverseLineIndex = self.MEMBER_LINE_COUNT - i - 1
 			yPos = 28 + inverseLineIndex*lineStep
-            ## 13.12.02 아랍 수정
+            ## 13.12.02 Arabic fix
 			## Name
 			if localeInfo.IsJAPAN():
 				nameSlotImage = ui.MakeImageBox(page, "d:/ymir work/ui/public/Parameter_Slot_100x18.sub", 15, yPos)
@@ -1275,7 +1275,7 @@ class GuildWindow(ui.ScriptWindow):
 
 			yPos = 22 + i*lineStep
 			index = i+1
-			## 13.12.02 아랍 수정
+			## 13.12.02 Arabic fix
 			## GradeNumber
 			if localeInfo.IsARABIC():
 				gradeNumberSlotImage = ui.MakeImageBox(page, "d:/ymir work/ui/public/Parameter_Slot_00.sub", 310, yPos)
@@ -1348,7 +1348,7 @@ class GuildWindow(ui.ScriptWindow):
 		guildID = net.GetGuildID()
 		self.largeMarkBox.SetIndex(guildID)
 		self.largeMarkBox.SetScale(3)
-		## 13.12.02 아랍수정
+		## 13.12.02 Arabic fix
 		if localeInfo.IsARABIC():
 			self.largeMarkBox.SetPosition(self.largeMarkBox.GetWidth()+32,1)
 
@@ -1467,7 +1467,7 @@ class GuildWindow(ui.ScriptWindow):
 
 		page.levelAverageSlot.SetText(str(guild.GetGuildMemberLevelAverage()))
 
-		## 길드장만 길드 마크와 길드전 신청 버튼을 볼 수 있음
+		## Only the guild master can see the guild mark and guild war request buttons
 		mainCharacterName = player.GetMainCharacterName()
 		masterName = guild.GetGuildMasterName()
 
@@ -1488,7 +1488,7 @@ class GuildWindow(ui.ScriptWindow):
 			page.declareWarButton.Hide()
 			page.uploadSymbolButton.Hide()
 
-		## Refresh 시에 길드전 정보 업데이트
+		## Update guild war info on Refresh
 		for i in xrange(guild.ENEMY_GUILD_SLOT_MAX_COUNT):
 			name = guild.GetEnemyGuildName(i)
 			nameTextLine = self.enemyGuildNameList[i]
@@ -1973,15 +1973,15 @@ class BuildGuildBuildingWindow(ui.ScriptWindow):
 
 	if localeInfo.IsJAPAN():
 		GUILD_CATEGORY_LIST = (
-				("HEADQUARTER", "딈멳뙕뭱븿"),
-				("FACILITY", "둮뮗뙕뭱븿"),
-				("OBJECT", "궩궻뫜"),
+				("HEADQUARTER", "Main Building"),
+				("FACILITY", "Facility Building"),
+				("OBJECT", "Object"),
 			)
 	elif localeInfo.IsYMIR() or localeInfo.IsWE_KOREA():
 		GUILD_CATEGORY_LIST = (
-				("HEADQUARTER", "본건물"),
-				("FACILITY", "기능건물"),
-				("OBJECT", "조경물"),
+				("HEADQUARTER", "Main Building"),
+				("FACILITY", "Facility Building"),
+				("OBJECT", "Landscaping"),
 			)
 	elif localeInfo.IsEUROPE() or localeInfo.IsHONGKONG():
 		GUILD_CATEGORY_LIST = (
@@ -2162,7 +2162,7 @@ class BuildGuildBuildingWindow(ui.ScriptWindow):
 		line_width = line_maxX - line_minX
 		line_width_half = line_width / 2
 
-		X_SIZE_STEP = 2 * 2 ## 2의 단위로만 증가해야 함
+		X_SIZE_STEP = 2 * 2 ## must increase only in units of 2
 		Y_SIZE_STEP = 8
 		sxPos = door_maxX - corner_minX + (line_width_half*X_SIZE_STEP)
 		exPos = -sxPos
@@ -2338,14 +2338,14 @@ class BuildGuildBuildingWindow(ui.ScriptWindow):
 		self.popup = None
 
 	def __EnablePCBlocker(self):
-		## PC Blocker 처리를 켠다. (투명해짐)
+		## Turn on PC Blocker handling. (becomes transparent)
 		chr.SetInstanceType(chr.INSTANCE_TYPE_BUILDING)
 
 		for idx in self.indexList:
 			chr.SetBlendRenderMode(idx, 1.0)
 
 	def __DisablePCBlocker(self):
-		## PC Blocker 처리를 끈다. (안투명해짐)
+		## Turn off PC Blocker handling. (no longer transparent)
 		chr.SetInstanceType(chr.INSTANCE_TYPE_OBJECT)
 
 		for idx in self.indexList:
@@ -2600,13 +2600,13 @@ class BuildGuildBuildingWindow(ui.ScriptWindow):
 		return True
 
 """
-- 프로토콜
+- Protocol
 
-게임돌입시:
+On game entry:
 	RecvLandPacket:
 		CPythonMiniMap::RegisterGuildArea
 
-게임이동중:
+While moving in game:
 	PythonPlayer::Update()
 		CPythonPlayer::__Update_NotifyGuildAreaEvent()
 			game.py.BINARY_Guild_EnterGuildArea
@@ -2615,15 +2615,15 @@ class BuildGuildBuildingWindow(ui.ScriptWindow):
 				uigameButton.GameButtonWindow.HideBuildButton()
 
 BuildButton:
-!길드장인지 처리 없음
-!건물이 있어도 짓기 버튼은 있음
+!no check for whether player is guild master
+!the build button exists even if a building already exists
 
-!건물이 임시로 사용하는 VID 는 서버가 보내주는 것과 혼동될 염려가 있음
-!건물 VNUM 은 BuildGuildBuildingWindow.BUILDING_VNUM_LIST 를 이용해 변환
+!the VID temporarily used by a building may be confused with the one sent by the server
+!building VNUM is converted using BuildGuildBuildingWindow.BUILDING_VNUM_LIST
 
-!건물 지을때는 /build c(reate)
-!건물 부술때는 /build d(estroy)
-!rotation 의 단위는 degree
+!to build a building use /build c(reate)
+!to destroy a building use /build d(estroy)
+!the unit of rotation is degree
 
 	interfaceModule.interface.__OnClickBuildButton:
 		interfaceModule.interface.BUILD_OpenWindow:
@@ -2636,7 +2636,7 @@ PreviewButton:
 	__OnPreviewMode:
 	__RestoreViewMode:
 
-건물 부수기:
+Destroy building:
 	uiTarget.TargetBoard.__OnDestroyBuilding
 		net.SendChatPacket("/build d vid")
 """
@@ -2878,13 +2878,13 @@ if __name__ == "__main__":
 	app.Loop()
 
 	"""
-	- 프로토콜
+	- Protocol
 
-게임돌입시:
+On game entry:
 	RecvLandPacket:
 		CPythonMiniMap::RegisterGuildArea
 
-게임이동중:
+While moving in game:
 	PythonPlayer::Update()
 		CPythonPlayer::__Update_NotifyGuildAreaEvent()
 			game.py.BINARY_Guild_EnterGuildArea
@@ -2893,15 +2893,15 @@ if __name__ == "__main__":
 				uigameButton.GameButtonWindow.HideBuildButton()
 
 BuildButton:
-!길드장인지 처리 없음
-!건물이 있어도 짓기 버튼은 있음
+!no check for whether player is guild master
+!the build button exists even if a building already exists
 
-!건물이 임시로 사용하는 VID 는 서버가 보내주는 것과 혼동될 염려가 있음
-!건물 VNUM 은 BuildGuildBuildingWindow.BUILDING_VNUM_LIST 를 이용해 변환
+!the VID temporarily used by a building may be confused with the one sent by the server
+!building VNUM is converted using BuildGuildBuildingWindow.BUILDING_VNUM_LIST
 
-!건물 지을때는 /build c(reate)
-!건물 부술때는 /build d(estroy)
-!rotation 의 단위는 degree
+!to build a building use /build c(reate)
+!to destroy a building use /build d(estroy)
+!the unit of rotation is degree
 
 	interfaceModule.interface.__OnClickBuildButton:
 		interfaceModule.interface.BUILD_OpenWindow:
@@ -2910,13 +2910,13 @@ AcceptButton:
 	BuildGuildBuildingWindow.Build:
 		net.SendChatPacket("/build c vnum x y x_rot y_rot z_rot")
 
-	x_rot, y_rot 는 AffectContainer에 저장
+	x_rot, y_rot are stored in AffectContainer
 
 PreviewButton:
 	__OnPreviewMode:
 	__RestoreViewMode:
 
-건물 부수기:
+Destroy building:
 	uiTarget.TargetBoard.__OnDestroyBuilding
 		net.SendChatPacket("/build d vid")
 	"""

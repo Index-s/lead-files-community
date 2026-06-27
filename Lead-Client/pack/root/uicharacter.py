@@ -521,7 +521,7 @@ class CharacterWindow(ui.ScriptWindow):
 		except:
 			#import exception
 			#exception.Abort("CharacterWindow.RefreshStatus.BindObject")
-			## 게임이 튕겨 버림
+			## the game crashes
 			pass
 
 		self.__RefreshStatusPlusButtonList()
@@ -798,7 +798,7 @@ class CharacterWindow(ui.ScriptWindow):
 			skillLevel = getSkillLevel(slotIndex)
 			skillType = getSkillType(skillIndex)
 
-			## 승마 스킬 예외 처리
+			## Riding skill exception handling
 			if player.SKILL_INDEX_RIDING == skillIndex:
 				if 1 == skillGrade:
 					skillLevel += 19
@@ -825,7 +825,7 @@ class CharacterWindow(ui.ScriptWindow):
 					else:
 						skillPage.SetSlotCountNew(realSlotIndex, skillGrade, skillLevel)
 
-			## 그외
+			## Others
 			else:
 				if not SHOW_LIMIT_SUPPORT_SKILL_LIST or skillIndex in SHOW_LIMIT_SUPPORT_SKILL_LIST:
 					realSlotIndex = self.__GetETCSkillRealSlotIndex(slotIndex)
@@ -859,11 +859,11 @@ class CharacterWindow(ui.ScriptWindow):
 
 	def CanShowPlusButton(self, skillIndex, skillLevel, curStatPoint):
 
-		## 스킬이 있으면
+		## If the skill exists
 		if 0 == skillIndex:
 			return False
 
-		## 레벨업 조건을 만족한다면
+		## If the level-up condition is satisfied
 		if not skill.CanLevelUpSkill(skillIndex, skillLevel):
 			return False
 
@@ -979,8 +979,8 @@ class CharacterWindow(ui.ScriptWindow):
 
 		mouseModule.mouseController.DeattachObject()
 
-	## FIXME : 스킬을 사용했을때 슬롯 번호를 가지고 해당 슬롯을 찾아서 업데이트 한다.
-	##         매우 불합리. 구조 자체를 개선해야 할듯.
+	## FIXME : When a skill is used, take the slot number, find the matching slot, and update it.
+	##         Very unreasonable. The structure itself probably needs to be improved.
 	def OnUseSkill(self, slotIndex, coolTime):
 
 		skillIndex = player.GetSkillIndex(slotIndex)

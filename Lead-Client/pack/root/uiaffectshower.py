@@ -331,7 +331,7 @@ class AffectImage(ui.ExpandedImageBox):
 			toolTip += " (%s : %s)" % (localeInfo.LEFT_TIME, leftTime)
 		self.SetToolTipText(toolTip, 0, 40)
 		
-	#독일버전에서 시간을 제거하기 위해서 사용 
+	#Used to remove the time in the German version 
 	def __UpdateDescription2(self):
 		if not self.description:
 			return
@@ -404,7 +404,7 @@ class AffectShower(ui.Window):
 			chr.NEW_AFFECT_SKILL_BOOK_BONUS : (localeInfo.TOOLTIP_APPLY_SKILL_BOOK_BONUS, "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),
 			chr.NEW_AFFECT_SKILL_BOOK_NO_DELAY : (localeInfo.TOOLTIP_APPLY_SKILL_BOOK_NO_DELAY, "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),
 			
-			# 자동물약 hp, sp
+			# auto potion hp, sp
 			chr.NEW_AFFECT_AUTO_HP_RECOVERY : (localeInfo.TOOLTIP_AUTO_POTION_REST, "d:/ymir work/ui/pattern/auto_hpgauge/05.dds"),			
 			chr.NEW_AFFECT_AUTO_SP_RECOVERY : (localeInfo.TOOLTIP_AUTO_POTION_REST, "d:/ymir work/ui/pattern/auto_spgauge/05.dds"),
 			#chr.NEW_AFFECT_AUTO_HP_RECOVERY : (localeInfo.TOOLTIP_AUTO_POTION_REST, "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),			
@@ -421,7 +421,7 @@ class AffectShower(ui.Window):
 			MALL_DESC_IDX_START+player.POINT_MAX_SP_PCT : (localeInfo.TOOLTIP_MAX_SP_PCT, "d:/ymir work/ui/skill/common/affect/gold_premium.sub"),
 	}
 	if app.ENABLE_DRAGON_SOUL_SYSTEM:
-		# 용혼석 천, 지 덱.
+		# Dragon Soul sky, land deck.
 		AFFECT_DATA_DICT[chr.NEW_AFFECT_DRAGON_SOUL_DECK1] = (localeInfo.TOOLTIP_DRAGON_SOUL_DECK1, "d:/ymir work/ui/dragonsoul/buff_ds_sky1.tga")
 		AFFECT_DATA_DICT[chr.NEW_AFFECT_DRAGON_SOUL_DECK2] = (localeInfo.TOOLTIP_DRAGON_SOUL_DECK2, "d:/ymir work/ui/dragonsoul/buff_ds_land1.tga")
 
@@ -446,7 +446,7 @@ class AffectShower(ui.Window):
 		self.affectImageDict={}
 		self.__ArrangeImageList()
 
-	def ClearAffects(self): ## 스킬 이펙트만 없앱니다.
+	def ClearAffects(self): ## Removes only the skill effects.
 		self.living_affectImageDict={}
 		for key, image in self.affectImageDict.items():
 			if not image.IsSkillAffect():
@@ -472,7 +472,7 @@ class AffectShower(ui.Window):
 		if not self.AFFECT_DATA_DICT.has_key(affect):
 			return
 
-		## 용신의 가호, 선인의 교훈은 Duration 을 0 으로 설정한다.
+		## For Dragon God's Blessing and Sage's Lesson, set Duration to 0.
 		if affect == chr.NEW_AFFECT_NO_DEATH_PENALTY or\
 		   affect == chr.NEW_AFFECT_SKILL_BOOK_BONUS or\
 		   affect == chr.NEW_AFFECT_AUTO_SP_RECOVERY or\
