@@ -1,9 +1,9 @@
 import app
 import constInfo
 
-MAP_TRENT02 = "MAP_TRENT02" # �ӽ�
-MAP_WL = "MAP_WL" # �ӽ�
-MAP_NUSLUCK = "MAP_NUSLUCK" # �ӽ� 
+MAP_TRENT02 = "MAP_TRENT02"
+MAP_WL = "MAP_WL"
+MAP_NUSLUCK = "MAP_NUSLUCK"
 MAP_TREE2 = "MAP_TREE2"
 
 BLEND_POTION_NO_TIME = "BLEND_POTION_NO_TIME"
@@ -106,7 +106,7 @@ def LoadLocaleData():
 		app.LoadLocaleData(app.GetLocalePath())
 
 def IsCHEONMA():
-	return IsYMIR()		# ���� YMIR �������� ������ õ��������. õ�������� ���� �ݱ� ������ ���� �� ����.
+	return IsYMIR()
 
 # END_OF_SUPPORT_NEW_KOREA_SERVER
 
@@ -183,7 +183,6 @@ else:
 LoadLocaleFile(LOCALE_FILE_NAME, locals())
 
 ########################################################################################################
-## NOTE : �������� ������ "������/�� �����ðڽ��ϱ�?" ���ڿ��� ���� ������ ���� �ڵ�
 dictSingleWord = {
 	"m":1, "n":1, "r":1, "M":1, "N":1, "R":1, "l":1, "L":1, "1":1, "3":1, "6":1, "7":1, "8":1, "0":1,
 }

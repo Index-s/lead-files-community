@@ -1196,7 +1196,6 @@ class ExpandedImageBox(ImageBox):
 	def SetRenderingMode(self, mode):
 		wndMgr.SetRenderingMode(self.hWnd, mode)
 
-	# [0.0, 1.0] ������ ����ŭ �ۼ�Ʈ�� �׸��� �ʴ´�.
 	def SetRenderingRect(self, left, top, right, bottom):
 		wndMgr.SetRenderingRect(self.hWnd, left, top, right, bottom)
 
@@ -1850,7 +1849,6 @@ class TitleBar(Window):
 
 	def MakeTitleBar(self, width, color):
 
-		## ���� Color�� ����ϰ� ���� ����
 
 		width = max(64, width)
 
@@ -3175,8 +3173,6 @@ class PythonScriptLoader(object):
 		print "===== Load Script File : %s" % (FileName)
 
 		try:
-			# chr, player ���� sandbox ������ import�� ������ �ʱ� ������,(���� �ǿ��� ������ �ſ� ŭ.)
-			#  �̸� script dictionary�� �ʿ��� ����� �־���´�.
 			import chr
 			import player
 			import app

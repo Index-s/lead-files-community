@@ -233,7 +233,6 @@ class CubeWindow(ui.ScriptWindow):
 		self.tooltipItem.AddItemData(itemVnum, metinSlot, attrSlot)
 		
 
-	# ��Ḧ Ŭ���ϸ� �κ��丮���� �ش� �������� ã�Ƽ� �����.
 	def __OnSelectMaterialSlot(self, trash, resultIndex, materialIndex):
 		resultIndex = resultIndex + self.firstSlotIndex
 		if resultIndex not in self.cubeMaterialInfos:
@@ -246,18 +245,16 @@ class CubeWindow(ui.ScriptWindow):
 			return
 
 		for itemVnum, itemCount in materialInfo[materialIndex]:
-			bAddedNow = False	# �̹��� Ŭ�������ν� �������� �߰��Ǿ���?
+			bAddedNow = False
 			item.SelectItem(itemVnum)
 			itemSizeX, itemSizeY = item.GetItemSize()
 
-			# ������ �ʿ��� ��ŭ�� ��Ḧ ������ �ִ°�?
 			if player.GetItemCountByVnum(itemVnum) >= itemCount:
 				for i in xrange(player.INVENTORY_SLOT_COUNT):
 					vnum = player.GetItemIndex(i)
 					count= player.GetItemCount(i)
 
 					if vnum == itemVnum and count >= itemCount:
-						# �̹� ���� �������� ��ϵǾ� �ִ��� �˻��ϰ�, ���ٸ� �߰���
 						bAlreadyExists = False
 						for slotPos, invenPos in self.cubeItemInfo.items():
 							if invenPos == i:
@@ -268,17 +265,14 @@ class CubeWindow(ui.ScriptWindow):
 
 						#print "Cube Status : ", self.cubeItemInfo
 
-						# ���� �����ϸ� ť�꿡 ��ϵ��� ���� �������̹Ƿ�, �� ť�� ���Կ� �ش� ������ �߰�
 						bCanAddSlot = False
 						for slotPos in xrange(self.cubeSlot.GetSlotCount()):
-							# �� ť�� ������ ����ִ°�?
 							if not slotPos in self.cubeItemInfo:
 								upperColumnItemSizeY = -1
 								currentSlotLine = int(slotPos / self.CUBE_SLOT_COUNTX)
 								cubeColumn = int(slotPos % self.CUBE_SLOT_COUNTX)
 
 
-								# ���� ť�꿡 3ĭ¥�� �������� ��ϵǾ� �ִٸ�, �� ��(column)�� �� �̻� �� �͵� ���� �Ѿ��
 								if cubeColumn in self.cubeItemInfo:
 									columnVNUM = player.GetItemIndex(self.cubeItemInfo[cubeColumn])
 									item.SelectItem(columnVNUM)
@@ -292,7 +286,6 @@ class CubeWindow(ui.ScriptWindow):
 									item.SelectItem(upperColumnVNUM)
 									columnItemSizeX, upperColumnItemSizeY = item.GetItemSize()
 								
-								# 1ĭ¥�� �������� �ٷ� ���ٿ� ��ĭ¥�� �������� �־�� ��
 								if 1 == itemSizeY: 
 									if 0 == currentSlotLine:
 										bCanAddSlot = True
@@ -300,13 +293,11 @@ class CubeWindow(ui.ScriptWindow):
 										bCanAddSlot = True
 									elif 2 == currentSlotLine:
 										bCanAddSlot = True
-								# 2ĭ¥�� �������� ���Ʒ��� ����־�� ��
 								elif 2 == itemSizeY:
 									if 0 == currentSlotLine and not cubeColumn + self.CUBE_SLOT_COUNTX in self.cubeItemInfo:
 										bCanAddSlot = True
 									elif 1 == currentSlotLine and 1 == upperColumnItemSizeY and not cubeColumn + (self.CUBE_SLOT_COUNTX * 2) in self.cubeItemInfo:
 										bCanAddSlot = True
-								# 3ĭ¥�� �������� �ش� Column ��ü�� ��� ����־�� ��
 								else:
 									if not cubeColumn in self.cubeItemInfo and not cubeColumn + self.CUBE_SLOT_COUNTX in self.cubeItemInfo and not cubeColumn + (self.CUBE_SLOT_COUNTX * 2) in self.cubeItemInfo:
 										bCanAddSlot = True

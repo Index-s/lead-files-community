@@ -261,13 +261,10 @@ class LoginWindow(ui.ScriptWindow):
 
 		print "---------------------------------------------------------------------------- CLOSE LOGIN WINDOW "
 		#
-		# selectMusic�� ������ BGM�� ����Ƿ� �ΰ� �� üũ�Ѵ�. 
 		#
 		if musicInfo.loginMusic != "" and musicInfo.selectMusic != "":
 			snd.FadeOutMusic("BGM/"+musicInfo.loginMusic)
 
-		## NOTE : idEditLine�� pwdEditLine�� �̺�Ʈ�� ���� ���� �Ǿ��־
-		##        Event�� ������ �ʱ�ȭ ���־�߸� �մϴ� - [levites]
 		self.idEditLine.SetTabEvent(0)
 		self.idEditLine.SetReturnEvent(0)
 		self.pwdEditLine.SetReturnEvent(0)
@@ -353,11 +350,11 @@ class LoginWindow(ui.ScriptWindow):
 
 	def SetPasswordEditLineFocus(self):
 		if localeInfo.IsEUROPE():
-			if self.idEditLine != None: #0000862: [M2EU] �α���â �˾� ����: ����� ���� None ������
+			if self.idEditLine != None:
 				self.idEditLine.SetText("")
-				self.idEditLine.SetFocus() #0000685: [M2EU] ���̵�/��й�ȣ ���� ���� ���� ����: ������ ���̵�� ��Ŀ���� ���� �����
+				self.idEditLine.SetFocus()
 
-			if self.pwdEditLine != None: #0000862: [M2EU] �α���â �˾� ����: ����� ���� None ������
+			if self.pwdEditLine != None:
 				self.pwdEditLine.SetText("")
 		else:
 			if self.pwdEditLine != None:
@@ -412,7 +409,6 @@ class LoginWindow(ui.ScriptWindow):
 				loginFailureMsg = localeInfo.LOGIN_FAILURE_UNKNOWN  + error
 
 
-		#0000685: [M2EU] ���̵�/��й�ȣ ���� ���� ���� ����: ������ �н������ ��Ŀ���� ���� �����
 		loginFailureFunc=self.loginFailureFuncDict.get(error, self.SetPasswordEditLineFocus)
 
 		if app.loggined:
@@ -759,7 +755,6 @@ class LoginWindow(ui.ScriptWindow):
 			if channelIndex >= 0:
 				self.channelList.SelectItem(channelIndex)
 
-		## Show/Hide �ڵ忡 ������ �־ �ӽ� - [levites]
 		self.serverBoard.SetPosition(self.xServerBoard, self.yServerBoard)
 		self.serverBoard.Show()
 		self.connectBoard.Hide()
@@ -971,7 +966,6 @@ class LoginWindow(ui.ScriptWindow):
 			self.PopupNotifyMessage(localeInfo.CHANNEL_SELECT_CHANNEL)
 			return
 
-		# ���°� FULL �� ������ ���� ����
 		if state == serverInfo.STATE_DICT[3]: 
 			self.PopupNotifyMessage(localeInfo.CHANNEL_NOTIFY_FULL)
 			return
