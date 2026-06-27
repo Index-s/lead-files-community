@@ -31,7 +31,7 @@ window = {
 					"x" : 10,
 					"y" : 17,
 
-					"text" : "스킬포인트 리셋",
+					"text" : "Reset Skill Points",
 
 					"default_image" : ROOT + "XLarge_Button_01.sub",
 					"over_image" : ROOT + "XLarge_Button_02.sub",
@@ -45,7 +45,7 @@ window = {
 					"x" : 10,
 					"y" : 57,
 
-					"text" : "취소",
+					"text" : "Cancel",
 
 					"default_image" : ROOT + "XLarge_Button_01.sub",
 					"over_image" : ROOT + "XLarge_Button_02.sub",

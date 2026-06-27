@@ -230,7 +230,7 @@ window = {
 								{
 									"name" : "Guild_Name",
 									"type":"text",
-									"text":"길드 이름",
+									"text":"Guild Name",
 									"x":0,
 									"y":0,
 									"r":1.0,
@@ -255,7 +255,7 @@ window = {
 								{
 									"name" : "Character_Name",
 									"type":"text",
-									"text":"캐릭터 이름",
+									"text":"Character Name",
 									"x":0,
 									"y":0,
 									"r":1.0,
@@ -307,16 +307,16 @@ window = {
 						{ "name" : "Face_Image", "type" : "image", "x" : 11, "y" : 11, "image" : "d:/ymir work/ui/game/windows/face_warrior.sub" },
 						{ "name" : "Face_Slot", "type" : "image", "x" : 7, "y" : 7, "image" : FACE_SLOT_FILE, },
 
-						## 기본 능력
+						## Basic Stats
 						{
 							"name":"Status_Standard", "type":"window", "x":3, "y":100, "width":200, "height":250,
 							"children" :
 							(
-								## 기본 능력 제목
+								## Basic Stats Title
 								{ "name":"Character_Bar_01", "type":"horizontalbar", "x":12, "y":8, "width":223, },
 								{ "name":"Character_Bar_01_Text", "type" : "image", "x" : 13, "y" : 9, "image" : LOCALE_PATH+"label_std.sub", },
 								
-								## 능력 수련 수치
+								## Stat Training Points
 								{ 
 									"name":"Status_Plus_Label", 
 									"type":"image", 
@@ -329,7 +329,7 @@ window = {
 									),
 								},
 
-								## 기본 능력 아이템 리스트
+								## Basic Stats Item List
 								{"name":"Status_Standard_ItemList1", "type" : "image", "x":17, "y":31, "image" : LOCALE_PATH+"label_std_item1.sub", },
 								{"name":"Status_Standard_ItemList2", "type" : "image", "x":100, "y":30, "image" : LOCALE_PATH+"label_std_item2.sub", },
 
@@ -420,21 +420,21 @@ window = {
 							),
 						},
 						
-						## 부가 능력
+						## Extra Stats
 						{ 
 							"name":"Status_Extent", "type":"window", "x":3, "y":221, "width":200, "height":50, 
 							"children" :
 							(
 
-								## 부가 능력 제목
+								## Extra Stats Title
 								{ "name":"Status_Extent_Bar", "type":"horizontalbar", "x":12, "y":6, "width":223, },
 								{ "name":"Status_Extent_Label", "type" : "image", "x" : 13, "y" : 8, "image" : LOCALE_PATH+"label_ext.sub", },
 
-								## 기본 능력 아이템 리스트
+								## Basic Stats Item List
 								{"name":"Status_Extent_ItemList1", "type" : "image", "x":11, "y":31, "image" : LOCALE_PATH+"label_ext_item1.sub", },
 								{"name":"Status_Extent_ItemList2", "type" : "image", "x":128, "y":32, "image" : LOCALE_PATH+"label_ext_item2.sub", },
 
-								## MSPD - 이동 속도
+								## MSPD - Movement Speed
 								{
 									"name":"MOV_Label", "type":"window", "x":66, "y":33, "width":50, "height":20, 
 									"children" :
@@ -444,7 +444,7 @@ window = {
 									)
 								},
 
-								## ASPD - 공격 속도
+								## ASPD - Attack Speed
 								{
 									"name":"ASPD_Label", "type":"window", "x":66, "y":33+23, "width":50, "height":20, 
 									"children" :
@@ -454,7 +454,7 @@ window = {
 									)
 								},
 
-								## CSPD - 주문 속도
+								## CSPD - Casting Speed
 								{
 									"name":"CSPD_Label", "type":"window", "x":66, "y":33+23*2, "width":50, "height":20, 
 									"children" :
@@ -464,7 +464,7 @@ window = {
 									)
 								},
 
-								## MATT - 마법 공격력
+								## MATT - Magic Attack
 								{
 									"name":"MATT_Label", "type":"window", "x":183, "y":33, "width":50, "height":20, 
 									"children" :
@@ -474,7 +474,7 @@ window = {
 									)
 								},
 
-								## MDEF - 마법 방어력
+								## MDEF - Magic Defense
 								{
 									"name":"MDEF_Label", "type":"window", "x":183, "y":33+23, "width":50, "height":20, 
 									"children" :
@@ -484,7 +484,7 @@ window = {
 									)
 								},
 
-								## 회피율
+								## Evasion Rate
 								{
 									"name":"ER_Label", "type":"window", "x":183, "y":33+23*2, "width":50, "height":20, 
 									"children" :
@@ -681,7 +681,7 @@ window = {
 
 					"children" :
 					(
-						## 기본 액션 제목
+						## Basic Action Title
 						{ "name":"Action_Bar", "type":"horizontalbar", "x":12, "y":11, "width":223, },
 						{ "name":"Action_Bar_Text", "type":"text", "x":15, "y":13, "text":uiScriptLocale.CHARACTER_NORMAL_ACTION },
 
@@ -702,7 +702,7 @@ window = {
 							"image" : ICON_SLOT_FILE,
 						},
 
-						## 상호 액션 제목
+						## Mutual Action Title
 						{ "name":"Reaction_Bar", "type":"horizontalbar", "x":12, "y":8+150, "width":223, },
 						{ "name":"Reaction_Bar_Text", "type":"text", "x":15, "y":10+150, "text":uiScriptLocale.CHARACTER_MUTUAL_ACTION },
 
@@ -760,25 +760,25 @@ window = {
 							"horizontal_align" : "right",
 						},
 
-						{ "name" : "Quest_Name_00", "type" : "text", "text" : "이름입니다", "x" : 60, "y" : 14 },
-						{ "name" : "Quest_LastTime_00", "type" : "text", "text" : "남은 시간 입니다", "x" : 60, "y" : 30 },
-						{ "name" : "Quest_LastCount_00", "type" : "text", "text" : "남은 개수 입니다", "x" : 60, "y" : 46 },
+						{ "name" : "Quest_Name_00", "type" : "text", "text" : "This is the name", "x" : 60, "y" : 14 },
+						{ "name" : "Quest_LastTime_00", "type" : "text", "text" : "This is the remaining time", "x" : 60, "y" : 30 },
+						{ "name" : "Quest_LastCount_00", "type" : "text", "text" : "This is the remaining count", "x" : 60, "y" : 46 },
 
-						{ "name" : "Quest_Name_01", "type" : "text", "text" : "이름입니다", "x" : 60, "y" : 74 },
-						{ "name" : "Quest_LastTime_01", "type" : "text", "text" : "남은 시간 입니다", "x" : 60, "y" : 90 },
-						{ "name" : "Quest_LastCount_01", "type" : "text", "text" : "남은 개수 입니다", "x" : 60, "y" : 106 },
+						{ "name" : "Quest_Name_01", "type" : "text", "text" : "This is the name", "x" : 60, "y" : 74 },
+						{ "name" : "Quest_LastTime_01", "type" : "text", "text" : "This is the remaining time", "x" : 60, "y" : 90 },
+						{ "name" : "Quest_LastCount_01", "type" : "text", "text" : "This is the remaining count", "x" : 60, "y" : 106 },
 
-						{ "name" : "Quest_Name_02", "type" : "text", "text" : "이름입니다", "x" : 60, "y" : 134 },
-						{ "name" : "Quest_LastTime_02", "type" : "text", "text" : "남은 시간 입니다", "x" : 60, "y" : 150 },
-						{ "name" : "Quest_LastCount_02", "type" : "text", "text" : "남은 개수 입니다", "x" : 60, "y" : 166 },
+						{ "name" : "Quest_Name_02", "type" : "text", "text" : "This is the name", "x" : 60, "y" : 134 },
+						{ "name" : "Quest_LastTime_02", "type" : "text", "text" : "This is the remaining time", "x" : 60, "y" : 150 },
+						{ "name" : "Quest_LastCount_02", "type" : "text", "text" : "This is the remaining count", "x" : 60, "y" : 166 },
 
-						{ "name" : "Quest_Name_03", "type" : "text", "text" : "이름입니다", "x" : 60, "y" : 194 },
-						{ "name" : "Quest_LastTime_03", "type" : "text", "text" : "남은 시간 입니다", "x" : 60, "y" : 210 },
-						{ "name" : "Quest_LastCount_03", "type" : "text", "text" : "남은 개수 입니다", "x" : 60, "y" : 226 },
+						{ "name" : "Quest_Name_03", "type" : "text", "text" : "This is the name", "x" : 60, "y" : 194 },
+						{ "name" : "Quest_LastTime_03", "type" : "text", "text" : "This is the remaining time", "x" : 60, "y" : 210 },
+						{ "name" : "Quest_LastCount_03", "type" : "text", "text" : "This is the remaining count", "x" : 60, "y" : 226 },
 
-						{ "name" : "Quest_Name_04", "type" : "text", "text" : "이름입니다", "x" : 60, "y" : 254 },
-						{ "name" : "Quest_LastTime_04", "type" : "text", "text" : "남은 시간 입니다", "x" : 60, "y" : 270 },
-						{ "name" : "Quest_LastCount_04", "type" : "text", "text" : "남은 개수 입니다", "x" : 60, "y" : 286 },
+						{ "name" : "Quest_Name_04", "type" : "text", "text" : "This is the name", "x" : 60, "y" : 254 },
+						{ "name" : "Quest_LastTime_04", "type" : "text", "text" : "This is the remaining time", "x" : 60, "y" : 270 },
+						{ "name" : "Quest_LastCount_04", "type" : "text", "text" : "This is the remaining count", "x" : 60, "y" : 286 },
 
 					),
 				},
