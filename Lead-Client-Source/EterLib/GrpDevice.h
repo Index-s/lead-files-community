@@ -52,10 +52,10 @@ protected:
 	void __DestroyPDTVertexBufferList();
 	bool __CreatePDTVertexBufferList();
 
-	LPDIRECT3DVERTEXDECLARATION9 CreatePTStreamVertexShader();
-	LPDIRECT3DVERTEXDECLARATION9 CreatePNTStreamVertexShader();
-	LPDIRECT3DVERTEXDECLARATION9 CreatePNT2StreamVertexShader();
-	LPDIRECT3DVERTEXDECLARATION9 CreateDoublePNTStreamVertexShader();
+	LPDIRECT3DVERTEXDECLARATION9 CreatePTStreamVertexDeclaration();
+	LPDIRECT3DVERTEXDECLARATION9 CreatePNTStreamVertexDeclaration();
+	LPDIRECT3DVERTEXDECLARATION9 CreatePNT2StreamVertexDeclaration();
+	LPDIRECT3DVERTEXDECLARATION9 CreateDoublePNTStreamVertexDeclaration();
 
 protected:
 	DWORD						m_uBackBufferCount;

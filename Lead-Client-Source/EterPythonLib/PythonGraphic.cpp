@@ -483,7 +483,7 @@ void CPythonGraphic::RenderAlphaImage(CGraphicImageInstance* pImageInstance, flo
 	vertices[3].diffuse = DiffuseColor2;
 	vertices[3].texCoord = TTextureCoordinate(eu, ev);
 
-	STATEMANAGER.SetVertexDeclaration(ms_pntVS);
+	STATEMANAGER.SetVertexDeclaration(ms_pntDecl);
 	// 2004.11.18.myevan.DrawIndexPrimitiveUP -> DynamicVertexBuffer
 	CGraphicBase::SetDefaultIndexBuffer(DEFAULT_IB_FILL_RECT);
 	if (CGraphicBase::SetPDTStream(vertices, 4))
