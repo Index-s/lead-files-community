@@ -1111,8 +1111,8 @@ typedef struct SGuildReserve
 	int32_t        lWarPrice;
 	int32_t        lInitialScore;
 	bool        bStarted;
-	DWORD	dwBetFrom;
-	DWORD	dwBetTo;
+	GoldType	dwBetFrom;
+	GoldType	dwBetTo;
 	int32_t	lPowerFrom;
 	int32_t	lPowerTo;
 	int32_t	lHandicap;

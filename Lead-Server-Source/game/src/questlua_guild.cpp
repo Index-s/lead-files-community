@@ -193,9 +193,9 @@ namespace quest
 		p.dwWarID = (DWORD) lua_tonumber(L, 1);
 		strlcpy(p.szLogin, ch->GetDesc()->GetAccountTable().login, sizeof(p.szLogin));
 		p.dwGuild = (DWORD) lua_tonumber(L, 2);
-		p.dwGold = (DWORD) lua_tonumber(L, 3);
+		p.dwGold = (GoldType) lua_tonumber(L, 3);
 
-		sys_log(0, "GUILD_WAR_BET: %s login %s war_id %u guild %u gold %u", 
+		sys_log(0, "GUILD_WAR_BET: %s login %s war_id %u guild %u gold %lld",
 				ch->GetName(), p.szLogin, p.dwWarID, p.dwGuild, p.dwGold);
 
 		db_clientdesc->DBPacket(HEADER_GD_GUILD_WAR_BET, 0, &p, sizeof(p));
@@ -466,4 +466,3 @@ namespace quest
 		CQuestManager::instance().AddLuaFunctionTable("guild", guild_functions);
 	}
 }
-

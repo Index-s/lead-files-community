@@ -15,6 +15,8 @@ ALTER TABLE player.myshop_pricelist MODIFY COLUMN price BIGINT NOT NULL DEFAULT 
 
 -- optional but recommended for consistency with packet/table changes
 ALTER TABLE player.guild_war_bet MODIFY COLUMN gold BIGINT NOT NULL DEFAULT 0;
+ALTER TABLE player.guild_war_reservation MODIFY COLUMN bet_from BIGINT NOT NULL DEFAULT 0;
+ALTER TABLE player.guild_war_reservation MODIFY COLUMN bet_to BIGINT NOT NULL DEFAULT 0;
 
 -- log database
 ALTER TABLE log.money_log MODIFY COLUMN gold BIGINT NOT NULL DEFAULT 0;
