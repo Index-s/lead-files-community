@@ -163,7 +163,6 @@
     <ClCompile Include="GrpMarkInstance.cpp" />
     <ClCompile Include="GrpMath.cpp" />
     <ClCompile Include="GrpObjectInstance.cpp" />
-    <ClCompile Include="GrpPixelShader.cpp" />
     <ClCompile Include="GrpRatioInstance.cpp" />
     <ClCompile Include="GrpScreen.cpp" />
     <ClCompile Include="GrpShadowTexture.cpp" />
@@ -174,7 +173,6 @@
     <ClCompile Include="GrpVertexBuffer.cpp" />
     <ClCompile Include="GrpVertexBufferDynamic.cpp" />
     <ClCompile Include="GrpVertexBufferStatic.cpp" />
-    <ClCompile Include="GrpVertexShader.cpp" />
     <ClCompile Include="IME.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="JpegFile.cpp" />
@@ -240,7 +238,6 @@
     <ClInclude Include="GrpMarkInstance.h" />
     <ClInclude Include="GrpMath.h" />
     <ClInclude Include="GrpObjectInstance.h" />
-    <ClInclude Include="GrpPixelShader.h" />
     <ClInclude Include="GrpRatioInstance.h" />
     <ClInclude Include="GrpScreen.h" />
     <ClInclude Include="GrpShadowTexture.h" />
@@ -251,7 +248,6 @@
     <ClInclude Include="GrpVertexBuffer.h" />
     <ClInclude Include="GrpVertexBufferDynamic.h" />
     <ClInclude Include="GrpVertexBufferStatic.h" />
-    <ClInclude Include="GrpVertexShader.h" />
     <ClInclude Include="IME.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="JpegFile.h" />

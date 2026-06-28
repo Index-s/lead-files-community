@@ -95,8 +95,6 @@
 #include "GrpVertexBuffer.h"
 #include "GrpVertexBufferStatic.h"
 #include "GrpVertexBufferDynamic.h"
-#include "GrpVertexShader.h"
-#include "GrpPixelShader.h"
 
 
 #include "GrpShadowTexture.h"
