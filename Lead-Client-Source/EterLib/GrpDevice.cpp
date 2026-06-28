@@ -135,7 +135,7 @@ bool CGraphicDevice::ResizeBackBuffer(UINT uWidth, UINT uHeight)
 	return true;
 }
 
-LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePNTStreamVertexShader()
+LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePNTStreamVertexDeclaration()
 {
 	assert(ms_lpd3dDevice != NULL);
 
@@ -151,14 +151,14 @@ LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePNTStreamVertexShader()
 	if (ms_lpd3dDevice->CreateVertexDeclaration(pShaderDecl, &dwShader) != D3D_OK)
 	{
 		char szError[1024];
-		sprintf_s(szError, sizeof(szError), "Failed to create CreatePNTStreamVertexShader");
+		sprintf_s(szError, sizeof(szError), "Failed to create CreatePNTStreamVertexDeclaration");
 		MessageBox(NULL, szError, "Vertex Shader Error", MB_ICONSTOP);
 	}
 
 	return dwShader;
 }
 
-LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePNT2StreamVertexShader()
+LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePNT2StreamVertexDeclaration()
 {
 	assert(ms_lpd3dDevice != NULL);
 
@@ -175,14 +175,14 @@ LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePNT2StreamVertexShader()
 	if (ms_lpd3dDevice->CreateVertexDeclaration(pShaderDecl, &dwShader) != D3D_OK)
 	{
 		char szError[1024];
-		sprintf_s(szError, sizeof(szError), "Failed to create CreatePNT2StreamVertexShader");
+		sprintf_s(szError, sizeof(szError), "Failed to create CreatePNT2StreamVertexDeclaration");
 		MessageBox(NULL, szError, "Vertex Shader Error", MB_ICONSTOP);
 	}
 
 	return dwShader;
 }
 
-LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePTStreamVertexShader()
+LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePTStreamVertexDeclaration()
 {
 	assert(ms_lpd3dDevice != NULL);
 
@@ -197,14 +197,14 @@ LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreatePTStreamVertexShader()
 	if (ms_lpd3dDevice->CreateVertexDeclaration(pShaderDecl, &dwShader) != D3D_OK)
 	{
 		char szError[1024];
-		sprintf_s(szError, sizeof(szError), "Failed to create CreatePTStreamVertexShader");
+		sprintf_s(szError, sizeof(szError), "Failed to create CreatePTStreamVertexDeclaration");
 		MessageBox(NULL, szError, "Vertex Shader Error", MB_ICONSTOP);
 	}
 
 	return dwShader;
 }
 
-LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreateDoublePNTStreamVertexShader()
+LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreateDoublePNTStreamVertexDeclaration()
 {
 	assert(ms_lpd3dDevice != NULL);
 
@@ -224,7 +224,7 @@ LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreateDoublePNTStreamVertexShader()
 	if (ms_lpd3dDevice->CreateVertexDeclaration(pShaderDecl, &dwShader) != D3D_OK)
 	{
 		char szError[1024];
-		sprintf_s(szError, sizeof(szError), "Failed to create CreateDoublePNTStreamVertexShader");
+		sprintf_s(szError, sizeof(szError), "Failed to create CreateDoublePNTStreamVertexDeclaration");
 		MessageBox(NULL, szError, "Vertex Shader Error", MB_ICONSTOP);
 	}
 
@@ -555,9 +555,9 @@ RETRY:
 	D3DXCreateMatrixStack(0, &ms_lpd3dMatStack);
 	ms_lpd3dMatStack->LoadIdentity();
 
-	ms_ptVS	= CreatePTStreamVertexShader();
-	ms_pntVS = CreatePNTStreamVertexShader();
-	ms_pnt2VS = CreatePNT2StreamVertexShader();
+	ms_ptDecl	= CreatePTStreamVertexDeclaration();
+	ms_pntDecl = CreatePNTStreamVertexDeclaration();
+	ms_pnt2Decl = CreatePNT2StreamVertexDeclaration();
 
 	D3DXMatrixIdentity(&ms_matIdentity);
 	D3DXMatrixIdentity(&ms_matView);
@@ -768,22 +768,22 @@ void CGraphicDevice::Destroy()
 		ms_hDC = NULL;
 	}
 
-	if (ms_ptVS)
+	if (ms_ptDecl)
 	{	
-		ms_ptVS->Release();
-		ms_ptVS = 0;;
+		ms_ptDecl->Release();
+		ms_ptDecl = 0;;
 	}
 
-	if (ms_pntVS)
+	if (ms_pntDecl)
 	{
-		ms_pntVS->Release();
-		ms_pntVS = 0;
+		ms_pntDecl->Release();
+		ms_pntDecl = 0;
 	}
 
-	if (ms_pnt2VS)
+	if (ms_pnt2Decl)
 	{
-		ms_pnt2VS->Release();
-		ms_pnt2VS = 0;
+		ms_pnt2Decl->Release();
+		ms_pnt2Decl = 0;
 	}
 
 	safe_release(ms_lpSphereMesh);

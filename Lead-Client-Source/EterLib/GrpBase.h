@@ -260,9 +260,9 @@ class CGraphicBase
 		static D3DPRESENT_PARAMETERS	ms_d3dPresentParameter;
 		
 		static DWORD					ms_dwD3DBehavior;
-		static LPDIRECT3DVERTEXDECLARATION9 ms_ptVS;
-		static LPDIRECT3DVERTEXDECLARATION9 ms_pntVS;
-		static LPDIRECT3DVERTEXDECLARATION9 ms_pnt2VS;
+		static LPDIRECT3DVERTEXDECLARATION9 ms_ptDecl;
+		static LPDIRECT3DVERTEXDECLARATION9 ms_pntDecl;
+		static LPDIRECT3DVERTEXDECLARATION9 ms_pnt2Decl;
 
 		static D3DXMATRIX				ms_matScreen0;
 		static D3DXMATRIX				ms_matScreen1;
