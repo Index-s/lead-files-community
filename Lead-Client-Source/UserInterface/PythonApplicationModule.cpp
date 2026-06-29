@@ -1039,16 +1039,16 @@ PyObject * appOpenTextFile(PyObject * poSelf, PyObject * poArgs)
 
 	CTextLineLoader * pTextLineLoader = new CTextLineLoader(szFileName);
 
-	return Py_BuildValue("i", (int)(uintptr_t)pTextLineLoader);
+	return Py_BuildHandle(pTextLineLoader);
 }
 
 PyObject * appCloseTextFile(PyObject * poSelf, PyObject * poArgs)
 {
-	int iHandle;
-	if (!PyTuple_GetInteger(poArgs, 0, &iHandle))
+	void * pvHandle;
+	if (!PyTuple_GetHandle(poArgs, 0, &pvHandle))
 		return Py_BuildException();
 
-	CTextLineLoader * pTextFileLoader = (CTextLineLoader *)(uintptr_t)iHandle;
+	CTextLineLoader * pTextFileLoader = (CTextLineLoader *)pvHandle;
 	delete pTextFileLoader;
 
 	return Py_BuildNone();
@@ -1056,24 +1056,24 @@ PyObject * appCloseTextFile(PyObject * poSelf, PyObject * poArgs)
 
 PyObject * appGetTextFileLineCount(PyObject * poSelf, PyObject * poArgs)
 {
-	int iHandle;
-	if (!PyTuple_GetInteger(poArgs, 0, &iHandle))
+	void * pvHandle;
+	if (!PyTuple_GetHandle(poArgs, 0, &pvHandle))
 		return Py_BuildException();
 
-	CTextLineLoader * pTextFileLoader = (CTextLineLoader *)(uintptr_t)iHandle;
+	CTextLineLoader * pTextFileLoader = (CTextLineLoader *)pvHandle;
 	return Py_BuildValue("i", pTextFileLoader->GetLineCount());
 }
 
 PyObject * appGetTextFileLine(PyObject * poSelf, PyObject * poArgs)
 {
-	int iHandle;
-	if (!PyTuple_GetInteger(poArgs, 0, &iHandle))
+	void * pvHandle;
+	if (!PyTuple_GetHandle(poArgs, 0, &pvHandle))
 		return Py_BuildException();
 	int iLineIndex;
 	if (!PyTuple_GetInteger(poArgs, 1, &iLineIndex))
 		return Py_BuildException();
 
-	CTextLineLoader * pTextFileLoader = (CTextLineLoader *)(uintptr_t)iHandle;
+	CTextLineLoader * pTextFileLoader = (CTextLineLoader *)pvHandle;
 	return Py_BuildValue("s", pTextFileLoader->GetLine(iLineIndex));
 }
 
