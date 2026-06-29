@@ -493,7 +493,7 @@ bool CPythonApplication::Process()
 					m_dwFaceAccCount += dwCurFaceCount;
 					m_dwFaceAccTime += m_dwCurRenderTime;
 
-					m_fFaceSpd=(0 != m_dwFaceAccTime) ? static_cast<float>(m_dwFaceAccCount/m_dwFaceAccTime) : 0.0f;
+					m_fFaceSpd=static_cast<float>(m_dwFaceAccCount/m_dwFaceAccTime);
 
 					// Distance automatic adjustment
 					if (-1 == m_iForceSightRange)
