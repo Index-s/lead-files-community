@@ -14,7 +14,7 @@
 #endif
 
 #include <dx9/d3d9.h>
-#include <dx9/d3dx9.h>
+#include <d3dx9math_shim.h>
 
 #define DIRECTINPUT_VERSION 0x0800
 
@@ -32,7 +32,6 @@
 
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "d3d9.lib")
-#pragma comment(lib, "d3dx9.lib")
 
 #include "../eterBase/StdAfx.h"
 #include "../eterBase/Debug.h"
@@ -80,8 +79,6 @@
 
 #include "GrpObjectInstance.h"
 #include "GrpRatioInstance.h"
-
-#include "GrpD3DXBuffer.h"
 
 #include "GrpTexture.h"
 #include "GrpImageTexture.h"

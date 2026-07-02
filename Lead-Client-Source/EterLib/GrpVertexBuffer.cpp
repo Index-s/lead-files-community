@@ -3,9 +3,50 @@
 #include "GrpVertexBuffer.h"
 #include "StateManager.h"
 
+// Local replacement for D3DXGetFVFVertexSize.
+static UINT GetFVFVertexSize(DWORD dwFVF)
+{
+	UINT uSize = 0;
+
+	switch (dwFVF & D3DFVF_POSITION_MASK)
+	{
+		case D3DFVF_XYZ:	uSize += 3 * sizeof(float); break;
+		case D3DFVF_XYZRHW:	uSize += 4 * sizeof(float); break;
+		case D3DFVF_XYZW:	uSize += 4 * sizeof(float); break;
+		case D3DFVF_XYZB1:	uSize += 4 * sizeof(float); break;
+		case D3DFVF_XYZB2:	uSize += 5 * sizeof(float); break;
+		case D3DFVF_XYZB3:	uSize += 6 * sizeof(float); break;
+		case D3DFVF_XYZB4:	uSize += 7 * sizeof(float); break;
+		case D3DFVF_XYZB5:	uSize += 8 * sizeof(float); break;
+	}
+
+	if (dwFVF & D3DFVF_NORMAL)
+		uSize += 3 * sizeof(float);
+	if (dwFVF & D3DFVF_PSIZE)
+		uSize += sizeof(float);
+	if (dwFVF & D3DFVF_DIFFUSE)
+		uSize += sizeof(DWORD);
+	if (dwFVF & D3DFVF_SPECULAR)
+		uSize += sizeof(DWORD);
+
+	const UINT uTexCount = (dwFVF & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT;
+	for (UINT i = 0; i < uTexCount; ++i)
+	{
+		switch ((dwFVF >> (16 + i * 2)) & 3)
+		{
+			case D3DFVF_TEXTUREFORMAT1:	uSize += 1 * sizeof(float); break;
+			case D3DFVF_TEXTUREFORMAT2:	uSize += 2 * sizeof(float); break;
+			case D3DFVF_TEXTUREFORMAT3:	uSize += 3 * sizeof(float); break;
+			case D3DFVF_TEXTUREFORMAT4:	uSize += 4 * sizeof(float); break;
+		}
+	}
+
+	return uSize;
+}
+
 int	CGraphicVertexBuffer::GetVertexStride() const
 {
-	int retSize = D3DXGetFVFVertexSize(m_dwFVF);
+	int retSize = GetFVFVertexSize(m_dwFVF);
 	return retSize;
 }
 
@@ -160,7 +201,7 @@ bool CGraphicVertexBuffer::Create(int vtxCount, DWORD fvf, DWORD usage, D3DPOOL 
 	Destroy();
 
 	m_vtxCount = vtxCount;
-	m_dwBufferSize = D3DXGetFVFVertexSize(fvf) * m_vtxCount;
+	m_dwBufferSize = GetFVFVertexSize(fvf) * m_vtxCount;
 	m_d3dPool = d3dPool;
 	m_dwUsage = usage;
 	m_dwFVF = fvf;

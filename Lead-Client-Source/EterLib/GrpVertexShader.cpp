@@ -1,6 +1,5 @@
 ﻿#include "StdAfx.h"
 #include "GrpVertexShader.h"
-#include "GrpD3DXBuffer.h"
 #include "StateManager.h"
 
 CVertexShader::CVertexShader()
