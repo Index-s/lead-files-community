@@ -31,8 +31,6 @@ public:
 	void			Destroy();
 	int				Create(HWND hWnd, int hres, int vres, bool Windowed = true, int bit = 32, int ReflashRate = 0);
 
-	bool			Reset();
-
 	void			EnableWebBrowserMode(const RECT& c_rcWebPage);		
 	void			DisableWebBrowserMode();
 	void			MoveWebBrowserRect(const RECT& c_rcWebPage);

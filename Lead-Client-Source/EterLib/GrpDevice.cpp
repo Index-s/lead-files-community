@@ -232,16 +232,6 @@ LPDIRECT3DVERTEXDECLARATION9 CGraphicDevice::CreateDoublePNTStreamVertexDeclarat
 }
 
 
-bool CGraphicDevice::Reset()
-{
-	HRESULT hr;
-
-	if (FAILED(hr = ms_lpd3dDevice->ResetEx(&ms_d3dPresentParameter, NULL)))
-		return false;
-
-	return true;
-}
-
 static LPDIRECT3DSURFACE9 s_lpStencil;
 static DWORD   s_MaxTextureWidth, s_MaxTextureHeight;
 
