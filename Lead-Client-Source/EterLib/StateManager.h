@@ -263,6 +263,11 @@ class CStateManager : public CSingleton<CStateManager>
 		void	SaveViewport();
 		void	RestoreViewport();
 
+		HRESULT	GetRenderTarget(DWORD RenderTargetIndex, LPDIRECT3DSURFACE9* ppRenderTarget);
+		HRESULT	SetRenderTarget(DWORD RenderTargetIndex, LPDIRECT3DSURFACE9 pRenderTarget);
+		HRESULT	GetDepthStencilSurface(LPDIRECT3DSURFACE9* ppZStencilSurface);
+		HRESULT	SetDepthStencilSurface(LPDIRECT3DSURFACE9 pNewZStencil);
+
 		// Renderstates
 		void	SaveRenderState(D3DRENDERSTATETYPE Type, DWORD dwValue);
 		void	RestoreRenderState(D3DRENDERSTATETYPE Type);
