@@ -217,6 +217,7 @@ class CGraphicBase
 		static bool		IsTLVertexClipping();
 		static bool		IsFastTNL();
 		static bool		IsLowTextureMemory();
+		static bool		IsDeviceCreated();
 		static bool		IsHighTextureMemory();
 
 		static void SetDefaultIndexBuffer(UINT eDefIB);
@@ -270,8 +271,15 @@ class CGraphicBase
 
 		static HWND						ms_hWnd;
 		static HDC						ms_hDC;
+
+		// The raw device lives behind the StateManager/CGraphicBase seam; only the
+		// device-management layer may touch it directly.
+	private:
+		friend class CGraphicDevice;
 		static LPDIRECT3D9EX				ms_lpd3d;
 		static LPDIRECT3DDEVICE9EX		ms_lpd3dDevice;
+
+	protected:
 		static ID3DXMatrixStack*		ms_lpd3dMatStack;
 		static D3DVIEWPORT9				ms_Viewport;
 

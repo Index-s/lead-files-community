@@ -30,7 +30,7 @@ bool CGraphicTexture::IsEmpty() const
 
 void CGraphicTexture::SetTextureStage(int stage) const
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	STATEMANAGER.SetTexture(stage, m_lpd3dTexture);	
 }
 
