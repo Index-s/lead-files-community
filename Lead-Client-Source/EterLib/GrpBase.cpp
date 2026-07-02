@@ -537,6 +537,36 @@ HRESULT CGraphicBase::UpdateDeviceTexture(LPDIRECT3DBASETEXTURE9 pSourceTexture,
 	return ms_lpd3dDevice->UpdateTexture(pSourceTexture, pDestinationTexture);
 }
 
+bool CGraphicBase::SupportsFullscreenGamma()
+{
+	return D3DCAPS2_FULLSCREENGAMMA == (ms_d3dCaps.Caps2 & D3DCAPS2_FULLSCREENGAMMA);
+}
+
+void CGraphicBase::SetDeviceGammaRamp(CONST D3DGAMMARAMP* pRamp)
+{
+	ms_lpd3dDevice->SetGammaRamp(0, D3DSGR_NO_CALIBRATION, pRamp);
+}
+
+HRESULT CGraphicBase::GetAdapterIdentifier(D3DADAPTER_IDENTIFIER9* pIdentifier)
+{
+	return ms_lpd3d->GetAdapterIdentifier(0, 0, pIdentifier);
+}
+
+HRESULT CGraphicBase::GetAdapterDisplayMode(D3DDISPLAYMODE* pMode)
+{
+	return ms_lpd3d->GetAdapterDisplayMode(0, pMode);
+}
+
+UINT CGraphicBase::GetAdapterModeCount(D3DFORMAT eFormat)
+{
+	return ms_lpd3d->GetAdapterModeCount(0, eFormat);
+}
+
+HRESULT CGraphicBase::EnumAdapterModes(D3DFORMAT eFormat, UINT uMode, D3DDISPLAYMODE* pMode)
+{
+	return ms_lpd3d->EnumAdapterModes(0, eFormat, uMode, pMode);
+}
+
 CGraphicBase::CGraphicBase()
 {
 }
