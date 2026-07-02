@@ -457,7 +457,7 @@ class QuestDialog(ui.ScriptWindow):
 		
 	# END_OF_QUEST_CANCEL
 	
-	def MakeQuestion(self, n):  # n은 모든 퀘스트 대화창의 마지막 버튼인 "닫기"를 포함한 전체 퀘스트 버튼 개수. by 김준호
+	def MakeQuestion(self, n):  # n is the total number of quest buttons including the last button "Close" of every quest dialog. by Kim Jun-ho
 		global entire_questbutton_number
 		global entire_questpage_number
 		global cur_questpage_number
@@ -548,7 +548,7 @@ class QuestDialog(ui.ScriptWindow):
 		self.prevbutton = None
 		self.CloseSelf()	
 
-	def AppendQuestion(self, name, idx):  # idx는 0부터 시작함. PythonEventManager.cpp line 881 참고. by 김준호
+	def AppendQuestion(self, name, idx):  # idx starts from 0. See PythonEventManager.cpp line 881. by Kim Jun-ho
 		if not self.btnAnswer:
 			return
 
@@ -595,7 +595,7 @@ class QuestDialog(ui.ScriptWindow):
 	# QUEST_INPUT
 	def OnKeyDown(self, key):
 		if self.btnAnswer == None:
-			## 선택문이 없고 '다음', '확인' 등의 일방 버튼만 있는 경우에 대한 처리
+			## Handling for the case where there is no choice and only one-way buttons such as 'Next' or 'OK' exist
 			if None != self.btnNext:
 				if app.DIK_RETURN == key:
 					self.OnPressEscapeKey()
@@ -640,21 +640,21 @@ class QuestDialog(ui.ScriptWindow):
 		
 	def OnPressEscapeKey(self):
 
-		# ESC키가 눌린 경우 "다음" 버튼을 누른 것과 같은 효과를 내도록 함.
+		# When the ESC key is pressed, make it produce the same effect as pressing the "Next" button.
 		if None != self.btnNext:
-		    ##퀘스트문자들이 전부다 나왔을경우의 ESC버튼
+		    ##ESC button for the case where all quest text has been displayed
 			if event.BUTTON_TYPE_CANCEL == self.nextButtonType:
 				event.SelectAnswer(self.descIndex, 254)
 				self.CloseSelf()
-			## 아무 작업을 하지 않을때
+			## When no action is to be taken
 			elif event.BUTTON_TYPE_DONE == self.nextButtonType:
 				self.CloseSelf()
-			## 엔터나 다음화면으로 넘어가려고 할경우 
+			## When trying to move to the next screen via Enter 
 			elif event.BUTTON_TYPE_NEXT == self.nextButtonType:
 				event.SelectAnswer(self.descIndex, 254)
 				self.CloseSelf()
 		else:
-		## 도중에 꺼버리거나, ESC버튼이 나왓을경우 
+		## When closed midway, or when the ESC button has appeared 
 			event.SelectAnswer(self.descIndex, entire_questbutton_number -1 )		
 			self.nextbutton = None
 			self.prevbutton = None

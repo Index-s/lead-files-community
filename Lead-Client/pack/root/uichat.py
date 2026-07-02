@@ -617,7 +617,7 @@ class ChatWindow(ui.Window):
 		self.scrollBar = scrollBar
 
 		self.Refresh()
-		self.chatInputSet.RefreshPosition() # RTL 시 위치를 제대로 잡으려면 위치 갱신이 필요하다
+		self.chatInputSet.RefreshPosition() # In RTL mode a position refresh is needed to place it correctly
 	
 	def __del__(self):
 		ui.Window.__del__(self)

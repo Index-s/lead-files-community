@@ -17,7 +17,7 @@ import stringCommander
 import emotion
 
 ####################################
-# 빠른 실행을 위한 모듈 로딩 분담
+# Module loading distribution for faster execution
 ####################################
 import uiRefine
 import uiToolTip
@@ -166,7 +166,7 @@ class LoadingWindow(ui.ScriptWindow):
 		self.playerX=playerX
 		self.playerY=playerY
 
-		self.__RegisterSkill() ## 로딩 중간에 실행 하면 문제 발생
+		self.__RegisterSkill() ## Causes problems if executed in the middle of loading
 		self.__RegisterTitleName()
 		self.__RegisterColor()
 		self.__InitData()
@@ -187,7 +187,7 @@ class LoadingWindow(ui.ScriptWindow):
 		self.playerY=playerY
 
 		self.__RegisterDungeonMapName()
-		self.__RegisterSkill() ## 로딩 중간에 실행 하면 문제 발생
+		self.__RegisterSkill() ## Causes problems if executed in the middle of loading
 		self.__RegisterTitleName()
 		self.__RegisterColor()
 		self.__RegisterEmotionIcon()
@@ -223,7 +223,7 @@ class LoadingWindow(ui.ScriptWindow):
 				self.errMsg.Show()
 				self.loadStepList=[]
 
-				## 이곳에서 syserr.txt 를 보낸다.
+				## Send syserr.txt from here.
 
 				import dbg
 				dbg.TraceError(" !!! Failed to load game data : STEP [%d]" % (progress))

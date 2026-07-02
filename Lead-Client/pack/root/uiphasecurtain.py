@@ -49,11 +49,11 @@ class PhaseCurtain(ui.Bar):
 			if self.curAlpha >= 1.0:
 				self.curAlpha = 1.0
 
-				# 이벤트 중간에 멈출경우를 대비해 미리 제거
+				# Remove in advance in case the event stops midway
 				event=self.event
 				self.event = 0
 
-				#print "페이드 아웃 완료 이벤트 실행"
+				#print "Fade out complete, executing event"
 
 				if -1 != self.args:
 					event(self.args)
