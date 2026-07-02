@@ -176,6 +176,7 @@
     <ClCompile Include="GrpVertexBufferStatic.cpp" />
     <ClCompile Include="GrpVertexShader.cpp" />
     <ClCompile Include="IME.cpp" />
+    <ClCompile Include="ImageFileDecoder.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="JpegFile.cpp" />
     <ClCompile Include="LensFlare.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="GrpVertexBufferStatic.h" />
     <ClInclude Include="GrpVertexShader.h" />
     <ClInclude Include="IME.h" />
+    <ClInclude Include="ImageFileDecoder.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="JpegFile.h" />
     <ClInclude Include="LensFlare.h" />
