@@ -94,7 +94,6 @@
 #include "GrpVertexBufferDynamic.h"
 
 
-#include "GrpShadowTexture.h"
 #include "GrpImageInstance.h"
 #include "GrpExpandedImageInstance.h"
 #include "GrpTextInstance.h"
