@@ -268,6 +268,9 @@ class CStateManager : public CSingleton<CStateManager>
 		HRESULT	GetDepthStencilSurface(LPDIRECT3DSURFACE9* ppZStencilSurface);
 		HRESULT	SetDepthStencilSurface(LPDIRECT3DSURFACE9 pNewZStencil);
 
+		HRESULT	CreateVertexShader(CONST DWORD* pFunction, LPDIRECT3DVERTEXSHADER9* ppShader);
+		HRESULT	CreateVertexDeclaration(CONST D3DVERTEXELEMENT9* pVertexElements, LPDIRECT3DVERTEXDECLARATION9* ppDecl);
+
 		// Renderstates
 		void	SaveRenderState(D3DRENDERSTATETYPE Type, DWORD dwValue);
 		void	RestoreRenderState(D3DRENDERSTATETYPE Type);
