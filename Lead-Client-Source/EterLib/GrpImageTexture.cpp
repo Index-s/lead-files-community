@@ -56,7 +56,7 @@ namespace
 	}
 
 	// Full-mip-chain A8R8G8B8 texture from decoded pixels (staging -> default, like the DDS path).
-	LPDIRECT3DTEXTURE9 CreateTextureFromDecodedImage(LPDIRECT3DDEVICE9 lpDevice, const SDecodedImage& c_rkImage)
+	LPDIRECT3DTEXTURE9 CreateTextureFromDecodedImage(const SDecodedImage& c_rkImage)
 	{
 		UINT uMipCount = 1;
 		{
@@ -73,12 +73,12 @@ namespace
 		LPDIRECT3DTEXTURE9 lpd3dStaging = NULL;
 		LPDIRECT3DTEXTURE9 lpd3dTexture = NULL;
 
-		if (FAILED(lpDevice->CreateTexture(c_rkImage.uWidth, c_rkImage.uHeight,
-										   uMipCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &lpd3dStaging, NULL)))
+		if (FAILED(CGraphicBase::CreateDeviceTexture(c_rkImage.uWidth, c_rkImage.uHeight,
+										   uMipCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &lpd3dStaging)))
 			return NULL;
 
-		if (FAILED(lpDevice->CreateTexture(c_rkImage.uWidth, c_rkImage.uHeight,
-										   uMipCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &lpd3dTexture, NULL)))
+		if (FAILED(CGraphicBase::CreateDeviceTexture(c_rkImage.uWidth, c_rkImage.uHeight,
+										   uMipCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &lpd3dTexture)))
 		{
 			lpd3dStaging->Release();
 			return NULL;
@@ -116,7 +116,7 @@ namespace
 			}
 		}
 
-		if (FAILED(lpDevice->UpdateTexture(lpd3dStaging, lpd3dTexture)))
+		if (FAILED(CGraphicBase::UpdateDeviceTexture(lpd3dStaging, lpd3dTexture)))
 		{
 			lpd3dStaging->Release();
 			lpd3dTexture->Release();
@@ -177,7 +177,7 @@ bool CGraphicImageTexture::CreateDeviceObjects()
 
 	if (m_stFileName.empty())
 	{
-		if (FAILED(ms_lpd3dDevice->CreateTexture(m_width, m_height, 1, D3DUSAGE_DYNAMIC, m_d3dFmt, D3DPOOL_DEFAULT, &m_lpd3dTexture, NULL)))
+		if (FAILED(CreateDeviceTexture(m_width, m_height, 1, D3DUSAGE_DYNAMIC, m_d3dFmt, D3DPOOL_DEFAULT, &m_lpd3dTexture)))
 			return false;
 	}
 	else
@@ -244,15 +244,15 @@ bool CGraphicImageTexture::CreateDDSTexture(CDXTCImage & image, const BYTE * /*c
 	else
 		format = D3DFMT_DXT1;
 
-	if (FAILED(ms_lpd3dDevice->CreateTexture(	image.m_nWidth, image.m_nHeight,
-										mipmapCount, 0, format, D3DPOOL_SYSTEMMEM, &lpd3dStaging, NULL)))
+	if (FAILED(CreateDeviceTexture(	image.m_nWidth, image.m_nHeight,
+										mipmapCount, 0, format, D3DPOOL_SYSTEMMEM, &lpd3dStaging)))
 	{
 		TraceError("CreateDDSTexture: Cannot creatre texture" );
 		return false;
 	}
 
-	if (FAILED(ms_lpd3dDevice->CreateTexture(	image.m_nWidth, image.m_nHeight,
-									mipmapCount, 0, format, D3DPOOL_DEFAULT, &lpd3dTexture, NULL)))
+	if (FAILED(CreateDeviceTexture(	image.m_nWidth, image.m_nHeight,
+									mipmapCount, 0, format, D3DPOOL_DEFAULT, &lpd3dTexture)))
 	{
 		TraceError("CreateDDSTexture: Cannot creatre texture");
 		lpd3dStaging->Release();
@@ -278,7 +278,7 @@ bool CGraphicImageTexture::CreateDDSTexture(CDXTCImage & image, const BYTE * /*c
 		}
 	}
 
-	HRESULT hrUpdate = ms_lpd3dDevice->UpdateTexture(lpd3dStaging, lpd3dTexture);
+	HRESULT hrUpdate = UpdateDeviceTexture(lpd3dStaging, lpd3dTexture);
 	if (FAILED(hrUpdate))
 	{
 		TraceError("CreateDDSTexture: UpdateTexture failed hr=0x%08X", hrUpdate);
@@ -326,7 +326,7 @@ bool CGraphicImageTexture::CreateFromMemoryFile(UINT bufSize, const void * c_pvB
 
 		ApplyColorKey(kImage, 0xffff00ff);
 
-		m_lpd3dTexture = CreateTextureFromDecodedImage(ms_lpd3dDevice, kImage);
+		m_lpd3dTexture = CreateTextureFromDecodedImage(kImage);
 		if (!m_lpd3dTexture)
 		{
 			TraceError("CreateFromMemoryFile: Cannot create texture");
