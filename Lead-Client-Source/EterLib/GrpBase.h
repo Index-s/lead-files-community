@@ -233,9 +233,15 @@ class CGraphicBase
 		void		UpdatePipeLineMatrix();
 
 	protected:
-		// Various D3DX Meshes (used to display collusion data, etc.)
-		static LPD3DXMESH				ms_lpSphereMesh;
-		static LPD3DXMESH				ms_lpCylinderMesh;
+		// Debug meshes (used to display collision data, etc.)
+		static LPDIRECT3DVERTEXBUFFER9	ms_lpSphereVB;
+		static LPDIRECT3DINDEXBUFFER9	ms_lpSphereIB;
+		static UINT						ms_uSphereVtxCount;
+		static UINT						ms_uSphereFaceCount;
+		static LPDIRECT3DVERTEXBUFFER9	ms_lpCylinderVB;
+		static LPDIRECT3DINDEXBUFFER9	ms_lpCylinderIB;
+		static UINT						ms_uCylinderVtxCount;
+		static UINT						ms_uCylinderFaceCount;
 
 	protected:
 		static HRESULT					ms_hLastResult;

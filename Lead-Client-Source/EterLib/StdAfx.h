@@ -81,8 +81,6 @@
 #include "GrpObjectInstance.h"
 #include "GrpRatioInstance.h"
 
-#include "GrpD3DXBuffer.h"
-
 #include "GrpTexture.h"
 #include "GrpImageTexture.h"
 #include "GrpFontTexture.h"

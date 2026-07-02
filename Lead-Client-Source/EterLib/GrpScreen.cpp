@@ -308,12 +308,12 @@ void CScreen::RenderCircle3d(float fx, float fy, float fz, float fRadius, int iS
 				 fx+pts[0].x, fy+pts[0].y, fz+pts[0].z);
 }
 
-class CD3DXMeshRenderingOption : public CScreen
+class CDebugMeshRenderingOption : public CScreen
 {
 public:
 	IDirect3DVertexShader9* m_pVS;
 
-	CD3DXMeshRenderingOption(D3DFILLMODE d3dFillMode, const D3DXMATRIX& c_rmatWorld)
+	CDebugMeshRenderingOption(D3DFILLMODE d3dFillMode, const D3DXMATRIX& c_rmatWorld)
 		: m_pVS(nullptr)
 	{
 		ms_lpd3dDevice->GetVertexShader(&m_pVS);
@@ -328,7 +328,7 @@ public:
 		STATEMANAGER.SetTexture(1, NULL);
 	}
 
-	~CD3DXMeshRenderingOption()
+	~CDebugMeshRenderingOption()
 	{
 		ms_lpd3dDevice->SetVertexShader(m_pVS);
 
@@ -340,8 +340,11 @@ public:
 	}
 };
 
-void CScreen::RenderD3DXMesh(LPD3DXMESH lpMesh, const D3DXMATRIX * c_pmatWorld, float fx, float fy, float fz, float fRadius, D3DFILLMODE d3dFillMode)
+void CScreen::RenderDebugMesh(LPDIRECT3DVERTEXBUFFER9 lpVB, LPDIRECT3DINDEXBUFFER9 lpIB, UINT uVtxCount, UINT uFaceCount, const D3DXMATRIX * c_pmatWorld, float fx, float fy, float fz, float fRadius, D3DFILLMODE d3dFillMode)
 {
+	if (!lpVB || !lpIB)
+		return;
+
 	D3DXMATRIX matTranslation;
 	D3DXMATRIX matScaling;
 
@@ -356,25 +359,21 @@ void CScreen::RenderD3DXMesh(LPD3DXMESH lpMesh, const D3DXMATRIX * c_pmatWorld, 
 		matWorld *= *c_pmatWorld;
 	}
 
-	CD3DXMeshRenderingOption SetRenderingOption(d3dFillMode, matWorld);
-	LPDIRECT3DINDEXBUFFER9 lpIndexBuffer;
-	LPDIRECT3DVERTEXBUFFER9 lpVertexBuffer;
-	lpMesh->GetIndexBuffer(&lpIndexBuffer);
-	lpMesh->GetVertexBuffer(&lpVertexBuffer);
-	STATEMANAGER.SetFVF(lpMesh->GetFVF());
-	STATEMANAGER.SetIndices(lpIndexBuffer, 0);
-	STATEMANAGER.SetStreamSource(0, lpVertexBuffer, 24);
-	STATEMANAGER.DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, lpMesh->GetNumVertices(), 0, lpMesh->GetNumFaces());
+	CDebugMeshRenderingOption SetRenderingOption(d3dFillMode, matWorld);
+	STATEMANAGER.SetFVF(D3DFVF_XYZ | D3DFVF_NORMAL);
+	STATEMANAGER.SetIndices(lpIB, 0);
+	STATEMANAGER.SetStreamSource(0, lpVB, 24);
+	STATEMANAGER.DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, uVtxCount, 0, uFaceCount);
 }
 
 void CScreen::RenderSphere(const D3DXMATRIX * c_pmatWorld, float fx, float fy, float fz, float fRadius, D3DFILLMODE d3dFillMode)
 {
-	RenderD3DXMesh(ms_lpSphereMesh, c_pmatWorld, fx, fy, fz, fRadius, d3dFillMode);
+	RenderDebugMesh(ms_lpSphereVB, ms_lpSphereIB, ms_uSphereVtxCount, ms_uSphereFaceCount, c_pmatWorld, fx, fy, fz, fRadius, d3dFillMode);
 }
 
 void CScreen::RenderCylinder(const D3DXMATRIX * c_pmatWorld, float fx, float fy, float fz, float fRadius, float /*fLength*/, D3DFILLMODE d3dFillMode)
 {
-	RenderD3DXMesh(ms_lpCylinderMesh, c_pmatWorld, fx, fy, fz, fRadius, d3dFillMode);
+	RenderDebugMesh(ms_lpCylinderVB, ms_lpCylinderIB, ms_uCylinderVtxCount, ms_uCylinderFaceCount, c_pmatWorld, fx, fy, fz, fRadius, d3dFillMode);
 }
 
 void CScreen::RenderTextureBox(float sx, float sy, float ex, float ey, float z, float su, float sv, float eu, float ev)

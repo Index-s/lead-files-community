@@ -13,6 +13,170 @@ D3DPRESENT_PARAMETERS g_kD3DPP;
 bool g_isBrowserMode=false;
 RECT g_rcBrowser;
 
+namespace
+{
+	struct SDebugMeshVertex
+	{
+		float px, py, pz;
+		float nx, ny, nz;
+	};
+
+	bool CreateDebugMeshBuffers(LPDIRECT3DDEVICE9 lpDevice,
+								const std::vector<SDebugMeshVertex>& c_rVertices,
+								const std::vector<WORD>& c_rIndices,
+								LPDIRECT3DVERTEXBUFFER9* ppVB,
+								LPDIRECT3DINDEXBUFFER9* ppIB,
+								UINT* puVtxCount,
+								UINT* puFaceCount)
+	{
+		*ppVB = NULL;
+		*ppIB = NULL;
+		*puVtxCount = 0;
+		*puFaceCount = 0;
+
+		const UINT uVBSize = UINT(c_rVertices.size() * sizeof(SDebugMeshVertex));
+		const UINT uIBSize = UINT(c_rIndices.size() * sizeof(WORD));
+
+		if (FAILED(lpDevice->CreateVertexBuffer(uVBSize, 0, D3DFVF_XYZ | D3DFVF_NORMAL, D3DPOOL_MANAGED, ppVB, NULL)))
+			return false;
+
+		if (FAILED(lpDevice->CreateIndexBuffer(uIBSize, 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, ppIB, NULL)))
+		{
+			(*ppVB)->Release();
+			*ppVB = NULL;
+			return false;
+		}
+
+		void* pvData;
+		if (SUCCEEDED((*ppVB)->Lock(0, uVBSize, &pvData, 0)))
+		{
+			memcpy(pvData, c_rVertices.data(), uVBSize);
+			(*ppVB)->Unlock();
+		}
+		if (SUCCEEDED((*ppIB)->Lock(0, uIBSize, &pvData, 0)))
+		{
+			memcpy(pvData, c_rIndices.data(), uIBSize);
+			(*ppIB)->Unlock();
+		}
+
+		*puVtxCount = UINT(c_rVertices.size());
+		*puFaceCount = UINT(c_rIndices.size() / 3);
+		return true;
+	}
+
+	void CreateDebugSphereMesh(LPDIRECT3DDEVICE9 lpDevice, float fRadius, UINT uSlices, UINT uStacks,
+							   LPDIRECT3DVERTEXBUFFER9* ppVB, LPDIRECT3DINDEXBUFFER9* ppIB,
+							   UINT* puVtxCount, UINT* puFaceCount)
+	{
+		std::vector<SDebugMeshVertex> vertices;
+		std::vector<WORD> indices;
+		vertices.reserve((uStacks - 1) * uSlices + 2);
+		indices.reserve(uStacks * uSlices * 6);
+
+		SDebugMeshVertex v;
+		v.px = 0.0f; v.py = 0.0f; v.pz = fRadius;
+		v.nx = 0.0f; v.ny = 0.0f; v.nz = 1.0f;
+		vertices.push_back(v);
+
+		for (UINT i = 1; i < uStacks; ++i)
+		{
+			float fPhi = D3DX_PI * float(i) / float(uStacks);
+			float fZ = cosf(fPhi);
+			float fR = sinf(fPhi);
+			for (UINT j = 0; j < uSlices; ++j)
+			{
+				float fTheta = 2.0f * D3DX_PI * float(j) / float(uSlices);
+				v.nx = fR * cosf(fTheta);
+				v.ny = fR * sinf(fTheta);
+				v.nz = fZ;
+				v.px = v.nx * fRadius;
+				v.py = v.ny * fRadius;
+				v.pz = v.nz * fRadius;
+				vertices.push_back(v);
+			}
+		}
+
+		v.px = 0.0f; v.py = 0.0f; v.pz = -fRadius;
+		v.nx = 0.0f; v.ny = 0.0f; v.nz = -1.0f;
+		vertices.push_back(v);
+		WORD wBottomPole = WORD(vertices.size() - 1);
+
+		auto ring = [uSlices](UINT i, UINT j) -> WORD { return WORD(1 + (i - 1) * uSlices + (j % uSlices)); };
+
+		for (UINT j = 0; j < uSlices; ++j)
+		{
+			indices.push_back(0);
+			indices.push_back(ring(1, j + 1));
+			indices.push_back(ring(1, j));
+		}
+		for (UINT i = 1; i + 1 < uStacks; ++i)
+		{
+			for (UINT j = 0; j < uSlices; ++j)
+			{
+				indices.push_back(ring(i, j));
+				indices.push_back(ring(i, j + 1));
+				indices.push_back(ring(i + 1, j));
+				indices.push_back(ring(i + 1, j));
+				indices.push_back(ring(i, j + 1));
+				indices.push_back(ring(i + 1, j + 1));
+			}
+		}
+		for (UINT j = 0; j < uSlices; ++j)
+		{
+			indices.push_back(wBottomPole);
+			indices.push_back(ring(uStacks - 1, j));
+			indices.push_back(ring(uStacks - 1, j + 1));
+		}
+
+		CreateDebugMeshBuffers(lpDevice, vertices, indices, ppVB, ppIB, puVtxCount, puFaceCount);
+	}
+
+	void CreateDebugCylinderMesh(LPDIRECT3DDEVICE9 lpDevice, float fRadius, float fLength, UINT uSlices, UINT uStacks,
+								 LPDIRECT3DVERTEXBUFFER9* ppVB, LPDIRECT3DINDEXBUFFER9* ppIB,
+								 UINT* puVtxCount, UINT* puFaceCount)
+	{
+		// Open tube along +z from -fLength/2 to +fLength/2 (matches D3DXCreateCylinder).
+		std::vector<SDebugMeshVertex> vertices;
+		std::vector<WORD> indices;
+		vertices.reserve((uStacks + 1) * uSlices);
+		indices.reserve(uStacks * uSlices * 6);
+
+		for (UINT i = 0; i <= uStacks; ++i)
+		{
+			float fZ = fLength * (float(i) / float(uStacks) - 0.5f);
+			for (UINT j = 0; j < uSlices; ++j)
+			{
+				float fTheta = 2.0f * D3DX_PI * float(j) / float(uSlices);
+				SDebugMeshVertex v;
+				v.nx = cosf(fTheta);
+				v.ny = sinf(fTheta);
+				v.nz = 0.0f;
+				v.px = v.nx * fRadius;
+				v.py = v.ny * fRadius;
+				v.pz = fZ;
+				vertices.push_back(v);
+			}
+		}
+
+		auto ring = [uSlices](UINT i, UINT j) -> WORD { return WORD(i * uSlices + (j % uSlices)); };
+
+		for (UINT i = 0; i < uStacks; ++i)
+		{
+			for (UINT j = 0; j < uSlices; ++j)
+			{
+				indices.push_back(ring(i, j));
+				indices.push_back(ring(i, j + 1));
+				indices.push_back(ring(i + 1, j));
+				indices.push_back(ring(i + 1, j));
+				indices.push_back(ring(i, j + 1));
+				indices.push_back(ring(i + 1, j + 1));
+			}
+		}
+
+		CreateDebugMeshBuffers(lpDevice, vertices, indices, ppVB, ppIB, puVtxCount, puFaceCount);
+	}
+}
+
 CGraphicDevice::CGraphicDevice()
 : m_uBackBufferCount(0)
 {
@@ -558,8 +722,8 @@ RETRY:
 	ms_matScreen2._11 = (float) iHres / 2;
 	ms_matScreen2._22 = (float) iVres / 2;
 	
-	D3DXCreateSphere(ms_lpd3dDevice, 1.0f, 32, 32, &ms_lpSphereMesh, NULL);
-	D3DXCreateCylinder(ms_lpd3dDevice, 1.0f, 1.0f, 1.0f, 8, 8, &ms_lpCylinderMesh, NULL);
+	CreateDebugSphereMesh(ms_lpd3dDevice, 1.0f, 32, 32, &ms_lpSphereVB, &ms_lpSphereIB, &ms_uSphereVtxCount, &ms_uSphereFaceCount);
+	CreateDebugCylinderMesh(ms_lpd3dDevice, 1.0f, 1.0f, 8, 8, &ms_lpCylinderVB, &ms_lpCylinderIB, &ms_uCylinderVtxCount, &ms_uCylinderFaceCount);
 
 	ms_lpd3dDevice->Clear(0L, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0xff000000, 1.0f, 0);
 
@@ -752,8 +916,10 @@ void CGraphicDevice::Destroy()
 		ms_pnt2Decl = 0;
 	}
 
-	safe_release(ms_lpSphereMesh);
-	safe_release(ms_lpCylinderMesh);
+	safe_release(ms_lpSphereVB);
+	safe_release(ms_lpSphereIB);
+	safe_release(ms_lpCylinderVB);
+	safe_release(ms_lpCylinderIB);
 
 	safe_release(ms_lpd3dMatStack);
 	safe_release(ms_lpd3dDevice);
