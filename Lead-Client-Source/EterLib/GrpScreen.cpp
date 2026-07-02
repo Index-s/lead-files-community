@@ -16,7 +16,7 @@ void CScreen::RenderLine3d(float sx, float sy, float sz, float ex, float ey, flo
 	if (GRAPHICS_CAPS_CAN_NOT_DRAW_LINE)
 		return;
 
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 
 	SPDTVertexRaw vertices[2] =
 	{
@@ -39,7 +39,7 @@ void CScreen::RenderBox3d(float sx, float sy, float sz, float ex, float ey, floa
 	if (GRAPHICS_CAPS_CAN_NOT_DRAW_LINE)
 		return;
 
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 
 	SPDTVertexRaw vertices[8] =
 	{
@@ -68,7 +68,7 @@ void CScreen::RenderBox3d(float sx, float sy, float sz, float ex, float ey, floa
 
 void CScreen::RenderBar3d(float sx, float sy, float sz, float ex, float ey, float ez)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 
 	SPDTVertexRaw vertices[4] =
 	{
@@ -91,7 +91,7 @@ void CScreen::RenderBar3d(float sx, float sy, float sz, float ex, float ey, floa
 
 void CScreen::RenderBar3d(const D3DXVECTOR3 * c_pv3Positions)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	
 	SPDTVertexRaw vertices[4] =
 	{
@@ -113,7 +113,7 @@ void CScreen::RenderBar3d(const D3DXVECTOR3 * c_pv3Positions)
 
 void CScreen::RenderGradationBar3d(float sx, float sy, float sz, float ex, float ey, float ez, DWORD dwStartColor, DWORD dwEndColor)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	if (sx==ex) return;
 	if (sy==ey) return;
 
@@ -373,7 +373,7 @@ void CScreen::RenderCylinder(const D3DXMATRIX * c_pmatWorld, float fx, float fy,
 
 void CScreen::RenderTextureBox(float sx, float sy, float ex, float ey, float z, float su, float sv, float eu, float ev)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 
 	TPDTVertex vertices[4];
 
@@ -408,7 +408,7 @@ void CScreen::RenderTextureBox(float sx, float sy, float ex, float ey, float z, 
 
 void CScreen::RenderBillboard(D3DXVECTOR3 * Position, D3DXCOLOR & Color)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	
 	TPDTVertex vertices[4];
 	vertices[0].position = TPosition(Position[0].x, Position[0].y, Position[0].z);
@@ -611,19 +611,19 @@ void CScreen::SetClearStencil(DWORD stencil)
 
 void CScreen::ClearDepthBuffer()
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	STATEMANAGER.Clear(D3DCLEAR_ZBUFFER, ms_clearColor, ms_clearDepth, ms_clearStencil);
 }
 
 void CScreen::Clear()
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	STATEMANAGER.Clear(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, ms_clearColor, ms_clearDepth, ms_clearStencil);
 }
 
 BOOL CScreen::IsLostDevice()
 {
-	if (!ms_lpd3dDevice)
+	if (!IsDeviceCreated())
 		return TRUE;
 
 	return FALSE;
@@ -631,7 +631,7 @@ BOOL CScreen::IsLostDevice()
 
 BOOL CScreen::RestoreDevice()
 {
-	if (!ms_lpd3dDevice)
+	if (!IsDeviceCreated())
 		return FALSE;
 
 	return TRUE;
@@ -639,7 +639,7 @@ BOOL CScreen::RestoreDevice()
 
 bool CScreen::Begin()
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	ResetFaceCount();
 
 	if (!STATEMANAGER.BeginScene())
@@ -661,7 +661,7 @@ extern RECT g_rcBrowser;
 
 void CScreen::Show(HWND hWnd)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 
 	if (g_isBrowserMode)
 	{
@@ -683,13 +683,13 @@ void CScreen::Show(HWND hWnd)
 
 void CScreen::Show(RECT * pSrcRect)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	STATEMANAGER.Present(pSrcRect, NULL, NULL);
 }
 
 void CScreen::Show(RECT * pSrcRect, HWND hWnd)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	STATEMANAGER.Present(pSrcRect, NULL, hWnd);
 }
 

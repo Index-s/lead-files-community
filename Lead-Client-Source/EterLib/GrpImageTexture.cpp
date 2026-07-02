@@ -172,7 +172,7 @@ void CGraphicImageTexture::Destroy()
 
 bool CGraphicImageTexture::CreateDeviceObjects()
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	assert(m_lpd3dTexture == NULL);
 
 	if (m_stFileName.empty())
@@ -203,7 +203,7 @@ bool CGraphicImageTexture::CreateDeviceObjects()
 
 bool CGraphicImageTexture::Create(UINT width, UINT height, D3DFORMAT d3dFmt, DWORD dwFilter)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	Destroy();
 
 	m_width = width;
@@ -300,7 +300,7 @@ bool CGraphicImageTexture::CreateDDSTexture(CDXTCImage & image, const BYTE * /*c
 
 bool CGraphicImageTexture::CreateFromMemoryFile(UINT bufSize, const void * c_pvBuf, D3DFORMAT d3dFmt, DWORD dwFilter)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	assert(m_lpd3dTexture == NULL);
 
 	static CDXTCImage image;

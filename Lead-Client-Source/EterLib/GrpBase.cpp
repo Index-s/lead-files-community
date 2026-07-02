@@ -512,6 +512,11 @@ HRESULT CGraphicBase::GetLastResult()
 	return ms_hLastResult;
 }
 
+bool CGraphicBase::IsDeviceCreated()
+{
+	return NULL != ms_lpd3dDevice;
+}
+
 HRESULT CGraphicBase::CreateDeviceTexture(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture)
 {
 	return ms_lpd3dDevice->CreateTexture(uWidth, uHeight, uLevels, dwUsage, eFormat, ePool, ppTexture, NULL);

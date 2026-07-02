@@ -11,7 +11,7 @@ LPDIRECT3DINDEXBUFFER9 CGraphicIndexBuffer::GetD3DIndexBuffer() const
 
 void CGraphicIndexBuffer::SetIndices(int startIndex) const
 {
-	assert(ms_lpd3dDevice!=NULL);
+	assert(IsDeviceCreated());
 	STATEMANAGER.SetIndices(m_lpd3dIdxBuf, startIndex);	
 }
 

@@ -62,7 +62,7 @@ int CGraphicVertexBuffer::GetVertexCount() const
 
 void CGraphicVertexBuffer::SetStream(int stride, int layer) const
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	STATEMANAGER.SetStreamSource(layer, m_lpd3dVB, stride);	
 }
 
@@ -171,7 +171,7 @@ bool CGraphicVertexBuffer::Copy(int bufSize, const void* srcVertices)
 
 bool CGraphicVertexBuffer::CreateDeviceObjects()
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	assert(m_lpd3dVB == NULL);
 
 	if (FAILED(
@@ -194,7 +194,7 @@ void CGraphicVertexBuffer::DestroyDeviceObjects()
 
 bool CGraphicVertexBuffer::Create(int vtxCount, DWORD fvf, DWORD usage, D3DPOOL d3dPool)
 {
-	assert(ms_lpd3dDevice != NULL);
+	assert(IsDeviceCreated());
 	assert(vtxCount > 0);
 
 	Destroy();
