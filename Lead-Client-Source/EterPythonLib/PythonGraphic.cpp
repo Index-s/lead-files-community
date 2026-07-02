@@ -82,7 +82,7 @@ void CPythonGraphic::SetOmniLight()
 	Light.Ambient.b = 1.0f;
 	Light.Ambient.a = 1.0f;
     Light.Range = 500.0f;
-	ms_lpd3dDevice->SetLight(0, &Light);
+	STATEMANAGER.SetLight(0, &Light);
 	ms_lpd3dDevice->LightEnable(0, TRUE);
 
 	Light.Type = D3DLIGHT_POINT;
@@ -90,7 +90,7 @@ void CPythonGraphic::SetOmniLight()
 	Light.Attenuation0 = 0.1f;
 	Light.Attenuation1 = 0.01f;
 	Light.Attenuation2 = 0.0f;
-	ms_lpd3dDevice->SetLight(1, &Light);
+	STATEMANAGER.SetLight(1, &Light);
 	ms_lpd3dDevice->LightEnable(1, TRUE);
 }
 
