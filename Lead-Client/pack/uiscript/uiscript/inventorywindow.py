@@ -42,7 +42,7 @@ for i in range(1, player.INVENTORY_PAGE_COUNT + 1):
 window = {
 	"name" : "InventoryWindow",
 
-	## 600 - (width + 오른쪽으로 부터 띄우기 24 px)
+	## 600 - (width + offset 24 px from the right)
 	"x" : SCREEN_WIDTH - 176,
 	"y" : SCREEN_HEIGHT - 37 - 565,
 

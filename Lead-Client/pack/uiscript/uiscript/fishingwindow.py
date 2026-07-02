@@ -20,7 +20,7 @@ window = {
 			"y" : 0,
 			"width" : 150,
 			"height" : 195,
-			"title" : "≥¨Ω√",
+			"title" : "Fishing",
 
 			"children" :
 			(
@@ -82,7 +82,7 @@ window = {
 							"x" : 10,
 							"y" : 10,
 
-							"text" : "π∞∞Ì±‚ ¿Ã∏ß",
+							"text" : "Fish Name",
 						},
 
 						{
@@ -215,7 +215,7 @@ window = {
 					"x" : 0,
 					"y" : 30,
 
-					"text" : "≥¨Ω√",
+					"text" : "Fishing",
 					"horizontal_align" : "center",
 					"vertical_align" : "bottom",
 
