@@ -32,7 +32,6 @@
 
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "d3d9.lib")
-#pragma comment(lib, "d3dx9.lib")
 
 #include "../eterBase/StdAfx.h"
 #include "../eterBase/Debug.h"
