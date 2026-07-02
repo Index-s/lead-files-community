@@ -443,22 +443,8 @@ void CLensFlare::AdjustBrightness()
 
 void CLensFlare::ReadDepthPixels(float * /*pPixels*/)
 {
-	/*
-	LPDIRECT3DSURFACE8 lpSurface;
-	if (FAILED(ms_lpd3dDevice->GetDepthStencilSurface(&lpSurface)))
-		assert(false);
-
-	D3DLOCKED_RECT rect;
-	lpSurface->LockRect(&rect, NULL, D3DLOCK_READONLY | D3DLOCK_NO_DIRTY_UPDATE);
-
-	lpSurface->UnlockRect();
-	*/
-	/*
-	glReadPixels(GLint(m_afFlareWinPos[0] - c_nDepthTestDimension / 2),
-				 GLint(m_afFlareWinPos[1] - c_nDepthTestDimension / 2),
-				 c_nDepthTestDimension, c_nDepthTestDimension,
-				 GL_DEPTH_COMPONENT, GL_FLOAT, pPixels);
-	*/
+	// Depth readback has never been implemented on this backend; the flare
+	// visibility test runs on the zero-filled pixel buffers.
 }
 
 ///////////////////////////////////////////////////////////////////////  
