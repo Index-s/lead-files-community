@@ -106,42 +106,6 @@ void CSnowEnvironment::__ApplyBlur()
 	if (!m_bBlurEnable)
 		return;
 
-//			{
-//				STATEMANAGER.SetRenderState( D3DRS_ALPHABLENDENABLE,   TRUE );
-//				STATEMANAGER.SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
-//				STATEMANAGER.SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-//				STATEMANAGER.SetRenderState( D3DRS_COLORVERTEX ,TRUE);
-//				STATEMANAGER.SetRenderState( D3DRS_DIFFUSEMATERIALSOURCE , D3DMCS_COLOR1 );
-//				STATEMANAGER.SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-//				STATEMANAGER.SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-//				STATEMANAGER.SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-//				STATEMANAGER.SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-//				STATEMANAGER.SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-//				STATEMANAGER.SetTextureStageState(0,  D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-//				DWORD	alphaColor = 0xFFFFFF | ((DWORD)(0.6f*255.0f) << 24);
-//
-//				BlurVertex V[4] = { BlurVertex(D3DXVECTOR3(0.0f,0.0f,0.0f),1.0f,		alphaColor, 0,0) ,
-//									BlurVertex(D3DXVECTOR3(wTextureSize,0.0f,0.0f),1.0f,		alphaColor, 1,0) ,
-//									BlurVertex(D3DXVECTOR3(0.0f,wTextureSize,0.0f),1.0f,		alphaColor, 0,1) ,
-//									BlurVertex(D3DXVECTOR3(wTextureSize,wTextureSize,0.0f),1.0f,	alphaColor, 1,1) };
-//				STATEMANAGER.SetTexture(0,m_lpAccumTexture);
-//				STATEMANAGER.SetVertexShader( D3DFVF_XYZRHW | D3DFVF_DIFFUSE|D3DFVF_TEX1 );
-//				STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,2,V,sizeof(BlurVertex));
-//			}
-//
-//			{
-//				STATEMANAGER.SetRenderTarget(m_lpAccumRenderTargetSurface, m_lpAccumDepthSurface);
-//
-//				BlurVertex V[4] = { BlurVertex(D3DXVECTOR3(0.0f,0.0f,0.0f),1.0f,		0xFFFFFF, 0,0) ,
-//									BlurVertex(D3DXVECTOR3(wTextureSize,0.0f,0.0f),1.0f,		0xFFFFFF, 1,0) ,
-//									BlurVertex(D3DXVECTOR3(0.0f,wTextureSize,0.0f),1.0f,		0xFFFFFF, 0,1) ,
-//									BlurVertex(D3DXVECTOR3(wTextureSize,wTextureSize,0.0f),1.0f,	0xFFFFFF, 1,1) };
-//
-//				STATEMANAGER.SetTexture(0,m_lpSnowTexture);
-//				STATEMANAGER.SetRenderState( D3DRS_ALPHABLENDENABLE,   FALSE);
-//				STATEMANAGER.SetVertexShader( D3DFVF_XYZRHW | D3DFVF_DIFFUSE|D3DFVF_TEX1 );
-//				STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,2,V,sizeof(BlurVertex));
-//			}
 
 	///////////////
 	{
@@ -241,13 +205,6 @@ bool CSnowEnvironment::__CreateBlurTexture()
 	if (FAILED(ms_lpd3dDevice->CreateDepthStencilSurface(m_wBlurTextureSize, m_wBlurTextureSize, D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, TRUE, &m_lpSnowDepthSurface, NULL)))
 		return false;
 
-	if (FAILED(ms_lpd3dDevice->CreateTexture(m_wBlurTextureSize, m_wBlurTextureSize, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &m_lpAccumTexture, NULL)))
-		return false;
-	if (FAILED(m_lpAccumTexture->GetSurfaceLevel(0, &m_lpAccumRenderTargetSurface)))
-		return false;
-	if (FAILED(ms_lpd3dDevice->CreateDepthStencilSurface(m_wBlurTextureSize, m_wBlurTextureSize, D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, TRUE, &m_lpAccumDepthSurface, NULL)))
-		return false;
-
 	return true;
 }
 
@@ -306,9 +263,6 @@ void CSnowEnvironment::Destroy()
 	SAFE_RELEASE(m_lpSnowTexture);
 	SAFE_RELEASE(m_lpSnowRenderTargetSurface);
 	SAFE_RELEASE(m_lpSnowDepthSurface);
-	SAFE_RELEASE(m_lpAccumTexture);
-	SAFE_RELEASE(m_lpAccumRenderTargetSurface);
-	SAFE_RELEASE(m_lpAccumDepthSurface);
 	SAFE_RELEASE(m_pVB);
 	SAFE_RELEASE(m_pIB);
 
@@ -330,9 +284,6 @@ void CSnowEnvironment::__Initialize()
 	m_lpSnowTexture = NULL;
 	m_lpSnowRenderTargetSurface = NULL;
 	m_lpSnowDepthSurface = NULL;
-	m_lpAccumTexture = NULL;
-	m_lpAccumRenderTargetSurface = NULL;
-	m_lpAccumDepthSurface = NULL;
 	m_pVB = NULL;
 	m_pIB = NULL;
 	m_pImageInstance = NULL;
