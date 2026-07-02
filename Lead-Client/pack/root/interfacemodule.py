@@ -574,7 +574,7 @@ class Interface(object):
 		if app.ENABLE_DRAGON_SOUL_SYSTEM:
 			self.wndDragonSoul.RefreshItemSlot()
 
-	def RefreshCharacter(self): ## Character �������� ��, Inventory �������� ���� �׸� ���� Refresh
+	def RefreshCharacter(self):
 		self.wndCharacter.RefreshCharacter()
 		self.wndTaskBar.RefreshQuickSlot()
 
@@ -708,7 +708,6 @@ class Interface(object):
 	def RemovePartyMember(self, pid):
 		self.wndParty.RemovePartyMember(pid)
 
-		##!! 20061026.levites.����Ʈ_��ġ_����
 		self.__ArrangeQuestButton()
 
 	def LinkPartyMember(self, pid, vid):
@@ -723,7 +722,6 @@ class Interface(object):
 	def ExitParty(self):
 		self.wndParty.ExitParty()
 
-		##!! 20061026.levites.����Ʈ_��ġ_����
 		self.__ArrangeQuestButton()
 
 	def PartyHealReady(self):
@@ -888,7 +886,6 @@ class Interface(object):
 		if True == self.wndChat.IsEditMode():
 			self.wndChat.CloseChat()
 		else:
-			# ���������� ���������� ä�� �Է��� �ȵ�
 			if self.wndWeb and self.wndWeb.IsShow():
 				pass
 			else:
@@ -989,7 +986,6 @@ class Interface(object):
 			else:
 				self.wndExpandedTaskBar.Close()
 	
-	# ��ȥ��
 	def DragonSoulActivate(self, deck):
 		if app.ENABLE_DRAGON_SOUL_SYSTEM:
 			self.wndDragonSoul.ActivateDragonSoulByExtern(deck)
@@ -1063,7 +1059,6 @@ class Interface(object):
 				if True == self.wndDragonSoulRefine.IsShow():
 					self.wndDragonSoulRefine.Close()
 
-	# ��ȥ�� ��
 	
 	def ToggleGuildWindow(self):
 		if not self.wndGuild.IsShow():
@@ -1127,7 +1122,6 @@ class Interface(object):
 	def OpenWebWindow(self, url):
 		self.wndWeb.Open(url)
 
-		# ���������� ���� ä���� �ݴ´�
 		self.wndChat.CloseChat()
 
 	# show GIFT
@@ -1157,7 +1151,7 @@ class Interface(object):
 		
 		print "ť�� ���� ����! [%d:%d]" % (itemVnum, count)
 
-		if 0: # ��� �޽��� ����� ���� �Ѵ�
+		if 0:
 			self.wndCubeResult.SetPosition(*self.wndCube.GetGlobalPosition())
 			self.wndCubeResult.SetCubeResultItem(itemVnum, count)
 			self.wndCubeResult.Open()
@@ -1323,7 +1317,6 @@ class Interface(object):
 		btn = uiWhisper.WhisperButton()
 
 		# QUEST_LETTER_IMAGE
-		##!! 20061026.levites.����Ʈ_�̹���_��ü
 		import item
 		if "item"==iconType:
 			item.SelectItem(int(iconName))
@@ -1370,7 +1363,6 @@ class Interface(object):
 		screenWidth = wndMgr.GetScreenWidth()
 		screenHeight = wndMgr.GetScreenHeight()
 
-		##!! 20061026.levites.����Ʈ_��ġ_����
 		if self.wndParty.IsShow():
 			xPos = 100 + 30
 		else:
@@ -1424,8 +1416,6 @@ class Interface(object):
 	def __InitWhisper(self):
 		chat.InitWhisper(self)
 
-	## ä��â�� "�޽��� ������"�� �������� �̸� ���� ��ȭâ�� ���� �Լ�
-	## �̸��� ���� ������ ������ WhisperDialogDict �� ������ �����ȴ�.
 	def OpenWhisperDialogWithoutTarget(self):
 		if not self.dlgWhisperWithoutTarget:
 			dlgWhisper = uiWhisper.WhisperDialog(self.MinimizeWhisperDialog, self.CloseWhisperDialog)
@@ -1442,7 +1432,6 @@ class Interface(object):
 			self.dlgWhisperWithoutTarget.SetTop()
 			self.dlgWhisperWithoutTarget.OpenWithoutTarget(self.RegisterTemporaryWhisperDialog)
 
-	## �̸� ���� ��ȭâ���� �̸��� ���������� WhisperDialogDict�� â�� �־��ִ� �Լ�
 	def RegisterTemporaryWhisperDialog(self, name):
 		if not self.dlgWhisperWithoutTarget:
 			return
@@ -1461,7 +1450,6 @@ class Interface(object):
 		self.dlgWhisperWithoutTarget = None
 		self.__CheckGameMaster(name)
 
-	## ĳ���� �޴��� 1:1 ��ȭ �ϱ⸦ �������� �̸��� ������ �ٷ� â�� ���� �Լ�
 	def OpenWhisperDialog(self, name):
 		if not self.whisperDialogDict.has_key(name):
 			dlg = self.__MakeWhisperDialog(name)
@@ -1474,7 +1462,6 @@ class Interface(object):
 			if 0 != btn:
 				self.__DestroyWhisperButton(btn)
 
-	## �ٸ� ĳ���ͷκ��� �޼����� �޾����� �ϴ� ��ư�� ��� �δ� �Լ�
 	def RecvWhisper(self, name):
 		if not self.whisperDialogDict.has_key(name):
 			btn = self.__FindWhisperButton(name)
@@ -1493,7 +1480,6 @@ class Interface(object):
 	def MakeWhisperButton(self, name):
 		self.__MakeWhisperButton(name)
 
-	## ��ư�� �������� â�� ���� �Լ�
 	def ShowWhisperDialog(self, btn):
 		try:
 			self.__MakeWhisperDialog(btn.name)
@@ -1505,11 +1491,8 @@ class Interface(object):
 			import dbg
 			dbg.TraceError("interface.ShowWhisperDialog - Failed to find key")
 
-		## ��ư �ʱ�ȭ
 		self.__DestroyWhisperButton(btn)
 
-	## WhisperDialog â���� �ּ�ȭ ������ ���������� ȣ��Ǵ� �Լ�
-	## â�� �ּ�ȭ �մϴ�.
 	def MinimizeWhisperDialog(self, name):
 
 		if 0 != name:
@@ -1517,8 +1500,6 @@ class Interface(object):
 
 		self.CloseWhisperDialog(name)
 
-	## WhisperDialog â���� �ݱ� ������ ���������� ȣ��Ǵ� �Լ�
-	## â�� ����ϴ�.
 	def CloseWhisperDialog(self, name):
 
 		if 0 == name:
@@ -1537,7 +1518,6 @@ class Interface(object):
 			import dbg
 			dbg.TraceError("interface.CloseWhisperDialog - Failed to find key")
 
-	## ��ư�� ������ �ٲ������ ��ư�� ������ �ϴ� �Լ�
 	def __ArrangeWhisperButton(self):
 
 		screenWidth = wndMgr.GetScreenWidth()
@@ -1554,9 +1534,6 @@ class Interface(object):
 			button.SetPosition(xPos + (int(count/yCount) * -50), yPos + (count%yCount * 63))
 			count += 1
 
-	## �̸����� Whisper ��ư�� ã�� ������ �ִ� �Լ�
-	## ��ư�� ��ųʸ��� ���� �ʴ� ���� ���� �Ǿ� ���� ������ ���� ���� ������
-	## �̷� ���� ToolTip���� �ٸ� ��ư�鿡 ���� �������� �����̴�.
 	def __FindWhisperButton(self, name):
 		for button in self.whisperButtonList:
 			if button.name == name:
@@ -1564,7 +1541,6 @@ class Interface(object):
 
 		return 0
 
-	## â�� ����ϴ�.
 	def __MakeWhisperDialog(self, name):
 		dlgWhisper = uiWhisper.WhisperDialog(self.MinimizeWhisperDialog, self.CloseWhisperDialog)
 		dlgWhisper.BindInterface(self)
@@ -1576,7 +1552,6 @@ class Interface(object):
 
 		return dlgWhisper
 
-	## ��ư�� ����ϴ�.
 	def __MakeWhisperButton(self, name):
 		whisperButton = uiWhisper.WhisperButton()
 		whisperButton.SetUpVisual("d:/ymir work/ui/game/windows/btn_mail_up.sub")

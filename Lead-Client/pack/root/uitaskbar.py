@@ -152,7 +152,6 @@ class EnergyBar(ui.ScriptWindow):
 	def RefreshStatus(self):
 		pointEnergy = player.GetStatus (player.ENERGY)
 		leftTimeEnergy = player.GetStatus (player.ENERGY_END_TIME) - app.GetGlobalTimeStamp()
-		# ���ȯ ���� �ð� = 2�ð�.
 		self.SetEnergy (pointEnergy, leftTimeEnergy, 7200)
 			
 	def SetEnergy (self, point, leftTime, maxTime):
@@ -330,12 +329,10 @@ class TaskBar(ui.ScriptWindow):
 			self.SetSkillSlotNew(slotNumber, skillIndex, skillGrade, skillLevel)
 			self.SetSlotCountNew(slotNumber, skillGrade, skillLevel)
 
-			## NOTE : CoolTime üũ
 			if player.IsSkillCoolTime(skillSlotNumber):
 				(coolTime, elapsedTime) = player.GetSkillCoolTime(skillSlotNumber)
 				self.SetSlotCoolTime(slotNumber, coolTime, elapsedTime)
 
-			## NOTE : Activate �Ǿ� �ִٸ� �����ܵ� ������Ʈ
 			if player.IsSkillActive(skillSlotNumber):
 				self.ActivateSlot(slotNumber)
 
@@ -438,7 +435,6 @@ class TaskBar(ui.ScriptWindow):
 		toggleButtonDict[TaskBar.BUTTON_MESSENGER]=self.GetChild("MessengerButton")
 		toggleButtonDict[TaskBar.BUTTON_SYSTEM]=self.GetChild("SystemButton")
 		
-		# ChatButton, ExpandButton �� �� �ϳ��� �ݵ�� �����Ѵ�.
 		try:
 			toggleButtonDict[TaskBar.BUTTON_CHAT]=self.GetChild("ChatButton")
 		except:
@@ -764,9 +760,7 @@ class TaskBar(ui.ScriptWindow):
 					if itemCount <= 1:
 						itemCount = 0
 					
-					## �ڵ����� (#72723, #72724) Ư��ó�� - �������ε��� ���Կ� Ȱ��ȭ/��Ȱ��ȭ ǥ�ø� ���� �۾��� - [hyo]
 					if constInfo.IS_AUTO_POTION(itemIndex):
-						# metinSocket - [0] : Ȱ��ȭ ����, [1] : ����� ��, [2] : �ִ� �뷮
 						metinSocket = [player.GetItemMetinSocket(Position, j) for j in xrange(player.METIN_SOCKET_MAX_NUM)]
 						
 						if 0 != int(metinSocket[0]):
@@ -797,12 +791,10 @@ class TaskBar(ui.ScriptWindow):
 					slot.SetSlotCountNew(slotNumber, skillGrade, skillLevel)
 					slot.SetCoverButton(slotNumber)
 
-					## NOTE : CoolTime üũ
 					if player.IsSkillCoolTime(Position):
 						(coolTime, elapsedTime) = player.GetSkillCoolTime(Position)
 						slot.SetSlotCoolTime(slotNumber, coolTime, elapsedTime)
 
-					## NOTE : Activate �Ǿ� �ִٸ� �����ܵ� ������Ʈ
 					if player.IsSkillActive(Position):
 						slot.ActivateSlot(slotNumber)
 
@@ -1046,8 +1038,6 @@ class TaskBar(ui.ScriptWindow):
 				if skill.IsStandingSkill(skillIndex):
 					continue
 
-				## FIXME : ��ų �ϳ��� ���� �ϳ��� �Ҵ��ϴ°� �ƹ��� ���� ���ϰ� ũ��.
-				##		 �� �κ��� �ð��� ���� ��ġ����. - [levites]
 				skillButton = self.SkillButton()
 				skillButton.SetSkill(startNumber+i)
 				skillButton.SetPosition(x, y)

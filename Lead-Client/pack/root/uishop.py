@@ -274,7 +274,6 @@ class ShopDialog(ui.ScriptWindow):
 		self.pop = None
 		constInfo.SET_ITEM_QUESTION_DIALOG_STATUS(0)
 
-	## ��ȥ�� �ȸ��� ��� �߰�.
 	def SellAttachedItem(self):
 
 		if shop.IsPrivateShop():
