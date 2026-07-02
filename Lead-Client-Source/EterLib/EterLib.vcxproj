@@ -149,7 +149,6 @@
     <ClCompile Include="GrpCollisionObject.cpp" />
     <ClCompile Include="GrpColor.cpp" />
     <ClCompile Include="GrpColorInstance.cpp" />
-    <ClCompile Include="GrpD3DXBuffer.cpp" />
     <ClCompile Include="GrpDetector.cpp" />
     <ClCompile Include="GrpDevice.cpp" />
     <ClCompile Include="GrpDIB.cpp" />
@@ -227,7 +226,6 @@
     <ClInclude Include="GrpCollisionObject.h" />
     <ClInclude Include="GrpColor.h" />
     <ClInclude Include="GrpColorInstance.h" />
-    <ClInclude Include="GrpD3DXBuffer.h" />
     <ClInclude Include="GrpDetector.h" />
     <ClInclude Include="GrpDevice.h" />
     <ClInclude Include="GrpDIB.h" />

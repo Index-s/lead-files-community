@@ -1,6 +1,5 @@
 ﻿#include "StdAfx.h"
 #include "GrpPixelShader.h"
-#include "GrpD3DXBuffer.h"
 #include "StateManager.h"
 
 CPixelShader::CPixelShader()

@@ -40,7 +40,7 @@ public:
 	void DrawMinorGrid(float xMin, float yMin, float xMax, float yMax, float xminorStep, float yminorStep, float zPos=0);
 	void DrawGrid(float xMin, float yMin, float xMax, float yMax, float xmajorStep, float ymajorStep, float xminorStep, float yminorStep, float zPos=0);
 
-	void RenderD3DXMesh(LPD3DXMESH lpMesh, const D3DXMATRIX * c_pmatWorld, float fx, float fy, float fz, float fRadius, D3DFILLMODE d3dFillMode);
+	void RenderDebugMesh(LPDIRECT3DVERTEXBUFFER9 lpVB, LPDIRECT3DINDEXBUFFER9 lpIB, UINT uVtxCount, UINT uFaceCount, const D3DXMATRIX * c_pmatWorld, float fx, float fy, float fz, float fRadius, D3DFILLMODE d3dFillMode);
 	void RenderSphere(const D3DXMATRIX * c_pmatWorld, float fx, float fy, float fz, float fRadius, D3DFILLMODE d3dFillMode = D3DFILL_SOLID);
 	void RenderCylinder(const D3DXMATRIX * c_pmatWorld, float fx, float fy, float fz, float fRadius, float fLength, D3DFILLMODE d3dFillMode = D3DFILL_SOLID);
 

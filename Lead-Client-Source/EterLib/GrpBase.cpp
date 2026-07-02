@@ -93,8 +93,14 @@ std::vector<TIndex>		CGraphicBase::ms_fillRectIdxVector;
 std::vector<TIndex>		CGraphicBase::ms_fillCubeIdxVector;
 */
 
-LPD3DXMESH				CGraphicBase::ms_lpSphereMesh = NULL;
-LPD3DXMESH				CGraphicBase::ms_lpCylinderMesh = NULL;
+LPDIRECT3DVERTEXBUFFER9	CGraphicBase::ms_lpSphereVB = NULL;
+LPDIRECT3DINDEXBUFFER9	CGraphicBase::ms_lpSphereIB = NULL;
+UINT					CGraphicBase::ms_uSphereVtxCount = 0;
+UINT					CGraphicBase::ms_uSphereFaceCount = 0;
+LPDIRECT3DVERTEXBUFFER9	CGraphicBase::ms_lpCylinderVB = NULL;
+LPDIRECT3DINDEXBUFFER9	CGraphicBase::ms_lpCylinderIB = NULL;
+UINT					CGraphicBase::ms_uCylinderVtxCount = 0;
+UINT					CGraphicBase::ms_uCylinderFaceCount = 0;
 
 LPDIRECT3DVERTEXBUFFER9	CGraphicBase::ms_smallPdtVertexBuffer = NULL;
 LPDIRECT3DVERTEXBUFFER9	CGraphicBase::ms_largePdtVertexBuffer = NULL;
