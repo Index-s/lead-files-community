@@ -311,13 +311,9 @@ void CScreen::RenderCircle3d(float fx, float fy, float fz, float fRadius, int iS
 class CDebugMeshRenderingOption : public CScreen
 {
 public:
-	IDirect3DVertexShader9* m_pVS;
-
 	CDebugMeshRenderingOption(D3DFILLMODE d3dFillMode, const D3DXMATRIX& c_rmatWorld)
-		: m_pVS(nullptr)
 	{
-		ms_lpd3dDevice->GetVertexShader(&m_pVS);
-
+		STATEMANAGER.SaveVertexShader(NULL);
 		STATEMANAGER.SaveTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TFACTOR);
 		STATEMANAGER.SaveTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 		STATEMANAGER.SaveTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
@@ -330,8 +326,7 @@ public:
 
 	~CDebugMeshRenderingOption()
 	{
-		ms_lpd3dDevice->SetVertexShader(m_pVS);
-
+		STATEMANAGER.RestoreVertexShader();
 		STATEMANAGER.RestoreTransform(D3DTS_WORLD);
 		STATEMANAGER.RestoreTextureStageState(0, D3DTSS_COLORARG1);
 		STATEMANAGER.RestoreTextureStageState(0, D3DTSS_COLOROP);
