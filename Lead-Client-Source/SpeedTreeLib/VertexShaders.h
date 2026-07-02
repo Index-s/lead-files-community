@@ -31,8 +31,11 @@
 
 #pragma once
 #include "SpeedTreeConfig.h"
+#include <d3dcompiler.h>
 #include <map>
 #include <string>
+
+#pragma comment(lib, "d3dcompiler.lib")
 
 ///////////////////////////////////////////////////////////////////////  
 //	Branch & Frond Vertex Formats
@@ -76,54 +79,7 @@ struct SFVFBranchVertex
 };
 
 
-///////////////////////////////////////////////////////////////////////  
-//	Branch/Frond Vertex Program
-
-static const char g_achSimpleVertexProgram[] = 
-{
-		"vs.1.1\n"												// identity shader version
-
-		"mov		oT0.xy,		v7\n"							// always pass texcoord0 through
-
-	#ifdef WRAPPER_RENDER_SELF_SHADOWS
-		"mov		oT1.xy,		v8\n"							// pass shadow texcoords through if enabled
-	#endif
-
-		// retrieve and convert wind matrix index
-		"mov		a0.x,	v9.x\n"
-
-		// perform wind interpolation
-		"m4x4		r1,			v0,			c[54+a0.x]\n"		// compute full wind effect
-		"sub		r2,			r1,			v0\n"				// compute difference between full wind and none
-		"mov		r3.x,		v9.y\n"							// mad can't access two v's at once, use r3.x as tmp
-		"mad		r1,			r2,			r3.x,		v0\n"	// perform interpolation
-
-		"add		r2,			c[52],		r1\n"				// translate to tree's position
-		"m4x4		oPos,		r2,			c[0]\n"				// project to screen
-
-	#ifdef WRAPPER_USE_FOG
-		"dp4		r1,			r2,			c[2]\n"				// find distance to vertex
-		"sub		r2.x,		c[85].y,	r1.z\n"				// linear fogging
-		"mul		oFog,		r2.x,		c[85].z\n"			// write to fog register
-	#endif
-
-	#ifdef WRAPPER_USE_STATIC_LIGHTING
-		"mov		oD0,		v5\n"							// pass color through
-	#else
-		"mov		r1,			c[74]\n"						// can only use one const register per instruction
-		"mul		r5,			c[73],		r1\n"				// diffuse values
-	
-		"mov		r1,			c[75]\n"						// can only use one const register per instruction
-		"mul		r4,			c[72],		r1\n"				// ambient values
-			
-		"dp3		r2,		v3,			c[71]\n"				// dot light direction with normal
-//		"max		r2.x,		r2.x,		c[70].x\n"			// limit it
-		"mad		oD0,		r2.x,		r5,			r4\n"	// compute the final color
-	#endif
-};
-
-
-///////////////////////////////////////////////////////////////////////  
+///////////////////////////////////////////////////////////////////////
 //	LoadBranchShader
 
 static LPDIRECT3DVERTEXDECLARATION9 LoadBranchShader(LPDIRECT3DDEVICE9 pDx)
@@ -188,70 +144,92 @@ struct SFVFLeafVertex
 };
 
 
-///////////////////////////////////////////////////////////////////////  
+///////////////////////////////////////////////////////////////////////
 //	Leaf Vertex Program
+//
+//	HLSL (vs_2_0 via D3DCompile) translation of the original vs.1.1 assembly.
+//	The constant file is addressed as one absolute-register array so the
+//	CPU-side SetVertexShaderConstant layout (Constants at c0..c85) is unchanged.
 
-static const char g_achLeafVertexProgram[] = 
-{
-		"vs.1.1\n"											// identity shader version
+static const char g_achLeafVertexProgram[] =
+		"float4 g_avConstants[86] : register(c0);\n"
 
-        "dcl_position v0\n"
+		"struct VS_INPUT\n"
+		"{\n"
+		"    float3 vPosition  : POSITION;\n"
+#ifdef WRAPPER_USE_STATIC_LIGHTING
+		"    float4 vColor     : COLOR0;\n"
+#else
+		"    float3 vNormal    : NORMAL;\n"
+#endif
+		"    float2 vTexCoord  : TEXCOORD0;\n"
+#if defined WRAPPER_USE_GPU_WIND || defined WRAPPER_USE_GPU_LEAF_PLACEMENT
+		"    float4 vPlacement : TEXCOORD2;\n"
+#endif
+		"};\n"
+
+		"struct VS_OUTPUT\n"
+		"{\n"
+		"    float4 vPosition : POSITION;\n"
+		"    float4 vDiffuse  : COLOR0;\n"
+		"    float2 vTexCoord : TEXCOORD0;\n"
+#ifdef WRAPPER_USE_FOG
+		"    float  fFog      : FOG;\n"
+#endif
+		"};\n"
+
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+
+		// always pass texcoord0 through
+		"    Out.vTexCoord = In.vTexCoord;\n"
+
+#ifdef WRAPPER_USE_GPU_WIND
+		// wind interpolation: r0 = lerp(v0, v0 * wind_matrix[c54 + v9.x], v9.y)
+		"    float4 vVertex = float4(In.vPosition, 1.0f);\n"
+		"    int nWindIndex = (int)In.vPlacement.x;\n"
+		"    float4 vWind;\n"
+		"    vWind.x = dot(vVertex, g_avConstants[54 + nWindIndex]);\n"
+		"    vWind.y = dot(vVertex, g_avConstants[55 + nWindIndex]);\n"
+		"    vWind.z = dot(vVertex, g_avConstants[56 + nWindIndex]);\n"
+		"    vWind.w = dot(vVertex, g_avConstants[57 + nWindIndex]);\n"
+		"    float4 r0 = (vWind - vVertex) * In.vPlacement.y + vVertex;\n"
+#else
+		// wind already handled, pass the vertex through
+		"    float4 r0 = float4(In.vPosition, 1.0f);\n"
+#endif
+
+#ifdef WRAPPER_USE_GPU_LEAF_PLACEMENT
+		// place the leaves: r0 += leaf_table[v9.z] * v9.w (absolute register index)
+		"    r0 += g_avConstants[(int)In.vPlacement.z] * In.vPlacement.w;\n"
+#endif
+
+		// translate to tree's position, project to screen (m4x4 with c0..c3)
+		"    r0 += g_avConstants[52];\n"
+		"    Out.vPosition.x = dot(r0, g_avConstants[0]);\n"
+		"    Out.vPosition.y = dot(r0, g_avConstants[1]);\n"
+		"    Out.vPosition.z = dot(r0, g_avConstants[2]);\n"
+		"    Out.vPosition.w = dot(r0, g_avConstants[3]);\n"
+
+#ifdef WRAPPER_USE_FOG
+		// linear fog: (c85.y - dp4(r0, c2)) * c85.z
+		"    Out.fFog = (g_avConstants[85].y - dot(r0, g_avConstants[2])) * g_avConstants[85].z;\n"
+#endif
 
 #ifdef WRAPPER_USE_STATIC_LIGHTING
-        "dcl_color v5\n"
+		// pass color through
+		"    Out.vDiffuse = In.vColor;\n"
 #else
-        "dcl_normal v3\n"
+		// diffuse = max(dot(normal, light_dir), c70.x) * (c73*c74) + (c72*c75)
+		"    float4 vDiffuseValues = g_avConstants[73] * g_avConstants[74];\n"
+		"    float4 vAmbientValues = g_avConstants[72] * g_avConstants[75];\n"
+		"    float fDot = max(dot(In.vNormal, g_avConstants[71].xyz), g_avConstants[70].x);\n"
+		"    Out.vDiffuse = fDot * vDiffuseValues + vAmbientValues;\n"
 #endif
-        "dcl_texcoord0 v7\n"
-#ifdef WRAPPER_USE_GPU_LEAF_PLACEMENT
-        "dcl_texcoord2 v9\n"
-#endif
 
-
-		"mov		oT0.xy,	v7\n"							// always pass texcoord0 through
-		
-	#ifdef WRAPPER_USE_GPU_WIND
-		// retrieve and convert wind matrix index
-		"mov		a0.x,	v9.x\n"
-
-		// perform wind interpolation
-		"m4x4		r1,		v0,			c[54+a0.x]\n"		// compute full wind effect
-		"sub		r2,		r1,			v0\n"				// compute difference between full wind and none
-		"mov		r3.x,	v9.y\n"							// mad can't access two v's at once, use r3.x as tmp
-		"mad		r0,		r2,			r3.x,		v0\n"	// perform interpolation
-	#else
-		"mov		r0,		v0\n"							// wind already handled, pass the vertex through
-	#endif
-
-	#ifdef WRAPPER_USE_GPU_LEAF_PLACEMENT
-		"mov		a0.x,	v9.z\n"							// place the leaves
-		"mul		r1,		c[a0.x],	v9.w\n"
-		"add		r0,		r1,			r0\n"	
-	#endif
-
-		"add		r0,		c[52],		r0\n"				// translate to tree's position
-		"m4x4		oPos,	r0,			c[0]\n"				// project to screen
-
-	#ifdef WRAPPER_USE_FOG
-		"dp4		r1,			r0,			c[2]\n"			// find distance to vertex
-		"sub		r2.x,		c[85].y,	r1.z\n"			// 
-		"mul		oFog,		r2.x,		c[85].z\n"
-	#endif
-
-	#ifdef WRAPPER_USE_STATIC_LIGHTING
-		"mov		oD0,	v5\n"							// pass color through
-	#else
-		"mov		r1,		c[74]\n"						// can only use one const register per instruction
-		"mul		r5,		c[73],		r1\n"				// diffuse values
-
-		"mov		r1,		c[75]\n"						// can only use one const register per instruction
-		"mul		r4,		c[72],		r1\n"				// ambient values
-		
-		"dp3		r2.x,   v3,			c[71]\n"			// dot light direction with normal
-		"max		r2.x,	r2.x,		c[70].x\n"			// limit it
-		"mad		oD0,	r2.x,		r5,			r4\n"	// compute the final color
-	#endif
-};
+		"    return Out;\n"
+		"}\n";
 
 
 ///////////////////////////////////////////////////////////////////////  
@@ -280,14 +258,17 @@ static void LoadLeafShader(LPDIRECT3DDEVICE9 pDx, LPDIRECT3DVERTEXDECLARATION9& 
 			D3DDECL_END()
 	};
 
-    LPD3DXBUFFER pCode = nullptr, pError = nullptr;
-    if (D3DXAssembleShader(g_achLeafVertexProgram, sizeof(g_achLeafVertexProgram) - 1, nullptr, nullptr, 0, &pCode, &pError) == D3D_OK) {
-        if (pDx->CreateVertexShader((DWORD*)pCode->GetBufferPointer(), &pVertexShader) != D3D_OK) {
+    ID3DBlob* pCode = nullptr;
+    ID3DBlob* pError = nullptr;
+    if (SUCCEEDED(D3DCompile(g_achLeafVertexProgram, sizeof(g_achLeafVertexProgram) - 1, "LeafVertexProgram",
+                             nullptr, nullptr, "main", "vs_2_0", 0, 0, &pCode, &pError))) {
+        if (pDx->CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &pVertexShader) != D3D_OK) {
             TraceError("Failed to create leaf vertex shader.");
         }
     }
     else {
-        TraceError("Failed to assemble leaf vertex shader. The error reported is [ %s ].", pError->GetBufferPointer());
+        TraceError("Failed to compile leaf vertex shader. The error reported is [ %s ].",
+                   pError ? (const char*)pError->GetBufferPointer() : "unknown");
     }
 
     if (FAILED(pDx->CreateVertexDeclaration(leafVertexDecl, &pVertexDecl))) {
