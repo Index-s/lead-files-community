@@ -927,6 +927,12 @@ bool CArea::__Load_LoadObject(const char * c_szFileName)
 
 		const CTokenVector & rVector = stTokenVectorMap[szObjectName];
 
+		if (rVector.size() < 4)
+		{
+			TraceError(" CArea::__LoadObject %s : object(%s) has %u tokens, need >= 4", c_szFileName, szObjectName, static_cast<unsigned>(rVector.size()));
+			continue;
+		}
+
 		const std::string & c_rstrxPosition = rVector[0].c_str();
 		const std::string & c_rstryPosition = rVector[1].c_str();
 		const std::string & c_rstrzPosition = rVector[2].c_str();
@@ -1024,6 +1030,12 @@ bool CArea::__Load_LoadAmbience(const char * c_szFileName)
 			continue;
 
 		const CTokenVector & rVector = stTokenVectorMap[szObjectName];
+
+		if (rVector.size() < 5)
+		{
+			TraceError(" CArea::__LoadAmbience %s : object(%s) has %u tokens, need >= 5", c_szFileName, szObjectName, static_cast<unsigned>(rVector.size()));
+			continue;
+		}
 
 		const std::string & c_rstrxPosition = rVector[0].c_str();
 		const std::string & c_rstryPosition = rVector[1].c_str();
