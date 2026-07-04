@@ -350,6 +350,7 @@ class CStateManager : public CSingleton<CStateManager>
 		void SaveStreamSource(UINT StreamNumber, LPDIRECT3DVERTEXBUFFER9 pStreamData, UINT Stride);
 		void RestoreStreamSource(UINT StreamNumber);
 		void SetStreamSource(UINT StreamNumber, LPDIRECT3DVERTEXBUFFER9 pStreamData, UINT Stride);
+		UINT GetStreamStride(UINT StreamNumber) const { return m_CurrentState.m_StreamData[StreamNumber].m_Stride; }
 
 		void SaveIndices(LPDIRECT3DINDEXBUFFER9 pIndexData, UINT BaseVertexIndex);
 		void RestoreIndices();

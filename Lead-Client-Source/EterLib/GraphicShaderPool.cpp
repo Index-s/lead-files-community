@@ -186,6 +186,121 @@ namespace
 		"    return float4(vColor + fAlpha * vEnv, fAlpha);\n"
 		"}\n";
 
+
+	// XYZ|NORMAL|TEX1|TEX2 through WVP, both UV sets passed through (dungeon).
+	const char c_achPNT2VertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"struct VS_INPUT { float3 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    Out.vTexCoord = In.vTexCoord;\n"
+		"    Out.vLightCoord = In.vLightCoord;\n"
+		"    return Out;\n"
+		"}\n";
+
+	// Dungeon cascade: stage0 SELECTARG1(TEXTURE), stage1 MODULATE(TEXTURE, CURRENT).
+	const char c_achLightmapPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vLightCoord : TEXCOORD1) : COLOR0\n"
+		"{\n"
+		"    return tex2D(g_kSampler0, vTexCoord) * tex2D(g_kSampler1, vLightCoord);\n"
+		"}\n";
+
+
+	// Lit PNT with the fixed-function CAMERASPACEPOSITION texgen on TEXCOORD1
+	// (character-shadow projection through the TEXTURE1 transform).
+	const char c_achPNTLitRecvVertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"float4 g_avWorld[4] : register(c4);\n"
+		"float4 g_vLightDirection : register(c8);\n"
+		"float4 g_kLitDiffuse : register(c9);\n"
+		"float4 g_kLitAmbient : register(c10);\n"
+		"float4 g_avWorldView[4] : register(c11);\n"
+		"float4 g_avTexMat1[4] : register(c15);\n"
+		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    float4 vNormal = float4(In.vNormal, 0.0f);\n"
+		"    float3 vWorldNormal;\n"
+		"    vWorldNormal.x = dot(vNormal, g_avWorld[0]);\n"
+		"    vWorldNormal.y = dot(vNormal, g_avWorld[1]);\n"
+		"    vWorldNormal.z = dot(vNormal, g_avWorld[2]);\n"
+		"    float fDot = max(0.0f, dot(vWorldNormal, g_vLightDirection.xyz));\n"
+		"    Out.vDiffuse = saturate(g_kLitAmbient + g_kLitDiffuse * fDot);\n"
+		"    Out.vTexCoord = In.vTexCoord;\n"
+		"    float4 vCamPos;\n"
+		"    vCamPos.x = dot(vPosition, g_avWorldView[0]);\n"
+		"    vCamPos.y = dot(vPosition, g_avWorldView[1]);\n"
+		"    vCamPos.z = dot(vPosition, g_avWorldView[2]);\n"
+		"    vCamPos.w = 1.0f;\n"
+		"    Out.vShadowCoord.x = dot(vCamPos, g_avTexMat1[0]);\n"
+		"    Out.vShadowCoord.y = dot(vCamPos, g_avTexMat1[1]);\n"
+		"    return Out;\n"
+		"}\n";
+
+	// Shadow receiver: stage0 MODULATE(tex, lit), stage1 MODULATE(shadow, current).
+	const char c_achLitShadowPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1) : COLOR0\n"
+		"{\n"
+		"    float3 vColor = tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb;\n"
+		"    vColor *= tex2D(g_kSampler1, vShadowCoord).rgb;\n"
+		"    return float4(vColor, 1.0f);\n"
+		"}\n";
+
+	// XYZ|NORMAL|TEX1|TEX2 with the character-shadow projection on TEXCOORD1.
+	// Position goes through the same WVP dot sequence as PNT2VertexProgram so
+	// both dungeon-block passes rasterize bit-identical depths.
+	const char c_achPNT2RecvVertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"float4 g_avWorldView[4] : register(c11);\n"
+		"float4 g_avTexMat1[4] : register(c15);\n"
+		"struct VS_INPUT { float3 vPosition : POSITION; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vShadowCoord : TEXCOORD1; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    float4 vCamPos;\n"
+		"    vCamPos.x = dot(vPosition, g_avWorldView[0]);\n"
+		"    vCamPos.y = dot(vPosition, g_avWorldView[1]);\n"
+		"    vCamPos.z = dot(vPosition, g_avWorldView[2]);\n"
+		"    vCamPos.w = 1.0f;\n"
+		"    Out.vShadowCoord.x = dot(vCamPos, g_avTexMat1[0]);\n"
+		"    Out.vShadowCoord.y = dot(vCamPos, g_avTexMat1[1]);\n"
+		"    return Out;\n"
+		"}\n";
+
+	// Dungeon-block shadow receiver: stage0 SELECTARG1(TFACTOR), stage1
+	// MODULATE(shadow, current); the ZERO/SRCCOLOR blend applies it to the scene.
+	const char c_achTFactorShadowPixelProgram[] =
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 g_vTFactor : register(c0);\n"
+		"float4 main(float2 vShadowCoord : TEXCOORD1) : COLOR0\n"
+		"{\n"
+		"    return float4(g_vTFactor.rgb * tex2D(g_kSampler1, vShadowCoord).rgb, 1.0f);\n"
+		"}\n";
+
 	// Fixed-function D3DTOP_MODULATEINVALPHA_ADDCOLOR(TEXTURE, DIFFUSE), alpha = texture.
 	const char c_achInvAlphaAddPixelProgram[] =
 		"sampler2D g_kSampler0 : register(s0);\n"
@@ -237,6 +352,9 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpPDTTexMatVertexShader(NULL)
 	, m_lpPNTLitVertexShader(NULL)
 	, m_lpPNTLitSpecVertexShader(NULL)
+	, m_lpPNT2VertexShader(NULL)
+	, m_lpPNT2RecvVertexShader(NULL)
+	, m_lpPNTLitRecvVertexShader(NULL)
 	, m_lpModulatePixelShader(NULL)
 	, m_lpDiffusePixelShader(NULL)
 	, m_lpTexturePixelShader(NULL)
@@ -247,9 +365,13 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTFactorOnlyPixelShader(NULL)
 	, m_lpTexTFactorAlphaPixelShader(NULL)
 	, m_lpLitSpecPixelShader(NULL)
+	, m_lpLightmapPixelShader(NULL)
+	, m_lpLitShadowPixelShader(NULL)
+	, m_lpTFactorShadowPixelShader(NULL)
 	, m_lpPDTDeclaration(NULL)
 	, m_lpPTDeclaration(NULL)
 	, m_lpPNTDeclaration(NULL)
+	, m_lpPNT2Declaration(NULL)
 {
 }
 
@@ -265,6 +387,9 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPDTTexMatVertexShader);
 	safe_release(m_lpPNTLitVertexShader);
 	safe_release(m_lpPNTLitSpecVertexShader);
+	safe_release(m_lpPNT2VertexShader);
+	safe_release(m_lpPNT2RecvVertexShader);
+	safe_release(m_lpPNTLitRecvVertexShader);
 	safe_release(m_lpModulatePixelShader);
 	safe_release(m_lpDiffusePixelShader);
 	safe_release(m_lpTexturePixelShader);
@@ -275,9 +400,13 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpTFactorOnlyPixelShader);
 	safe_release(m_lpTexTFactorAlphaPixelShader);
 	safe_release(m_lpLitSpecPixelShader);
+	safe_release(m_lpLightmapPixelShader);
+	safe_release(m_lpLitShadowPixelShader);
+	safe_release(m_lpTFactorShadowPixelShader);
 	safe_release(m_lpPDTDeclaration);
 	safe_release(m_lpPTDeclaration);
 	safe_release(m_lpPNTDeclaration);
+	safe_release(m_lpPNT2Declaration);
 	m_bCreateFailed = false;
 }
 
@@ -569,6 +698,119 @@ bool CGraphicShaderPool::__Create()
 	safe_release(pCode);
 	safe_release(pError);
 
+	if (FAILED(D3DCompile(c_achPNT2VertexProgram, sizeof(c_achPNT2VertexProgram) - 1, "PNT2VertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNT2VertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build PNT2VertexProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achLightmapPixelProgram, sizeof(c_achLightmapPixelProgram) - 1, "LightmapPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLightmapPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build LightmapPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achPNTLitRecvVertexProgram, sizeof(c_achPNTLitRecvVertexProgram) - 1, "PNTLitRecvVertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNTLitRecvVertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build PNTLitRecvVertexProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achLitShadowPixelProgram, sizeof(c_achLitShadowPixelProgram) - 1, "LitShadowPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLitShadowPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build LitShadowPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achPNT2RecvVertexProgram, sizeof(c_achPNT2RecvVertexProgram) - 1, "PNT2RecvVertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNT2RecvVertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build PNT2RecvVertexProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achTFactorShadowPixelProgram, sizeof(c_achTFactorShadowPixelProgram) - 1, "TFactorShadowPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorShadowPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TFactorShadowPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	const D3DVERTEXELEMENT9 akPNT2Elements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,   0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		{ 0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
+		D3DDECL_END()
+	};
+
+	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPNT2Elements, &m_lpPNT2Declaration)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PNT2 vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
 	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPNTElements, &m_lpPNTDeclaration)))
 	{
 		TraceError("CGraphicShaderPool: failed to create PNT vertex declaration.");
@@ -682,6 +924,47 @@ bool CGraphicShaderPool::BindPNTLitSpecular()
 	STATEMANAGER.SetVertexShaderConstant(11, &matTemp, 4);
 	D3DXMatrixTranspose(&matWorld, &matWorld);
 	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 4);
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTemp);
+	D3DXMatrixTranspose(&matTemp, &matTemp);
+	STATEMANAGER.SetVertexShaderConstant(15, &matTemp, 4);
+	return true;
+}
+
+bool CGraphicShaderPool::BindPNT2Lightmap()
+{
+	return __Bind(m_lpPNT2Declaration, m_lpPNT2VertexShader, m_lpLightmapPixelShader);
+}
+
+bool CGraphicShaderPool::BindPNTLitShadowReceiver()
+{
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitRecvVertexShader, m_lpLitShadowPixelShader))
+		return false;
+
+	D3DXMATRIX matWorld, matView, matTemp;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	STATEMANAGER.GetTransform(D3DTS_VIEW, &matView);
+	D3DXMatrixMultiply(&matTemp, &matWorld, &matView);
+	D3DXMatrixTranspose(&matTemp, &matTemp);
+	STATEMANAGER.SetVertexShaderConstant(11, &matTemp, 4);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 4);
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTemp);
+	D3DXMatrixTranspose(&matTemp, &matTemp);
+	STATEMANAGER.SetVertexShaderConstant(15, &matTemp, 4);
+	return true;
+}
+
+bool CGraphicShaderPool::BindPNT2ShadowReceiver()
+{
+	if (!__Bind(m_lpPNT2Declaration, m_lpPNT2RecvVertexShader, m_lpTFactorShadowPixelShader))
+		return false;
+
+	D3DXMATRIX matWorld, matView, matTemp;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	STATEMANAGER.GetTransform(D3DTS_VIEW, &matView);
+	D3DXMatrixMultiply(&matTemp, &matWorld, &matView);
+	D3DXMatrixTranspose(&matTemp, &matTemp);
+	STATEMANAGER.SetVertexShaderConstant(11, &matTemp, 4);
 	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTemp);
 	D3DXMatrixTranspose(&matTemp, &matTemp);
 	STATEMANAGER.SetVertexShaderConstant(15, &matTemp, 4);

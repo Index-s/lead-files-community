@@ -281,10 +281,58 @@ bool CGraphicBase::BeginGrannyMeshShader()
 	if (!ms_bUseShaderFFP)
 		return false;
 
+	// Route by the bound stream layout first: granny characters/objects use PNT,
+	// dungeon blocks PNT2. Anything else keeps the fixed-function path.
+	DWORD dwValue;
+	const UINT uStride = STATEMANAGER.GetStreamStride(0);
+	if (sizeof(TPNT2Vertex) == uStride)
+	{
+		// Dungeon blocks are drawn twice: the lightmap pass and the character-shadow
+		// receiver re-render. Both convert together with the same WVP math so the
+		// two passes rasterize identical depths (mixed paths z-fight).
+		STATEMANAGER.GetTextureStageState(0, D3DTSS_COLOROP, &dwValue);
+		if (D3DTOP_SELECTARG1 != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG1, &dwValue);
+		const DWORD dwColorArg1 = dwValue;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwValue);
+		if (D3DTOP_MODULATE != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG1, &dwValue);
+		if (D3DTA_TEXTURE != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG2, &dwValue);
+		if (D3DTA_CURRENT != dwValue)
+			return false;
+		LPDIRECT3DBASETEXTURE9 pkTexture;
+		STATEMANAGER.GetTexture(1, &pkTexture);
+		if (!pkTexture)
+			return false;
+		if (D3DTA_TEXTURE == dwColorArg1)
+		{
+			// Lightmap cascade: stage0 SELECTARG1(TEXTURE), stage1 MODULATE(lightmap, CURRENT).
+			STATEMANAGER.GetTexture(0, &pkTexture);
+			if (!pkTexture)
+				return false;
+			return gs_kShaderPool.BindPNT2Lightmap();
+		}
+		if (D3DTA_TFACTOR == dwColorArg1)
+		{
+			// Shadow receiver: white TFACTOR times the shadow map projected via
+			// CAMERASPACEPOSITION texgen, multiplied into the scene by the blend.
+			STATEMANAGER.GetTextureStageState(1, D3DTSS_TEXCOORDINDEX, &dwValue);
+			if (D3DTSS_TCI_CAMERASPACEPOSITION != dwValue)
+				return false;
+			return gs_kShaderPool.BindPNT2ShadowReceiver();
+		}
+		return false;
+	}
+	if (sizeof(TPNTVertex) != uStride)
+		return false;
+
 	// Only the base cascade is converted: stage 0 MODULATE(TEXTURE, DIFFUSE) for
 	// color and alpha, stage 1 disabled, a texture bound. Specular, fades and
 	// two-texture materials keep the fixed-function path for now.
-	DWORD dwValue;
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLOROP, &dwValue);
 	if (D3DTOP_MODULATE != dwValue)
 		return false;
@@ -295,6 +343,35 @@ bool CGraphicBase::BeginGrannyMeshShader()
 	if (D3DTA_DIFFUSE != dwValue)
 		return false;
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAOP, &dwValue);
+	if (D3DTOP_DISABLE == dwValue)
+	{
+		// Character-shadow receiver re-render: stage1 projects the shadow map via
+		// CAMERASPACEPOSITION texgen. Must use the same vertex path as the main
+		// pass or the two passes z-fight.
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwValue);
+		if (D3DTOP_MODULATE != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG1, &dwValue);
+		if (D3DTA_TEXTURE != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG2, &dwValue);
+		if (D3DTA_CURRENT != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_TEXCOORDINDEX, &dwValue);
+		if (D3DTSS_TCI_CAMERASPACEPOSITION != dwValue)
+			return false;
+		LPDIRECT3DBASETEXTURE9 pkShadowTexture;
+		STATEMANAGER.GetTexture(0, &pkShadowTexture);
+		if (!pkShadowTexture)
+			return false;
+		STATEMANAGER.GetTexture(1, &pkShadowTexture);
+		if (!pkShadowTexture)
+			return false;
+		if (!gs_kShaderPool.BindPNTLitShadowReceiver())
+			return false;
+		__UploadGrannyLightingConstants();
+		return true;
+	}
 	if (D3DTOP_MODULATE != dwValue)
 		return false;
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAARG1, &dwValue);
@@ -343,6 +420,12 @@ bool CGraphicBase::BeginGrannyMeshShader()
 	else if (!gs_kShaderPool.BindPNTLit())
 		return false;
 
+	__UploadGrannyLightingConstants();
+	return true;
+}
+
+void CGraphicBase::__UploadGrannyLightingConstants()
+{
 	// Fixed-function directional light: color = saturate(cAmbient + cDiffuse * max(0, N.L)).
 	D3DXVECTOR4 avConstants[3];
 	if (STATEMANAGER.GetRenderState(D3DRS_LIGHTING) && STATEMANAGER.GetLightEnable(0))
@@ -376,7 +459,6 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		avConstants[2] = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	STATEMANAGER.SetVertexShaderConstant(8, avConstants, 3);
-	return true;
 }
 
 void CGraphicBase::EndPDTShader()

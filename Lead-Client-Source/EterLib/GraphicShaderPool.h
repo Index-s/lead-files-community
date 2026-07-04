@@ -36,6 +36,14 @@ class CGraphicShaderPool
 		// Lit PNT plus the sphere-map specular layer: TEXCOORD1 = camera-space
 		// reflection vector through the TEXTURE1 transform (granny specular).
 		bool BindPNTLitSpecular();
+		// XYZ|NORMAL|TEX1|TEX2 dungeon blocks: tex0 * lightmap(tex1), no lighting.
+		bool BindPNT2Lightmap();
+		// Lit PNT with the character-shadow projection: TEXCOORD1 = camera-space
+		// position through the TEXTURE1 transform (shadow-receiver re-render pass).
+		bool BindPNTLitShadowReceiver();
+		// Dungeon-block shadow receiver: TFACTOR times the projected shadow map,
+		// position through the same WVP math as the PNT2 lightmap pass.
+		bool BindPNT2ShadowReceiver();
 		void Unbind();
 
 		void Destroy();
@@ -50,6 +58,9 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTTexMatVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitSpecVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpPNT2VertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpPNT2RecvVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitRecvVertexShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpDiffusePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
@@ -60,7 +71,11 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorOnlyPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTexTFactorAlphaPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLitSpecPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpLightmapPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpLitShadowPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTFactorShadowPixelShader;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNTDeclaration;
+		LPDIRECT3DVERTEXDECLARATION9	m_lpPNT2Declaration;
 };

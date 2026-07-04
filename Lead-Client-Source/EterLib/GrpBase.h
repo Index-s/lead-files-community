@@ -238,6 +238,10 @@ class CGraphicBase
 		static void EndPDTShader();		// call only after a successful BeginPDTShader
 		static void DestroyShaderPool();
 
+	private:
+		static void __UploadGrannyLightingConstants();
+	public:
+
 		// Resource-creation seam: every device object the renderer allocates
 		// goes through these, so a future backend can swap allocation in one place.
 		static HRESULT CreateDeviceTexture(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture);
