@@ -23,6 +23,11 @@ void CStateManager::SetLight(DWORD index, CONST D3DLIGHT9* pLight)
 	m_lpD3DDev->SetLight(index, pLight);
 }
 
+HRESULT CStateManager::CreatePixelShader(CONST DWORD* pFunction, LPDIRECT3DPIXELSHADER9* ppShader)
+{
+	return m_lpD3DDev->CreatePixelShader(pFunction, ppShader);
+}
+
 void CStateManager::GetLight(DWORD index, D3DLIGHT9* pLight)
 {
 	assert(index<8);

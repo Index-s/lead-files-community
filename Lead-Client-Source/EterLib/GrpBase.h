@@ -216,6 +216,13 @@ class CGraphicBase
 		static void SetDefaultIndexBuffer(UINT eDefIB);
 		static bool SetPDTStream(SPDTVertexRaw* pVertices, UINT uVtxCount);
 		static bool SetPDTStream(SPDTVertex* pVertices, UINT uVtxCount);
+
+		// Fixed-function replacement shaders (DX12 migration); default off.
+		static void SetUseShaderFFP(bool bEnable);
+		static bool IsUseShaderFFP();
+		static bool BeginPDTShader();	// true = shader pipeline bound; else use the FVF path
+		static void EndPDTShader();		// call only after a successful BeginPDTShader
+		static void DestroyShaderPool();
 		
 	protected:
 		static D3DXMATRIX				ms_matIdentity;
@@ -239,6 +246,8 @@ class CGraphicBase
 
 	protected:
 		static HRESULT					ms_hLastResult;
+
+		static bool						ms_bUseShaderFFP;
 
 		static int						ms_iWidth;
 		static int						ms_iHeight;
