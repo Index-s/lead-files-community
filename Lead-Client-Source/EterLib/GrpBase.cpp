@@ -301,10 +301,33 @@ bool CGraphicBase::BeginGrannyMeshShader()
 	if (D3DTA_TEXTURE != dwValue)
 		return false;
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAARG2, &dwValue);
-	if (D3DTA_DIFFUSE != dwValue)
+	const bool bSpecularAlpha = (D3DTA_TFACTOR == dwValue);
+	if (D3DTA_DIFFUSE != dwValue && !bSpecularAlpha)
 		return false;
 	STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwValue);
-	if (D3DTOP_DISABLE != dwValue)
+	bool bSpecular = false;
+	if (bSpecularAlpha && D3DTOP_MODULATEALPHA_ADDCOLOR == dwValue)
+	{
+		// Granny sphere-map specular: verify the full stage-1 cascade.
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG1, &dwValue);
+		if (D3DTA_CURRENT != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG2, &dwValue);
+		if (D3DTA_TEXTURE != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_ALPHAOP, &dwValue);
+		if (D3DTOP_SELECTARG1 != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_TEXCOORDINDEX, &dwValue);
+		if (D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR != dwValue)
+			return false;
+		LPDIRECT3DBASETEXTURE9 pEnvTexture;
+		STATEMANAGER.GetTexture(1, &pEnvTexture);
+		if (!pEnvTexture)
+			return false;
+		bSpecular = true;
+	}
+	else if (bSpecularAlpha || D3DTOP_DISABLE != dwValue)
 		return false;
 
 	LPDIRECT3DBASETEXTURE9 pTexture;
@@ -312,7 +335,12 @@ bool CGraphicBase::BeginGrannyMeshShader()
 	if (!pTexture)
 		return false;
 
-	if (!gs_kShaderPool.BindPNTLit())
+	if (bSpecular)
+	{
+		if (!gs_kShaderPool.BindPNTLitSpecular())
+			return false;
+	}
+	else if (!gs_kShaderPool.BindPNTLit())
 		return false;
 
 	// Fixed-function directional light: color = saturate(cAmbient + cDiffuse * max(0, N.L)).

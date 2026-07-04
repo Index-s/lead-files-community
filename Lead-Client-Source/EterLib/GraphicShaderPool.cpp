@@ -126,6 +126,66 @@ namespace
 		"    return Out;\n"
 		"}\n";
 
+
+	// Lit PNT with a second texcoord: the fixed-function CAMERASPACEREFLECTIONVECTOR
+	// texgen (R = 2(E.N)N - E in camera space) through the TEXTURE1 transform.
+	const char c_achPNTLitSpecVertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"float4 g_avWorld[4] : register(c4);\n"
+		"float4 g_vLightDirection : register(c8);\n"
+		"float4 g_kLitDiffuse : register(c9);\n"
+		"float4 g_kLitAmbient : register(c10);\n"
+		"float4 g_avWorldView[4] : register(c11);\n"
+		"float4 g_avTexMat1[4] : register(c15);\n"
+		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vSpecCoord : TEXCOORD1; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    float4 vNormal = float4(In.vNormal, 0.0f);\n"
+		"    float3 vWorldNormal;\n"
+		"    vWorldNormal.x = dot(vNormal, g_avWorld[0]);\n"
+		"    vWorldNormal.y = dot(vNormal, g_avWorld[1]);\n"
+		"    vWorldNormal.z = dot(vNormal, g_avWorld[2]);\n"
+		"    float fDot = max(0.0f, dot(vWorldNormal, g_vLightDirection.xyz));\n"
+		"    Out.vDiffuse = saturate(g_kLitAmbient + g_kLitDiffuse * fDot);\n"
+		"    Out.vTexCoord = In.vTexCoord;\n"
+		"    float3 vCamPos;\n"
+		"    vCamPos.x = dot(vPosition, g_avWorldView[0]);\n"
+		"    vCamPos.y = dot(vPosition, g_avWorldView[1]);\n"
+		"    vCamPos.z = dot(vPosition, g_avWorldView[2]);\n"
+		"    float3 vCamNormal;\n"
+		"    vCamNormal.x = dot(vNormal, g_avWorldView[0]);\n"
+		"    vCamNormal.y = dot(vNormal, g_avWorldView[1]);\n"
+		"    vCamNormal.z = dot(vNormal, g_avWorldView[2]);\n"
+		"    float3 vEye = normalize(vCamPos);\n"
+		"    float3 vUnitNormal = normalize(vCamNormal);\n"
+		"    float4 vReflect = float4(2.0f * dot(vEye, vUnitNormal) * vUnitNormal - vEye, 1.0f);\n"
+		"    Out.vSpecCoord.x = dot(vReflect, g_avTexMat1[0]);\n"
+		"    Out.vSpecCoord.y = dot(vReflect, g_avTexMat1[1]);\n"
+		"    return Out;\n"
+		"}\n";
+
+	// Granny specular: stage0 MODULATE(tex, lit) with alpha = tex.a * TFACTOR.a,
+	// stage1 MODULATEALPHA_ADDCOLOR(current, envmap), alpha = current.
+	const char c_achLitSpecPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vSpecCoord : TEXCOORD1) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    float3 vColor = kTexel.rgb * vDiffuse.rgb;\n"
+		"    float fAlpha = kTexel.a * g_kTFactor.a;\n"
+		"    float3 vEnv = tex2D(g_kSampler1, vSpecCoord).rgb;\n"
+		"    return float4(vColor + fAlpha * vEnv, fAlpha);\n"
+		"}\n";
+
 	// Fixed-function D3DTOP_MODULATEINVALPHA_ADDCOLOR(TEXTURE, DIFFUSE), alpha = texture.
 	const char c_achInvAlphaAddPixelProgram[] =
 		"sampler2D g_kSampler0 : register(s0);\n"
@@ -176,6 +236,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpPTVertexShader(NULL)
 	, m_lpPDTTexMatVertexShader(NULL)
 	, m_lpPNTLitVertexShader(NULL)
+	, m_lpPNTLitSpecVertexShader(NULL)
 	, m_lpModulatePixelShader(NULL)
 	, m_lpDiffusePixelShader(NULL)
 	, m_lpTexturePixelShader(NULL)
@@ -185,6 +246,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTFactorAddPixelShader(NULL)
 	, m_lpTFactorOnlyPixelShader(NULL)
 	, m_lpTexTFactorAlphaPixelShader(NULL)
+	, m_lpLitSpecPixelShader(NULL)
 	, m_lpPDTDeclaration(NULL)
 	, m_lpPTDeclaration(NULL)
 	, m_lpPNTDeclaration(NULL)
@@ -202,6 +264,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPTVertexShader);
 	safe_release(m_lpPDTTexMatVertexShader);
 	safe_release(m_lpPNTLitVertexShader);
+	safe_release(m_lpPNTLitSpecVertexShader);
 	safe_release(m_lpModulatePixelShader);
 	safe_release(m_lpDiffusePixelShader);
 	safe_release(m_lpTexturePixelShader);
@@ -211,6 +274,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpTFactorAddPixelShader);
 	safe_release(m_lpTFactorOnlyPixelShader);
 	safe_release(m_lpTexTFactorAlphaPixelShader);
+	safe_release(m_lpLitSpecPixelShader);
 	safe_release(m_lpPDTDeclaration);
 	safe_release(m_lpPTDeclaration);
 	safe_release(m_lpPNTDeclaration);
@@ -473,6 +537,38 @@ bool CGraphicShaderPool::__Create()
 	safe_release(pCode);
 	safe_release(pError);
 
+	if (FAILED(D3DCompile(c_achPNTLitSpecVertexProgram, sizeof(c_achPNTLitSpecVertexProgram) - 1, "PNTLitSpecVertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNTLitSpecVertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build PNTLitSpecVertexProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achLitSpecPixelProgram, sizeof(c_achLitSpecPixelProgram) - 1, "LitSpecPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLitSpecPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build LitSpecPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
 	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPNTElements, &m_lpPNTDeclaration)))
 	{
 		TraceError("CGraphicShaderPool: failed to create PNT vertex declaration.");
@@ -570,6 +666,25 @@ bool CGraphicShaderPool::BindPNTLit()
 	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
 	D3DXMatrixTranspose(&matWorld, &matWorld);
 	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 4);
+	return true;
+}
+
+bool CGraphicShaderPool::BindPNTLitSpecular()
+{
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitSpecVertexShader, m_lpLitSpecPixelShader))
+		return false;
+
+	D3DXMATRIX matWorld, matView, matTemp;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	STATEMANAGER.GetTransform(D3DTS_VIEW, &matView);
+	D3DXMatrixMultiply(&matTemp, &matWorld, &matView);
+	D3DXMatrixTranspose(&matTemp, &matTemp);
+	STATEMANAGER.SetVertexShaderConstant(11, &matTemp, 4);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 4);
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTemp);
+	D3DXMatrixTranspose(&matTemp, &matTemp);
+	STATEMANAGER.SetVertexShaderConstant(15, &matTemp, 4);
 	return true;
 }
 
