@@ -15,17 +15,22 @@ class CGraphicShaderPool
 		bool BindPDTModulate();
 		// Same vertex path, pixel = diffuse only (fixed-function NULL-texture draws).
 		bool BindPDTDiffuse();
+		// XYZ|TEX1 vertices, pixel = texture only (fixed-function SELECTARG1(TEXTURE)).
+		bool BindPTTexture();
 		void Unbind();
 
 		void Destroy();
 
 	private:
 		bool __Create();
-		bool __BindPDT(LPDIRECT3DPIXELSHADER9 lpPixelShader);
+		bool __Bind(LPDIRECT3DVERTEXDECLARATION9 lpDeclaration, LPDIRECT3DVERTEXSHADER9 lpVertexShader, LPDIRECT3DPIXELSHADER9 lpPixelShader);
 
 		bool m_bCreateFailed;
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpPTVertexShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpDiffusePixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDTDeclaration;
+		LPDIRECT3DVERTEXDECLARATION9	m_lpPTDeclaration;
 };
