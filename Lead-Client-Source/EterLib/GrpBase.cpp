@@ -275,6 +275,82 @@ bool CGraphicBase::BeginEffectShader(DWORD dwColorOp)
 	}
 }
 
+
+bool CGraphicBase::BeginGrannyMeshShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	// Only the base cascade is converted: stage 0 MODULATE(TEXTURE, DIFFUSE) for
+	// color and alpha, stage 1 disabled, a texture bound. Specular, fades and
+	// two-texture materials keep the fixed-function path for now.
+	DWORD dwValue;
+	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLOROP, &dwValue);
+	if (D3DTOP_MODULATE != dwValue)
+		return false;
+	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG1, &dwValue);
+	if (D3DTA_TEXTURE != dwValue)
+		return false;
+	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG2, &dwValue);
+	if (D3DTA_DIFFUSE != dwValue)
+		return false;
+	STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAOP, &dwValue);
+	if (D3DTOP_MODULATE != dwValue)
+		return false;
+	STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAARG1, &dwValue);
+	if (D3DTA_TEXTURE != dwValue)
+		return false;
+	STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAARG2, &dwValue);
+	if (D3DTA_DIFFUSE != dwValue)
+		return false;
+	STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwValue);
+	if (D3DTOP_DISABLE != dwValue)
+		return false;
+
+	LPDIRECT3DBASETEXTURE9 pTexture;
+	STATEMANAGER.GetTexture(0, &pTexture);
+	if (!pTexture)
+		return false;
+
+	if (!gs_kShaderPool.BindPNTLit())
+		return false;
+
+	// Fixed-function directional light: color = saturate(cAmbient + cDiffuse * max(0, N.L)).
+	D3DXVECTOR4 avConstants[3];
+	if (STATEMANAGER.GetRenderState(D3DRS_LIGHTING) && STATEMANAGER.GetLightEnable(0))
+	{
+		D3DLIGHT9 kLight;
+		STATEMANAGER.GetLight(0, &kLight);
+		D3DMATERIAL9 kMaterial;
+		STATEMANAGER.GetMaterial(&kMaterial);
+		const DWORD dwAmbient = STATEMANAGER.GetRenderState(D3DRS_AMBIENT);
+		const float c_fInv255 = 1.0f / 255.0f;
+		const float fAmbientR = ((dwAmbient >> 16) & 0xff) * c_fInv255 + kLight.Ambient.r;
+		const float fAmbientG = ((dwAmbient >> 8) & 0xff) * c_fInv255 + kLight.Ambient.g;
+		const float fAmbientB = (dwAmbient & 0xff) * c_fInv255 + kLight.Ambient.b;
+		const float fAmbientA = ((dwAmbient >> 24) & 0xff) * c_fInv255 + kLight.Ambient.a;
+
+		avConstants[0] = D3DXVECTOR4(-kLight.Direction.x, -kLight.Direction.y, -kLight.Direction.z, 0.0f);
+		avConstants[1] = D3DXVECTOR4(kMaterial.Diffuse.r * kLight.Diffuse.r,
+									 kMaterial.Diffuse.g * kLight.Diffuse.g,
+									 kMaterial.Diffuse.b * kLight.Diffuse.b,
+									 kMaterial.Diffuse.a * kLight.Diffuse.a);
+		avConstants[2] = D3DXVECTOR4(kMaterial.Ambient.r * fAmbientR + kMaterial.Emissive.r,
+									 kMaterial.Ambient.g * fAmbientG + kMaterial.Emissive.g,
+									 kMaterial.Ambient.b * fAmbientB + kMaterial.Emissive.b,
+									 kMaterial.Ambient.a * fAmbientA + kMaterial.Emissive.a);
+	}
+	else
+	{
+		// Lighting off: fixed function feeds an opaque white vertex color.
+		avConstants[0] = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
+		avConstants[1] = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
+		avConstants[2] = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	STATEMANAGER.SetVertexShaderConstant(8, avConstants, 3);
+	return true;
+}
+
 void CGraphicBase::EndPDTShader()
 {
 	gs_kShaderPool.Unbind();

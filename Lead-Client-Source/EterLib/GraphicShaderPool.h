@@ -30,6 +30,9 @@ class CGraphicShaderPool
 		bool BindPTTFactorAdd();
 		bool BindPTTFactorOnly();
 		bool BindPTTexTFactorAlpha();
+		// XYZ|NORMAL|TEX1 with fixed-function directional lighting evaluated in the
+		// vertex shader; lighting constants (c8-c10) are uploaded by the caller.
+		bool BindPNTLit();
 		void Unbind();
 
 		void Destroy();
@@ -42,6 +45,7 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPTVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTTexMatVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitVertexShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpDiffusePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
@@ -53,4 +57,5 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpTexTFactorAlphaPixelShader;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPTDeclaration;
+		LPDIRECT3DVERTEXDECLARATION9	m_lpPNTDeclaration;
 };

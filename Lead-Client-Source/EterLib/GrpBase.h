@@ -234,6 +234,7 @@ class CGraphicBase
 		static bool BeginPDTModulateTexAlphaShader();	// rgb = texture*diffuse, alpha = texture
 		static bool BeginPDTCloudShader();	// scrolling-UV cloud layer (MODULATEINVALPHA_ADDCOLOR)
 		static bool BeginEffectShader(DWORD dwColorOp);	// effect COLOROP(TFACTOR, TEXTURE); false = unsupported op, use FFP
+		static bool BeginGrannyMeshShader();	// lit PNT mesh w/ base modulate cascade; false = keep FFP
 		static void EndPDTShader();		// call only after a successful BeginPDTShader
 		static void DestroyShaderPool();
 

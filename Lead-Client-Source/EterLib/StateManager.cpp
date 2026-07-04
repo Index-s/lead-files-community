@@ -98,6 +98,13 @@ void CStateManager::GetLight(DWORD index, D3DLIGHT9* pLight)
 	*pLight=m_kLightData.m_akD3DLight[index];
 }
 
+BOOL CStateManager::GetLightEnable(DWORD index)
+{
+	BOOL bEnable = FALSE;
+	m_lpD3DDev->GetLightEnable(index, &bEnable);
+	return bEnable;
+}
+
 bool CStateManager::BeginScene()
 {
 	m_bScene=true;

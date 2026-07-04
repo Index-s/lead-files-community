@@ -96,6 +96,36 @@ namespace
 		"    return Out;\n"
 		"}\n";
 
+
+	// XYZ|NORMAL|TEX1 with the fixed-function directional-light formula:
+	// color = saturate(cAmbient + cDiffuse * max(0, dot(worldNormal, lightDir))).
+	const char c_achPNTLitVertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"float4 g_avWorld[4] : register(c4);\n"
+		"float4 g_vLightDirection : register(c8);\n"
+		"float4 g_kLitDiffuse : register(c9);\n"
+		"float4 g_kLitAmbient : register(c10);\n"
+		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    float4 vNormal = float4(In.vNormal, 0.0f);\n"
+		"    float3 vWorldNormal;\n"
+		"    vWorldNormal.x = dot(vNormal, g_avWorld[0]);\n"
+		"    vWorldNormal.y = dot(vNormal, g_avWorld[1]);\n"
+		"    vWorldNormal.z = dot(vNormal, g_avWorld[2]);\n"
+		"    float fDot = max(0.0f, dot(vWorldNormal, g_vLightDirection.xyz));\n"
+		"    Out.vDiffuse = saturate(g_kLitAmbient + g_kLitDiffuse * fDot);\n"
+		"    Out.vTexCoord = In.vTexCoord;\n"
+		"    return Out;\n"
+		"}\n";
+
 	// Fixed-function D3DTOP_MODULATEINVALPHA_ADDCOLOR(TEXTURE, DIFFUSE), alpha = texture.
 	const char c_achInvAlphaAddPixelProgram[] =
 		"sampler2D g_kSampler0 : register(s0);\n"
@@ -145,6 +175,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpPDTVertexShader(NULL)
 	, m_lpPTVertexShader(NULL)
 	, m_lpPDTTexMatVertexShader(NULL)
+	, m_lpPNTLitVertexShader(NULL)
 	, m_lpModulatePixelShader(NULL)
 	, m_lpDiffusePixelShader(NULL)
 	, m_lpTexturePixelShader(NULL)
@@ -156,6 +187,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTexTFactorAlphaPixelShader(NULL)
 	, m_lpPDTDeclaration(NULL)
 	, m_lpPTDeclaration(NULL)
+	, m_lpPNTDeclaration(NULL)
 {
 }
 
@@ -169,6 +201,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPDTVertexShader);
 	safe_release(m_lpPTVertexShader);
 	safe_release(m_lpPDTTexMatVertexShader);
+	safe_release(m_lpPNTLitVertexShader);
 	safe_release(m_lpModulatePixelShader);
 	safe_release(m_lpDiffusePixelShader);
 	safe_release(m_lpTexturePixelShader);
@@ -180,6 +213,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpTexTFactorAlphaPixelShader);
 	safe_release(m_lpPDTDeclaration);
 	safe_release(m_lpPTDeclaration);
+	safe_release(m_lpPNTDeclaration);
 	m_bCreateFailed = false;
 }
 
@@ -414,6 +448,39 @@ bool CGraphicShaderPool::__Create()
 		return false;
 	}
 
+
+	const D3DVERTEXELEMENT9 akPNTElements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,   0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		D3DDECL_END()
+	};
+
+	if (FAILED(D3DCompile(c_achPNTLitVertexProgram, sizeof(c_achPNTLitVertexProgram) - 1, "PNTLitVertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNTLitVertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build PNT lit vertex shader [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPNTElements, &m_lpPNTDeclaration)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PNT vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
 	return true;
 }
 
@@ -492,6 +559,18 @@ bool CGraphicShaderPool::BindPTTFactorOnly()
 bool CGraphicShaderPool::BindPTTexTFactorAlpha()
 {
 	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTexTFactorAlphaPixelShader);
+}
+
+bool CGraphicShaderPool::BindPNTLit()
+{
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitVertexShader, m_lpModulatePixelShader))
+		return false;
+
+	D3DXMATRIX matWorld;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 4);
+	return true;
 }
 
 
