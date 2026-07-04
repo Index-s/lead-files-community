@@ -176,7 +176,7 @@ class MapNameShower(ui.ExpandedImageBox):
 			self.floorImage.SetPosition(100, 80)
 			self.floorImage.SetAlpha(0.0)
 			self.floorImage.Show()
-			# 맵이름 (ex: 아귀동굴) 이미지 로딩 & 표시			
+			# Map name (ex: Agui Cave) image loading & display			
 			try:
 				floor = self.__GetDevilTowerFloor(x, y)
 				print x, y, floor
@@ -194,8 +194,8 @@ class MapNameShower(ui.ExpandedImageBox):
 				self.objectiveImage.SetAlpha(0.0)
 				self.objectiveImage.Show()
 			
-				# 층별 목표 이미지 로딩 & 표시
-				# 던전은 현재 몇층인지 알아오는 부분 때문에 하드코딩을 피하기가 힘들다...
+				# Per-floor objective image loading & display
+				# For dungeons it is hard to avoid hardcoding because of the part that finds out the current floor...
 				try:
 					floor = self.__GetDevilTowerFloor(x, y)
 					print x, y, floor
@@ -215,7 +215,7 @@ class MapNameShower(ui.ExpandedImageBox):
 			self.floorImage.SetAlpha(0.0)
 			self.floorImage.Show()
 
-			# 맵이름 (ex: 아귀동굴) 이미지 로딩 & 표시
+			# Map name (ex: Agui Cave) image loading & display
 			try:
 				floor = self.__GetDevilBase(x, y)
 				print x, y, floor
@@ -233,8 +233,8 @@ class MapNameShower(ui.ExpandedImageBox):
 				self.objectiveImage.Show()
 				
 
-				# 층별 목표 이미지 로딩 & 표시
-				# 던전은 현재 몇층인지 알아오는 부분 때문에 하드코딩을 피하기가 힘들다...
+				# Per-floor objective image loading & display
+				# For dungeons it is hard to avoid hardcoding because of the part that finds out the current floor...
 				try:
 					floor = self.__GetDevilBase(x, y)
 					print x, y, floor

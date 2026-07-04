@@ -9,8 +9,8 @@ import uiCommon
 import localeInfo
 import chat
 import item
-import systemSetting #김준호
-import player #김준호
+import systemSetting #Kim Junho
+import player #Kim Junho
 
 g_isBuildingPrivateShop = False
 
@@ -106,7 +106,7 @@ class PrivateShopAdvertisementBoard(ui.ThinBoard):
 		
 		else:
 			for key in g_privateShopAdvertisementBoardDict.keys():
-				if  player.GetMainCharacterIndex() == key:  #상점풍선을 안보이게 감추는 경우에도, 플레이어 자신의 상점 풍선은 보이도록 함. by 김준호
+				if  player.GetMainCharacterIndex() == key:  #Even when shop balloons are hidden, the player's own shop balloon stays visible. by Kim Junho
 					g_privateShopAdvertisementBoardDict[key].Show() 	
 					x, y = chr.GetProjectPosition(player.GetMainCharacterIndex(), 220)
 					g_privateShopAdvertisementBoardDict[key].SetPosition(x - self.GetWidth()/2, y - self.GetHeight()/2)

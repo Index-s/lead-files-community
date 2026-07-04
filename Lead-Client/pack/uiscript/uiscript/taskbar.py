@@ -71,7 +71,7 @@ window = {
 					)
 				},
 				{
-					## 툴팁을 띄우기 위한 윈도우
+					## Window for displaying the tooltip
 					"name" : "HPGauge_Board",
 					"type" : "window",
 
@@ -116,7 +116,7 @@ window = {
 					),
 				},
 				{
-					## 툴팁을 띄우기 위한 윈도우
+					## Window for displaying the tooltip
 					"name" : "SPGauge_Board",
 					"type" : "window",
 
@@ -161,7 +161,7 @@ window = {
 					),
 				},
 				{
-					## 툴팁을 띄우기 위한 윈도우
+					## Window for displaying the tooltip
 					"name" : "STGauge_Board",
 					"type" : "window",
 

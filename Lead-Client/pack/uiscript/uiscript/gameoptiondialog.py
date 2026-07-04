@@ -56,7 +56,7 @@ window = {
 					),
 				},
 
-				## 이름색
+				## Name Color
 				{
 					"name" : "name_color",
 					"type" : "text",
@@ -93,7 +93,7 @@ window = {
 					"down_image" : ROOT_PATH + "Middle_Button_03.sub",
 				},
 
-				## 타겟창
+				## Target Window
 				{
 					"name" : "target_board",
 					"type" : "text",
@@ -398,7 +398,7 @@ window = {
 					"down_image" : ROOT_PATH + "middle_button_03.sub",
 				},
 
-				## 판매문구
+				## Sales Text
 				{
 					"name" : "salestext_on_off",
 					"type" : "text",

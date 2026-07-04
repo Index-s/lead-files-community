@@ -13,7 +13,7 @@ for path in open("index"):
 			continue
 
 		if tokens[0] == "BasePosition":
-			x, y = [int(item)/100 for item in tokens[1:3]]
+			x, y = [int(item)//100 for item in tokens[1:3]]
 		elif tokens[0] == "MapSize":
 			w, h = [int(item) * 256 for item in tokens[1:3]]
 
@@ -23,4 +23,4 @@ x = 4693
 y = 9642
 for rect in rectList:
 	if x >= rect[1] and y >= rect[2] and x <= rect[3] and y<= rect[4]:
-		print rect[0]
+		print(rect[0])

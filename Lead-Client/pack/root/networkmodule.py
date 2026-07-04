@@ -124,16 +124,16 @@ class MainStream(object):
 
 	def SetPhaseWindow(self, newPhaseWindow):
 		if self.newPhaseWindow:
-			#print "이미 새로운 윈도우로 바꾼상태에서 또 바꿈", newPhaseWindow
+			#print "Already changed to a new window, changing again", newPhaseWindow
 			self.__ChangePhaseWindow()
 
 		self.newPhaseWindow=newPhaseWindow
 
 		if self.curPhaseWindow:
-			#print "페이드 아웃되면 바꿈"
+			#print "Change when fade out completes"
 			self.curtain.FadeOut(self.__ChangePhaseWindow)
 		else:
-			#print "현재 윈도우가 없는 상태라 바로 바꿈"
+			#print "No current window, so change immediately"
 			self.__ChangePhaseWindow()
 
 	def __ChangePhaseWindow(self):

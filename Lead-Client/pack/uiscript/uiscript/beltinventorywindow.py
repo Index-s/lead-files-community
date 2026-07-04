@@ -7,7 +7,7 @@ EQUIPMENT_START_INDEX = player.EQUIPMENT_SLOT_START
 window = {
 	"name" : "BeltInventoryWindow",
 
-	## 600 - (width + 오른쪽으로 부터 띄우기 24 px)
+	## 600 - (width + offset from the right 24 px)
 	"x" : SCREEN_WIDTH - 176 - 148,
 	"y" : SCREEN_HEIGHT - 37 - 565 + 209 + 32,
 #	"x" : -148,

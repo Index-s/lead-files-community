@@ -506,7 +506,7 @@ class Console(object):
 		chr.testSetComboType(int(type))
 
 	def SetSkillGroupFake(self, index):
-		"""테스트 코드"""
+		"""Test code"""
 		net.SetSkillGroupFake(int(index))
 		self.Print(" SetSkillGroupFake : %d" % int(index))
 
@@ -737,7 +737,7 @@ class ConsoleWindow(ui.Window):
 	def CloseWindow(self):
 		self.Hide()
 
-	## NOTE : 이곳에서 Command를 처리합니다 - [levites]
+	## NOTE : Commands are processed here - [levites]
 	def ProcessCommand(self, text):
 
 		if '/' == text[0]:

@@ -12,7 +12,7 @@ strength_fee = {
 	item.MATERIAL_DS_REFINE_HOLLY : 30000,
 }
 
-# 강화가 어느 단계 까지 가능 한지
+# Up to which step strengthening is possible
 # table(GRADE, STEP) = max strength.
 default_strength_max_table = [
 	[2, 2, 3, 3, 4],
@@ -22,12 +22,12 @@ default_strength_max_table = [
 	[4, 4, 4, 5, 6],
 ]
 
-# 일단 기획적으로는 strength 강화의 경우, 강화석에 의해 fee가 셋팅되기 때문에,
-# dragon_soul_refine_info에 넣지 않았다.
-# (강화석만 넣어도 얼마 필요한지 보일 수 있도록 하기 위해)
-# 다만 서버에서는 용혼석 타입 별로 강화석 fee를 셋팅할 수 있도록 해놨기 때문에,
-# 만일 용혼석 별로 강화석 fee를 다르게 하고 싶다면,
-# 클라 코드를 수정해야할 것이다.
+# For now, by design, in the case of strength strengthening the fee is set by the strengthening stone,
+# so it was not put into dragon_soul_refine_info.
+# (so that just inserting the strengthening stone shows how much is needed)
+# However, on the server the strengthening stone fee can be set per dragon soul stone type,
+# so if you want a different strengthening stone fee per dragon soul stone,
+# you will need to modify the client code.
 default_refine_info = {
 	"grade_need_count" : default_grade_need_count,
 	"grade_fee" : default_grade_fee,

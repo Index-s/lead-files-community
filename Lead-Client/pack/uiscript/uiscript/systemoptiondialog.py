@@ -116,7 +116,7 @@ window = {
 					"y" : 50,
 				},	
 
-				## 카메라
+				## Camera
 				{
 					"name" : "camera_mode",
 					"type" : "text",
@@ -155,7 +155,7 @@ window = {
 					"down_image" : ROOT_PATH + "Middle_Button_03.sub",
 				},
 
-				## 안개
+				## Fog
 				{
 					"name" : "fog_mode",
 					"type" : "text",
@@ -210,7 +210,7 @@ window = {
 
 
 
-				## 그림자
+				## Shadow
 #				{
 #					"name" : "shadow_mode",
 #					"type" : "text",

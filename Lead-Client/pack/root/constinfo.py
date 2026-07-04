@@ -202,36 +202,36 @@ def GET_ACCESSORY_MATERIAL_VNUM(vnum, subType):
 	return ACCESSORY_MATERIAL_LIST[type]
 
 ##################################################################
-## 새로 추가된 '벨트' 아이템 타입과, 벨트의 소켓에 꽂을 아이템 관련.. 
-## 벨트의 소켓시스템은 악세서리와 동일하기 때문에, 위 악세서리 관련 하드코딩처럼 이런식으로 할 수밖에 없다..
+## Related to the newly added 'belt' item type and the items to insert into the belt's sockets..
+## The belt's socket system is identical to accessories, so we have no choice but to do it this way, like the accessory-related hardcoding above..
 
 def GET_BELT_MATERIAL_VNUM(vnum, subType = 0):
-	# 현재는 모든 벨트에는 하나의 아이템(#18900)만 삽입 가능
+	# Currently only one item (#18900) can be inserted into any belt
 	return 18900
 
 ##################################################################
-## 자동물약 (HP: #72723 ~ #72726, SP: #72727 ~ #72730)
+## Auto potion (HP: #72723 ~ #72726, SP: #72727 ~ #72730)
 
-# 해당 vnum이 자동물약인가?
+# Is this vnum an auto potion?
 def IS_AUTO_POTION(itemVnum):
 	return IS_AUTO_POTION_HP(itemVnum) or IS_AUTO_POTION_SP(itemVnum)
 	
-# 해당 vnum이 HP 자동물약인가?
+# Is this vnum an HP auto potion?
 def IS_AUTO_POTION_HP(itemVnum):
 	if 72723 <= itemVnum and 72726 >= itemVnum:
 		return 1
-	elif itemVnum >= 76021 and itemVnum <= 76022:		## 새로 들어간 선물용 화룡의 축복
+	elif itemVnum >= 76021 and itemVnum <= 76022:		## Newly added gift-type Blessing of the Fire Dragon
 		return 1
 	elif itemVnum == 79012:
 		return 1
 		
 	return 0
 	
-# 해당 vnum이 SP 자동물약인가?
+# Is this vnum an SP auto potion?
 def IS_AUTO_POTION_SP(itemVnum):
 	if 72727 <= itemVnum and 72730 >= itemVnum:
 		return 1
-	elif itemVnum >= 76004 and itemVnum <= 76005:		## 새로 들어간 선물용 수룡의 축복
+	elif itemVnum >= 76004 and itemVnum <= 76005:		## Newly added gift-type Blessing of the Water Dragon
 		return 1
 	elif itemVnum == 79013:
 		return 1

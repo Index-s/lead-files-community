@@ -47,6 +47,12 @@ bool CProperty::GetString(const char * c_pszKey, const char ** c_ppString)
 	if (m_stTokenMap.end() == it)
 		return false;
 
+	if (it->second.empty())
+	{
+		TraceError("CProperty::GetString : key(%s) in property(%s) has no value", c_pszKey, m_stFileName.c_str());
+		return false;
+	}
+
 	*c_ppString = it->second[0].c_str();
 	return true;
 }

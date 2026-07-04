@@ -7,7 +7,7 @@ os.system('mkdir object')
 #os.system('rm -rf pre_qc')
 os.system('mkdir pre_qc')
 os.system('chgrp quest object')
-for line in file('locale_list'):
+for line in open('locale_list'):
 	r = pre_qc.run (line)
 	if r == True:
 		filename = 'pre_qc/'+line
@@ -15,7 +15,7 @@ for line in file('locale_list'):
 		filename = line
 
 	if os.system('./qc '+filename):
-		print 'Error occured on compile ' + line
+		print('Error occured on compile ' + line)
 		os.system('chmod -R 770 object')
 		import sys
 		sys.exit(-1)

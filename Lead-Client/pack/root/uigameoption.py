@@ -8,8 +8,8 @@ import localeInfo
 import constInfo
 import chrmgr
 import player
-import uiPrivateShopBuilder # ±Ë¡ÿ»£
-import interfaceModule # ±Ë¡ÿ»£
+import uiPrivateShopBuilder # Kim Junho
+import interfaceModule # Kim Junho
 
 blockMode = 0
 viewChatMode = 0

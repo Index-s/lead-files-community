@@ -16,7 +16,7 @@ import musicInfo
 import playerSettingModule
 
 ####################################
-# 빠른 실행을 위한 모듈 로딩 분담
+# Module loading distribution for fast startup
 ####################################
 import uiCommon                    
 import uiMapNameShower             
@@ -26,7 +26,7 @@ import uiCharacter
 import uiTarget                    
 import consoleModule               
 
-# interface module이 문제야...
+# the interface module is the problem...
 import interfaceModule
 import uiTaskBar                   
 import uiInventory
@@ -745,7 +745,7 @@ class SelectCharacterWindow(ui.Window):
 		if -1 != self.startIndex:
 
 			## Temporary
-			## BackGroundLoading이 지원 될때까지 임시로..
+			## Temporary until BackGroundLoading is supported..
 			if app.GetTime() - self.startReservingTime > 3.0:
 				if False == self.openLoadingFlag:
 					chrSlot=self.stream.GetCharacterSlot()
@@ -757,7 +757,7 @@ class SelectCharacterWindow(ui.Window):
 					import player
 					player.SetPlayTime(playTime)
 					import chat
-					chat.Clear() ## 들어갈때 Chat 을 초기화. 임시 Pos.
+					chat.Clear() ## Clear chat on entering. Temporary Pos.
 			## Temporary
 		#######################################################
 

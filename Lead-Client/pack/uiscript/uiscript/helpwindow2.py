@@ -145,15 +145,15 @@ window = {
 				{
 					"name" : "help_02_01", "type" : "text", "outline" : 1,
 					"x" : 0, "y" : SCREEN_HEIGHT * HEIGHT_STEP*0,
-					"text" : "- 가나다라마바사 01",
+					"text" : "- Sample text 01",
 				},
 				{
 					"name" : "help_02_02", "type" : "text", "outline" : 1,
 					"x" : 0, "y" : HEIGHT_STEP*1,
-					"text" : "- 가나다라마바사 02",
+					"text" : "- Sample text 02",
 				},
 
-				## 이 밑으로 텍스트를 추가 하시면 됩니다.
+				## Add text below this line.
 			),
 		},
 
