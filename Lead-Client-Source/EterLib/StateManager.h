@@ -252,12 +252,14 @@ class CStateManager : public CSingleton<CStateManager>
 		void	RestoreMaterial();
 		void	SetMaterial(const D3DMATERIAL9 * pMaterial);
 		void	GetMaterial(D3DMATERIAL9 * pMaterial);
+		BOOL	GetLightEnable(DWORD index);
 
 		void	SetLight(DWORD index, CONST D3DLIGHT9* pLight);
 		void	GetLight(DWORD index, D3DLIGHT9* pLight);
 
 		HRESULT	CreateVertexShader(CONST DWORD* pFunction, LPDIRECT3DVERTEXSHADER9* ppShader);
 		HRESULT	CreateVertexDeclaration(CONST D3DVERTEXELEMENT9* pVertexElements, LPDIRECT3DVERTEXDECLARATION9* ppDecl);
+		HRESULT	CreatePixelShader(CONST DWORD* pFunction, LPDIRECT3DPIXELSHADER9* ppShader);
 
 		// Renderstates
 		void	SaveRenderState(D3DRENDERSTATETYPE Type, DWORD dwValue);
