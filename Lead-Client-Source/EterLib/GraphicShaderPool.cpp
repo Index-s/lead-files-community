@@ -33,12 +33,20 @@ namespace
 		"{\n"
 		"    return tex2D(g_kSampler0, vTexCoord) * vDiffuse;\n"
 		"}\n";
+
+	// Fixed-function NULL-texture draw: only the interpolated diffuse reaches the output.
+	const char c_achDiffusePixelProgram[] =
+		"float4 main(float4 vDiffuse : COLOR0) : COLOR0\n"
+		"{\n"
+		"    return vDiffuse;\n"
+		"}\n";
 }
 
 CGraphicShaderPool::CGraphicShaderPool()
 	: m_bCreateFailed(false)
 	, m_lpPDTVertexShader(NULL)
 	, m_lpModulatePixelShader(NULL)
+	, m_lpDiffusePixelShader(NULL)
 	, m_lpPDTDeclaration(NULL)
 {
 }
@@ -52,6 +60,7 @@ void CGraphicShaderPool::Destroy()
 {
 	safe_release(m_lpPDTVertexShader);
 	safe_release(m_lpModulatePixelShader);
+	safe_release(m_lpDiffusePixelShader);
 	safe_release(m_lpPDTDeclaration);
 	m_bCreateFailed = false;
 }
@@ -103,6 +112,22 @@ bool CGraphicShaderPool::__Create()
 	safe_release(pCode);
 	safe_release(pError);
 
+	if (FAILED(D3DCompile(c_achDiffusePixelProgram, sizeof(c_achDiffusePixelProgram) - 1, "DiffusePixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpDiffusePixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build diffuse pixel shader [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
 	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPDTElements, &m_lpPDTDeclaration)))
 	{
 		TraceError("CGraphicShaderPool: failed to create PDT vertex declaration.");
@@ -114,7 +139,7 @@ bool CGraphicShaderPool::__Create()
 	return true;
 }
 
-bool CGraphicShaderPool::BindPDTModulate()
+bool CGraphicShaderPool::__BindPDT(LPDIRECT3DPIXELSHADER9 lpPixelShader)
 {
 	if (!m_lpPDTDeclaration && !__Create())
 		return false;
@@ -130,8 +155,18 @@ bool CGraphicShaderPool::BindPDTModulate()
 
 	STATEMANAGER.SetVertexDeclaration(m_lpPDTDeclaration);
 	STATEMANAGER.SetVertexShader(m_lpPDTVertexShader);
-	STATEMANAGER.SetPixelShader(m_lpModulatePixelShader);
+	STATEMANAGER.SetPixelShader(lpPixelShader);
 	return true;
+}
+
+bool CGraphicShaderPool::BindPDTModulate()
+{
+	return __BindPDT(m_lpModulatePixelShader);
+}
+
+bool CGraphicShaderPool::BindPDTDiffuse()
+{
+	return __BindPDT(m_lpDiffusePixelShader);
 }
 
 void CGraphicShaderPool::Unbind()
