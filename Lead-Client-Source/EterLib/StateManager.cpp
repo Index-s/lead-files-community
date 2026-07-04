@@ -534,6 +534,20 @@ void CStateManager::RestoreRenderState(D3DRENDERSTATETYPE Type)
 
 void CStateManager::SetRenderState(D3DRENDERSTATETYPE Type, DWORD Value)
 {
+	// The shader pipeline reads TEXTUREFACTOR from pixel constant c0.
+	if (D3DRS_TEXTUREFACTOR == Type)
+	{
+		const float c_fInv255 = 1.0f / 255.0f;
+		const float afColor[4] =
+		{
+			((Value >> 16) & 0xff) * c_fInv255,
+			((Value >> 8) & 0xff) * c_fInv255,
+			(Value & 0xff) * c_fInv255,
+			((Value >> 24) & 0xff) * c_fInv255,
+		};
+		SetPixelShaderConstant(0, afColor, 1);
+	}
+
 	if (m_CurrentState.m_RenderStates[Type] == Value)
 		return;
 

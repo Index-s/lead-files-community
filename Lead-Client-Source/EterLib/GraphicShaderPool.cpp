@@ -104,6 +104,40 @@ namespace
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    return float4(kTexel.rgb + vDiffuse.rgb * (1.0f - kTexel.a), kTexel.a);\n"
 		"}\n";
+
+	// Effect combiners: COLOROP(ARG1=TFACTOR, ARG2=TEXTURE), ALPHAOP = MODULATE.
+	const char c_achTFactorModulatePixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    return float4(kTexel.rgb * g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
+		"}\n";
+	const char c_achTFactorAddPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    return float4(kTexel.rgb + g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
+		"}\n";
+	const char c_achTFactorOnlyPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    return float4(g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
+		"}\n";
+	const char c_achTexTFactorAlphaPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    return float4(kTexel.rgb, kTexel.a * g_kTFactor.a);\n"
+		"}\n";
 }
 
 CGraphicShaderPool::CGraphicShaderPool()
@@ -116,6 +150,10 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTexturePixelShader(NULL)
 	, m_lpModulateTexAlphaPixelShader(NULL)
 	, m_lpInvAlphaAddPixelShader(NULL)
+	, m_lpTFactorModulatePixelShader(NULL)
+	, m_lpTFactorAddPixelShader(NULL)
+	, m_lpTFactorOnlyPixelShader(NULL)
+	, m_lpTexTFactorAlphaPixelShader(NULL)
 	, m_lpPDTDeclaration(NULL)
 	, m_lpPTDeclaration(NULL)
 {
@@ -136,6 +174,10 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpTexturePixelShader);
 	safe_release(m_lpModulateTexAlphaPixelShader);
 	safe_release(m_lpInvAlphaAddPixelShader);
+	safe_release(m_lpTFactorModulatePixelShader);
+	safe_release(m_lpTFactorAddPixelShader);
+	safe_release(m_lpTFactorOnlyPixelShader);
+	safe_release(m_lpTexTFactorAlphaPixelShader);
 	safe_release(m_lpPDTDeclaration);
 	safe_release(m_lpPTDeclaration);
 	m_bCreateFailed = false;
@@ -300,6 +342,70 @@ bool CGraphicShaderPool::__Create()
 	safe_release(pCode);
 	safe_release(pError);
 
+	if (FAILED(D3DCompile(c_achTFactorModulatePixelProgram, sizeof(c_achTFactorModulatePixelProgram) - 1, "TFactorModulatePixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorModulatePixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TFactorModulatePixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achTFactorAddPixelProgram, sizeof(c_achTFactorAddPixelProgram) - 1, "TFactorAddPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorAddPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TFactorAddPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achTFactorOnlyPixelProgram, sizeof(c_achTFactorOnlyPixelProgram) - 1, "TFactorOnlyPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorOnlyPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TFactorOnlyPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achTexTFactorAlphaPixelProgram, sizeof(c_achTexTFactorAlphaPixelProgram) - 1, "TexTFactorAlphaPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTexTFactorAlphaPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TexTFactorAlphaPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
 	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPTElements, &m_lpPTDeclaration)))
 	{
 		TraceError("CGraphicShaderPool: failed to create PT vertex declaration.");
@@ -367,6 +473,27 @@ bool CGraphicShaderPool::BindPDTTexMatInvAlphaAdd()
 	STATEMANAGER.SetVertexShaderConstant(4, &matTexture, 4);
 	return true;
 }
+
+bool CGraphicShaderPool::BindPTTFactorModulate()
+{
+	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTFactorModulatePixelShader);
+}
+
+bool CGraphicShaderPool::BindPTTFactorAdd()
+{
+	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTFactorAddPixelShader);
+}
+
+bool CGraphicShaderPool::BindPTTFactorOnly()
+{
+	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTFactorOnlyPixelShader);
+}
+
+bool CGraphicShaderPool::BindPTTexTFactorAlpha()
+{
+	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTexTFactorAlphaPixelShader);
+}
+
 
 void CGraphicShaderPool::Unbind()
 {

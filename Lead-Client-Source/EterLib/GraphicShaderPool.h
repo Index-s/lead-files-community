@@ -24,6 +24,12 @@ class CGraphicShaderPool
 		// XYZ|DIFFUSE|TEX1 with UVs run through the TEXTURE0 transform,
 		// pixel = fixed-function MODULATEINVALPHA_ADDCOLOR (sky cloud layer).
 		bool BindPDTTexMatInvAlphaAdd();
+		// XYZ|TEX1 with TEXTUREFACTOR (c0) as the effect color; the op mirrors
+		// the data-driven COLOROP with ARG1=TFACTOR, ARG2=TEXTURE; alpha = tfactor*texture.
+		bool BindPTTFactorModulate();
+		bool BindPTTFactorAdd();
+		bool BindPTTFactorOnly();
+		bool BindPTTexTFactorAlpha();
 		void Unbind();
 
 		void Destroy();
@@ -41,6 +47,10 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulateTexAlphaPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpInvAlphaAddPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTFactorModulatePixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTFactorAddPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTFactorOnlyPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTexTFactorAlphaPixelShader;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPTDeclaration;
 };

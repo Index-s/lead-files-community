@@ -255,6 +255,26 @@ bool CGraphicBase::BeginPDTCloudShader()
 	return gs_kShaderPool.BindPDTTexMatInvAlphaAdd();
 }
 
+bool CGraphicBase::BeginEffectShader(DWORD dwColorOp)
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	switch (dwColorOp)
+	{
+		case D3DTOP_MODULATE:
+			return gs_kShaderPool.BindPTTFactorModulate();
+		case D3DTOP_ADD:
+			return gs_kShaderPool.BindPTTFactorAdd();
+		case D3DTOP_SELECTARG1:
+			return gs_kShaderPool.BindPTTFactorOnly();
+		case D3DTOP_SELECTARG2:
+			return gs_kShaderPool.BindPTTexTFactorAlpha();
+		default:
+			return false;	// uncommon combiner: keep the fixed-function path
+	}
+}
+
 void CGraphicBase::EndPDTShader()
 {
 	gs_kShaderPool.Unbind();
