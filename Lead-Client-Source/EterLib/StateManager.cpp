@@ -23,10 +23,25 @@ void CStateManager::SetLight(DWORD index, CONST D3DLIGHT9* pLight)
 	m_lpD3DDev->SetLight(index, pLight);
 }
 
+HRESULT CStateManager::CreatePixelShader(CONST DWORD* pFunction, LPDIRECT3DPIXELSHADER9* ppShader)
+{
+	return m_lpD3DDev->CreatePixelShader(pFunction, ppShader);
+}
+
 void CStateManager::GetLight(DWORD index, D3DLIGHT9* pLight)
 {
 	assert(index<8);
 	*pLight=m_kLightData.m_akD3DLight[index];
+}
+
+HRESULT CStateManager::CreateVertexShader(CONST DWORD* pFunction, LPDIRECT3DVERTEXSHADER9* ppShader)
+{
+	return m_lpD3DDev->CreateVertexShader(pFunction, ppShader);
+}
+
+HRESULT CStateManager::CreateVertexDeclaration(CONST D3DVERTEXELEMENT9* pVertexElements, LPDIRECT3DVERTEXDECLARATION9* ppDecl)
+{
+	return m_lpD3DDev->CreateVertexDeclaration(pVertexElements, ppDecl);
 }
 
 bool CStateManager::BeginScene()
