@@ -4,6 +4,7 @@
 #include "GrpBase.h"
 #include "Camera.h"
 #include "StateManager.h"
+#include "GraphicShaderPool.h"
 
 void PixelPositionToD3DXVECTOR3(const D3DXVECTOR3& c_rkPPosSrc, D3DXVECTOR3* pv3Dst)
 {
@@ -34,6 +35,7 @@ D3DPRESENT_PARAMETERS	CGraphicBase::ms_d3dPresentParameter = {};
 D3DVIEWPORT9			CGraphicBase::ms_Viewport;
 
 HRESULT					CGraphicBase::ms_hLastResult = NULL;
+bool					CGraphicBase::ms_bUseShaderFFP = false;
 
 int						CGraphicBase::ms_iWidth;
 int						CGraphicBase::ms_iHeight;
@@ -185,6 +187,68 @@ bool CGraphicBase::SetPDTStream(SPDTVertexRaw* pSrcVertices, UINT uVtxCount)
 	STATEMANAGER.SetStreamSource(0, vb, sizeof(TPDTVertex));
 
 	return true;
+}
+
+static CGraphicShaderPool gs_kShaderPool;
+
+void CGraphicBase::SetUseShaderFFP(bool bEnable)
+{
+	ms_bUseShaderFFP = bEnable;
+}
+
+bool CGraphicBase::IsUseShaderFFP()
+{
+	return ms_bUseShaderFFP;
+}
+
+bool CGraphicBase::BeginPDTShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindPDTModulate();
+}
+
+bool CGraphicBase::BeginPDTDiffuseShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindPDTDiffuse();
+}
+
+bool CGraphicBase::BeginPTTextureShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindPTTexture();
+}
+
+bool CGraphicBase::BeginPDTTextureShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindPDTTexture();
+}
+
+bool CGraphicBase::BeginPDTModulateTexAlphaShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindPDTModulateTexAlpha();
+}
+
+void CGraphicBase::EndPDTShader()
+{
+	gs_kShaderPool.Unbind();
+}
+
+void CGraphicBase::DestroyShaderPool()
+{
+	gs_kShaderPool.Destroy();
 }
 
 DWORD CGraphicBase::GetAvailableTextureMemory()
