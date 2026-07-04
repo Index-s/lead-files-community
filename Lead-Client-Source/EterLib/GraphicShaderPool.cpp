@@ -142,7 +142,7 @@ namespace
 		"float4 g_vPointAtten : register(c14);\n"    // xyz = a0/a1/a2, w = enabled (0/1)
 		"float4 g_kPointDiffuse : register(c15);\n"
 		"float4 g_kPointAmbient : register(c16);\n"
-		"float4 g_kBaseColor : register(c17);\n"     // mat.Ambient*RS_AMBIENT + mat.Emissive
+		"float4 g_kBaseColor : register(c17);\n"     // rgb = mat.Ambient*RS_AMBIENT + mat.Emissive, w = mat.Diffuse.a
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
 		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
@@ -183,7 +183,7 @@ namespace
 		"        float fDot = max(0.0f, dot(vWorldNormal, vL));\n"
 		"        vColor += fAtten * (g_kPointAmbient.rgb + g_kPointDiffuse.rgb * fDot);\n"
 		"    }\n"
-		"    Out.vDiffuse = float4(saturate(vColor), 1.0f);\n"
+		"    Out.vDiffuse = saturate(float4(vColor, g_kBaseColor.w));\n"
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		"    return Out;\n"
 		"}\n";
@@ -1012,7 +1012,14 @@ bool CGraphicShaderPool::BindPNTLitSpecular()
 
 bool CGraphicShaderPool::BindPNTLitOmni()
 {
-	return __Bind(m_lpPNTDeclaration, m_lpPNTLitOmniVertexShader, m_lpModulatePixelShader);
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitOmniVertexShader, m_lpModulatePixelShader))
+		return false;
+
+	D3DXMATRIX matWorld;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 4);
+	return true;
 }
 
 bool CGraphicShaderPool::BindPNT2Lightmap()

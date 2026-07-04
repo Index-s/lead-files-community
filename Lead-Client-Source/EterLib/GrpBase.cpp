@@ -499,14 +499,21 @@ void CGraphicBase::__UploadOmniLightingConstants()
 	D3DXVECTOR3 v3SpotDir(kSpot.Direction.x, kSpot.Direction.y, kSpot.Direction.z);
 	D3DXVec3Normalize(&v3SpotDir, &v3SpotDir);
 
+	// A degenerate cone (Theta == Phi) would make the shader's linear ramp 0/0;
+	// keep the denominator positive so it degrades to the FFP hard cutoff.
+	const float fCosTheta = cosf(kSpot.Theta * 0.5f);
+	float fCosPhi = cosf(kSpot.Phi * 0.5f);
+	if (fCosTheta - fCosPhi < 0.0001f)
+		fCosPhi = fCosTheta - 0.0001f;
+
 	D3DXVECTOR4 avConstants[10];
 	avConstants[0] = D3DXVECTOR4(kSpot.Position.x, kSpot.Position.y, kSpot.Position.z, kSpot.Range);
 	avConstants[1] = D3DXVECTOR4(v3SpotDir.x, v3SpotDir.y, v3SpotDir.z, 0.0f);
-	avConstants[2] = D3DXVECTOR4(kSpot.Attenuation0, kSpot.Attenuation1, kSpot.Attenuation2, cosf(kSpot.Theta * 0.5f));
+	avConstants[2] = D3DXVECTOR4(kSpot.Attenuation0, kSpot.Attenuation1, kSpot.Attenuation2, fCosTheta);
 	avConstants[3] = D3DXVECTOR4(kMaterial.Diffuse.r * kSpot.Diffuse.r,
 								 kMaterial.Diffuse.g * kSpot.Diffuse.g,
 								 kMaterial.Diffuse.b * kSpot.Diffuse.b,
-								 cosf(kSpot.Phi * 0.5f));
+								 fCosPhi);
 	avConstants[4] = D3DXVECTOR4(kMaterial.Ambient.r * kSpot.Ambient.r,
 								 kMaterial.Ambient.g * kSpot.Ambient.g,
 								 kMaterial.Ambient.b * kSpot.Ambient.b, 0.0f);
@@ -524,7 +531,8 @@ void CGraphicBase::__UploadOmniLightingConstants()
 								 kMaterial.Ambient.b * kPoint.Ambient.b, 0.0f);
 	avConstants[9] = D3DXVECTOR4(kMaterial.Ambient.r * fGlobalR + kMaterial.Emissive.r,
 								 kMaterial.Ambient.g * fGlobalG + kMaterial.Emissive.g,
-								 kMaterial.Ambient.b * fGlobalB + kMaterial.Emissive.b, 0.0f);
+								 kMaterial.Ambient.b * fGlobalB + kMaterial.Emissive.b,
+								 kMaterial.Diffuse.a);
 	STATEMANAGER.SetVertexShaderConstant(8, avConstants, 10);
 }
 
