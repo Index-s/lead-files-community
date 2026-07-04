@@ -224,6 +224,13 @@ class CGraphicBase
 		static bool SetPDTStream(SPDTVertexRaw* pVertices, UINT uVtxCount);
 		static bool SetPDTStream(SPDTVertex* pVertices, UINT uVtxCount);
 
+		// Fixed-function replacement shaders (DX12 migration); default off.
+		static void SetUseShaderFFP(bool bEnable);
+		static bool IsUseShaderFFP();
+		static bool BeginPDTShader();	// true = shader pipeline bound; else use the FVF path
+		static void EndPDTShader();		// call only after a successful BeginPDTShader
+		static void DestroyShaderPool();
+
 		// Resource-creation seam: every device object the renderer allocates
 		// goes through these, so a future backend can swap allocation in one place.
 		static HRESULT CreateDeviceTexture(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture);
@@ -260,6 +267,8 @@ class CGraphicBase
 
 	protected:
 		static HRESULT					ms_hLastResult;
+
+		static bool						ms_bUseShaderFFP;
 
 		static int						ms_iWidth;
 		static int						ms_iHeight;

@@ -889,6 +889,7 @@ void CGraphicDevice::InitBackBufferCount(UINT uBackBufferCount)
 
 void CGraphicDevice::Destroy()
 {
+	DestroyShaderPool();
 	__DestroyPDTVertexBufferList();
 	__DestroyDefaultIndexBufferList();
 
