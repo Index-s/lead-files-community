@@ -247,6 +247,14 @@ bool CGraphicBase::BeginPDTModulateTexAlphaShader()
 	return gs_kShaderPool.BindPDTModulateTexAlpha();
 }
 
+bool CGraphicBase::BeginPDTCloudShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindPDTTexMatInvAlphaAdd();
+}
+
 void CGraphicBase::EndPDTShader()
 {
 	gs_kShaderPool.Unbind();

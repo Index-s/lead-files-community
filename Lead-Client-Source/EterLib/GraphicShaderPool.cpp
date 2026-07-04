@@ -74,16 +74,48 @@ namespace
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    return float4(kTexel.rgb * vDiffuse.rgb, kTexel.a);\n"
 		"}\n";
+
+	// PDT vertices with the TEXTURE0 transform applied to the UVs (COUNT2).
+	const char c_achPDTTexMatVertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"float4 g_avTexMat[4] : register(c4);\n"
+		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    Out.vDiffuse = In.vDiffuse;\n"
+		"    float4 vTexCoord = float4(In.vTexCoord, 1.0f, 0.0f);\n"
+		"    Out.vTexCoord.x = dot(vTexCoord, g_avTexMat[0]);\n"
+		"    Out.vTexCoord.y = dot(vTexCoord, g_avTexMat[1]);\n"
+		"    return Out;\n"
+		"}\n";
+
+	// Fixed-function D3DTOP_MODULATEINVALPHA_ADDCOLOR(TEXTURE, DIFFUSE), alpha = texture.
+	const char c_achInvAlphaAddPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    return float4(kTexel.rgb + vDiffuse.rgb * (1.0f - kTexel.a), kTexel.a);\n"
+		"}\n";
 }
 
 CGraphicShaderPool::CGraphicShaderPool()
 	: m_bCreateFailed(false)
 	, m_lpPDTVertexShader(NULL)
 	, m_lpPTVertexShader(NULL)
+	, m_lpPDTTexMatVertexShader(NULL)
 	, m_lpModulatePixelShader(NULL)
 	, m_lpDiffusePixelShader(NULL)
 	, m_lpTexturePixelShader(NULL)
 	, m_lpModulateTexAlphaPixelShader(NULL)
+	, m_lpInvAlphaAddPixelShader(NULL)
 	, m_lpPDTDeclaration(NULL)
 	, m_lpPTDeclaration(NULL)
 {
@@ -98,10 +130,12 @@ void CGraphicShaderPool::Destroy()
 {
 	safe_release(m_lpPDTVertexShader);
 	safe_release(m_lpPTVertexShader);
+	safe_release(m_lpPDTTexMatVertexShader);
 	safe_release(m_lpModulatePixelShader);
 	safe_release(m_lpDiffusePixelShader);
 	safe_release(m_lpTexturePixelShader);
 	safe_release(m_lpModulateTexAlphaPixelShader);
+	safe_release(m_lpInvAlphaAddPixelShader);
 	safe_release(m_lpPDTDeclaration);
 	safe_release(m_lpPTDeclaration);
 	m_bCreateFailed = false;
@@ -234,6 +268,38 @@ bool CGraphicShaderPool::__Create()
 	safe_release(pCode);
 	safe_release(pError);
 
+	if (FAILED(D3DCompile(c_achPDTTexMatVertexProgram, sizeof(c_achPDTTexMatVertexProgram) - 1, "PDTTexMatVertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPDTTexMatVertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build PDTTexMatVertexProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achInvAlphaAddPixelProgram, sizeof(c_achInvAlphaAddPixelProgram) - 1, "InvAlphaAddPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpInvAlphaAddPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build InvAlphaAddPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
 	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPTElements, &m_lpPTDeclaration)))
 	{
 		TraceError("CGraphicShaderPool: failed to create PT vertex declaration.");
@@ -288,6 +354,18 @@ bool CGraphicShaderPool::BindPDTTexture()
 bool CGraphicShaderPool::BindPDTModulateTexAlpha()
 {
 	return __Bind(m_lpPDTDeclaration, m_lpPDTVertexShader, m_lpModulateTexAlphaPixelShader);
+}
+
+bool CGraphicShaderPool::BindPDTTexMatInvAlphaAdd()
+{
+	if (!__Bind(m_lpPDTDeclaration, m_lpPDTTexMatVertexShader, m_lpInvAlphaAddPixelShader))
+		return false;
+
+	D3DXMATRIX matTexture;
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE0, &matTexture);
+	D3DXMatrixTranspose(&matTexture, &matTexture);
+	STATEMANAGER.SetVertexShaderConstant(4, &matTexture, 4);
+	return true;
 }
 
 void CGraphicShaderPool::Unbind()

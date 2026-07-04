@@ -21,6 +21,9 @@ class CGraphicShaderPool
 		bool BindPDTTexture();
 		// XYZ|DIFFUSE|TEX1 vertices, rgb = texture * diffuse, alpha = texture.
 		bool BindPDTModulateTexAlpha();
+		// XYZ|DIFFUSE|TEX1 with UVs run through the TEXTURE0 transform,
+		// pixel = fixed-function MODULATEINVALPHA_ADDCOLOR (sky cloud layer).
+		bool BindPDTTexMatInvAlphaAdd();
 		void Unbind();
 
 		void Destroy();
@@ -32,10 +35,12 @@ class CGraphicShaderPool
 		bool m_bCreateFailed;
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPTVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpPDTTexMatVertexShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpDiffusePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulateTexAlphaPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpInvAlphaAddPixelShader;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPTDeclaration;
 };

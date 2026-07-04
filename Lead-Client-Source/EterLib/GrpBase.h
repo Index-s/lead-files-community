@@ -232,6 +232,7 @@ class CGraphicBase
 		static bool BeginPTTextureShader();	// XYZ|TEX1 draws (texture passthrough)
 		static bool BeginPDTTextureShader();	// XYZ|DIFFUSE|TEX1 draws where FFP selects TEXTURE only
 		static bool BeginPDTModulateTexAlphaShader();	// rgb = texture*diffuse, alpha = texture
+		static bool BeginPDTCloudShader();	// scrolling-UV cloud layer (MODULATEINVALPHA_ADDCOLOR)
 		static void EndPDTShader();		// call only after a successful BeginPDTShader
 		static void DestroyShaderPool();
 
