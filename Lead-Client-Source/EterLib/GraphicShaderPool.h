@@ -17,6 +17,10 @@ class CGraphicShaderPool
 		bool BindPDTDiffuse();
 		// XYZ|TEX1 vertices, pixel = texture only (fixed-function SELECTARG1(TEXTURE)).
 		bool BindPTTexture();
+		// XYZ|DIFFUSE|TEX1 vertices, pixel = texture only (diffuse present but unused).
+		bool BindPDTTexture();
+		// XYZ|DIFFUSE|TEX1 vertices, rgb = texture * diffuse, alpha = texture.
+		bool BindPDTModulateTexAlpha();
 		void Unbind();
 
 		void Destroy();
@@ -31,6 +35,7 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpDiffusePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpModulateTexAlphaPixelShader;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPTDeclaration;
 };

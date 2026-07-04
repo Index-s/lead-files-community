@@ -65,6 +65,15 @@ namespace
 		"{\n"
 		"    return tex2D(g_kSampler0, vTexCoord);\n"
 		"}\n";
+
+	// Fixed-function: COLOROP=MODULATE(TEXTURE,DIFFUSE), ALPHAOP=SELECTARG1(TEXTURE).
+	const char c_achModulateTexAlphaPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    return float4(kTexel.rgb * vDiffuse.rgb, kTexel.a);\n"
+		"}\n";
 }
 
 CGraphicShaderPool::CGraphicShaderPool()
@@ -74,6 +83,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpModulatePixelShader(NULL)
 	, m_lpDiffusePixelShader(NULL)
 	, m_lpTexturePixelShader(NULL)
+	, m_lpModulateTexAlphaPixelShader(NULL)
 	, m_lpPDTDeclaration(NULL)
 	, m_lpPTDeclaration(NULL)
 {
@@ -91,6 +101,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpModulatePixelShader);
 	safe_release(m_lpDiffusePixelShader);
 	safe_release(m_lpTexturePixelShader);
+	safe_release(m_lpModulateTexAlphaPixelShader);
 	safe_release(m_lpPDTDeclaration);
 	safe_release(m_lpPTDeclaration);
 	m_bCreateFailed = false;
@@ -207,6 +218,22 @@ bool CGraphicShaderPool::__Create()
 	safe_release(pCode);
 	safe_release(pError);
 
+	if (FAILED(D3DCompile(c_achModulateTexAlphaPixelProgram, sizeof(c_achModulateTexAlphaPixelProgram) - 1, "ModulateTexAlphaPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpModulateTexAlphaPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build modulate-tex-alpha pixel shader [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
 	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPTElements, &m_lpPTDeclaration)))
 	{
 		TraceError("CGraphicShaderPool: failed to create PT vertex declaration.");
@@ -251,6 +278,16 @@ bool CGraphicShaderPool::BindPDTDiffuse()
 bool CGraphicShaderPool::BindPTTexture()
 {
 	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTexturePixelShader);
+}
+
+bool CGraphicShaderPool::BindPDTTexture()
+{
+	return __Bind(m_lpPDTDeclaration, m_lpPDTVertexShader, m_lpTexturePixelShader);
+}
+
+bool CGraphicShaderPool::BindPDTModulateTexAlpha()
+{
+	return __Bind(m_lpPDTDeclaration, m_lpPDTVertexShader, m_lpModulateTexAlphaPixelShader);
 }
 
 void CGraphicShaderPool::Unbind()

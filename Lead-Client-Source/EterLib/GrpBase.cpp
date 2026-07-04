@@ -231,6 +231,22 @@ bool CGraphicBase::BeginPTTextureShader()
 	return gs_kShaderPool.BindPTTexture();
 }
 
+bool CGraphicBase::BeginPDTTextureShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindPDTTexture();
+}
+
+bool CGraphicBase::BeginPDTModulateTexAlphaShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindPDTModulateTexAlpha();
+}
+
 void CGraphicBase::EndPDTShader()
 {
 	gs_kShaderPool.Unbind();

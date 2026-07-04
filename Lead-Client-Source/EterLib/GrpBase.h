@@ -230,6 +230,8 @@ class CGraphicBase
 		static bool BeginPDTShader();	// true = shader pipeline bound; else use the FVF path
 		static bool BeginPDTDiffuseShader();	// variant for NULL-texture draws (diffuse passthrough)
 		static bool BeginPTTextureShader();	// XYZ|TEX1 draws (texture passthrough)
+		static bool BeginPDTTextureShader();	// XYZ|DIFFUSE|TEX1 draws where FFP selects TEXTURE only
+		static bool BeginPDTModulateTexAlphaShader();	// rgb = texture*diffuse, alpha = texture
 		static void EndPDTShader();		// call only after a successful BeginPDTShader
 		static void DestroyShaderPool();
 
