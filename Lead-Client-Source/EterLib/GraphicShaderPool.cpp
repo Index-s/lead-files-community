@@ -126,6 +126,68 @@ namespace
 		"    return Out;\n"
 		"}\n";
 
+	// XYZ|NORMAL|TEX1 with the fixed-function spot + point vertex lighting used
+	// by the character-preview screens (grp.SetOmniLight): per light,
+	// atten = 1/(a0 + a1*d + a2*d*d) inside Range, spot factor is the linear
+	// theta/phi cone ramp (Falloff = 1), ambient and diffuse both scaled by them.
+	const char c_achPNTLitOmniVertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"float4 g_avWorld[4] : register(c4);\n"
+		"float4 g_vSpotPos : register(c8);\n"        // xyz = position, w = range
+		"float4 g_vSpotDir : register(c9);\n"        // xyz = unit direction
+		"float4 g_vSpotAtten : register(c10);\n"     // xyz = a0/a1/a2, w = cos(theta/2)
+		"float4 g_kSpotDiffuse : register(c11);\n"   // rgb = light.Diffuse*mat.Diffuse, w = cos(phi/2)
+		"float4 g_kSpotAmbient : register(c12);\n"   // rgb = light.Ambient*mat.Ambient
+		"float4 g_vPointPos : register(c13);\n"      // xyz = position, w = range
+		"float4 g_vPointAtten : register(c14);\n"    // xyz = a0/a1/a2, w = enabled (0/1)
+		"float4 g_kPointDiffuse : register(c15);\n"
+		"float4 g_kPointAmbient : register(c16);\n"
+		"float4 g_kBaseColor : register(c17);\n"     // mat.Ambient*RS_AMBIENT + mat.Emissive
+		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    float3 vWorldPos;\n"
+		"    vWorldPos.x = dot(vPosition, g_avWorld[0]);\n"
+		"    vWorldPos.y = dot(vPosition, g_avWorld[1]);\n"
+		"    vWorldPos.z = dot(vPosition, g_avWorld[2]);\n"
+		"    float4 vNormal = float4(In.vNormal, 0.0f);\n"
+		"    float3 vWorldNormal;\n"
+		"    vWorldNormal.x = dot(vNormal, g_avWorld[0]);\n"
+		"    vWorldNormal.y = dot(vNormal, g_avWorld[1]);\n"
+		"    vWorldNormal.z = dot(vNormal, g_avWorld[2]);\n"
+		"    float3 vColor = g_kBaseColor.rgb;\n"
+		"    {\n"
+		"        float3 vToLight = g_vSpotPos.xyz - vWorldPos;\n"
+		"        float fDist = length(vToLight);\n"
+		"        float3 vL = vToLight / fDist;\n"
+		"        float fAtten = 1.0f / dot(g_vSpotAtten.xyz, float3(1.0f, fDist, fDist * fDist));\n"
+		"        fAtten *= (fDist <= g_vSpotPos.w) ? 1.0f : 0.0f;\n"
+		"        float fRho = dot(g_vSpotDir.xyz, -vL);\n"
+		"        float fSpot = saturate((fRho - g_kSpotDiffuse.w) / (g_vSpotAtten.w - g_kSpotDiffuse.w));\n"
+		"        float fDot = max(0.0f, dot(vWorldNormal, vL));\n"
+		"        vColor += fAtten * fSpot * (g_kSpotAmbient.rgb + g_kSpotDiffuse.rgb * fDot);\n"
+		"    }\n"
+		"    {\n"
+		"        float3 vToLight = g_vPointPos.xyz - vWorldPos;\n"
+		"        float fDist = length(vToLight);\n"
+		"        float3 vL = vToLight / fDist;\n"
+		"        float fAtten = 1.0f / dot(g_vPointAtten.xyz, float3(1.0f, fDist, fDist * fDist));\n"
+		"        fAtten *= (fDist <= g_vPointPos.w) ? g_vPointAtten.w : 0.0f;\n"
+		"        float fDot = max(0.0f, dot(vWorldNormal, vL));\n"
+		"        vColor += fAtten * (g_kPointAmbient.rgb + g_kPointDiffuse.rgb * fDot);\n"
+		"    }\n"
+		"    Out.vDiffuse = float4(saturate(vColor), 1.0f);\n"
+		"    Out.vTexCoord = In.vTexCoord;\n"
+		"    return Out;\n"
+		"}\n";
+
 
 	// Lit PNT with a second texcoord: the fixed-function CAMERASPACEREFLECTIONVECTOR
 	// texgen (R = 2(E.N)N - E in camera space) through the TEXTURE1 transform.
@@ -352,6 +414,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpPDTTexMatVertexShader(NULL)
 	, m_lpPNTLitVertexShader(NULL)
 	, m_lpPNTLitSpecVertexShader(NULL)
+	, m_lpPNTLitOmniVertexShader(NULL)
 	, m_lpPNT2VertexShader(NULL)
 	, m_lpPNT2RecvVertexShader(NULL)
 	, m_lpPNTLitRecvVertexShader(NULL)
@@ -387,6 +450,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPDTTexMatVertexShader);
 	safe_release(m_lpPNTLitVertexShader);
 	safe_release(m_lpPNTLitSpecVertexShader);
+	safe_release(m_lpPNTLitOmniVertexShader);
 	safe_release(m_lpPNT2VertexShader);
 	safe_release(m_lpPNT2RecvVertexShader);
 	safe_release(m_lpPNTLitRecvVertexShader);
@@ -682,6 +746,22 @@ bool CGraphicShaderPool::__Create()
 	safe_release(pCode);
 	safe_release(pError);
 
+	if (FAILED(D3DCompile(c_achPNTLitOmniVertexProgram, sizeof(c_achPNTLitOmniVertexProgram) - 1, "PNTLitOmniVertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNTLitOmniVertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build PNTLitOmniVertexProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
 	if (FAILED(D3DCompile(c_achLitSpecPixelProgram, sizeof(c_achLitSpecPixelProgram) - 1, "LitSpecPixelProgram",
 						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
 		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLitSpecPixelShader)))
@@ -928,6 +1008,11 @@ bool CGraphicShaderPool::BindPNTLitSpecular()
 	D3DXMatrixTranspose(&matTemp, &matTemp);
 	STATEMANAGER.SetVertexShaderConstant(15, &matTemp, 4);
 	return true;
+}
+
+bool CGraphicShaderPool::BindPNTLitOmni()
+{
+	return __Bind(m_lpPNTDeclaration, m_lpPNTLitOmniVertexShader, m_lpModulatePixelShader);
 }
 
 bool CGraphicShaderPool::BindPNT2Lightmap()

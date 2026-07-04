@@ -412,6 +412,26 @@ bool CGraphicBase::BeginGrannyMeshShader()
 	if (!pTexture)
 		return false;
 
+	// The character-preview screens light with a spot + point pair instead of
+	// the world's directional light (grp.SetOmniLight); route them to the omni
+	// program. Any other light type keeps the fixed-function path.
+	if (STATEMANAGER.GetRenderState(D3DRS_LIGHTING) && STATEMANAGER.GetLightEnable(0))
+	{
+		D3DLIGHT9 kLight;
+		STATEMANAGER.GetLight(0, &kLight);
+		if (D3DLIGHT_SPOT == kLight.Type)
+		{
+			if (bSpecular)
+				return false;
+			if (!gs_kShaderPool.BindPNTLitOmni())
+				return false;
+			__UploadOmniLightingConstants();
+			return true;
+		}
+		if (D3DLIGHT_DIRECTIONAL != kLight.Type)
+			return false;
+	}
+
 	if (bSpecular)
 	{
 		if (!gs_kShaderPool.BindPNTLitSpecular())
@@ -459,6 +479,53 @@ void CGraphicBase::__UploadGrannyLightingConstants()
 		avConstants[2] = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	STATEMANAGER.SetVertexShaderConstant(8, avConstants, 3);
+}
+
+void CGraphicBase::__UploadOmniLightingConstants()
+{
+	// Fixed-function spot (light 0) + point (light 1) vertex lighting, as set up
+	// by the character-preview screens. Products are premultiplied per light;
+	// the shader applies range-clamped attenuation and the linear cone ramp.
+	D3DLIGHT9 kSpot;
+	STATEMANAGER.GetLight(0, &kSpot);
+	D3DMATERIAL9 kMaterial;
+	STATEMANAGER.GetMaterial(&kMaterial);
+	const DWORD dwAmbient = STATEMANAGER.GetRenderState(D3DRS_AMBIENT);
+	const float c_fInv255 = 1.0f / 255.0f;
+	const float fGlobalR = ((dwAmbient >> 16) & 0xff) * c_fInv255;
+	const float fGlobalG = ((dwAmbient >> 8) & 0xff) * c_fInv255;
+	const float fGlobalB = (dwAmbient & 0xff) * c_fInv255;
+
+	D3DXVECTOR3 v3SpotDir(kSpot.Direction.x, kSpot.Direction.y, kSpot.Direction.z);
+	D3DXVec3Normalize(&v3SpotDir, &v3SpotDir);
+
+	D3DXVECTOR4 avConstants[10];
+	avConstants[0] = D3DXVECTOR4(kSpot.Position.x, kSpot.Position.y, kSpot.Position.z, kSpot.Range);
+	avConstants[1] = D3DXVECTOR4(v3SpotDir.x, v3SpotDir.y, v3SpotDir.z, 0.0f);
+	avConstants[2] = D3DXVECTOR4(kSpot.Attenuation0, kSpot.Attenuation1, kSpot.Attenuation2, cosf(kSpot.Theta * 0.5f));
+	avConstants[3] = D3DXVECTOR4(kMaterial.Diffuse.r * kSpot.Diffuse.r,
+								 kMaterial.Diffuse.g * kSpot.Diffuse.g,
+								 kMaterial.Diffuse.b * kSpot.Diffuse.b,
+								 cosf(kSpot.Phi * 0.5f));
+	avConstants[4] = D3DXVECTOR4(kMaterial.Ambient.r * kSpot.Ambient.r,
+								 kMaterial.Ambient.g * kSpot.Ambient.g,
+								 kMaterial.Ambient.b * kSpot.Ambient.b, 0.0f);
+
+	D3DLIGHT9 kPoint;
+	STATEMANAGER.GetLight(1, &kPoint);
+	const float fPointOn = STATEMANAGER.GetLightEnable(1) ? 1.0f : 0.0f;
+	avConstants[5] = D3DXVECTOR4(kPoint.Position.x, kPoint.Position.y, kPoint.Position.z, kPoint.Range);
+	avConstants[6] = D3DXVECTOR4(kPoint.Attenuation0, kPoint.Attenuation1, kPoint.Attenuation2, fPointOn);
+	avConstants[7] = D3DXVECTOR4(kMaterial.Diffuse.r * kPoint.Diffuse.r,
+								 kMaterial.Diffuse.g * kPoint.Diffuse.g,
+								 kMaterial.Diffuse.b * kPoint.Diffuse.b, 0.0f);
+	avConstants[8] = D3DXVECTOR4(kMaterial.Ambient.r * kPoint.Ambient.r,
+								 kMaterial.Ambient.g * kPoint.Ambient.g,
+								 kMaterial.Ambient.b * kPoint.Ambient.b, 0.0f);
+	avConstants[9] = D3DXVECTOR4(kMaterial.Ambient.r * fGlobalR + kMaterial.Emissive.r,
+								 kMaterial.Ambient.g * fGlobalG + kMaterial.Emissive.g,
+								 kMaterial.Ambient.b * fGlobalB + kMaterial.Emissive.b, 0.0f);
+	STATEMANAGER.SetVertexShaderConstant(8, avConstants, 10);
 }
 
 void CGraphicBase::EndPDTShader()

@@ -240,6 +240,7 @@ class CGraphicBase
 
 	private:
 		static void __UploadGrannyLightingConstants();
+		static void __UploadOmniLightingConstants();
 	public:
 
 		// Resource-creation seam: every device object the renderer allocates

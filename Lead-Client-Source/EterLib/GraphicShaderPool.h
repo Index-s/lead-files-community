@@ -36,6 +36,9 @@ class CGraphicShaderPool
 		// Lit PNT plus the sphere-map specular layer: TEXCOORD1 = camera-space
 		// reflection vector through the TEXTURE1 transform (granny specular).
 		bool BindPNTLitSpecular();
+		// PNT with the fixed-function spot + point vertex lighting used by the
+		// character-preview screens; light constants (c8-c17) uploaded by the caller.
+		bool BindPNTLitOmni();
 		// XYZ|NORMAL|TEX1|TEX2 dungeon blocks: tex0 * lightmap(tex1), no lighting.
 		bool BindPNT2Lightmap();
 		// Lit PNT with the character-shadow projection: TEXCOORD1 = camera-space
@@ -58,6 +61,7 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTTexMatVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitSpecVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitOmniVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNT2VertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNT2RecvVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitRecvVertexShader;
