@@ -907,6 +907,13 @@ bool CGraphicShaderPool::__Bind(LPDIRECT3DVERTEXDECLARATION9 lpDeclaration, LPDI
 	if (!m_lpPDTDeclaration && !__Create())
 		return false;
 
+	// The caller reads its member arguments BEFORE the create above runs, so on
+	// the very first bind they are still the pre-creation NULLs; binding those
+	// would draw with no declaration/shader at all. Fall back to fixed-function
+	// for this draw - the next bind picks up the freshly created objects.
+	if (!lpDeclaration || !lpVertexShader || !lpPixelShader)
+		return false;
+
 	D3DXMATRIX matWorld, matView, matProj, matWVP;
 	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
 	STATEMANAGER.GetTransform(D3DTS_VIEW, &matView);
