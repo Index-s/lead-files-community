@@ -209,6 +209,14 @@ bool CGraphicBase::BeginPDTShader()
 	return gs_kShaderPool.BindPDTModulate();
 }
 
+bool CGraphicBase::BeginPDTDiffuseShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindPDTDiffuse();
+}
+
 void CGraphicBase::EndPDTShader()
 {
 	gs_kShaderPool.Unbind();

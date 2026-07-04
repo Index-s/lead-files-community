@@ -221,6 +221,7 @@ class CGraphicBase
 		static void SetUseShaderFFP(bool bEnable);
 		static bool IsUseShaderFFP();
 		static bool BeginPDTShader();	// true = shader pipeline bound; else use the FVF path
+		static bool BeginPDTDiffuseShader();	// variant for NULL-texture draws (diffuse passthrough)
 		static void EndPDTShader();		// call only after a successful BeginPDTShader
 		static void DestroyShaderPool();
 		
