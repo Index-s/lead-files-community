@@ -39,6 +39,11 @@ HRESULT CStateManager::CreateVertexDeclaration(CONST D3DVERTEXELEMENT9* pVertexE
 	return m_lpD3DDev->CreateVertexDeclaration(pVertexElements, ppDecl);
 }
 
+HRESULT CStateManager::CreatePixelShader(CONST DWORD* pFunction, LPDIRECT3DPIXELSHADER9* ppShader)
+{
+	return m_lpD3DDev->CreatePixelShader(pFunction, ppShader);
+}
+
 bool CStateManager::BeginScene()
 {
 	m_bScene=true;
