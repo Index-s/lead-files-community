@@ -1243,14 +1243,16 @@ void CSpeedTreeWrapper::RenderBillboards(void) const
 		STATEMANAGER.SetRenderState(D3DRS_ALPHAREF, DWORD(m_pGeometryCache->m_sBillboard0.m_fAlphaTestValue));
 		
 		ms_faceCount += 2;
+		// Fan expanded to a triangle list (DX12 has no fan topology).
+		SBillboardVertex sList[6] = { sVertex[0], sVertex[1], sVertex[2], sVertex[0], sVertex[2], sVertex[3] };
 		if (CGraphicBase::BeginPTTextureShader())
 		{
-			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLELIST, 2, sList, sizeof(SBillboardVertex));
 			CGraphicBase::EndPDTShader();
 		}
 		else
 		{
-			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLELIST, 2, sList, sizeof(SBillboardVertex));
 		}
 	}
 	
@@ -1269,14 +1271,16 @@ void CSpeedTreeWrapper::RenderBillboards(void) const
 		STATEMANAGER.SetRenderState(D3DRS_ALPHAREF, DWORD(m_pGeometryCache->m_sBillboard1.m_fAlphaTestValue));
 		
 		ms_faceCount += 2;
+		// Fan expanded to a triangle list (DX12 has no fan topology).
+		SBillboardVertex sList[6] = { sVertex[0], sVertex[1], sVertex[2], sVertex[0], sVertex[2], sVertex[3] };
 		if (CGraphicBase::BeginPTTextureShader())
 		{
-			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLELIST, 2, sList, sizeof(SBillboardVertex));
 			CGraphicBase::EndPDTShader();
 		}
 		else
 		{
-			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLELIST, 2, sList, sizeof(SBillboardVertex));
 		}
 	}
 	
@@ -1296,14 +1300,16 @@ void CSpeedTreeWrapper::RenderBillboards(void) const
 		STATEMANAGER.SetRenderState(D3DRS_ALPHAREF, DWORD(m_pGeometryCache->m_sHorizontalBillboard.m_fAlphaTestValue));
 		
 		ms_faceCount += 2;
+		// Fan expanded to a triangle list (DX12 has no fan topology).
+		SBillboardVertex sList[6] = { sVertex[0], sVertex[1], sVertex[2], sVertex[0], sVertex[2], sVertex[3] };
 		if (CGraphicBase::BeginPTTextureShader())
 		{
-			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLELIST, 2, sList, sizeof(SBillboardVertex));
 			CGraphicBase::EndPDTShader();
 		}
 		else
 		{
-			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLELIST, 2, sList, sizeof(SBillboardVertex));
 		}
 	}
 	
