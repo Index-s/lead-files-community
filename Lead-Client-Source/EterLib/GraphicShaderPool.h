@@ -42,6 +42,9 @@ class CGraphicShaderPool
 		// XYZ|NORMAL|TEX1 with fixed-function directional lighting evaluated in the
 		// vertex shader; lighting constants (c8-c10) are uploaded by the caller.
 		bool BindPNTLit();
+		// SpeedTree branches/fronds: precomputed vertex lighting, optional
+		// self-shadow map on the second UV set.
+		bool BindSpeedTreeBranch(bool bSelfShadow);
 		// Lit PNT actor fade: alpha = TFACTOR (BlendRender cascade).
 		bool BindPNTLitBlend();
 		// Lit PNT hit flash: rgb += TFACTOR (AddRender cascade).
@@ -88,6 +91,7 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTTexMatVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpMiniMapVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpSpeedTreeBranchVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitSpecVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitOmniVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNT2VertexShader;
@@ -114,6 +118,7 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorModulate4XPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorAddSignedPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLitSpecPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpSpeedTreeShadowPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLightmapPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLitShadowPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorShadowPixelShader;
@@ -128,5 +133,6 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNT2Declaration;
+		LPDIRECT3DVERTEXDECLARATION9	m_lpPDT2Declaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNDeclaration;
 };

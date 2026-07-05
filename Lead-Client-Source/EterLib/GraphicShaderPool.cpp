@@ -247,6 +247,45 @@ const char c_achTexturePixelProgram[] =
 		"}\n";
 
 
+	// SpeedTree branches/fronds: XYZ|DIFFUSE|TEX2 stream with precomputed
+	// lighting in the vertex color and the self-shadow map on the second UV set.
+	const char c_achSpeedTreeBranchVertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"float4 g_avWorldView[3] : register(c11);\n"
+		"float4 g_vFogParams : register(c28);\n"
+		"float4 g_vFogParams2 : register(c29);\n"
+		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    Out.vDiffuse = In.vDiffuse;\n"
+		"    Out.vTexCoord = In.vTexCoord;\n"
+		"    Out.vShadowCoord = In.vShadowCoord;\n"
+		"    float3 vViewPos;\n"
+		"    vViewPos.x = dot(vPosition, g_avWorldView[0]);\n"
+		"    vViewPos.y = dot(vPosition, g_avWorldView[1]);\n"
+		"    vViewPos.z = dot(vPosition, g_avWorldView[2]);\n"
+		"    float fFogDist = lerp(vViewPos.z, length(vViewPos), g_vFogParams2.y);\n"
+		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
+		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    return Out;\n"
+		"}\n";
+
+	// Branch with self-shadow: both stages modulate (texture, diffuse, shadow).
+	const char c_achSpeedTreeShadowPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1) : COLOR0\n"
+		"{\n"
+		"    return tex2D(g_kSampler0, vTexCoord) * vDiffuse * tex2D(g_kSampler1, vShadowCoord);\n"
+		"}\n";
+
 	// XYZ|NORMAL|TEX1 with the fixed-function directional-light formula:
 	// color = saturate(cAmbient + cDiffuse * max(0, dot(worldNormal, lightDir))).
 	const char c_achPNTLitVertexProgram[] =
@@ -749,6 +788,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpPDTTexMatVertexShader(NULL)
 	, m_lpMiniMapVertexShader(NULL)
 	, m_lpPNTLitVertexShader(NULL)
+	, m_lpSpeedTreeBranchVertexShader(NULL)
 	, m_lpPNTLitSpecVertexShader(NULL)
 	, m_lpPNTLitOmniVertexShader(NULL)
 	, m_lpPNT2VertexShader(NULL)
@@ -775,6 +815,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTFactorModulate4XPixelShader(NULL)
 	, m_lpTFactorAddSignedPixelShader(NULL)
 	, m_lpLitSpecPixelShader(NULL)
+	, m_lpSpeedTreeShadowPixelShader(NULL)
 	, m_lpLightmapPixelShader(NULL)
 	, m_lpLitShadowPixelShader(NULL)
 	, m_lpTFactorShadowPixelShader(NULL)
@@ -789,6 +830,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpPDDeclaration(NULL)
 	, m_lpPNTDeclaration(NULL)
 	, m_lpPNT2Declaration(NULL)
+	, m_lpPDT2Declaration(NULL)
 	, m_lpPNDeclaration(NULL)
 {
 }
@@ -806,6 +848,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPDTTexMatVertexShader);
 	safe_release(m_lpMiniMapVertexShader);
 	safe_release(m_lpPNTLitVertexShader);
+	safe_release(m_lpSpeedTreeBranchVertexShader);
 	safe_release(m_lpPNTLitSpecVertexShader);
 	safe_release(m_lpPNTLitOmniVertexShader);
 	safe_release(m_lpPNT2VertexShader);
@@ -832,6 +875,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpTFactorModulate4XPixelShader);
 	safe_release(m_lpTFactorAddSignedPixelShader);
 	safe_release(m_lpLitSpecPixelShader);
+	safe_release(m_lpSpeedTreeShadowPixelShader);
 	safe_release(m_lpLightmapPixelShader);
 	safe_release(m_lpLitShadowPixelShader);
 	safe_release(m_lpTFactorShadowPixelShader);
@@ -846,6 +890,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPDDeclaration);
 	safe_release(m_lpPNTDeclaration);
 	safe_release(m_lpPNT2Declaration);
+	safe_release(m_lpPDT2Declaration);
 	safe_release(m_lpPNDeclaration);
 	m_bCreateFailed = false;
 }
@@ -1289,6 +1334,55 @@ bool CGraphicShaderPool::__Create()
 				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
 		safe_release(pCode);
 		safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achSpeedTreeBranchVertexProgram, sizeof(c_achSpeedTreeBranchVertexProgram) - 1, "SpeedTreeBranchVertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpSpeedTreeBranchVertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build SpeedTreeBranchVertexProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achSpeedTreeShadowPixelProgram, sizeof(c_achSpeedTreeShadowPixelProgram) - 1, "SpeedTreeShadowPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpSpeedTreeShadowPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build SpeedTreeShadowPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	const D3DVERTEXELEMENT9 akPDT2Elements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,    0 },
+		{ 0, 16, D3DDECLTYPE_FLOAT2,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT2,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
+		D3DDECL_END()
+	};
+
+	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPDT2Elements, &m_lpPDT2Declaration)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PDT2 vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
 		Destroy();
 		m_bCreateFailed = true;
 		return false;
@@ -1782,6 +1876,12 @@ bool CGraphicShaderPool::BindPNTLit()
 	D3DXMatrixTranspose(&matWorld, &matWorld);
 	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
 	return true;
+}
+
+bool CGraphicShaderPool::BindSpeedTreeBranch(bool bSelfShadow)
+{
+	return __Bind(m_lpPDT2Declaration, m_lpSpeedTreeBranchVertexShader,
+				  bSelfShadow ? m_lpSpeedTreeShadowPixelShader : m_lpModulatePixelShader);
 }
 
 bool CGraphicShaderPool::BindPNTLitBlend()
