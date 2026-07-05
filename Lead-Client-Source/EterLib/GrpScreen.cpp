@@ -697,12 +697,18 @@ void CScreen::ClearDepthBuffer()
 {
 	assert(IsDeviceCreated());
 	STATEMANAGER.Clear(D3DCLEAR_ZBUFFER, ms_clearColor, ms_clearDepth, ms_clearStencil);
+
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+		pkBackend->ClearTargets(D3DCLEAR_ZBUFFER, ms_clearColor, ms_clearDepth, ms_clearStencil);
 }
 
 void CScreen::Clear()
 {
 	assert(IsDeviceCreated());
 	STATEMANAGER.Clear(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, ms_clearColor, ms_clearDepth, ms_clearStencil);
+
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+		pkBackend->ClearTargets(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, ms_clearColor, ms_clearDepth, ms_clearStencil);
 }
 
 BOOL CScreen::IsLostDevice()
