@@ -1,5 +1,6 @@
 ﻿#include "StdAfx.h"
 #include "GrpDevice.h"
+#include "GrpBackendDX12.h"
 #include "../eterBase/Stl.h"
 #include "../eterBase/Debug.h"
 
@@ -480,6 +481,11 @@ bool CGraphicDevice::__IsInDriverBlackList(D3D_CAdapterInfo& rkD3DAdapterInfo)
 static CGraphicDevice::EBackend gs_eRequestedBackend = CGraphicDevice::BACKEND_DX9;
 static CGraphicDevice::EBackend gs_eActiveBackend = CGraphicDevice::BACKEND_DX9;
 
+// First light: under RENDERER dx12 the backend runs beside the D3D9
+// device - D3D9 keeps servicing every legacy call while the mirrored
+// stream presents through the DX12 swapchain.
+static CGraphicBackendDX12 gs_kBackendDX12;
+
 void CGraphicDevice::SetRequestedBackend(EBackend eBackend)
 {
 	gs_eRequestedBackend = eBackend;
@@ -492,12 +498,6 @@ CGraphicDevice::EBackend CGraphicDevice::GetBackend()
 
 int CGraphicDevice::Create(HWND hWnd, int iHres, int iVres, bool Windowed, int /*iBit*/, int iReflashRate)
 {
-	if (BACKEND_DX12 == gs_eRequestedBackend)
-	{
-		// The DX12 backend is not implemented yet; stay on DX9 so a stray
-		// config entry can never leave the player without a device.
-		TraceError("RENDERER dx12 requested but the DX12 backend is not available yet; using dx9.");
-	}
 	gs_eActiveBackend = BACKEND_DX9;
 
 	int iRet = CREATE_OK;
@@ -718,6 +718,14 @@ RETRY:
 
 	m_pStateManager = new CStateManager(ms_lpd3dDevice);
 
+	if (BACKEND_DX12 == gs_eRequestedBackend)
+	{
+		if (gs_kBackendDX12.Create(hWnd, iHres, iVres, Windowed))
+			gs_eActiveBackend = BACKEND_DX12;
+		else
+			TraceError("RENDERER dx12: backend creation failed; staying on dx9.");
+	}
+
 	D3DXCreateMatrixStack(0, &ms_lpd3dMatStack);
 	ms_lpd3dMatStack->LoadIdentity();
 
@@ -910,6 +918,8 @@ void CGraphicDevice::InitBackBufferCount(UINT uBackBufferCount)
 
 void CGraphicDevice::Destroy()
 {
+	gs_kBackendDX12.Destroy();
+
 	DestroyShaderPool();
 	__DestroyPDTVertexBufferList();
 	__DestroyDefaultIndexBufferList();

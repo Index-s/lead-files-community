@@ -1,4 +1,5 @@
 ﻿#include "StdAfx.h"
+#include "GrpBackendDX12.h"
 #include "GrpScreen.h"
 #include "Camera.h"
 #include "StateManager.h"
@@ -731,6 +732,9 @@ bool CScreen::Begin()
 		return false;
 	}
 
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+		pkBackend->BeginFrame(ms_clearColor);
+
 	return true;
 }
 
@@ -745,6 +749,12 @@ extern RECT g_rcBrowser;
 void CScreen::Show(HWND hWnd)
 {
 	assert(IsDeviceCreated());
+
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+	{
+		pkBackend->EndFrame();
+		return;
+	}
 
 	if (g_isBrowserMode)
 	{
