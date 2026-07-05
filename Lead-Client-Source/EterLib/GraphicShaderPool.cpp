@@ -55,6 +55,26 @@ namespace
 		"    return tex2D(g_kSampler0, vTexCoord) * vDiffuse;\n"
 		"}\n";
 
+	// Actor fade (BlendRender): rgb = texture * lit diffuse, alpha = TFACTOR
+	// (stage0 ALPHAOP SELECTARG2(TFACTOR), stage1 disabled).
+	const char c_achLitBlendPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    return float4(tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb, g_kTFactor.a);\n"
+		"}\n";
+
+	// Actor hit flash (AddRender): stage1 ADD(CURRENT, TFACTOR) on the lit base.
+	const char c_achLitAddPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    return float4(kTexel.rgb * vDiffuse.rgb + g_kTFactor.rgb, kTexel.a * vDiffuse.a);\n"
+		"}\n";
+
 	// Fixed-function NULL-texture draw: only the interpolated diffuse reaches the output.
 	const char c_achDiffusePixelProgram[] =
 		"float4 main(float4 vDiffuse : COLOR0) : COLOR0\n"
@@ -462,6 +482,8 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpPNT2RecvVertexShader(NULL)
 	, m_lpPNTLitRecvVertexShader(NULL)
 	, m_lpModulatePixelShader(NULL)
+	, m_lpLitBlendPixelShader(NULL)
+	, m_lpLitAddPixelShader(NULL)
 	, m_lpDiffusePixelShader(NULL)
 	, m_lpTexturePixelShader(NULL)
 	, m_lpModulateTexAlphaPixelShader(NULL)
@@ -498,6 +520,8 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPNT2RecvVertexShader);
 	safe_release(m_lpPNTLitRecvVertexShader);
 	safe_release(m_lpModulatePixelShader);
+	safe_release(m_lpLitBlendPixelShader);
+	safe_release(m_lpLitAddPixelShader);
 	safe_release(m_lpDiffusePixelShader);
 	safe_release(m_lpTexturePixelShader);
 	safe_release(m_lpModulateTexAlphaPixelShader);
@@ -556,6 +580,38 @@ bool CGraphicShaderPool::__Create()
 				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
 		safe_release(pCode);
 		safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achLitBlendPixelProgram, sizeof(c_achLitBlendPixelProgram) - 1, "LitBlendPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLitBlendPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build LitBlendPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achLitAddPixelProgram, sizeof(c_achLitAddPixelProgram) - 1, "LitAddPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLitAddPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build LitAddPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
 		Destroy();
 		m_bCreateFailed = true;
 		return false;
@@ -1066,6 +1122,30 @@ bool CGraphicShaderPool::BindPTTexTFactorAlpha()
 bool CGraphicShaderPool::BindPNTLit()
 {
 	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitVertexShader, m_lpModulatePixelShader))
+		return false;
+
+	D3DXMATRIX matWorld;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
+	return true;
+}
+
+bool CGraphicShaderPool::BindPNTLitBlend()
+{
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitVertexShader, m_lpLitBlendPixelShader))
+		return false;
+
+	D3DXMATRIX matWorld;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
+	return true;
+}
+
+bool CGraphicShaderPool::BindPNTLitAdd()
+{
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitVertexShader, m_lpLitAddPixelShader))
 		return false;
 
 	D3DXMATRIX matWorld;
