@@ -47,6 +47,10 @@ class CGraphicShaderPool
 		// Dungeon-block shadow receiver: TFACTOR times the projected shadow map,
 		// position through the same WVP math as the PNT2 lightmap pass.
 		bool BindPNT2ShadowReceiver();
+		// Pixel-shader-only bind for draws that keep their own vertex shader
+		// (SpeedTree leaves); pair with UnbindPixelOnly.
+		bool BindPixelOnlyModulate();
+		void UnbindPixelOnly();
 		void Unbind();
 
 		void Destroy();

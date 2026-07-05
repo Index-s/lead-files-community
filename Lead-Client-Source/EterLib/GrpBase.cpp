@@ -249,6 +249,19 @@ bool CGraphicBase::BeginPDTCloudShader()
 	return gs_kShaderPool.BindPDTTexMatInvAlphaAdd();
 }
 
+bool CGraphicBase::BeginSpeedTreeLeafShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindPixelOnlyModulate();
+}
+
+void CGraphicBase::EndSpeedTreeLeafShader()
+{
+	gs_kShaderPool.UnbindPixelOnly();
+}
+
 bool CGraphicBase::BeginEffectShader(DWORD dwColorOp)
 {
 	if (!ms_bUseShaderFFP)

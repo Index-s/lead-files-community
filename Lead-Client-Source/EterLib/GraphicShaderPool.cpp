@@ -1135,6 +1135,23 @@ bool CGraphicShaderPool::BindPNT2ShadowReceiver()
 }
 
 
+bool CGraphicShaderPool::BindPixelOnlyModulate()
+{
+	if (!m_lpPDTDeclaration && !__Create())
+		return false;
+
+	if (!m_lpModulatePixelShader)
+		return false;
+
+	STATEMANAGER.SetPixelShader(m_lpModulatePixelShader);
+	return true;
+}
+
+void CGraphicShaderPool::UnbindPixelOnly()
+{
+	STATEMANAGER.SetPixelShader(NULL);
+}
+
 void CGraphicShaderPool::Unbind()
 {
 	STATEMANAGER.SetVertexShader(NULL);
