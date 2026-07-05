@@ -98,6 +98,60 @@ namespace
 		"    return float4(kTexel.rgb * vDiffuse.rgb, kTexel.a);\n"
 		"}\n";
 
+	// Minimap terrain tiles: XYZ|TEX1 stream, tile UVs passed through, cover
+	// UVs generated from the camera-space position through the TEXTURE1
+	// transform (rows in c6-c7).
+	const char c_achMiniMapVertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"float4 g_avTexMat1[2] : register(c6);\n"
+		"float4 g_avWorldView[3] : register(c11);\n"
+		"float4 g_vFogParams : register(c28);\n"
+		"float4 g_vFogParams2 : register(c29);\n"
+		"struct VS_INPUT { float3 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vCoverCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    float4 vCamPos;\n"
+		"    vCamPos.x = dot(vPosition, g_avWorldView[0]);\n"
+		"    vCamPos.y = dot(vPosition, g_avWorldView[1]);\n"
+		"    vCamPos.z = dot(vPosition, g_avWorldView[2]);\n"
+		"    vCamPos.w = 1.0f;\n"
+		"    Out.vTexCoord = In.vTexCoord;\n"
+		"    Out.vCoverCoord.x = dot(vCamPos, g_avTexMat1[0]);\n"
+		"    Out.vCoverCoord.y = dot(vCamPos, g_avTexMat1[1]);\n"
+		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
+		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
+		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    return Out;\n"
+		"}\n";
+
+	// Minimap tile: rgb = tile * cover, alpha = cover (stage1 MODULATE +
+	// alpha SELECTARG1(TEXTURE) over the stage0 tile).
+	const char c_achMiniMapPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vCoverCoord : TEXCOORD1) : COLOR0\n"
+		"{\n"
+		"    float4 kCover = tex2D(g_kSampler1, vCoverCoord);\n"
+		"    return float4(tex2D(g_kSampler0, vTexCoord).rgb * kCover.rgb, kCover.a);\n"
+		"}\n";
+
+	// Unloaded minimap tile: TFACTOR fill times the cover.
+	const char c_achMiniMapTFactorPixelProgram[] =
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float2 vCoverCoord : TEXCOORD1) : COLOR0\n"
+		"{\n"
+		"    float4 kCover = tex2D(g_kSampler1, vCoverCoord);\n"
+		"    return float4(g_kTFactor.rgb * kCover.rgb, kCover.a);\n"
+		"}\n";
+
 	// PDT vertices with the TEXTURE0 transform applied to the UVs (COUNT2).
 	const char c_achPDTTexMatVertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
@@ -455,6 +509,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpPDTVertexShader(NULL)
 	, m_lpPTVertexShader(NULL)
 	, m_lpPDTTexMatVertexShader(NULL)
+	, m_lpMiniMapVertexShader(NULL)
 	, m_lpPNTLitVertexShader(NULL)
 	, m_lpPNTLitSpecVertexShader(NULL)
 	, m_lpPNTLitOmniVertexShader(NULL)
@@ -465,6 +520,8 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpDiffusePixelShader(NULL)
 	, m_lpTexturePixelShader(NULL)
 	, m_lpModulateTexAlphaPixelShader(NULL)
+	, m_lpMiniMapPixelShader(NULL)
+	, m_lpMiniMapTFactorPixelShader(NULL)
 	, m_lpInvAlphaAddPixelShader(NULL)
 	, m_lpTFactorModulatePixelShader(NULL)
 	, m_lpTFactorAddPixelShader(NULL)
@@ -491,6 +548,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPDTVertexShader);
 	safe_release(m_lpPTVertexShader);
 	safe_release(m_lpPDTTexMatVertexShader);
+	safe_release(m_lpMiniMapVertexShader);
 	safe_release(m_lpPNTLitVertexShader);
 	safe_release(m_lpPNTLitSpecVertexShader);
 	safe_release(m_lpPNTLitOmniVertexShader);
@@ -501,6 +559,8 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpDiffusePixelShader);
 	safe_release(m_lpTexturePixelShader);
 	safe_release(m_lpModulateTexAlphaPixelShader);
+	safe_release(m_lpMiniMapPixelShader);
+	safe_release(m_lpMiniMapTFactorPixelShader);
 	safe_release(m_lpInvAlphaAddPixelShader);
 	safe_release(m_lpTFactorModulatePixelShader);
 	safe_release(m_lpTFactorAddPixelShader);
@@ -636,6 +696,54 @@ bool CGraphicShaderPool::__Create()
 				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
 		safe_release(pCode);
 		safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achMiniMapVertexProgram, sizeof(c_achMiniMapVertexProgram) - 1, "MiniMapVertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpMiniMapVertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build MiniMapVertexProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achMiniMapPixelProgram, sizeof(c_achMiniMapPixelProgram) - 1, "MiniMapPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpMiniMapPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build MiniMapPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achMiniMapTFactorPixelProgram, sizeof(c_achMiniMapTFactorPixelProgram) - 1, "MiniMapTFactorPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpMiniMapTFactorPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build MiniMapTFactorPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
 		Destroy();
 		m_bCreateFailed = true;
 		return false;
@@ -1029,6 +1137,19 @@ bool CGraphicShaderPool::BindPDTTexture()
 bool CGraphicShaderPool::BindPDTModulateTexAlpha()
 {
 	return __Bind(m_lpPDTDeclaration, m_lpPDTVertexShader, m_lpModulateTexAlphaPixelShader);
+}
+
+bool CGraphicShaderPool::BindMiniMap(bool bTexture)
+{
+	if (!__Bind(m_lpPTDeclaration, m_lpMiniMapVertexShader,
+				bTexture ? m_lpMiniMapPixelShader : m_lpMiniMapTFactorPixelShader))
+		return false;
+
+	D3DXMATRIX matTexture;
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTexture);
+	D3DXMatrixTranspose(&matTexture, &matTexture);
+	STATEMANAGER.SetVertexShaderConstant(6, &matTexture, 2);
+	return true;
 }
 
 bool CGraphicShaderPool::BindPDTTexMatInvAlphaAdd()
