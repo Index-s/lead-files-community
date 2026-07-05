@@ -448,6 +448,33 @@ namespace
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    return float4(kTexel.rgb, kTexel.a * g_kTFactor.a);\n"
 		"}\n";
+
+	// The remaining effect combiners shipped assets actually use
+	// (coloroperationtype in .mse files): MODULATE2X, MODULATE4X, ADDSIGNED.
+	const char c_achTFactorModulate2XPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    return float4(kTexel.rgb * g_kTFactor.rgb * 2.0f, kTexel.a * g_kTFactor.a);\n"
+		"}\n";
+	const char c_achTFactorModulate4XPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    return float4(kTexel.rgb * g_kTFactor.rgb * 4.0f, kTexel.a * g_kTFactor.a);\n"
+		"}\n";
+	const char c_achTFactorAddSignedPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    return float4(kTexel.rgb + g_kTFactor.rgb - 0.5f, kTexel.a * g_kTFactor.a);\n"
+		"}\n";
 }
 
 CGraphicShaderPool::CGraphicShaderPool()
@@ -470,6 +497,9 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTFactorAddPixelShader(NULL)
 	, m_lpTFactorOnlyPixelShader(NULL)
 	, m_lpTexTFactorAlphaPixelShader(NULL)
+	, m_lpTFactorModulate2XPixelShader(NULL)
+	, m_lpTFactorModulate4XPixelShader(NULL)
+	, m_lpTFactorAddSignedPixelShader(NULL)
 	, m_lpLitSpecPixelShader(NULL)
 	, m_lpLightmapPixelShader(NULL)
 	, m_lpLitShadowPixelShader(NULL)
@@ -506,6 +536,9 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpTFactorAddPixelShader);
 	safe_release(m_lpTFactorOnlyPixelShader);
 	safe_release(m_lpTexTFactorAlphaPixelShader);
+	safe_release(m_lpTFactorModulate2XPixelShader);
+	safe_release(m_lpTFactorModulate4XPixelShader);
+	safe_release(m_lpTFactorAddSignedPixelShader);
 	safe_release(m_lpLitSpecPixelShader);
 	safe_release(m_lpLightmapPixelShader);
 	safe_release(m_lpLitShadowPixelShader);
@@ -729,6 +762,54 @@ bool CGraphicShaderPool::__Create()
 		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTexTFactorAlphaPixelShader)))
 	{
 		TraceError("CGraphicShaderPool: failed to build TexTFactorAlphaPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achTFactorModulate2XPixelProgram, sizeof(c_achTFactorModulate2XPixelProgram) - 1, "TFactorModulate2XPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorModulate2XPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TFactorModulate2XPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achTFactorModulate4XPixelProgram, sizeof(c_achTFactorModulate4XPixelProgram) - 1, "TFactorModulate4XPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorModulate4XPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TFactorModulate4XPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achTFactorAddSignedPixelProgram, sizeof(c_achTFactorAddSignedPixelProgram) - 1, "TFactorAddSignedPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorAddSignedPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TFactorAddSignedPixelProgram [ %s ].",
 				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
 		safe_release(pCode);
 		safe_release(pError);
@@ -1061,6 +1142,21 @@ bool CGraphicShaderPool::BindPTTFactorOnly()
 bool CGraphicShaderPool::BindPTTexTFactorAlpha()
 {
 	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTexTFactorAlphaPixelShader);
+}
+
+bool CGraphicShaderPool::BindPTTFactorModulate2X()
+{
+	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTFactorModulate2XPixelShader);
+}
+
+bool CGraphicShaderPool::BindPTTFactorModulate4X()
+{
+	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTFactorModulate4XPixelShader);
+}
+
+bool CGraphicShaderPool::BindPTTFactorAddSigned()
+{
+	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTFactorAddSignedPixelShader);
 }
 
 bool CGraphicShaderPool::BindPNTLit()
