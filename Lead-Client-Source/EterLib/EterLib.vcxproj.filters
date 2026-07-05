@@ -30,6 +30,7 @@
     <ClCompile Include="GrpPipelineCacheDX12.cpp" />
     <ClCompile Include="GrpDeviceDX12.cpp" />
     <ClCompile Include="GrpUploadRingDX12.cpp" />
+    <ClCompile Include="GrpDynamicDrawDX12.cpp" />
     <ClCompile Include="GrpDIB.cpp" />
     <ClCompile Include="GrpExpandedImageInstance.cpp" />
     <ClCompile Include="GrpFontTexture.cpp" />
@@ -113,6 +114,7 @@
     <ClInclude Include="GrpPipelineCacheDX12.h" />
     <ClInclude Include="GrpDeviceDX12.h" />
     <ClInclude Include="GrpUploadRingDX12.h" />
+    <ClInclude Include="GrpDynamicDrawDX12.h" />
     <ClInclude Include="GrpDIB.h" />
     <ClInclude Include="GrpExpandedImageInstance.h" />
     <ClInclude Include="GrpFontTexture.h" />
