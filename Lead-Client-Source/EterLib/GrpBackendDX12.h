@@ -17,6 +17,7 @@
 #include "GrpSamplerCacheDX12.h"
 #include "GrpConstantShadowDX12.h"
 #include "GrpResourceUploadDX12.h"
+#include "GrpCPUDescriptorsDX12.h"
 
 class CGraphicBackendDX12
 {
@@ -32,12 +33,20 @@ class CGraphicBackendDX12
 		CGraphicBackendDX12();
 		~CGraphicBackendDX12();
 
+		// The live backend, or NULL while rendering runs on DX9: texture
+		// loaders use this to decide whether to build their DX12 twins.
+		static CGraphicBackendDX12*	GetInstance();
+
 		bool	Create(HWND hWnd, UINT uWidth, UINT uHeight, bool bWindowed);
 		void	Destroy();
 		bool	IsCreated() const;
 
 		CGraphicDeviceDX12&				GetDevice();
 		CGraphicResourceUploaderDX12&	GetUploader();
+
+		// Persistent SRV slots for textures (backed by the CPU allocator).
+		bool	CreateTextureSRV(ID3D12Resource* pkTexture, D3D12_CPU_DESCRIPTOR_HANDLE* pkHandleOut);
+		void	FreeTextureSRV(D3D12_CPU_DESCRIPTOR_HANDLE kHandle);
 
 		bool	BeginFrame(DWORD dwClearColor);
 		bool	EndFrame();
@@ -75,6 +84,9 @@ class CGraphicBackendDX12
 		CGraphicPipelineCacheDX12		m_kPipelineCache;
 		CGraphicConstantShadowDX12		m_kConstantShadow;
 		CGraphicResourceUploaderDX12	m_kUploader;
+		CGraphicCPUDescriptorsDX12		m_kTextureDescriptors;
+
+		static CGraphicBackendDX12*		ms_pkInstance;
 
 		ID3DBlob**						m_apkProgramBytecode;
 		UINT							m_uProgramCount;

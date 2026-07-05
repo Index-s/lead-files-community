@@ -8,6 +8,13 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
+CGraphicBackendDX12* CGraphicBackendDX12::ms_pkInstance = NULL;
+
+CGraphicBackendDX12* CGraphicBackendDX12::GetInstance()
+{
+	return ms_pkInstance;
+}
+
 CGraphicBackendDX12::CGraphicBackendDX12()
 	: m_apkProgramBytecode(NULL)
 	, m_uProgramCount(0)
@@ -48,7 +55,8 @@ bool CGraphicBackendDX12::Create(HWND hWnd, UINT uWidth, UINT uHeight, bool bWin
 		!m_kSRVRing.Create(pkDevice, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, SRV_RING_CAPACITY) ||
 		!m_kSamplerCache.Create(pkDevice, SAMPLER_TABLE_CAPACITY) ||
 		!m_kPipelineCache.Create(pkDevice, m_kRootSignature.GetRootSignature()) ||
-		!m_kUploader.Create(pkDevice))
+		!m_kUploader.Create(pkDevice) ||
+		!m_kTextureDescriptors.Create(pkDevice, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV))
 	{
 		TraceError("CGraphicBackendDX12: component creation failed.");
 		Destroy();
@@ -65,11 +73,15 @@ bool CGraphicBackendDX12::Create(HWND hWnd, UINT uWidth, UINT uHeight, bool bWin
 	}
 
 	m_bCreated = true;
+	ms_pkInstance = this;
 	return true;
 }
 
 void CGraphicBackendDX12::Destroy()
 {
+	if (ms_pkInstance == this)
+		ms_pkInstance = NULL;
+
 	if (m_kDevice.IsCreated())
 		m_kDevice.WaitForGPU();
 
@@ -91,6 +103,7 @@ void CGraphicBackendDX12::Destroy()
 	m_kSRVRing.Destroy();
 	m_kUploadRing.Destroy();
 	m_kUploader.Destroy();
+	m_kTextureDescriptors.Destroy();
 	m_kRootSignature.Destroy();
 	m_kDevice.Destroy();
 
@@ -114,6 +127,20 @@ CGraphicDeviceDX12& CGraphicBackendDX12::GetDevice()
 CGraphicResourceUploaderDX12& CGraphicBackendDX12::GetUploader()
 {
 	return m_kUploader;
+}
+
+bool CGraphicBackendDX12::CreateTextureSRV(ID3D12Resource* pkTexture, D3D12_CPU_DESCRIPTOR_HANDLE* pkHandleOut)
+{
+	if (!pkTexture || !m_kTextureDescriptors.Allocate(pkHandleOut))
+		return false;
+
+	m_kDevice.GetDevice()->CreateShaderResourceView(pkTexture, NULL, *pkHandleOut);
+	return true;
+}
+
+void CGraphicBackendDX12::FreeTextureSRV(D3D12_CPU_DESCRIPTOR_HANDLE kHandle)
+{
+	m_kTextureDescriptors.Free(kHandle);
 }
 
 bool CGraphicBackendDX12::__CompilePrograms()

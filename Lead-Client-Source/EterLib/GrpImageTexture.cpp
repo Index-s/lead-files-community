@@ -2,6 +2,8 @@
 #include "../eterBase/MappedFile.h"
 #include "../eterPack/EterPackManager.h"
 #include "GrpImageTexture.h"
+#include "GrpBackendDX12.h"
+#include "GrpFormatDX12.h"
 #include "ImageFileDecoder.h"
 
 namespace
@@ -299,6 +301,21 @@ bool CGraphicImageTexture::CreateDDSTexture(CDXTCImage & image, const BYTE * /*c
 	m_height = image.m_nHeight;
 	m_bEmpty = false;
 
+	// DX12 twin from the top level of the source image.
+	if (CGraphicBackendDX12::GetInstance())
+	{
+		bool bWiden = false;
+		const DXGI_FORMAT eFormatDX12 = CGraphicFormatDX12::ToTextureFormatDX12(format, &bWiden);
+		if (DXGI_FORMAT_UNKNOWN != eFormatDX12)
+		{
+			const UINT uPitch = CGraphicFormatDX12::GetRowPitch(eFormatDX12, image.m_nWidth);
+			const UINT uRows = CGraphicFormatDX12::GetRowCount(eFormatDX12, image.m_nHeight);
+			std::vector<BYTE> kTopLevel(static_cast<size_t>(uPitch) * uRows);
+			if (image.Copy(0, &kTopLevel[0], uPitch))
+				CreateDX12Twin(image.m_nWidth, image.m_nHeight, format, &kTopLevel[0], uPitch);
+		}
+	}
+
 	return true;
 }
 
@@ -339,6 +356,9 @@ bool CGraphicImageTexture::CreateFromMemoryFile(UINT bufSize, const void * c_pvB
 
 		m_width = kImage.uWidth;
 		m_height = kImage.uHeight;
+
+		CreateDX12Twin(kImage.uWidth, kImage.uHeight, D3DFMT_A8R8G8B8,
+					   &kImage.kPixels[0], kImage.uWidth * 4);
 	}
 
 	m_bEmpty = false;
