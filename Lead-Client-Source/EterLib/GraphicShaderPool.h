@@ -104,6 +104,7 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpTerrainSplatVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpTerrainLitShadowVertexShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpModulateNoFogPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLitBlendPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLitAddPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpDiffusePixelShader;
