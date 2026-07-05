@@ -225,6 +225,14 @@ bool CGraphicBase::BeginPTTextureShader()
 	return gs_kShaderPool.BindPTTexture();
 }
 
+bool CGraphicBase::BeginWaterShader(bool bTexture)
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindWater(bTexture);
+}
+
 bool CGraphicBase::BeginPDTTextureShader()
 {
 	if (!ms_bUseShaderFFP)

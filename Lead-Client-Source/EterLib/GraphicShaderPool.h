@@ -17,6 +17,9 @@ class CGraphicShaderPool
 		bool BindPDTDiffuse();
 		// XYZ|TEX1 vertices, pixel = texture only (fixed-function SELECTARG1(TEXTURE)).
 		bool BindPTTexture();
+		// XYZ|DIFFUSE water patches: UVs from the camera-space position through
+		// the TEXTURE0 transform; far variant passes the vertex color through.
+		bool BindWater(bool bTexture);
 		// XYZ|DIFFUSE|TEX1 vertices, pixel = texture only (diffuse present but unused).
 		bool BindPDTTexture();
 		// XYZ|DIFFUSE|TEX1 vertices, rgb = texture * diffuse, alpha = texture.
@@ -58,6 +61,7 @@ class CGraphicShaderPool
 		bool m_bCreateFailed;
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPTVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpWaterVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTTexMatVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitSpecVertexShader;
@@ -68,6 +72,7 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpDiffusePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpWaterPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulateTexAlphaPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpInvAlphaAddPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorModulatePixelShader;
@@ -80,6 +85,7 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorShadowPixelShader;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPTDeclaration;
+		LPDIRECT3DVERTEXDECLARATION9	m_lpPDDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNT2Declaration;
 };
