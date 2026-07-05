@@ -62,6 +62,15 @@ namespace
 		"    return vDiffuse;\n"
 		"}\n";
 
+	// Character-shadow cast: solid TEXTUREFACTOR silhouette
+	// (stage0 SELECTARG1(TFACTOR), stage1 disabled).
+	const char c_achFlatTFactorPixelProgram[] =
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main() : COLOR0\n"
+		"{\n"
+		"    return float4(g_kTFactor.rgb, 1.0f);\n"
+		"}\n";
+
 	// XYZ|TEX1 (no diffuse) through the same WVP.
 	const char c_achPTVertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
@@ -463,6 +472,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpPNTLitRecvVertexShader(NULL)
 	, m_lpModulatePixelShader(NULL)
 	, m_lpDiffusePixelShader(NULL)
+	, m_lpFlatTFactorPixelShader(NULL)
 	, m_lpTexturePixelShader(NULL)
 	, m_lpModulateTexAlphaPixelShader(NULL)
 	, m_lpInvAlphaAddPixelShader(NULL)
@@ -499,6 +509,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPNTLitRecvVertexShader);
 	safe_release(m_lpModulatePixelShader);
 	safe_release(m_lpDiffusePixelShader);
+	safe_release(m_lpFlatTFactorPixelShader);
 	safe_release(m_lpTexturePixelShader);
 	safe_release(m_lpModulateTexAlphaPixelShader);
 	safe_release(m_lpInvAlphaAddPixelShader);
@@ -576,6 +587,25 @@ bool CGraphicShaderPool::__Create()
 		m_bCreateFailed = true;
 		return false;
 	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achFlatTFactorPixelProgram, sizeof(c_achFlatTFactorPixelProgram) - 1, "FlatTFactorPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpFlatTFactorPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build FlatTFactorPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
 
 	safe_release(pCode);
 	safe_release(pError);
@@ -1073,6 +1103,11 @@ bool CGraphicShaderPool::BindPNTLit()
 	D3DXMatrixTranspose(&matWorld, &matWorld);
 	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
 	return true;
+}
+
+bool CGraphicShaderPool::BindPNTFlatTFactor()
+{
+	return __Bind(m_lpPNTDeclaration, m_lpPNTLitVertexShader, m_lpFlatTFactorPixelShader);
 }
 
 bool CGraphicShaderPool::BindPNTLitSpecular()
