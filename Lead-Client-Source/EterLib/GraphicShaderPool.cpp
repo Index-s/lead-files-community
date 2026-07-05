@@ -934,6 +934,13 @@ bool CGraphicShaderPool::__Create()
 				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
 		safe_release(pCode);
 		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
 
 	if (FAILED(D3DCompile(c_achLitBlendPixelProgram, sizeof(c_achLitBlendPixelProgram) - 1, "LitBlendPixelProgram",
 						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
@@ -966,10 +973,6 @@ bool CGraphicShaderPool::__Create()
 
 	safe_release(pCode);
 	safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
 
 	safe_release(pCode);
 	safe_release(pError);
@@ -982,6 +985,13 @@ bool CGraphicShaderPool::__Create()
 				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
 		safe_release(pCode);
 		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
 
 	if (FAILED(D3DCompile(c_achFlatTFactorPixelProgram, sizeof(c_achFlatTFactorPixelProgram) - 1, "FlatTFactorPixelProgram",
 						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
@@ -998,10 +1008,6 @@ bool CGraphicShaderPool::__Create()
 
 	safe_release(pCode);
 	safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
 
 	safe_release(pCode);
 	safe_release(pError);
@@ -1062,6 +1068,13 @@ bool CGraphicShaderPool::__Create()
 				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
 		safe_release(pCode);
 		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
 
 	if (FAILED(D3DCompile(c_achMiniMapVertexProgram, sizeof(c_achMiniMapVertexProgram) - 1, "MiniMapVertexProgram",
 						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
@@ -1110,10 +1123,6 @@ bool CGraphicShaderPool::__Create()
 
 	safe_release(pCode);
 	safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
 
 	safe_release(pCode);
 	safe_release(pError);
@@ -1334,6 +1343,13 @@ bool CGraphicShaderPool::__Create()
 				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
 		safe_release(pCode);
 		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
 
 	if (FAILED(D3DCompile(c_achSpeedTreeBranchVertexProgram, sizeof(c_achSpeedTreeBranchVertexProgram) - 1, "SpeedTreeBranchVertexProgram",
 						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
@@ -1379,10 +1395,6 @@ bool CGraphicShaderPool::__Create()
 	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPDT2Elements, &m_lpPDT2Declaration)))
 	{
 		TraceError("CGraphicShaderPool: failed to create PDT2 vertex declaration.");
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
 		Destroy();
 		m_bCreateFailed = true;
 		return false;
@@ -1623,6 +1635,13 @@ bool CGraphicShaderPool::__Create()
 				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
 		safe_release(pCode);
 		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
 
 	if (FAILED(D3DCompile(c_achTerrainAttrPixelProgram, sizeof(c_achTerrainAttrPixelProgram) - 1, "TerrainAttrPixelProgram",
 						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
@@ -1639,10 +1658,6 @@ bool CGraphicShaderPool::__Create()
 
 	safe_release(pCode);
 	safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
 
 	safe_release(pCode);
 	safe_release(pError);
