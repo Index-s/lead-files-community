@@ -26,24 +26,21 @@ LIBDIR = -L$(EXTERN_DIR)/lib \
          -L../../liblua/lib \
          -L/usr/local/lib
 
+LIBDIR += -L/usr/local/lib/mysql/
+
 #CFLAGS = -m64 -g -Wall -O2 -pipe -fexceptions -fno-stack-protector -pthread -D_THREAD_SAFE -DNDEBUG
 CFLAGS = -m64 -g -O1 -pipe -frtti -fexceptions -pthread -D_THREAD_SAFE -DBOOST_BIND_GLOBAL_PLACEHOLDERS -fno-stack-protector -fno-strict-aliasing
 
 # RE-ORDERED LIBS: Higher level libs first, base libs last
-LIBS = $(EXTERN_DIR)/lib/libIL.a \
-       $(EXTERN_DIR)/lib/libpng.a \
-       $(EXTERN_DIR)/lib/libjpeg-turbo.a \
-       $(EXTERN_DIR)/lib/libcryptopp.a \
-       -L/usr/local/lib -llzo2 \
+LIBS = -L/usr/local/lib -llzo2 \
        ../../liblua/lib/liblua.a \
        ../../liblua/lib/liblualib.a \
        ../../libsql/libsql.a \
        ../../libgame/lib/libgame.a \
        ../../libpoly/libpoly.a \
-       $(EXTERN_DIR)/lib/mysqlclient.a \
        /usr/lib/libssl.a /usr/lib/libcrypto.a \
        ../../libthecore/lib/libthecore.a \
-       -lz -lm -lmd -pthread
+       -lmariadbclient -lcryptopp -lIL -lz -lm -lmd -pthread
 
 CPP_SRCS = $(wildcard *.cpp)
 C_SRCS = $(wildcard *.c)
