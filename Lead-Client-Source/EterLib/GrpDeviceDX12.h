@@ -34,8 +34,21 @@ class CGraphicDeviceDX12
 		bool	IsDeviceRemoved() const;
 		bool	Recreate();
 
+		// Blocks until the GPU drained; the backend calls this before
+		// releasing resources still referenced by in-flight frames.
+		void	WaitForGPU();
+
 		ID3D12Device*				GetDevice() const;
 		ID3D12GraphicsCommandList*	GetCommandList() const;
+		ID3D12CommandQueue*			GetCommandQueue() const;
+
+		// Frame plumbing for the backend's ring reclamation and clears.
+		UINT64	GetLastSubmittedFenceValue() const;
+		UINT64	GetCompletedFenceValue() const;
+		UINT	GetWidth() const;
+		UINT	GetHeight() const;
+		D3D12_CPU_DESCRIPTOR_HANDLE	GetCurrentRTVHandle() const;
+		D3D12_CPU_DESCRIPTOR_HANDLE	GetDSVHandle() const;
 
 	private:
 		bool	__CreateDevice();

@@ -7,6 +7,19 @@
 class CGraphicShaderPool
 {
 	public:
+		// One entry per shader program: the DX12 backend compiles the same
+		// sources against SM5 targets.
+		struct TProgramInfo
+		{
+			const char*	c_szName;
+			const char*	c_szSource;
+			unsigned	uSourceLength;
+			bool		bVertexProgram;
+		};
+
+		static UINT					GetProgramCount();
+		static const TProgramInfo*	GetProgramInfo(UINT uIndex);
+
 		CGraphicShaderPool();
 		~CGraphicShaderPool();
 
