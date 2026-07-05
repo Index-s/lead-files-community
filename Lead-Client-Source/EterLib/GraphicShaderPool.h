@@ -24,6 +24,9 @@ class CGraphicShaderPool
 		bool BindPDTTexture();
 		// XYZ|DIFFUSE|TEX1 vertices, rgb = texture * diffuse, alpha = texture.
 		bool BindPDTModulateTexAlpha();
+		// XYZ|TEX1 minimap tiles: cover UVs from the camera-space position
+		// through the TEXTURE1 transform; TFACTOR variant for unloaded tiles.
+		bool BindMiniMap(bool bTexture);
 		// XYZ|DIFFUSE|TEX1 with UVs run through the TEXTURE0 transform,
 		// pixel = fixed-function MODULATEINVALPHA_ADDCOLOR (sky cloud layer).
 		bool BindPDTTexMatInvAlphaAdd();
@@ -75,6 +78,7 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpPTVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpWaterVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTTexMatVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpMiniMapVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitSpecVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitOmniVertexShader;
@@ -88,6 +92,8 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpWaterPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulateTexAlphaPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpMiniMapPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpMiniMapTFactorPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpInvAlphaAddPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorModulatePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorAddPixelShader;

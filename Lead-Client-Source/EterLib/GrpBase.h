@@ -233,6 +233,7 @@ class CGraphicBase
 		static bool BeginWaterShader(bool bTexture);	// XYZ|DIFFUSE water patches; false = keep FFP
 		static bool BeginPDTTextureShader();	// XYZ|DIFFUSE|TEX1 draws where FFP selects TEXTURE only
 		static bool BeginPDTModulateTexAlphaShader();	// rgb = texture*diffuse, alpha = texture
+		static bool BeginMiniMapShader(bool bTexture);	// minimap tiles x texgen cover; false = keep FFP
 		static bool BeginPDTCloudShader();	// scrolling-UV cloud layer (MODULATEINVALPHA_ADDCOLOR)
 		static bool BeginEffectShader(DWORD dwColorOp);	// effect COLOROP(TFACTOR, TEXTURE); false = unsupported op, use FFP
 		static bool BeginGrannyMeshShader();	// lit PNT mesh w/ base modulate cascade; false = keep FFP
