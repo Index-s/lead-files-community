@@ -239,8 +239,12 @@ bool CGraphicImageTexture::CreateDDSTexture(CDXTCImage & image, const BYTE * /*c
 
 	if(image.m_CompFormat == PF_DXT5)
 		format = D3DFMT_DXT5;
+	else if(image.m_CompFormat == PF_DXT4)
+		format = D3DFMT_DXT4;
 	else if(image.m_CompFormat == PF_DXT3)
 		format = D3DFMT_DXT3;
+	else if(image.m_CompFormat == PF_DXT2)
+		format = D3DFMT_DXT2;
 	else
 		format = D3DFMT_DXT1;
 
