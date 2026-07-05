@@ -6,6 +6,7 @@
 // BACKEND_DX12 goes live; until then it compiles but stays unreachable.
 
 #include <d3d12.h>
+#include <unordered_map>
 
 #include "GrpDeviceDX12.h"
 #include "GrpUploadRingDX12.h"
@@ -50,6 +51,18 @@ class CGraphicBackendDX12
 
 		bool	BeginFrame(DWORD dwClearColor);
 		bool	EndFrame();
+
+		// Offscreen render-target twins (character shadow map). Registered
+		// by texture-creation hooks; SetRenderTargetTexture redirects the
+		// output merger, RestoreDefaultTarget returns to the backbuffer and
+		// flips the twin to shader-readable for the receive pass.
+		bool	RegisterRenderTarget(const void* pkTextureD3D9, UINT uWidth, UINT uHeight);
+		bool	SetRenderTargetTexture(const void* pkTextureD3D9);
+		void	RestoreDefaultTarget();
+		bool	IsRenderTarget(const void* pkTextureD3D9) const;
+		D3D12_CPU_DESCRIPTOR_HANDLE	GetRenderTargetSRV(const void* pkTextureD3D9) const;
+
+		void	SetViewport(const D3DVIEWPORT9& rkViewport);
 
 		// Mid-frame clear of the bound targets (dwFlags = D3DCLEAR_* bits).
 		void	ClearTargets(DWORD dwFlags, DWORD dwColor, float fDepth, DWORD dwStencil);
@@ -114,6 +127,24 @@ class CGraphicBackendDX12
 
 		ID3D12Resource*					m_pkWhiteTexture;
 		ID3D12DescriptorHeap*			m_pkCPUHeap;
+		CGraphicCPUDescriptorsDX12		m_kRTVDescriptors;
+		CGraphicCPUDescriptorsDX12		m_kDSVDescriptors;
+
+		struct TRenderTargetDX12
+		{
+			ID3D12Resource*				pkColor;
+			ID3D12Resource*				pkDepth;
+			D3D12_CPU_DESCRIPTOR_HANDLE	kRTV;
+			D3D12_CPU_DESCRIPTOR_HANDLE	kDSV;
+			D3D12_CPU_DESCRIPTOR_HANDLE	kSRV;
+			UINT						uWidth;
+			UINT						uHeight;
+			bool						bShaderReadable;
+		};
+		std::unordered_map<const void*, TRenderTargetDX12>	m_kRenderTargetMap;
+		TRenderTargetDX12*				m_pkBoundRenderTarget;
+		D3D12_CPU_DESCRIPTOR_HANDLE		m_kCurrentRTV;
+		D3D12_CPU_DESCRIPTOR_HANDLE		m_kCurrentDSV;
 		bool							m_bInFrame;
 		D3D12_CPU_DESCRIPTOR_HANDLE		m_kWhiteSRV;
 		bool							m_bCreated;

@@ -27,6 +27,7 @@ CGraphicBackendDX12::CGraphicBackendDX12()
 	, m_uSRVIncrementSize(0)
 	, m_pkWhiteTexture(NULL)
 	, m_pkCPUHeap(NULL)
+	, m_pkBoundRenderTarget(NULL)
 	, m_bInFrame(false)
 	, m_bCreated(false)
 {
@@ -58,7 +59,9 @@ bool CGraphicBackendDX12::Create(HWND hWnd, UINT uWidth, UINT uHeight, bool bWin
 		!m_kSamplerCache.Create(pkDevice, SAMPLER_TABLE_CAPACITY) ||
 		!m_kPipelineCache.Create(pkDevice, m_kRootSignature.GetRootSignature()) ||
 		!m_kUploader.Create(pkDevice) ||
-		!m_kTextureDescriptors.Create(pkDevice, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV))
+		!m_kTextureDescriptors.Create(pkDevice, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) ||
+		!m_kRTVDescriptors.Create(pkDevice, D3D12_DESCRIPTOR_HEAP_TYPE_RTV) ||
+		!m_kDSVDescriptors.Create(pkDevice, D3D12_DESCRIPTOR_HEAP_TYPE_DSV))
 	{
 		TraceError("CGraphicBackendDX12: component creation failed.");
 		Destroy();
@@ -103,10 +106,21 @@ void CGraphicBackendDX12::Destroy()
 	}
 	m_uProgramCount = 0;
 
+	for (std::unordered_map<const void*, TRenderTargetDX12>::iterator it = m_kRenderTargetMap.begin();
+		 it != m_kRenderTargetMap.end(); ++it)
+	{
+		safe_release(it->second.pkColor);
+		safe_release(it->second.pkDepth);
+	}
+	m_kRenderTargetMap.clear();
+	m_pkBoundRenderTarget = NULL;
+
 	safe_release(m_pkWhiteTexture);
 	safe_release(m_pkCPUHeap);
 	m_kWhiteSRV.ptr = 0;
 
+	m_kRTVDescriptors.Destroy();
+	m_kDSVDescriptors.Destroy();
 	m_kPipelineCache.Destroy();
 	m_kSamplerCache.Destroy();
 	m_kSRVRing.Destroy();
@@ -255,6 +269,10 @@ bool CGraphicBackendDX12::BeginFrame(DWORD dwClearColor)
 	kScissor.bottom = static_cast<LONG>(m_kDevice.GetHeight());
 	pkCommandList->RSSetScissorRects(1, &kScissor);
 
+	m_kCurrentRTV = m_kDevice.GetCurrentRTVHandle();
+	m_kCurrentDSV = m_kDevice.GetDSVHandle();
+	m_pkBoundRenderTarget = NULL;
+
 	ID3D12DescriptorHeap* apkHeaps[] = { m_kSRVRing.GetHeap(), m_kSamplerCache.GetHeap() };
 	pkCommandList->SetDescriptorHeaps(2, apkHeaps);
 	pkCommandList->SetGraphicsRootSignature(m_kRootSignature.GetRootSignature());
@@ -279,7 +297,7 @@ void CGraphicBackendDX12::ClearTargets(DWORD dwFlags, DWORD dwColor, float fDept
 			(dwColor & 0xff) * c_fInv255,
 			((dwColor >> 24) & 0xff) * c_fInv255,
 		};
-		pkCommandList->ClearRenderTargetView(m_kDevice.GetCurrentRTVHandle(), afColor, 0, NULL);
+		pkCommandList->ClearRenderTargetView(m_kCurrentRTV, afColor, 0, NULL);
 	}
 
 	D3D12_CLEAR_FLAGS eDepthFlags = static_cast<D3D12_CLEAR_FLAGS>(0);
@@ -288,8 +306,185 @@ void CGraphicBackendDX12::ClearTargets(DWORD dwFlags, DWORD dwColor, float fDept
 	if (dwFlags & D3DCLEAR_STENCIL)
 		eDepthFlags |= D3D12_CLEAR_FLAG_STENCIL;
 	if (eDepthFlags)
-		pkCommandList->ClearDepthStencilView(m_kDevice.GetDSVHandle(), eDepthFlags, fDepth,
+		pkCommandList->ClearDepthStencilView(m_kCurrentDSV, eDepthFlags, fDepth,
 											 static_cast<UINT8>(dwStencil), 0, NULL);
+}
+
+bool CGraphicBackendDX12::RegisterRenderTarget(const void* pkTextureD3D9, UINT uWidth, UINT uHeight)
+{
+	if (!m_bCreated || !pkTextureD3D9)
+		return false;
+
+	std::unordered_map<const void*, TRenderTargetDX12>::iterator itOld = m_kRenderTargetMap.find(pkTextureD3D9);
+	if (itOld != m_kRenderTargetMap.end())
+	{
+		m_kDevice.WaitForGPU();
+		safe_release(itOld->second.pkColor);
+		safe_release(itOld->second.pkDepth);
+		m_kRenderTargetMap.erase(itOld);
+	}
+
+	ID3D12Device* pkDevice = m_kDevice.GetDevice();
+	TRenderTargetDX12 kTarget = {};
+	kTarget.uWidth = uWidth;
+	kTarget.uHeight = uHeight;
+	kTarget.bShaderReadable = true;
+
+	D3D12_HEAP_PROPERTIES kHeapProps = {};
+	kHeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+	D3D12_RESOURCE_DESC kColorDesc = {};
+	kColorDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	kColorDesc.Width = uWidth;
+	kColorDesc.Height = uHeight;
+	kColorDesc.DepthOrArraySize = 1;
+	kColorDesc.MipLevels = 1;
+	kColorDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	kColorDesc.SampleDesc.Count = 1;
+	kColorDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+
+	D3D12_CLEAR_VALUE kColorClear = {};
+	kColorClear.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	kColorClear.Color[0] = kColorClear.Color[1] = kColorClear.Color[2] = kColorClear.Color[3] = 1.0f;
+
+	if (FAILED(pkDevice->CreateCommittedResource(&kHeapProps, D3D12_HEAP_FLAG_NONE, &kColorDesc,
+												  D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &kColorClear,
+												  IID_PPV_ARGS(&kTarget.pkColor))))
+	{
+		TraceError("CGraphicBackendDX12: render-target color creation failed (%ux%u).", uWidth, uHeight);
+		return false;
+	}
+
+	D3D12_RESOURCE_DESC kDepthDesc = kColorDesc;
+	kDepthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	kDepthDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+	D3D12_CLEAR_VALUE kDepthClear = {};
+	kDepthClear.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	kDepthClear.DepthStencil.Depth = 1.0f;
+
+	if (FAILED(pkDevice->CreateCommittedResource(&kHeapProps, D3D12_HEAP_FLAG_NONE, &kDepthDesc,
+												  D3D12_RESOURCE_STATE_DEPTH_WRITE, &kDepthClear,
+												  IID_PPV_ARGS(&kTarget.pkDepth))))
+	{
+		TraceError("CGraphicBackendDX12: render-target depth creation failed (%ux%u).", uWidth, uHeight);
+		safe_release(kTarget.pkColor);
+		return false;
+	}
+
+	if (!m_kRTVDescriptors.Allocate(&kTarget.kRTV) ||
+		!m_kDSVDescriptors.Allocate(&kTarget.kDSV) ||
+		!m_kTextureDescriptors.Allocate(&kTarget.kSRV))
+	{
+		safe_release(kTarget.pkColor);
+		safe_release(kTarget.pkDepth);
+		return false;
+	}
+
+	pkDevice->CreateRenderTargetView(kTarget.pkColor, NULL, kTarget.kRTV);
+	pkDevice->CreateDepthStencilView(kTarget.pkDepth, NULL, kTarget.kDSV);
+	pkDevice->CreateShaderResourceView(kTarget.pkColor, NULL, kTarget.kSRV);
+
+	m_kRenderTargetMap[pkTextureD3D9] = kTarget;
+	return true;
+}
+
+bool CGraphicBackendDX12::IsRenderTarget(const void* pkTextureD3D9) const
+{
+	return m_kRenderTargetMap.find(pkTextureD3D9) != m_kRenderTargetMap.end();
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE CGraphicBackendDX12::GetRenderTargetSRV(const void* pkTextureD3D9) const
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE kHandle;
+	kHandle.ptr = 0;
+	std::unordered_map<const void*, TRenderTargetDX12>::const_iterator it = m_kRenderTargetMap.find(pkTextureD3D9);
+	if (it != m_kRenderTargetMap.end())
+		kHandle = it->second.kSRV;
+	return kHandle;
+}
+
+bool CGraphicBackendDX12::SetRenderTargetTexture(const void* pkTextureD3D9)
+{
+	if (!m_bCreated || !m_bInFrame)
+		return false;
+
+	std::unordered_map<const void*, TRenderTargetDX12>::iterator it = m_kRenderTargetMap.find(pkTextureD3D9);
+	if (it == m_kRenderTargetMap.end())
+		return false;
+
+	TRenderTargetDX12& rkTarget = it->second;
+	ID3D12GraphicsCommandList* pkCommandList = m_kDevice.GetCommandList();
+
+	if (rkTarget.bShaderReadable)
+	{
+		D3D12_RESOURCE_BARRIER kBarrier = {};
+		kBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		kBarrier.Transition.pResource = rkTarget.pkColor;
+		kBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		kBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		kBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		pkCommandList->ResourceBarrier(1, &kBarrier);
+		rkTarget.bShaderReadable = false;
+	}
+
+	m_kCurrentRTV = rkTarget.kRTV;
+	m_kCurrentDSV = rkTarget.kDSV;
+	m_pkBoundRenderTarget = &rkTarget;
+	pkCommandList->OMSetRenderTargets(1, &m_kCurrentRTV, FALSE, &m_kCurrentDSV);
+
+	D3D12_VIEWPORT kViewport = {};
+	kViewport.Width = static_cast<float>(rkTarget.uWidth);
+	kViewport.Height = static_cast<float>(rkTarget.uHeight);
+	kViewport.MaxDepth = 1.0f;
+	pkCommandList->RSSetViewports(1, &kViewport);
+
+	D3D12_RECT kScissor = {};
+	kScissor.right = static_cast<LONG>(rkTarget.uWidth);
+	kScissor.bottom = static_cast<LONG>(rkTarget.uHeight);
+	pkCommandList->RSSetScissorRects(1, &kScissor);
+	return true;
+}
+
+void CGraphicBackendDX12::RestoreDefaultTarget()
+{
+	if (!m_bCreated || !m_bInFrame)
+		return;
+
+	ID3D12GraphicsCommandList* pkCommandList = m_kDevice.GetCommandList();
+
+	if (m_pkBoundRenderTarget && !m_pkBoundRenderTarget->bShaderReadable)
+	{
+		// The receive pass samples this target next.
+		D3D12_RESOURCE_BARRIER kBarrier = {};
+		kBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		kBarrier.Transition.pResource = m_pkBoundRenderTarget->pkColor;
+		kBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		kBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		kBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		pkCommandList->ResourceBarrier(1, &kBarrier);
+		m_pkBoundRenderTarget->bShaderReadable = true;
+	}
+
+	m_pkBoundRenderTarget = NULL;
+	m_kCurrentRTV = m_kDevice.GetCurrentRTVHandle();
+	m_kCurrentDSV = m_kDevice.GetDSVHandle();
+	pkCommandList->OMSetRenderTargets(1, &m_kCurrentRTV, FALSE, &m_kCurrentDSV);
+}
+
+void CGraphicBackendDX12::SetViewport(const D3DVIEWPORT9& rkViewport)
+{
+	if (!m_bCreated || !m_bInFrame)
+		return;
+
+	D3D12_VIEWPORT kViewport = {};
+	kViewport.TopLeftX = static_cast<float>(rkViewport.X);
+	kViewport.TopLeftY = static_cast<float>(rkViewport.Y);
+	kViewport.Width = static_cast<float>(rkViewport.Width);
+	kViewport.Height = static_cast<float>(rkViewport.Height);
+	kViewport.MinDepth = rkViewport.MinZ;
+	kViewport.MaxDepth = rkViewport.MaxZ;
+	m_kDevice.GetCommandList()->RSSetViewports(1, &kViewport);
 }
 
 bool CGraphicBackendDX12::EndFrame()

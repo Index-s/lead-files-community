@@ -4,6 +4,7 @@
 #include "GrpBase.h"
 #include "Camera.h"
 #include "StateManager.h"
+#include "GrpBackendDX12.h"
 #include "GraphicShaderPool.h"
 
 void PixelPositionToD3DXVECTOR3(const D3DXVECTOR3& c_rkPPosSrc, D3DXVECTOR3* pv3Dst)
@@ -993,6 +994,28 @@ bool CGraphicBase::IsDeviceCreated()
 }
 
 HRESULT CGraphicBase::CreateDeviceTexture(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture)
+{
+	const HRESULT hrCreate = __CreateDeviceTextureImpl(uWidth, uHeight, uLevels, dwUsage, eFormat, ePool, ppTexture);
+
+	// DX12 mirror: render targets get a color+depth twin the shadow pass
+	// redirects into and the receive pass samples.
+	if (SUCCEEDED(hrCreate) && (dwUsage & D3DUSAGE_RENDERTARGET))
+	{
+		if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+		{
+			if (pkBackend->RegisterRenderTarget(*ppTexture, uWidth, uHeight))
+			{
+				// GetSRVHandleDX12 lives inside the backend record; register the
+				// texture pointer so SetTexture resolves the twin SRV.
+				STATEMANAGER.RegisterTextureSRVDX12(*ppTexture, pkBackend->GetRenderTargetSRV(*ppTexture));
+			}
+		}
+	}
+
+	return hrCreate;
+}
+
+HRESULT CGraphicBase::__CreateDeviceTextureImpl(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture)
 {
 	return ms_lpd3dDevice->CreateTexture(uWidth, uHeight, uLevels, dwUsage, eFormat, ePool, ppTexture, NULL);
 }

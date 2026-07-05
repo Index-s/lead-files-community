@@ -36,11 +36,18 @@ void CStateManager::LightEnable(DWORD index, BOOL bEnable)
 
 HRESULT CStateManager::Clear(DWORD Flags, D3DCOLOR Color, float Z, DWORD Stencil)
 {
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+		pkBackend->ClearTargets(Flags, Color, Z, Stencil);
 	return m_lpD3DDev->Clear(0, NULL, Flags, Color, Z, Stencil);
 }
 
 HRESULT CStateManager::SetViewport(const D3DVIEWPORT9* pViewport)
 {
+	if (pViewport)
+	{
+		if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+			pkBackend->SetViewport(*pViewport);
+	}
 	return m_lpD3DDev->SetViewport(pViewport);
 }
 
@@ -66,6 +73,25 @@ HRESULT CStateManager::GetRenderTarget(DWORD RenderTargetIndex, LPDIRECT3DSURFAC
 
 HRESULT CStateManager::SetRenderTarget(DWORD RenderTargetIndex, LPDIRECT3DSURFACE9 pRenderTarget)
 {
+	// DX12 mirror: resolve the surface's container texture; the backbuffer
+	// surface has no texture container, which signals the restore.
+	if (0 == RenderTargetIndex && pRenderTarget)
+	{
+		if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+		{
+			IDirect3DTexture9* pkContainer = NULL;
+			if (SUCCEEDED(pRenderTarget->GetContainer(__uuidof(IDirect3DTexture9), (void**)&pkContainer)) && pkContainer)
+			{
+				if (!pkBackend->SetRenderTargetTexture(pkContainer))
+					pkBackend->RestoreDefaultTarget();
+				pkContainer->Release();
+			}
+			else
+			{
+				pkBackend->RestoreDefaultTarget();
+			}
+		}
+	}
 	return m_lpD3DDev->SetRenderTarget(RenderTargetIndex, pRenderTarget);
 }
 
