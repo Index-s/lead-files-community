@@ -384,6 +384,17 @@ bool CGraphicBase::BeginGrannyMeshShader()
 	// color and alpha, stage 1 disabled, a texture bound. Specular, fades and
 	// two-texture materials keep the fixed-function path for now.
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLOROP, &dwValue);
+	if (D3DTOP_SELECTARG1 == dwValue)
+	{
+		// Character-shadow cast: actors drawn as solid TFACTOR silhouettes.
+		STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG1, &dwValue);
+		if (D3DTA_TFACTOR != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwValue);
+		if (D3DTOP_DISABLE != dwValue)
+			return false;
+		return gs_kShaderPool.BindPNTFlatTFactor();
+	}
 	if (D3DTOP_MODULATE != dwValue)
 		return false;
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG1, &dwValue);
