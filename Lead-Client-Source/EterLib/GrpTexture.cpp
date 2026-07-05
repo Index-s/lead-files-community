@@ -38,6 +38,18 @@ void CGraphicTexture::SetTextureStage(int stage) const
 {
 	assert(IsDeviceCreated());
 	STATEMANAGER.SetTexture(stage, m_lpd3dTexture);
+
+	// DX12-native bind (D3D9-removal stage 1): the texture object carries its
+	// own shader-resource view, so the renderer resolves it directly instead
+	// of looking it up from the D3D9 texture pointer. This is the path that
+	// survives once the D3D9 texture object is gone.
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+	{
+		if (m_pkTextureDX12)
+			pkBackend->SetTextureSRV(stage, m_kSRVHandleDX12);
+		else
+			pkBackend->ClearTextureSRV(stage);
+	}
 }
 
 LPDIRECT3DTEXTURE9 CGraphicTexture::GetD3DTexture() const
