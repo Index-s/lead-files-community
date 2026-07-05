@@ -82,7 +82,49 @@ namespace
 		"}\n";
 
 	// Fixed-function stage 0: COLOROP/ALPHAOP = SELECTARG1(TEXTURE).
-	const char c_achTexturePixelProgram[] =
+		// Water patches: XYZ|DIFFUSE stream, UVs generated from the camera-space
+	// position through the TEXTURE0 transform (rows in c4-c5); the far variant
+	// drops the texture and passes the vertex color through.
+	const char c_achWaterVertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"float4 g_avTexMat0[2] : register(c4);\n"
+		"float4 g_avWorldView[3] : register(c11);\n"
+		"float4 g_vFogParams : register(c28);\n"
+		"float4 g_vFogParams2 : register(c29);\n"
+		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    float4 vCamPos;\n"
+		"    vCamPos.x = dot(vPosition, g_avWorldView[0]);\n"
+		"    vCamPos.y = dot(vPosition, g_avWorldView[1]);\n"
+		"    vCamPos.z = dot(vPosition, g_avWorldView[2]);\n"
+		"    vCamPos.w = 1.0f;\n"
+		"    Out.vTexCoord.x = dot(vCamPos, g_avTexMat0[0]);\n"
+		"    Out.vTexCoord.y = dot(vCamPos, g_avTexMat0[1]);\n"
+		"    Out.vDiffuse = In.vDiffuse;\n"
+		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
+		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
+		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    return Out;\n"
+		"}\n";
+
+	// Water surface: rgb from the animated texture, alpha from the vertex color
+	// (stage0 SELECTARG1(TEXTURE) color + SELECTARG1(DIFFUSE) alpha).
+	const char c_achWaterPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    return float4(tex2D(g_kSampler0, vTexCoord).rgb, vDiffuse.a);\n"
+		"}\n";
+
+const char c_achTexturePixelProgram[] =
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
 		"{\n"
@@ -610,6 +652,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	: m_bCreateFailed(false)
 	, m_lpPDTVertexShader(NULL)
 	, m_lpPTVertexShader(NULL)
+	, m_lpWaterVertexShader(NULL)
 	, m_lpPDTTexMatVertexShader(NULL)
 	, m_lpPNTLitVertexShader(NULL)
 	, m_lpPNTLitSpecVertexShader(NULL)
@@ -622,6 +665,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpModulatePixelShader(NULL)
 	, m_lpDiffusePixelShader(NULL)
 	, m_lpTexturePixelShader(NULL)
+	, m_lpWaterPixelShader(NULL)
 	, m_lpModulateTexAlphaPixelShader(NULL)
 	, m_lpInvAlphaAddPixelShader(NULL)
 	, m_lpTFactorModulatePixelShader(NULL)
@@ -642,6 +686,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTerrainShadowChrPixelShader(NULL)
 	, m_lpPDTDeclaration(NULL)
 	, m_lpPTDeclaration(NULL)
+	, m_lpPDDeclaration(NULL)
 	, m_lpPNTDeclaration(NULL)
 	, m_lpPNT2Declaration(NULL)
 	, m_lpPNDeclaration(NULL)
@@ -657,6 +702,7 @@ void CGraphicShaderPool::Destroy()
 {
 	safe_release(m_lpPDTVertexShader);
 	safe_release(m_lpPTVertexShader);
+	safe_release(m_lpWaterVertexShader);
 	safe_release(m_lpPDTTexMatVertexShader);
 	safe_release(m_lpPNTLitVertexShader);
 	safe_release(m_lpPNTLitSpecVertexShader);
@@ -669,6 +715,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpModulatePixelShader);
 	safe_release(m_lpDiffusePixelShader);
 	safe_release(m_lpTexturePixelShader);
+	safe_release(m_lpWaterPixelShader);
 	safe_release(m_lpModulateTexAlphaPixelShader);
 	safe_release(m_lpInvAlphaAddPixelShader);
 	safe_release(m_lpTFactorModulatePixelShader);
@@ -689,6 +736,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpTerrainShadowChrPixelShader);
 	safe_release(m_lpPDTDeclaration);
 	safe_release(m_lpPTDeclaration);
+	safe_release(m_lpPDDeclaration);
 	safe_release(m_lpPNTDeclaration);
 	safe_release(m_lpPNT2Declaration);
 	safe_release(m_lpPNDeclaration);
@@ -973,6 +1021,53 @@ bool CGraphicShaderPool::__Create()
 		m_bCreateFailed = true;
 		return false;
 	}
+
+	const D3DVERTEXELEMENT9 akPDElements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,    0 },
+		D3DDECL_END()
+	};
+
+	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPDElements, &m_lpPDDeclaration)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PD vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	if (FAILED(D3DCompile(c_achWaterVertexProgram, sizeof(c_achWaterVertexProgram) - 1, "WaterVertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpWaterVertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build WaterVertexProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achWaterPixelProgram, sizeof(c_achWaterPixelProgram) - 1, "WaterPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpWaterPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build WaterPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
 
 
 	const D3DVERTEXELEMENT9 akPNTElements[] =
@@ -1373,6 +1468,19 @@ bool CGraphicShaderPool::BindPDTDiffuse()
 bool CGraphicShaderPool::BindPTTexture()
 {
 	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTexturePixelShader);
+}
+
+bool CGraphicShaderPool::BindWater(bool bTexture)
+{
+	if (!__Bind(m_lpPDDeclaration, m_lpWaterVertexShader,
+				bTexture ? m_lpWaterPixelShader : m_lpDiffusePixelShader))
+		return false;
+
+	D3DXMATRIX matTexture;
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE0, &matTexture);
+	D3DXMatrixTranspose(&matTexture, &matTexture);
+	STATEMANAGER.SetVertexShaderConstant(4, &matTexture, 2);
+	return true;
 }
 
 bool CGraphicShaderPool::BindPDTTexture()

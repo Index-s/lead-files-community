@@ -230,6 +230,7 @@ class CGraphicBase
 		static bool BeginPDTShader();	// true = shader pipeline bound; else use the FVF path
 		static bool BeginPDTDiffuseShader();	// variant for NULL-texture draws (diffuse passthrough)
 		static bool BeginPTTextureShader();	// XYZ|TEX1 draws (texture passthrough)
+		static bool BeginWaterShader(bool bTexture);	// XYZ|DIFFUSE water patches; false = keep FFP
 		static bool BeginPDTTextureShader();	// XYZ|DIFFUSE|TEX1 draws where FFP selects TEXTURE only
 		static bool BeginPDTModulateTexAlphaShader();	// rgb = texture*diffuse, alpha = texture
 		static bool BeginPDTCloudShader();	// scrolling-UV cloud layer (MODULATEINVALPHA_ADDCOLOR)
