@@ -313,6 +313,14 @@ bool CGraphicBase::BeginTerrainFogFlatShader()
 	return gs_kShaderPool.BindTerrainFogFlat();
 }
 
+bool CGraphicBase::BeginTerrainAttrShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindTerrainAttr();
+}
+
 bool CGraphicBase::BeginTerrainShadowShader(bool bChrShadow)
 {
 	if (!ms_bUseShaderFFP)

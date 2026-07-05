@@ -68,6 +68,8 @@ class CGraphicShaderPool
 		bool BindTerrainSplat(bool bBase);
 		// Beyond-fog patches: solid TEXTUREFACTOR fill on the same vertex path.
 		bool BindTerrainFogFlat();
+		// Attr/marked-area overlay: TFACTOR tint, alpha masked by the marked splat.
+		bool BindTerrainAttr();
 		// Terrain shadow multiply overlay on the identical patch vertex path;
 		// lighting constants (c8-c10) uploaded by the caller.
 		bool BindTerrainShadow(bool bChrShadow);
@@ -118,6 +120,7 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpTerrainSplatPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTerrainSplatBasePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTerrainFogFlatPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTerrainAttrPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTerrainShadowPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTerrainShadowChrPixelShader;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDTDeclaration;
