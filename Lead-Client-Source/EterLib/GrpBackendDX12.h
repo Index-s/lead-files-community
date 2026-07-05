@@ -96,6 +96,7 @@ class CGraphicBackendDX12
 		static CGraphicBackendDX12*		ms_pkInstance;
 
 		ID3DBlob**						m_apkProgramBytecode;
+		ID3DBlob**						m_apkProgramBytecodeAlphaTest;
 		UINT							m_uProgramCount;
 
 		CGraphicPipelineKeyDX12			m_kPipelineKey;
