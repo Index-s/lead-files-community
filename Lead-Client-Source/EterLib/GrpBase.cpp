@@ -533,7 +533,7 @@ void CGraphicBase::__UploadOmniLightingConstants()
 								 kMaterial.Ambient.g * fGlobalG + kMaterial.Emissive.g,
 								 kMaterial.Ambient.b * fGlobalB + kMaterial.Emissive.b,
 								 kMaterial.Diffuse.a);
-	STATEMANAGER.SetVertexShaderConstant(8, avConstants, 10);
+	STATEMANAGER.SetVertexShaderConstant(18, avConstants, 10);
 }
 
 void CGraphicBase::EndPDTShader()

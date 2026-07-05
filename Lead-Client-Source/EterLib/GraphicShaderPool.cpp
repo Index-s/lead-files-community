@@ -8,11 +8,31 @@
 
 namespace
 {
+	// The fixed-function vertex-fog factor, evaluated exactly like D3D9 FFP:
+	// LINEAR ramp or EXP density on the (optionally radial) view-space distance,
+	// selected by the flags __Bind derives from the cached fog render states.
+	// Reads the transposed WORLDVIEW rows in c11-c13 and the params in c28-c29.
+	#define FOG_VS_PARAMS \
+		"float4 g_vFogParams : register(c28);\n" \
+		"float4 g_vFogParams2 : register(c29);\n"
+	#define FOG_VS_DECLARATIONS \
+		"float4 g_avWorldView[3] : register(c11);\n" \
+		FOG_VS_PARAMS
+	#define FOG_VS_BODY \
+		"    float3 vViewPos;\n" \
+		"    vViewPos.x = dot(vPosition, g_avWorldView[0]);\n" \
+		"    vViewPos.y = dot(vPosition, g_avWorldView[1]);\n" \
+		"    vViewPos.z = dot(vPosition, g_avWorldView[2]);\n" \
+		"    float fFogDist = lerp(vViewPos.z, length(vViewPos), g_vFogParams2.y);\n" \
+		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n" \
+		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+
 	// One WVP through dp4, matching the SpeedTree leaf shader convention.
 	const char c_achPDTVertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
+		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -23,6 +43,7 @@ namespace
 		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
 		"    Out.vDiffuse = In.vDiffuse;\n"
 		"    Out.vTexCoord = In.vTexCoord;\n"
+		FOG_VS_BODY
 		"    return Out;\n"
 		"}\n";
 
@@ -44,8 +65,9 @@ namespace
 	// XYZ|TEX1 (no diffuse) through the same WVP.
 	const char c_achPTVertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
+		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -55,6 +77,7 @@ namespace
 		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
 		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
 		"    Out.vTexCoord = In.vTexCoord;\n"
+		FOG_VS_BODY
 		"    return Out;\n"
 		"}\n";
 
@@ -78,9 +101,10 @@ namespace
 	// PDT vertices with the TEXTURE0 transform applied to the UVs (COUNT2).
 	const char c_achPDTTexMatVertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
-		"float4 g_avTexMat[4] : register(c4);\n"
+		"float4 g_avTexMat[2] : register(c4);\n"
+		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -93,6 +117,7 @@ namespace
 		"    float4 vTexCoord = float4(In.vTexCoord, 1.0f, 0.0f);\n"
 		"    Out.vTexCoord.x = dot(vTexCoord, g_avTexMat[0]);\n"
 		"    Out.vTexCoord.y = dot(vTexCoord, g_avTexMat[1]);\n"
+		FOG_VS_BODY
 		"    return Out;\n"
 		"}\n";
 
@@ -101,12 +126,13 @@ namespace
 	// color = saturate(cAmbient + cDiffuse * max(0, dot(worldNormal, lightDir))).
 	const char c_achPNTLitVertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
-		"float4 g_avWorld[4] : register(c4);\n"
+		"float4 g_avWorld[3] : register(c4);\n"
 		"float4 g_vLightDirection : register(c8);\n"
 		"float4 g_kLitDiffuse : register(c9);\n"
 		"float4 g_kLitAmbient : register(c10);\n"
+		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -123,6 +149,7 @@ namespace
 		"    float fDot = max(0.0f, dot(vWorldNormal, g_vLightDirection.xyz));\n"
 		"    Out.vDiffuse = saturate(g_kLitAmbient + g_kLitDiffuse * fDot);\n"
 		"    Out.vTexCoord = In.vTexCoord;\n"
+		FOG_VS_BODY
 		"    return Out;\n"
 		"}\n";
 
@@ -132,19 +159,20 @@ namespace
 	// theta/phi cone ramp (Falloff = 1), ambient and diffuse both scaled by them.
 	const char c_achPNTLitOmniVertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
-		"float4 g_avWorld[4] : register(c4);\n"
-		"float4 g_vSpotPos : register(c8);\n"        // xyz = position, w = range
-		"float4 g_vSpotDir : register(c9);\n"        // xyz = unit direction
-		"float4 g_vSpotAtten : register(c10);\n"     // xyz = a0/a1/a2, w = cos(theta/2)
-		"float4 g_kSpotDiffuse : register(c11);\n"   // rgb = light.Diffuse*mat.Diffuse, w = cos(phi/2)
-		"float4 g_kSpotAmbient : register(c12);\n"   // rgb = light.Ambient*mat.Ambient
-		"float4 g_vPointPos : register(c13);\n"      // xyz = position, w = range
-		"float4 g_vPointAtten : register(c14);\n"    // xyz = a0/a1/a2, w = enabled (0/1)
-		"float4 g_kPointDiffuse : register(c15);\n"
-		"float4 g_kPointAmbient : register(c16);\n"
-		"float4 g_kBaseColor : register(c17);\n"     // rgb = mat.Ambient*RS_AMBIENT + mat.Emissive, w = mat.Diffuse.a
+		"float4 g_avWorld[3] : register(c4);\n"
+		FOG_VS_DECLARATIONS
+		"float4 g_vSpotPos : register(c18);\n"       // xyz = position, w = range
+		"float4 g_vSpotDir : register(c19);\n"       // xyz = unit direction
+		"float4 g_vSpotAtten : register(c20);\n"     // xyz = a0/a1/a2, w = cos(theta/2)
+		"float4 g_kSpotDiffuse : register(c21);\n"   // rgb = light.Diffuse*mat.Diffuse, w = cos(phi/2)
+		"float4 g_kSpotAmbient : register(c22);\n"   // rgb = light.Ambient*mat.Ambient
+		"float4 g_vPointPos : register(c23);\n"      // xyz = position, w = range
+		"float4 g_vPointAtten : register(c24);\n"    // xyz = a0/a1/a2, w = enabled (0/1)
+		"float4 g_kPointDiffuse : register(c25);\n"
+		"float4 g_kPointAmbient : register(c26);\n"
+		"float4 g_kBaseColor : register(c27);\n"     // rgb = mat.Ambient*RS_AMBIENT + mat.Emissive, w = mat.Diffuse.a
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -185,6 +213,7 @@ namespace
 		"    }\n"
 		"    Out.vDiffuse = saturate(float4(vColor, g_kBaseColor.w));\n"
 		"    Out.vTexCoord = In.vTexCoord;\n"
+		FOG_VS_BODY
 		"    return Out;\n"
 		"}\n";
 
@@ -193,14 +222,15 @@ namespace
 	// texgen (R = 2(E.N)N - E in camera space) through the TEXTURE1 transform.
 	const char c_achPNTLitSpecVertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
-		"float4 g_avWorld[4] : register(c4);\n"
+		"float4 g_avWorld[3] : register(c4);\n"
 		"float4 g_vLightDirection : register(c8);\n"
 		"float4 g_kLitDiffuse : register(c9);\n"
 		"float4 g_kLitAmbient : register(c10);\n"
-		"float4 g_avWorldView[4] : register(c11);\n"
-		"float4 g_avTexMat1[4] : register(c15);\n"
+		"float4 g_avWorldView[3] : register(c11);\n"
+		"float4 g_avTexMat1[2] : register(c15);\n"
+		FOG_VS_PARAMS
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vSpecCoord : TEXCOORD1; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vSpecCoord : TEXCOORD1; float fFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -230,6 +260,9 @@ namespace
 		"    float4 vReflect = float4(2.0f * dot(vEye, vUnitNormal) * vUnitNormal - vEye, 1.0f);\n"
 		"    Out.vSpecCoord.x = dot(vReflect, g_avTexMat1[0]);\n"
 		"    Out.vSpecCoord.y = dot(vReflect, g_avTexMat1[1]);\n"
+		"    float fFogDist = lerp(vCamPos.z, length(vCamPos), g_vFogParams2.y);\n"
+		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
+		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -252,8 +285,9 @@ namespace
 	// XYZ|NORMAL|TEX1|TEX2 through WVP, both UV sets passed through (dungeon).
 	const char c_achPNT2VertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
+		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; float fFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -264,6 +298,7 @@ namespace
 		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		"    Out.vLightCoord = In.vLightCoord;\n"
+		FOG_VS_BODY
 		"    return Out;\n"
 		"}\n";
 
@@ -281,14 +316,15 @@ namespace
 	// (character-shadow projection through the TEXTURE1 transform).
 	const char c_achPNTLitRecvVertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
-		"float4 g_avWorld[4] : register(c4);\n"
+		"float4 g_avWorld[3] : register(c4);\n"
 		"float4 g_vLightDirection : register(c8);\n"
 		"float4 g_kLitDiffuse : register(c9);\n"
 		"float4 g_kLitAmbient : register(c10);\n"
-		"float4 g_avWorldView[4] : register(c11);\n"
-		"float4 g_avTexMat1[4] : register(c15);\n"
+		"float4 g_avWorldView[3] : register(c11);\n"
+		"float4 g_avTexMat1[2] : register(c15);\n"
+		FOG_VS_PARAMS
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; float fFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -312,6 +348,9 @@ namespace
 		"    vCamPos.w = 1.0f;\n"
 		"    Out.vShadowCoord.x = dot(vCamPos, g_avTexMat1[0]);\n"
 		"    Out.vShadowCoord.y = dot(vCamPos, g_avTexMat1[1]);\n"
+		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
+		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
+		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -331,10 +370,11 @@ namespace
 	// both dungeon-block passes rasterize bit-identical depths.
 	const char c_achPNT2RecvVertexProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
-		"float4 g_avWorldView[4] : register(c11);\n"
-		"float4 g_avTexMat1[4] : register(c15);\n"
+		"float4 g_avWorldView[3] : register(c11);\n"
+		"float4 g_avTexMat1[2] : register(c15);\n"
+		FOG_VS_PARAMS
 		"struct VS_INPUT { float3 vPosition : POSITION; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vShadowCoord : TEXCOORD1; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vShadowCoord : TEXCOORD1; float fFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -350,6 +390,9 @@ namespace
 		"    vCamPos.w = 1.0f;\n"
 		"    Out.vShadowCoord.x = dot(vCamPos, g_avTexMat1[0]);\n"
 		"    Out.vShadowCoord.y = dot(vCamPos, g_avTexMat1[1]);\n"
+		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
+		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
+		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -914,14 +957,48 @@ bool CGraphicShaderPool::__Bind(LPDIRECT3DVERTEXDECLARATION9 lpDeclaration, LPDI
 	if (!lpDeclaration || !lpVertexShader || !lpPixelShader)
 		return false;
 
-	D3DXMATRIX matWorld, matView, matProj, matWVP;
+	D3DXMATRIX matWorld, matView, matProj, matWorldView, matWVP;
 	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
 	STATEMANAGER.GetTransform(D3DTS_VIEW, &matView);
 	STATEMANAGER.GetTransform(D3DTS_PROJECTION, &matProj);
-	D3DXMatrixMultiply(&matWVP, &matWorld, &matView);
-	D3DXMatrixMultiply(&matWVP, &matWVP, &matProj);
+	D3DXMatrixMultiply(&matWorldView, &matWorld, &matView);
+	D3DXMatrixMultiply(&matWVP, &matWorldView, &matProj);
 	D3DXMatrixTranspose(&matWVP, &matWVP);
 	STATEMANAGER.SetVertexShaderConstant(0, &matWVP, 4);
+	D3DXMatrixTranspose(&matWorldView, &matWorldView);
+	STATEMANAGER.SetVertexShaderConstant(11, &matWorldView, 3);
+
+	// Mirror the fixed-function vertex-fog states into c28/c29: a LINEAR ramp
+	// (d * x + y, also covering the fog-off case as a constant 1) or an EXP
+	// curve, each gated by its select flag, over the plain or radial distance.
+	D3DXVECTOR4 avFogParams[2];
+	avFogParams[0] = D3DXVECTOR4(0.0f, 1.0f, 1.0f, 0.0f);
+	avFogParams[1] = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
+	if (STATEMANAGER.GetRenderState(D3DRS_FOGENABLE))
+	{
+		const DWORD dwFogMode = STATEMANAGER.GetRenderState(D3DRS_FOGVERTEXMODE);
+		if (D3DFOG_LINEAR == dwFogMode)
+		{
+			const DWORD dwStart = STATEMANAGER.GetRenderState(D3DRS_FOGSTART);
+			const DWORD dwEnd = STATEMANAGER.GetRenderState(D3DRS_FOGEND);
+			const float fStart = *reinterpret_cast<const float*>(&dwStart);
+			const float fEnd = *reinterpret_cast<const float*>(&dwEnd);
+			// A degenerate range degrades to a hard cutoff at the end distance.
+			const float fRange = (fEnd - fStart > 0.0001f) ? (fEnd - fStart) : 0.0001f;
+			avFogParams[0].x = -1.0f / fRange;
+			avFogParams[0].y = fEnd / fRange;
+		}
+		else if (D3DFOG_EXP == dwFogMode)
+		{
+			const DWORD dwDensity = STATEMANAGER.GetRenderState(D3DRS_FOGDENSITY);
+			avFogParams[0].z = 0.0f;
+			avFogParams[0].w = 1.0f;
+			// exp(-d * density) evaluated as exp2: fold in log2(e).
+			avFogParams[1].x = *reinterpret_cast<const float*>(&dwDensity) * 1.442695f;
+		}
+		avFogParams[1].y = STATEMANAGER.GetRenderState(D3DRS_RANGEFOGENABLE) ? 1.0f : 0.0f;
+	}
+	STATEMANAGER.SetVertexShaderConstant(28, avFogParams, 2);
 
 	STATEMANAGER.SetVertexDeclaration(lpDeclaration);
 	STATEMANAGER.SetVertexShader(lpVertexShader);
@@ -962,7 +1039,7 @@ bool CGraphicShaderPool::BindPDTTexMatInvAlphaAdd()
 	D3DXMATRIX matTexture;
 	STATEMANAGER.GetTransform(D3DTS_TEXTURE0, &matTexture);
 	D3DXMatrixTranspose(&matTexture, &matTexture);
-	STATEMANAGER.SetVertexShaderConstant(4, &matTexture, 4);
+	STATEMANAGER.SetVertexShaderConstant(4, &matTexture, 2);
 	return true;
 }
 
@@ -994,7 +1071,7 @@ bool CGraphicShaderPool::BindPNTLit()
 	D3DXMATRIX matWorld;
 	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
 	D3DXMatrixTranspose(&matWorld, &matWorld);
-	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 4);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
 	return true;
 }
 
@@ -1003,17 +1080,13 @@ bool CGraphicShaderPool::BindPNTLitSpecular()
 	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitSpecVertexShader, m_lpLitSpecPixelShader))
 		return false;
 
-	D3DXMATRIX matWorld, matView, matTemp;
+	D3DXMATRIX matWorld, matTexture;
 	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
-	STATEMANAGER.GetTransform(D3DTS_VIEW, &matView);
-	D3DXMatrixMultiply(&matTemp, &matWorld, &matView);
-	D3DXMatrixTranspose(&matTemp, &matTemp);
-	STATEMANAGER.SetVertexShaderConstant(11, &matTemp, 4);
 	D3DXMatrixTranspose(&matWorld, &matWorld);
-	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 4);
-	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTemp);
-	D3DXMatrixTranspose(&matTemp, &matTemp);
-	STATEMANAGER.SetVertexShaderConstant(15, &matTemp, 4);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTexture);
+	D3DXMatrixTranspose(&matTexture, &matTexture);
+	STATEMANAGER.SetVertexShaderConstant(15, &matTexture, 2);
 	return true;
 }
 
@@ -1025,7 +1098,7 @@ bool CGraphicShaderPool::BindPNTLitOmni()
 	D3DXMATRIX matWorld;
 	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
 	D3DXMatrixTranspose(&matWorld, &matWorld);
-	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 4);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
 	return true;
 }
 
@@ -1039,17 +1112,13 @@ bool CGraphicShaderPool::BindPNTLitShadowReceiver()
 	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitRecvVertexShader, m_lpLitShadowPixelShader))
 		return false;
 
-	D3DXMATRIX matWorld, matView, matTemp;
+	D3DXMATRIX matWorld, matTexture;
 	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
-	STATEMANAGER.GetTransform(D3DTS_VIEW, &matView);
-	D3DXMatrixMultiply(&matTemp, &matWorld, &matView);
-	D3DXMatrixTranspose(&matTemp, &matTemp);
-	STATEMANAGER.SetVertexShaderConstant(11, &matTemp, 4);
 	D3DXMatrixTranspose(&matWorld, &matWorld);
-	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 4);
-	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTemp);
-	D3DXMatrixTranspose(&matTemp, &matTemp);
-	STATEMANAGER.SetVertexShaderConstant(15, &matTemp, 4);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTexture);
+	D3DXMatrixTranspose(&matTexture, &matTexture);
+	STATEMANAGER.SetVertexShaderConstant(15, &matTexture, 2);
 	return true;
 }
 
@@ -1058,15 +1127,10 @@ bool CGraphicShaderPool::BindPNT2ShadowReceiver()
 	if (!__Bind(m_lpPNT2Declaration, m_lpPNT2RecvVertexShader, m_lpTFactorShadowPixelShader))
 		return false;
 
-	D3DXMATRIX matWorld, matView, matTemp;
-	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
-	STATEMANAGER.GetTransform(D3DTS_VIEW, &matView);
-	D3DXMatrixMultiply(&matTemp, &matWorld, &matView);
-	D3DXMatrixTranspose(&matTemp, &matTemp);
-	STATEMANAGER.SetVertexShaderConstant(11, &matTemp, 4);
-	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTemp);
-	D3DXMatrixTranspose(&matTemp, &matTemp);
-	STATEMANAGER.SetVertexShaderConstant(15, &matTemp, 4);
+	D3DXMATRIX matTexture;
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTexture);
+	D3DXMatrixTranspose(&matTexture, &matTexture);
+	STATEMANAGER.SetVertexShaderConstant(15, &matTexture, 2);
 	return true;
 }
 

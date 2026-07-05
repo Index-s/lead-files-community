@@ -37,7 +37,7 @@ class CGraphicShaderPool
 		// reflection vector through the TEXTURE1 transform (granny specular).
 		bool BindPNTLitSpecular();
 		// PNT with the fixed-function spot + point vertex lighting used by the
-		// character-preview screens; light constants (c8-c17) uploaded by the caller.
+		// character-preview screens; light constants (c18-c27) uploaded by the caller.
 		bool BindPNTLitOmni();
 		// XYZ|NORMAL|TEX1|TEX2 dungeon blocks: tex0 * lightmap(tex1), no lighting.
 		bool BindPNT2Lightmap();
