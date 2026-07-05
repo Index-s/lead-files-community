@@ -555,6 +555,20 @@ void CStateManager::SetRenderState(D3DRENDERSTATETYPE Type, DWORD Value)
 		SetPixelShaderConstant(0, afColor, 1);
 	}
 
+	// The shader pipeline reads FOGCOLOR from pixel constant c1.
+	if (D3DRS_FOGCOLOR == Type)
+	{
+		const float c_fInv255 = 1.0f / 255.0f;
+		const float afColor[4] =
+		{
+			((Value >> 16) & 0xff) * c_fInv255,
+			((Value >> 8) & 0xff) * c_fInv255,
+			(Value & 0xff) * c_fInv255,
+			((Value >> 24) & 0xff) * c_fInv255,
+		};
+		SetPixelShaderConstant(1, afColor, 1);
+	}
+
 	if (m_CurrentState.m_RenderStates[Type] == Value)
 		return;
 

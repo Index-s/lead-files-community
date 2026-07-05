@@ -32,7 +32,7 @@ namespace
 		"float4 g_avWVP[4] : register(c0);\n"
 		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -44,11 +44,22 @@ namespace
 		"    Out.vDiffuse = In.vDiffuse;\n"
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		FOG_VS_BODY
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
 	// Fixed-function stage 0: COLOROP/ALPHAOP = MODULATE(TEXTURE, DIFFUSE).
 	const char c_achModulatePixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"{\n"
+		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord) * vDiffuse;\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
+		"}\n";
+
+	const char c_achModulateNoFogPixelProgram[] =
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
 		"{\n"
@@ -58,37 +69,49 @@ namespace
 	// Actor fade (BlendRender): rgb = texture * lit diffuse, alpha = TFACTOR
 	// (stage0 ALPHAOP SELECTARG2(TFACTOR), stage1 disabled).
 	const char c_achLitBlendPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return float4(tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb, g_kTFactor.a);\n"
+		"    float4 kFinal = float4(tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb, g_kTFactor.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Actor hit flash (AddRender): stage1 ADD(CURRENT, TFACTOR) on the lit base.
 	const char c_achLitAddPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
-		"    return float4(kTexel.rgb * vDiffuse.rgb + g_kTFactor.rgb, kTexel.a * vDiffuse.a);\n"
+		"    float4 kFinal = float4(kTexel.rgb * vDiffuse.rgb + g_kTFactor.rgb, kTexel.a * vDiffuse.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Fixed-function NULL-texture draw: only the interpolated diffuse reaches the output.
 	const char c_achDiffusePixelProgram[] =
-		"float4 main(float4 vDiffuse : COLOR0) : COLOR0\n"
+		"float4 g_kFogColor : register(c1);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return vDiffuse;\n"
+		"    float4 kFinal = vDiffuse;\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Character-shadow cast: solid TEXTUREFACTOR silhouette
 	// (stage0 SELECTARG1(TFACTOR), stage1 disabled).
 	const char c_achFlatTFactorPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main() : COLOR0\n"
+		"float4 main(float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return float4(g_kTFactor.rgb, 1.0f);\n"
+		"    float4 kFinal = float4(g_kTFactor.rgb, 1.0f);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// XYZ|TEX1 (no diffuse) through the same WVP.
@@ -96,7 +119,7 @@ namespace
 		"float4 g_avWVP[4] : register(c0);\n"
 		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -107,6 +130,7 @@ namespace
 		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		FOG_VS_BODY
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -121,7 +145,7 @@ namespace
 		"float4 g_vFogParams : register(c28);\n"
 		"float4 g_vFogParams2 : register(c29);\n"
 		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -141,32 +165,42 @@ namespace
 		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
 	// Water surface: rgb from the animated texture, alpha from the vertex color
 	// (stage0 SELECTARG1(TEXTURE) color + SELECTARG1(DIFFUSE) alpha).
 	const char c_achWaterPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return float4(tex2D(g_kSampler0, vTexCoord).rgb, vDiffuse.a);\n"
+		"    float4 kFinal = float4(tex2D(g_kSampler0, vTexCoord).rgb, vDiffuse.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 const char c_achTexturePixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return tex2D(g_kSampler0, vTexCoord);\n"
+		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Fixed-function: COLOROP=MODULATE(TEXTURE,DIFFUSE), ALPHAOP=SELECTARG1(TEXTURE).
 	const char c_achModulateTexAlphaPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
-		"    return float4(kTexel.rgb * vDiffuse.rgb, kTexel.a);\n"
+		"    float4 kFinal = float4(kTexel.rgb * vDiffuse.rgb, kTexel.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Minimap terrain tiles: XYZ|TEX1 stream, tile UVs passed through, cover
@@ -179,7 +213,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_vFogParams : register(c28);\n"
 		"float4 g_vFogParams2 : register(c29);\n"
 		"struct VS_INPUT { float3 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vCoverCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vCoverCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -199,28 +233,35 @@ const char c_achTexturePixelProgram[] =
 		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
 	// Minimap tile: rgb = tile * cover, alpha = cover (stage1 MODULATE +
 	// alpha SELECTARG1(TEXTURE) over the stage0 tile).
 	const char c_achMiniMapPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vCoverCoord : TEXCOORD1) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vCoverCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kCover = tex2D(g_kSampler1, vCoverCoord);\n"
-		"    return float4(tex2D(g_kSampler0, vTexCoord).rgb * kCover.rgb, kCover.a);\n"
+		"    float4 kFinal = float4(tex2D(g_kSampler0, vTexCoord).rgb * kCover.rgb, kCover.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Unloaded minimap tile: TFACTOR fill times the cover.
 	const char c_achMiniMapTFactorPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vCoverCoord : TEXCOORD1) : COLOR0\n"
+		"float4 main(float2 vCoverCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kCover = tex2D(g_kSampler1, vCoverCoord);\n"
-		"    return float4(g_kTFactor.rgb * kCover.rgb, kCover.a);\n"
+		"    float4 kFinal = float4(g_kTFactor.rgb * kCover.rgb, kCover.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// PDT vertices with the TEXTURE0 transform applied to the UVs (COUNT2).
@@ -229,7 +270,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_avTexMat[2] : register(c4);\n"
 		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -243,6 +284,7 @@ const char c_achTexturePixelProgram[] =
 		"    Out.vTexCoord.x = dot(vTexCoord, g_avTexMat[0]);\n"
 		"    Out.vTexCoord.y = dot(vTexCoord, g_avTexMat[1]);\n"
 		FOG_VS_BODY
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -255,7 +297,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_vFogParams : register(c28);\n"
 		"float4 g_vFogParams2 : register(c29);\n"
 		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -274,16 +316,20 @@ const char c_achTexturePixelProgram[] =
 		"    float fFogDist = lerp(vViewPos.z, length(vViewPos), g_vFogParams2.y);\n"
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
 	// Branch with self-shadow: both stages modulate (texture, diffuse, shadow).
 	const char c_achSpeedTreeShadowPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1) : COLOR0\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return tex2D(g_kSampler0, vTexCoord) * vDiffuse * tex2D(g_kSampler1, vShadowCoord);\n"
+		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord) * vDiffuse * tex2D(g_kSampler1, vShadowCoord);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// XYZ|NORMAL|TEX1 with the fixed-function directional-light formula:
@@ -296,7 +342,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kLitAmbient : register(c10);\n"
 		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -314,6 +360,7 @@ const char c_achTexturePixelProgram[] =
 		"    Out.vDiffuse = saturate(g_kLitAmbient + g_kLitDiffuse * fDot);\n"
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		FOG_VS_BODY
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -336,7 +383,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kPointAmbient : register(c26);\n"
 		"float4 g_kBaseColor : register(c27);\n"     // rgb = mat.Ambient*RS_AMBIENT + mat.Emissive, w = mat.Diffuse.a
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -378,6 +425,7 @@ const char c_achTexturePixelProgram[] =
 		"    Out.vDiffuse = saturate(float4(vColor, g_kBaseColor.w));\n"
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		FOG_VS_BODY
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -394,7 +442,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_avTexMat1[2] : register(c15);\n"
 		FOG_VS_PARAMS
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vSpecCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vSpecCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -427,22 +475,26 @@ const char c_achTexturePixelProgram[] =
 		"    float fFogDist = lerp(vCamPos.z, length(vCamPos), g_vFogParams2.y);\n"
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
 	// Granny specular: stage0 MODULATE(tex, lit) with alpha = tex.a * TFACTOR.a,
 	// stage1 MODULATEALPHA_ADDCOLOR(current, envmap), alpha = current.
 	const char c_achLitSpecPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vSpecCoord : TEXCOORD1) : COLOR0\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vSpecCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float3 vColor = kTexel.rgb * vDiffuse.rgb;\n"
 		"    float fAlpha = kTexel.a * g_kTFactor.a;\n"
 		"    float3 vEnv = tex2D(g_kSampler1, vSpecCoord).rgb;\n"
-		"    return float4(vColor + fAlpha * vEnv, fAlpha);\n"
+		"    float4 kFinal = float4(vColor + fAlpha * vEnv, fAlpha);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 
@@ -451,7 +503,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
 		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -463,16 +515,20 @@ const char c_achTexturePixelProgram[] =
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		"    Out.vLightCoord = In.vLightCoord;\n"
 		FOG_VS_BODY
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
 	// Dungeon cascade: stage0 SELECTARG1(TEXTURE), stage1 MODULATE(TEXTURE, CURRENT).
 	const char c_achLightmapPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vLightCoord : TEXCOORD1) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vLightCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return tex2D(g_kSampler0, vTexCoord) * tex2D(g_kSampler1, vLightCoord);\n"
+		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord) * tex2D(g_kSampler1, vLightCoord);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 
@@ -488,7 +544,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_avTexMat1[2] : register(c15);\n"
 		FOG_VS_PARAMS
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -515,18 +571,22 @@ const char c_achTexturePixelProgram[] =
 		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
 	// Shadow receiver: stage0 MODULATE(tex, lit), stage1 MODULATE(shadow, current).
 	const char c_achLitShadowPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1) : COLOR0\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float3 vColor = tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb;\n"
 		"    vColor *= tex2D(g_kSampler1, vShadowCoord).rgb;\n"
-		"    return float4(vColor, 1.0f);\n"
+		"    float4 kFinal = float4(vColor, 1.0f);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// XYZ|NORMAL|TEX1|TEX2 with the character-shadow projection on TEXCOORD1.
@@ -538,7 +598,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_avTexMat1[2] : register(c15);\n"
 		FOG_VS_PARAMS
 		"struct VS_INPUT { float3 vPosition : POSITION; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vShadowCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vShadowCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -557,17 +617,21 @@ const char c_achTexturePixelProgram[] =
 		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
 	// Dungeon-block shadow receiver: stage0 SELECTARG1(TFACTOR), stage1
 	// MODULATE(shadow, current); the ZERO/SRCCOLOR blend applies it to the scene.
 	const char c_achTFactorShadowPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
 		"float4 g_vTFactor : register(c0);\n"
-		"float4 main(float2 vShadowCoord : TEXCOORD1) : COLOR0\n"
+		"float4 main(float2 vShadowCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return float4(g_vTFactor.rgb * tex2D(g_kSampler1, vShadowCoord).rgb, 1.0f);\n"
+		"    float4 kFinal = float4(g_vTFactor.rgb * tex2D(g_kSampler1, vShadowCoord).rgb, 1.0f);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Terrain patches: XYZ|NORMAL stream, both UV sets generated from the
@@ -581,7 +645,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_vFogParams : register(c28);\n"
 		"float4 g_vFogParams2 : register(c29);\n"
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vSplatCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vSplatCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -602,33 +666,43 @@ const char c_achTexturePixelProgram[] =
 		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
 	// Splat layer: rgb = tile texture, a = splat-map alpha
 	// (stage0 MODULATE(tex, white diffuse) + stage1 alpha SELECTARG1(TEXTURE)).
 	const char c_achTerrainSplatPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vSplatCoord : TEXCOORD1) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vSplatCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return float4(tex2D(g_kSampler0, vTexCoord).rgb, tex2D(g_kSampler1, vSplatCoord).a);\n"
+		"    float4 kFinal = float4(tex2D(g_kSampler0, vTexCoord).rgb, tex2D(g_kSampler1, vSplatCoord).a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// First (base-coat) splat: stage1 ALPHAOP disabled, alpha = tile texture alpha.
 	const char c_achTerrainSplatBasePixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return tex2D(g_kSampler0, vTexCoord);\n"
+		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Far-fog flat pass: solid TFACTOR (fog color), alpha stage disabled.
 	const char c_achTerrainFogFlatPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main() : COLOR0\n"
+		"float4 main(float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return float4(g_kTFactor.rgb, 1.0f);\n"
+		"    float4 kFinal = float4(g_kTFactor.rgb, 1.0f);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Terrain shadow overlay VS: identical position/texgen path as the splat
@@ -647,7 +721,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_vFogParams : register(c28);\n"
 		"float4 g_vFogParams2 : register(c29);\n"
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -675,108 +749,142 @@ const char c_achTexturePixelProgram[] =
 		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    Out.fFixedFog = 1.0f;\n"
 		"    return Out;\n"
 		"}\n";
 
 	// Static-shadow multiply overlay: lit diffuse times the shadow texture
 	// (the ZERO/SRCCOLOR blend multiplies it into the scene).
 	const char c_achTerrainShadowPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return float4(tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb, vDiffuse.a);\n"
+		"    float4 kFinal = float4(tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb, vDiffuse.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Static + character shadow overlay: stage1 modulates the projected
 	// character shadow map on top.
 	const char c_achTerrainShadowChrPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1) : COLOR0\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float3 vColor = tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb;\n"
 		"    vColor *= tex2D(g_kSampler1, vShadowCoord).rgb;\n"
-		"    return float4(vColor, vDiffuse.a);\n"
+		"    float4 kFinal = float4(vColor, vDiffuse.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Terrain attr/marked-area overlay: rgb = TFACTOR, alpha = TFACTOR
 	// times the marked-splat texture sampled through the TEXTURE1 texgen.
 	const char c_achTerrainAttrPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vSplatCoord : TEXCOORD1) : COLOR0\n"
+		"float4 main(float2 vSplatCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    return float4(g_kTFactor.rgb, g_kTFactor.a * tex2D(g_kSampler1, vSplatCoord).a);\n"
+		"    float4 kFinal = float4(g_kTFactor.rgb, g_kTFactor.a * tex2D(g_kSampler1, vSplatCoord).a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Fixed-function D3DTOP_MODULATEINVALPHA_ADDCOLOR(TEXTURE, DIFFUSE), alpha = texture.
 	const char c_achInvAlphaAddPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
-		"    return float4(kTexel.rgb + vDiffuse.rgb * (1.0f - kTexel.a), kTexel.a);\n"
+		"    float4 kFinal = float4(kTexel.rgb + vDiffuse.rgb * (1.0f - kTexel.a), kTexel.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// Effect combiners: COLOROP(ARG1=TFACTOR, ARG2=TEXTURE), ALPHAOP = MODULATE.
 	const char c_achTFactorModulatePixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
-		"    return float4(kTexel.rgb * g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
+		"    float4 kFinal = float4(kTexel.rgb * g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 	const char c_achTFactorAddPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
-		"    return float4(kTexel.rgb + g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
+		"    float4 kFinal = float4(kTexel.rgb + g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 	const char c_achTFactorOnlyPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
-		"    return float4(g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
+		"    float4 kFinal = float4(g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 	const char c_achTexTFactorAlphaPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
-		"    return float4(kTexel.rgb, kTexel.a * g_kTFactor.a);\n"
+		"    float4 kFinal = float4(kTexel.rgb, kTexel.a * g_kTFactor.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 
 	// The remaining effect combiners shipped assets actually use
 	// (coloroperationtype in .mse files): MODULATE2X, MODULATE4X, ADDSIGNED.
 	const char c_achTFactorModulate2XPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
-		"    return float4(kTexel.rgb * g_kTFactor.rgb * 2.0f, kTexel.a * g_kTFactor.a);\n"
+		"    float4 kFinal = float4(kTexel.rgb * g_kTFactor.rgb * 2.0f, kTexel.a * g_kTFactor.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 	const char c_achTFactorModulate4XPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
-		"    return float4(kTexel.rgb * g_kTFactor.rgb * 4.0f, kTexel.a * g_kTFactor.a);\n"
+		"    float4 kFinal = float4(kTexel.rgb * g_kTFactor.rgb * 4.0f, kTexel.a * g_kTFactor.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 	const char c_achTFactorAddSignedPixelProgram[] =
+		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
-		"    return float4(kTexel.rgb + g_kTFactor.rgb - 0.5f, kTexel.a * g_kTFactor.a);\n"
+		"    float4 kFinal = float4(kTexel.rgb + g_kTFactor.rgb - 0.5f, kTexel.a * g_kTFactor.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    return kFinal;\n"
 		"}\n";
 }
 
@@ -797,6 +905,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTerrainSplatVertexShader(NULL)
 	, m_lpTerrainLitShadowVertexShader(NULL)
 	, m_lpModulatePixelShader(NULL)
+	, m_lpModulateNoFogPixelShader(NULL)
 	, m_lpLitBlendPixelShader(NULL)
 	, m_lpLitAddPixelShader(NULL)
 	, m_lpDiffusePixelShader(NULL)
@@ -857,6 +966,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpTerrainSplatVertexShader);
 	safe_release(m_lpTerrainLitShadowVertexShader);
 	safe_release(m_lpModulatePixelShader);
+	safe_release(m_lpModulateNoFogPixelShader);
 	safe_release(m_lpLitBlendPixelShader);
 	safe_release(m_lpLitAddPixelShader);
 	safe_release(m_lpDiffusePixelShader);
@@ -931,6 +1041,22 @@ bool CGraphicShaderPool::__Create()
 		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpModulatePixelShader)))
 	{
 		TraceError("CGraphicShaderPool: failed to build modulate pixel shader [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achModulateNoFogPixelProgram, sizeof(c_achModulateNoFogPixelProgram) - 1, "ModulateNoFogPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpModulateNoFogPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build modulate no-fog pixel shader [ %s ].",
 				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
 		safe_release(pCode);
 		safe_release(pError);
@@ -2045,10 +2171,10 @@ bool CGraphicShaderPool::BindPixelOnlyModulate()
 	if (!m_lpPDTDeclaration && !__Create())
 		return false;
 
-	if (!m_lpModulatePixelShader)
+	if (!m_lpModulateNoFogPixelShader)
 		return false;
 
-	STATEMANAGER.SetPixelShader(m_lpModulatePixelShader);
+	STATEMANAGER.SetPixelShader(m_lpModulateNoFogPixelShader);
 	return true;
 }
 
