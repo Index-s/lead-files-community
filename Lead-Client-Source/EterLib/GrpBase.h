@@ -230,6 +230,7 @@ class CGraphicBase
 		static bool BeginGrannyMeshShader();	// lit PNT mesh w/ base modulate cascade; false = keep FFP
 		static bool BeginTerrainSplatShader(bool bBase);	// terrain patch splat layers; false = keep FFP
 		static bool BeginTerrainFogFlatShader();	// beyond-fog terrain patches (TFACTOR fill)
+		static bool BeginTerrainAttrShader();	// attr/marked-area overlay; false = keep FFP
 		static void EndPDTShader();		// call only after a successful Begin*Shader
 		static void DestroyShaderPool();
 

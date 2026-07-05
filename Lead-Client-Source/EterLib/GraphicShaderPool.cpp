@@ -467,6 +467,16 @@ namespace
 		"    return float4(g_kTFactor.rgb, 1.0f);\n"
 		"}\n";
 
+	// Terrain attr/marked-area overlay: rgb = TFACTOR, alpha = TFACTOR
+	// times the marked-splat texture sampled through the TEXTURE1 texgen.
+	const char c_achTerrainAttrPixelProgram[] =
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 main(float2 vSplatCoord : TEXCOORD1) : COLOR0\n"
+		"{\n"
+		"    return float4(g_kTFactor.rgb, g_kTFactor.a * tex2D(g_kSampler1, vSplatCoord).a);\n"
+		"}\n";
+
 	// Fixed-function D3DTOP_MODULATEINVALPHA_ADDCOLOR(TEXTURE, DIFFUSE), alpha = texture.
 	const char c_achInvAlphaAddPixelProgram[] =
 		"sampler2D g_kSampler0 : register(s0);\n"
@@ -539,6 +549,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTerrainSplatPixelShader(NULL)
 	, m_lpTerrainSplatBasePixelShader(NULL)
 	, m_lpTerrainFogFlatPixelShader(NULL)
+	, m_lpTerrainAttrPixelShader(NULL)
 	, m_lpPDTDeclaration(NULL)
 	, m_lpPTDeclaration(NULL)
 	, m_lpPNTDeclaration(NULL)
@@ -580,6 +591,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpTerrainSplatPixelShader);
 	safe_release(m_lpTerrainSplatBasePixelShader);
 	safe_release(m_lpTerrainFogFlatPixelShader);
+	safe_release(m_lpTerrainAttrPixelShader);
 	safe_release(m_lpPDTDeclaration);
 	safe_release(m_lpPTDeclaration);
 	safe_release(m_lpPNTDeclaration);
@@ -1084,6 +1096,25 @@ bool CGraphicShaderPool::__Create()
 	safe_release(pCode);
 	safe_release(pError);
 
+	if (FAILED(D3DCompile(c_achTerrainAttrPixelProgram, sizeof(c_achTerrainAttrPixelProgram) - 1, "TerrainAttrPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainAttrPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TerrainAttrPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	safe_release(pCode);
+	safe_release(pError);
+
 	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPNTElements, &m_lpPNTDeclaration)))
 	{
 		TraceError("CGraphicShaderPool: failed to create PNT vertex declaration.");
@@ -1303,6 +1334,18 @@ bool CGraphicShaderPool::BindTerrainSplat(bool bBase)
 bool CGraphicShaderPool::BindTerrainFogFlat()
 {
 	return __Bind(m_lpPNDeclaration, m_lpTerrainSplatVertexShader, m_lpTerrainFogFlatPixelShader);
+}
+
+bool CGraphicShaderPool::BindTerrainAttr()
+{
+	if (!__Bind(m_lpPNDeclaration, m_lpTerrainSplatVertexShader, m_lpTerrainAttrPixelShader))
+		return false;
+
+	D3DXMATRIX matTexture;
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTexture);
+	D3DXMatrixTranspose(&matTexture, &matTexture);
+	STATEMANAGER.SetVertexShaderConstant(6, &matTexture, 2);
+	return true;
 }
 
 
