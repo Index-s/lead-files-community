@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 #include "../eterBase/Stl.h"
 #include "GrpBackendDX12.h"
 #include "GraphicShaderPool.h"
@@ -26,6 +26,7 @@ CGraphicBackendDX12::CGraphicBackendDX12()
 	, m_uSRVIncrementSize(0)
 	, m_pkWhiteTexture(NULL)
 	, m_pkCPUHeap(NULL)
+	, m_bInFrame(false)
 	, m_bCreated(false)
 {
 	for (UINT u = 0; u < TEXTURE_STAGE_COUNT; ++u)
@@ -111,6 +112,7 @@ void CGraphicBackendDX12::Destroy()
 		m_akTextureSRVs[u].ptr = 0;
 	m_akInputElements = NULL;
 	m_uInputElementCount = 0;
+	m_bInFrame = false;
 	m_bCreated = false;
 }
 
@@ -234,6 +236,7 @@ bool CGraphicBackendDX12::BeginFrame(DWORD dwClearColor)
 	ID3D12DescriptorHeap* apkHeaps[] = { m_kSRVRing.GetHeap(), m_kSamplerCache.GetHeap() };
 	pkCommandList->SetDescriptorHeaps(2, apkHeaps);
 	pkCommandList->SetGraphicsRootSignature(m_kRootSignature.GetRootSignature());
+	m_bInFrame = true;
 	return true;
 }
 
@@ -242,6 +245,7 @@ bool CGraphicBackendDX12::EndFrame()
 	if (!m_bCreated)
 		return false;
 
+	m_bInFrame = false;
 	m_kDevice.EndFrame();
 	const bool bPresented = m_kDevice.Present();
 
@@ -375,7 +379,7 @@ bool CGraphicBackendDX12::DrawTransient(D3D_PRIMITIVE_TOPOLOGY eTopology,
 										const void* pvVertices, UINT uVertexCount, UINT uStrideBytes,
 										const WORD* awIndices, UINT uIndexCount)
 {
-	if (!m_bCreated || !m_akInputElements)
+	if (!m_bCreated || !m_bInFrame || !m_akInputElements)
 		return false;
 
 	if (!__ApplyState(eTopology))

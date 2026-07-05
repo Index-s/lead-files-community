@@ -45,6 +45,9 @@
 #include <d3dx9math_shim.h>
 
 #include <vector>
+#include <unordered_map>
+
+#include "GrpInputLayoutDX12.h"
 
 #include "../eterBase/Singleton.h"
 
@@ -274,6 +277,32 @@ class CStateManager : public CSingleton<CStateManager>
 		HRESULT	CreateVertexShader(CONST DWORD* pFunction, LPDIRECT3DVERTEXSHADER9* ppShader);
 		HRESULT	CreateVertexDeclaration(CONST D3DVERTEXELEMENT9* pVertexElements, LPDIRECT3DVERTEXDECLARATION9* ppDecl);
 		HRESULT	CreatePixelShader(CONST DWORD* pFunction, LPDIRECT3DPIXELSHADER9* ppShader);
+
+		// DX12 mirror: identity maps from D3D9 objects to backend resources.
+		void	RegisterShaderProgramDX12(const void* pkShader, const char* c_szProgramName);
+		void	RegisterTextureSRVDX12(const void* pkTexture, D3D12_CPU_DESCRIPTOR_HANDLE kSRVHandle);
+		void	UnregisterTextureSRVDX12(const void* pkTexture);
+
+	private:
+		struct TInputLayoutDX12
+		{
+			D3D12_INPUT_ELEMENT_DESC	akElements[16];
+			UINT						uElementCount;
+			UINT						uLayoutID;
+		};
+
+		bool	__MirrorDrawDX12(D3DPRIMITIVETYPE ePrimitiveType,
+								 const void* pvVertices, UINT uVertexCount, UINT uStrideBytes,
+								 const WORD* awIndices, UINT uIndexCount);
+
+		std::unordered_map<const void*, UINT>				m_kShaderProgramMapDX12;
+		std::unordered_map<const void*, TInputLayoutDX12>	m_kDeclLayoutMapDX12;
+		std::unordered_map<const void*, SIZE_T>				m_kTextureSRVMapDX12;
+		UINT	m_uNextLayoutIDDX12 = 1;
+		UINT	m_uVertexProgramDX12 = 0xFFFFFFFF;
+		UINT	m_uPixelProgramDX12 = 0xFFFFFFFF;
+
+	public:
 
 		// Renderstates
 		void	SaveRenderState(D3DRENDERSTATETYPE Type, DWORD dwValue);

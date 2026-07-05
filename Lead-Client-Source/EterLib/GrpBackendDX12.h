@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // The DX12 backend spine: owns the device, upload/descriptor rings, PSO and
 // sampler caches and the SM5 builds of the pool programs, and turns mirrored
@@ -103,6 +103,7 @@ class CGraphicBackendDX12
 
 		ID3D12Resource*					m_pkWhiteTexture;
 		ID3D12DescriptorHeap*			m_pkCPUHeap;
+		bool							m_bInFrame;
 		D3D12_CPU_DESCRIPTOR_HANDLE		m_kWhiteSRV;
 		bool							m_bCreated;
 };

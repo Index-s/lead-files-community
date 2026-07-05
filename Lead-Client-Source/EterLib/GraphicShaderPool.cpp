@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 #include <d3dcompiler.h>
 #include "../eterBase/Stl.h"
 #include "GraphicShaderPool.h"
@@ -1052,6 +1052,52 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPNT2Declaration);
 	safe_release(m_lpPDT2Declaration);
 	safe_release(m_lpPNDeclaration);
+	// DX12 mirror: map every created shader to its registry program.
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpPDTVertexShader, "PDTVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpModulatePixelShader, "ModulatePixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpModulateNoFogPixelShader, "ModulateNoFogPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpLitBlendPixelShader, "LitBlendPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpLitAddPixelShader, "LitAddPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpDiffusePixelShader, "DiffusePixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpFlatTFactorPixelShader, "FlatTFactorPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpPTVertexShader, "PTVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTexturePixelShader, "TexturePixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpModulateTexAlphaPixelShader, "ModulateTexAlphaPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpMiniMapVertexShader, "MiniMapVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpMiniMapPixelShader, "MiniMapPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpMiniMapTFactorPixelShader, "MiniMapTFactorPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpPDTTexMatVertexShader, "PDTTexMatVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpInvAlphaAddPixelShader, "InvAlphaAddPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTFactorModulatePixelShader, "TFactorModulatePixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTFactorAddPixelShader, "TFactorAddPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTFactorOnlyPixelShader, "TFactorOnlyPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTexTFactorAlphaPixelShader, "TexTFactorAlphaPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTFactorModulate2XPixelShader, "TFactorModulate2XPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTFactorModulate4XPixelShader, "TFactorModulate4XPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTFactorAddSignedPixelShader, "TFactorAddSignedPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpWaterVertexShader, "WaterVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpWaterPixelShader, "WaterPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpPNTLitVertexShader, "PNTLitVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpSpeedTreeBranchVertexShader, "SpeedTreeBranchVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpSpeedTreeShadowPixelShader, "SpeedTreeShadowPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpPNTLitSpecVertexShader, "PNTLitSpecVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpPNTLitOmniVertexShader, "PNTLitOmniVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpLitSpecPixelShader, "LitSpecPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpPNT2VertexShader, "PNT2VertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpLightmapPixelShader, "LightmapPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpPNTLitRecvVertexShader, "PNTLitRecvVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpLitShadowPixelShader, "LitShadowPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpPNT2RecvVertexShader, "PNT2RecvVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTFactorShadowPixelShader, "TFactorShadowPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainSplatVertexShader, "TerrainSplatVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainSplatPixelShader, "TerrainSplatPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainSplatBasePixelShader, "TerrainSplatBasePixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainFogFlatPixelShader, "TerrainFogFlatPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainAttrPixelShader, "TerrainAttrPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainLitShadowVertexShader, "TerrainLitShadowVertexProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainShadowPixelShader, "TerrainShadowPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainShadowChrPixelShader, "TerrainShadowChrPixelProgram");
+
 	m_bCreateFailed = false;
 }
 

@@ -126,11 +126,17 @@ bool CGraphicTexture::CreateDX12Twin(UINT uWidth, UINT uHeight, D3DFORMAT eForma
 		return true;
 	}
 
+	if (m_lpd3dTexture)
+		STATEMANAGER.RegisterTextureSRVDX12(m_lpd3dTexture, m_kSRVHandleDX12);
+
 	return true;
 }
 
 void CGraphicTexture::DestroyDX12Twin()
 {
+	if (m_lpd3dTexture && m_kSRVHandleDX12.ptr)
+		STATEMANAGER.UnregisterTextureSRVDX12(m_lpd3dTexture);
+
 	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
 	if (pkBackend && m_kSRVHandleDX12.ptr)
 		pkBackend->FreeTextureSRV(m_kSRVHandleDX12);

@@ -1,5 +1,7 @@
 ﻿#include "StdAfx.h"
 #include "StateManager.h"
+#include "GrpBackendDX12.h"
+#include "GraphicShaderPool.h"
 
 //#define StateManager_Assert(a) if (!(a)) puts("assert"#a)
 #define StateManager_Assert(a) assert(a)
@@ -84,7 +86,19 @@ HRESULT CStateManager::CreateVertexShader(CONST DWORD* pFunction, LPDIRECT3DVERT
 
 HRESULT CStateManager::CreateVertexDeclaration(CONST D3DVERTEXELEMENT9* pVertexElements, LPDIRECT3DVERTEXDECLARATION9* ppDecl)
 {
-	return m_lpD3DDev->CreateVertexDeclaration(pVertexElements, ppDecl);
+	const HRESULT hr = m_lpD3DDev->CreateVertexDeclaration(pVertexElements, ppDecl);
+
+	// DX12 mirror: remember the input layout this declaration maps to.
+	if (SUCCEEDED(hr) && CGraphicBackendDX12::GetInstance())
+	{
+		TInputLayoutDX12 kLayout;
+		if (CGraphicInputLayoutDX12::Build(pVertexElements, kLayout.akElements, 16, &kLayout.uElementCount))
+		{
+			kLayout.uLayoutID = m_uNextLayoutIDDX12++;
+			m_kDeclLayoutMapDX12[*ppDecl] = kLayout;
+		}
+	}
+	return hr;
 }
 
 HRESULT CStateManager::CreatePixelShader(CONST DWORD* pFunction, LPDIRECT3DPIXELSHADER9* ppShader)
@@ -601,6 +615,22 @@ void CStateManager::SetTexture(DWORD dwStage, LPDIRECT3DBASETEXTURE9 pTexture)
 
 	m_lpD3DDev->SetTexture(dwStage, pTexture);
 	m_CurrentState.m_Textures[dwStage] = pTexture;
+
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+	{
+		std::unordered_map<const void*, SIZE_T>::const_iterator it =
+			pTexture ? m_kTextureSRVMapDX12.find(pTexture) : m_kTextureSRVMapDX12.end();
+		if (it != m_kTextureSRVMapDX12.end())
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE kHandle;
+			kHandle.ptr = it->second;
+			pkBackend->SetTextureSRV(dwStage, kHandle);
+		}
+		else
+		{
+			pkBackend->ClearTextureSRV(dwStage);
+		}
+	}
 }
 
 void CStateManager::GetTexture(DWORD dwStage, LPDIRECT3DBASETEXTURE9 * ppTexture)
@@ -708,6 +738,12 @@ void CStateManager::SetVertexShader(LPDIRECT3DVERTEXSHADER9 dwShader)
 
 	m_lpD3DDev->SetVertexShader(dwShader);
 	m_CurrentState.m_dwVertexShader = dwShader;
+
+	if (CGraphicBackendDX12::GetInstance())
+	{
+		std::unordered_map<const void*, UINT>::const_iterator it = m_kShaderProgramMapDX12.find(dwShader);
+		m_uVertexProgramDX12 = (it != m_kShaderProgramMapDX12.end()) ? it->second : 0xFFFFFFFF;
+	}
 }
 
 void CStateManager::GetVertexShader(LPDIRECT3DVERTEXSHADER9 * pdwShader)
@@ -786,6 +822,12 @@ void CStateManager::SetPixelShader(LPDIRECT3DPIXELSHADER9 dwShader)
 
 	m_lpD3DDev->SetPixelShader(dwShader);
 	m_CurrentState.m_dwPixelShader = dwShader;
+
+	if (CGraphicBackendDX12::GetInstance())
+	{
+		std::unordered_map<const void*, UINT>::const_iterator it = m_kShaderProgramMapDX12.find(dwShader);
+		m_uPixelProgramDX12 = (it != m_kShaderProgramMapDX12.end()) ? it->second : 0xFFFFFFFF;
+	}
 }
 
 void CStateManager::GetPixelShader(LPDIRECT3DPIXELSHADER9* pdwShader)
@@ -873,6 +915,9 @@ void CStateManager::SetVertexShaderConstant(DWORD dwRegister,CONST void* pConsta
 		StateManager_Assert((dwRegister + i) < STATEMANAGER_MAX_VCONSTANTS);
 		m_CurrentState.m_VertexShaderConstants[dwRegister + i] = *(((D3DXVECTOR4*)pConstantData) + i);
 	}
+
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+		pkBackend->SetVSConstants(dwRegister, (const float*)pConstantData, dwConstantCount);
 }
 
 // SetPixelShaderConstant
@@ -904,6 +949,9 @@ void CStateManager::SetPixelShaderConstant(DWORD dwRegister,CONST void* pConstan
 		StateManager_Assert((dwRegister + i) < STATEMANAGER_MAX_VCONSTANTS);
 		m_CurrentState.m_PixelShaderConstants[dwRegister + i] = *(((D3DXVECTOR4*)pConstantData) + i);
 	}
+
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+		pkBackend->SetPSConstants(dwRegister, (const float*)pConstantData, dwConstantCount);
 }
 
 void CStateManager::SaveStreamSource(UINT StreamNumber, LPDIRECT3DVERTEXBUFFER9 pStreamData,UINT Stride)
@@ -960,6 +1008,23 @@ HRESULT CStateManager::DrawPrimitive(D3DPRIMITIVETYPE PrimitiveType, UINT StartV
 HRESULT CStateManager::DrawPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, UINT PrimitiveCount, const void* pVertexStreamZeroData, UINT VertexStreamZeroStride)
 {
 	m_CurrentState.m_StreamData[0] = NULL;
+
+	if (CGraphicBackendDX12::GetInstance())
+	{
+		UINT uVertexCount = 0;
+		switch (PrimitiveType)
+		{
+			case D3DPT_POINTLIST:		uVertexCount = PrimitiveCount; break;
+			case D3DPT_LINELIST:		uVertexCount = PrimitiveCount * 2; break;
+			case D3DPT_LINESTRIP:		uVertexCount = PrimitiveCount + 1; break;
+			case D3DPT_TRIANGLELIST:	uVertexCount = PrimitiveCount * 3; break;
+			case D3DPT_TRIANGLESTRIP:	uVertexCount = PrimitiveCount + 2; break;
+			default: break;
+		}
+		if (uVertexCount)
+			__MirrorDrawDX12(PrimitiveType, pVertexStreamZeroData, uVertexCount, VertexStreamZeroStride, NULL, 0);
+	}
+
 	return (m_lpD3DDev->DrawPrimitiveUP(PrimitiveType, PrimitiveCount, pVertexStreamZeroData, VertexStreamZeroStride));
 }
 
@@ -972,5 +1037,99 @@ HRESULT CStateManager::DrawIndexedPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, UI
 {
 	m_CurrentState.m_IndexData = NULL;
 	m_CurrentState.m_StreamData[0] = NULL;
+
+	if (CGraphicBackendDX12::GetInstance() && D3DFMT_INDEX16 == IndexDataFormat)
+	{
+		UINT uIndexCount = 0;
+		switch (PrimitiveType)
+		{
+			case D3DPT_LINELIST:		uIndexCount = PrimitiveCount * 2; break;
+			case D3DPT_TRIANGLELIST:	uIndexCount = PrimitiveCount * 3; break;
+			case D3DPT_TRIANGLESTRIP:	uIndexCount = PrimitiveCount + 2; break;
+			default: break;
+		}
+		if (uIndexCount)
+			__MirrorDrawDX12(PrimitiveType, pVertexStreamZeroData, MinVertexIndex + NumVertexIndices, VertexStreamZeroStride,
+							 (const WORD*)pIndexData, uIndexCount);
+	}
+
 	return (m_lpD3DDev->DrawIndexedPrimitiveUP(PrimitiveType, MinVertexIndex, NumVertexIndices, PrimitiveCount, pIndexData, IndexDataFormat, pVertexStreamZeroData, VertexStreamZeroStride));
+}
+
+void CStateManager::RegisterShaderProgramDX12(const void* pkShader, const char* c_szProgramName)
+{
+	if (!pkShader)
+		return;
+
+	for (UINT u = 0; u < CGraphicShaderPool::GetProgramCount(); ++u)
+	{
+		if (0 == strcmp(CGraphicShaderPool::GetProgramInfo(u)->c_szName, c_szProgramName))
+		{
+			m_kShaderProgramMapDX12[pkShader] = u;
+			return;
+		}
+	}
+
+	TraceError("CStateManager: unknown shader program %s.", c_szProgramName);
+}
+
+void CStateManager::RegisterTextureSRVDX12(const void* pkTexture, D3D12_CPU_DESCRIPTOR_HANDLE kSRVHandle)
+{
+	if (pkTexture && kSRVHandle.ptr)
+		m_kTextureSRVMapDX12[pkTexture] = kSRVHandle.ptr;
+}
+
+void CStateManager::UnregisterTextureSRVDX12(const void* pkTexture)
+{
+	if (pkTexture)
+		m_kTextureSRVMapDX12.erase(pkTexture);
+}
+
+bool CStateManager::__MirrorDrawDX12(D3DPRIMITIVETYPE ePrimitiveType,
+									 const void* pvVertices, UINT uVertexCount, UINT uStrideBytes,
+									 const WORD* awIndices, UINT uIndexCount)
+{
+	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (!pkBackend)
+		return false;
+
+	// Only pool programs draw on DX12; FFP and foreign shaders wait for the flip.
+	if (0xFFFFFFFF == m_uVertexProgramDX12 || 0xFFFFFFFF == m_uPixelProgramDX12)
+		return false;
+
+	std::unordered_map<const void*, TInputLayoutDX12>::const_iterator itLayout =
+		m_kDeclLayoutMapDX12.find(m_CurrentState.m_dwVertexDeclaration);
+	if (itLayout == m_kDeclLayoutMapDX12.end())
+		return false;
+
+	D3D_PRIMITIVE_TOPOLOGY eTopology;
+	switch (ePrimitiveType)
+	{
+		case D3DPT_POINTLIST:		eTopology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST; break;
+		case D3DPT_LINELIST:		eTopology = D3D_PRIMITIVE_TOPOLOGY_LINELIST; break;
+		case D3DPT_LINESTRIP:		eTopology = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP; break;
+		case D3DPT_TRIANGLELIST:	eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; break;
+		case D3DPT_TRIANGLESTRIP:	eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP; break;
+		default:
+			return false;
+	}
+
+	CGraphicPipelineKeyDX12 kPipelineKey;
+	kPipelineKey.CaptureRenderStates(*this);
+	pkBackend->SetPipelineStates(kPipelineKey);
+
+	CGraphicSamplerKeyDX12 kSamplerKey;
+	for (UINT u = 0; u < CGraphicBackendDX12::TEXTURE_STAGE_COUNT; ++u)
+	{
+		kSamplerKey.Capture(*this, u);
+		pkBackend->SetSamplerKey(u, kSamplerKey);
+	}
+
+	if (!pkBackend->SetProgram(m_uVertexProgramDX12, m_uPixelProgramDX12))
+		return false;
+
+	pkBackend->SetInputLayout(itLayout->second.uLayoutID, itLayout->second.akElements,
+							  itLayout->second.uElementCount);
+
+	return pkBackend->DrawTransient(eTopology, pvVertices, uVertexCount, uStrideBytes, awIndices, uIndexCount);
 }
