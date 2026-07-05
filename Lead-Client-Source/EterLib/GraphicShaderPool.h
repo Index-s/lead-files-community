@@ -50,6 +50,12 @@ class CGraphicShaderPool
 		// Dungeon-block shadow receiver: TFACTOR times the projected shadow map,
 		// position through the same WVP math as the PNT2 lightmap pass.
 		bool BindPNT2ShadowReceiver();
+		// XYZ|NORMAL terrain patches: both UV sets generated from the camera-space
+		// position through the cached TEXTURE0/TEXTURE1 transforms; base coat takes
+		// its alpha from the tile texture, later splats from the splat map.
+		bool BindTerrainSplat(bool bBase);
+		// Beyond-fog patches: solid TEXTUREFACTOR fill on the same vertex path.
+		bool BindTerrainFogFlat();
 		void Unbind();
 
 		void Destroy();
@@ -68,6 +74,7 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpPNT2VertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNT2RecvVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitRecvVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpTerrainSplatVertexShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpDiffusePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
@@ -84,8 +91,12 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpLightmapPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLitShadowPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorShadowPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTerrainSplatPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTerrainSplatBasePixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTerrainFogFlatPixelShader;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNT2Declaration;
+		LPDIRECT3DVERTEXDECLARATION9	m_lpPNDeclaration;
 };
