@@ -241,6 +241,14 @@ bool CGraphicBase::BeginPDTModulateTexAlphaShader()
 	return gs_kShaderPool.BindPDTModulateTexAlpha();
 }
 
+bool CGraphicBase::BeginMiniMapShader(bool bTexture)
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindMiniMap(bTexture);
+}
+
 bool CGraphicBase::BeginPDTCloudShader()
 {
 	if (!ms_bUseShaderFFP)
