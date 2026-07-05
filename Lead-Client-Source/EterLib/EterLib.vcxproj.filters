@@ -32,6 +32,7 @@
     <ClCompile Include="GrpPipelineCacheDX12.cpp" />
     <ClCompile Include="GrpDeviceDX12.cpp" />
     <ClCompile Include="GrpBackendDX12.cpp" />
+    <ClCompile Include="GrpCPUDescriptorsDX12.cpp" />
     <ClCompile Include="GrpUploadRingDX12.cpp" />
     <ClCompile Include="GrpConstantShadowDX12.cpp" />
     <ClCompile Include="GrpDynamicDrawDX12.cpp" />
@@ -120,6 +121,7 @@
     <ClInclude Include="GrpPipelineCacheDX12.h" />
     <ClInclude Include="GrpDeviceDX12.h" />
     <ClInclude Include="GrpBackendDX12.h" />
+    <ClInclude Include="GrpCPUDescriptorsDX12.h" />
     <ClInclude Include="GrpUploadRingDX12.h" />
     <ClInclude Include="GrpConstantShadowDX12.h" />
     <ClInclude Include="GrpDynamicDrawDX12.h" />
