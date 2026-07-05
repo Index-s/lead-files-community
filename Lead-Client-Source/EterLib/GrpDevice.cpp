@@ -294,6 +294,12 @@ bool CGraphicDevice::ResizeBackBuffer(UINT uWidth, UINT uHeight)
 			}
 
 			STATEMANAGER.SetDefaultState();
+
+			if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+			{
+				if (!pkBackend->GetDevice().Resize(uWidth, uHeight))
+					TraceError("CGraphicDevice: DX12 backbuffer resize failed (%ux%u).", uWidth, uHeight);
+			}
 		}
 	}
 
