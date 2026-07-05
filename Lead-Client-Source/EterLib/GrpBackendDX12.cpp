@@ -262,6 +262,36 @@ bool CGraphicBackendDX12::BeginFrame(DWORD dwClearColor)
 	return true;
 }
 
+void CGraphicBackendDX12::ClearTargets(DWORD dwFlags, DWORD dwColor, float fDepth, DWORD dwStencil)
+{
+	if (!m_bCreated || !m_bInFrame)
+		return;
+
+	ID3D12GraphicsCommandList* pkCommandList = m_kDevice.GetCommandList();
+
+	if (dwFlags & D3DCLEAR_TARGET)
+	{
+		const float c_fInv255 = 1.0f / 255.0f;
+		const float afColor[4] =
+		{
+			((dwColor >> 16) & 0xff) * c_fInv255,
+			((dwColor >> 8) & 0xff) * c_fInv255,
+			(dwColor & 0xff) * c_fInv255,
+			((dwColor >> 24) & 0xff) * c_fInv255,
+		};
+		pkCommandList->ClearRenderTargetView(m_kDevice.GetCurrentRTVHandle(), afColor, 0, NULL);
+	}
+
+	D3D12_CLEAR_FLAGS eDepthFlags = static_cast<D3D12_CLEAR_FLAGS>(0);
+	if (dwFlags & D3DCLEAR_ZBUFFER)
+		eDepthFlags |= D3D12_CLEAR_FLAG_DEPTH;
+	if (dwFlags & D3DCLEAR_STENCIL)
+		eDepthFlags |= D3D12_CLEAR_FLAG_STENCIL;
+	if (eDepthFlags)
+		pkCommandList->ClearDepthStencilView(m_kDevice.GetDSVHandle(), eDepthFlags, fDepth,
+											 static_cast<UINT8>(dwStencil), 0, NULL);
+}
+
 bool CGraphicBackendDX12::EndFrame()
 {
 	if (!m_bCreated)

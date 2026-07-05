@@ -51,6 +51,9 @@ class CGraphicBackendDX12
 		bool	BeginFrame(DWORD dwClearColor);
 		bool	EndFrame();
 
+		// Mid-frame clear of the bound targets (dwFlags = D3DCLEAR_* bits).
+		void	ClearTargets(DWORD dwFlags, DWORD dwColor, float fDepth, DWORD dwStencil);
+
 		// --- mirrored draw state ---
 		// Program indices follow CGraphicShaderPool::GetProgramInfo order.
 		bool	SetProgram(UINT uVertexProgramIndex, UINT uPixelProgramIndex);
