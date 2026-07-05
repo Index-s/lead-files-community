@@ -467,6 +467,74 @@ namespace
 		"    return float4(g_kTFactor.rgb, 1.0f);\n"
 		"}\n";
 
+	// Terrain shadow overlay VS: identical position/texgen path as the splat
+	// program (the multiply pass re-rasterizes the same patch and must produce
+	// bit-identical depths) plus the fixed-function directional lighting the
+	// overlay's CURRENT argument consumes; world rows in c14-c16.
+	const char c_achTerrainLitShadowVertexProgram[] =
+		"float4 g_avWVP[4] : register(c0);\n"
+		"float4 g_avTexMat0[2] : register(c4);\n"
+		"float4 g_avTexMat1[2] : register(c6);\n"
+		"float4 g_vLightDirection : register(c8);\n"
+		"float4 g_kLitDiffuse : register(c9);\n"
+		"float4 g_kLitAmbient : register(c10);\n"
+		"float4 g_avWorldView[3] : register(c11);\n"
+		"float4 g_avWorld[3] : register(c14);\n"
+		"float4 g_vFogParams : register(c28);\n"
+		"float4 g_vFogParams2 : register(c29);\n"
+		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; float fFog : FOG; };\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    float4 vPosition = float4(In.vPosition, 1.0f);\n"
+		"    Out.vPosition.x = dot(vPosition, g_avWVP[0]);\n"
+		"    Out.vPosition.y = dot(vPosition, g_avWVP[1]);\n"
+		"    Out.vPosition.z = dot(vPosition, g_avWVP[2]);\n"
+		"    Out.vPosition.w = dot(vPosition, g_avWVP[3]);\n"
+		"    float4 vCamPos;\n"
+		"    vCamPos.x = dot(vPosition, g_avWorldView[0]);\n"
+		"    vCamPos.y = dot(vPosition, g_avWorldView[1]);\n"
+		"    vCamPos.z = dot(vPosition, g_avWorldView[2]);\n"
+		"    vCamPos.w = 1.0f;\n"
+		"    Out.vTexCoord.x = dot(vCamPos, g_avTexMat0[0]);\n"
+		"    Out.vTexCoord.y = dot(vCamPos, g_avTexMat0[1]);\n"
+		"    Out.vShadowCoord.x = dot(vCamPos, g_avTexMat1[0]);\n"
+		"    Out.vShadowCoord.y = dot(vCamPos, g_avTexMat1[1]);\n"
+		"    float4 vNormal = float4(In.vNormal, 0.0f);\n"
+		"    float3 vWorldNormal;\n"
+		"    vWorldNormal.x = dot(vNormal, g_avWorld[0]);\n"
+		"    vWorldNormal.y = dot(vNormal, g_avWorld[1]);\n"
+		"    vWorldNormal.z = dot(vNormal, g_avWorld[2]);\n"
+		"    float fDot = max(0.0f, dot(vWorldNormal, g_vLightDirection.xyz));\n"
+		"    Out.vDiffuse = saturate(g_kLitAmbient + g_kLitDiffuse * fDot);\n"
+		"    float fFogDist = lerp(vCamPos.z, length(vCamPos.xyz), g_vFogParams2.y);\n"
+		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
+		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
+		"    return Out;\n"
+		"}\n";
+
+	// Static-shadow multiply overlay: lit diffuse times the shadow texture
+	// (the ZERO/SRCCOLOR blend multiplies it into the scene).
+	const char c_achTerrainShadowPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"{\n"
+		"    return float4(tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb, vDiffuse.a);\n"
+		"}\n";
+
+	// Static + character shadow overlay: stage1 modulates the projected
+	// character shadow map on top.
+	const char c_achTerrainShadowChrPixelProgram[] =
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1) : COLOR0\n"
+		"{\n"
+		"    float3 vColor = tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb;\n"
+		"    vColor *= tex2D(g_kSampler1, vShadowCoord).rgb;\n"
+		"    return float4(vColor, vDiffuse.a);\n"
+		"}\n";
+
 	// Fixed-function D3DTOP_MODULATEINVALPHA_ADDCOLOR(TEXTURE, DIFFUSE), alpha = texture.
 	const char c_achInvAlphaAddPixelProgram[] =
 		"sampler2D g_kSampler0 : register(s0);\n"
@@ -550,6 +618,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpPNT2RecvVertexShader(NULL)
 	, m_lpPNTLitRecvVertexShader(NULL)
 	, m_lpTerrainSplatVertexShader(NULL)
+	, m_lpTerrainLitShadowVertexShader(NULL)
 	, m_lpModulatePixelShader(NULL)
 	, m_lpDiffusePixelShader(NULL)
 	, m_lpTexturePixelShader(NULL)
@@ -569,6 +638,8 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTerrainSplatPixelShader(NULL)
 	, m_lpTerrainSplatBasePixelShader(NULL)
 	, m_lpTerrainFogFlatPixelShader(NULL)
+	, m_lpTerrainShadowPixelShader(NULL)
+	, m_lpTerrainShadowChrPixelShader(NULL)
 	, m_lpPDTDeclaration(NULL)
 	, m_lpPTDeclaration(NULL)
 	, m_lpPNTDeclaration(NULL)
@@ -594,6 +665,7 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPNT2RecvVertexShader);
 	safe_release(m_lpPNTLitRecvVertexShader);
 	safe_release(m_lpTerrainSplatVertexShader);
+	safe_release(m_lpTerrainLitShadowVertexShader);
 	safe_release(m_lpModulatePixelShader);
 	safe_release(m_lpDiffusePixelShader);
 	safe_release(m_lpTexturePixelShader);
@@ -613,6 +685,8 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpTerrainSplatPixelShader);
 	safe_release(m_lpTerrainSplatBasePixelShader);
 	safe_release(m_lpTerrainFogFlatPixelShader);
+	safe_release(m_lpTerrainShadowPixelShader);
+	safe_release(m_lpTerrainShadowChrPixelShader);
 	safe_release(m_lpPDTDeclaration);
 	safe_release(m_lpPTDeclaration);
 	safe_release(m_lpPNTDeclaration);
@@ -1165,6 +1239,55 @@ bool CGraphicShaderPool::__Create()
 	safe_release(pCode);
 	safe_release(pError);
 
+
+	if (FAILED(D3DCompile(c_achTerrainLitShadowVertexProgram, sizeof(c_achTerrainLitShadowVertexProgram) - 1, "TerrainLitShadowVertexProgram",
+						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainLitShadowVertexShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TerrainLitShadowVertexProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achTerrainShadowPixelProgram, sizeof(c_achTerrainShadowPixelProgram) - 1, "TerrainShadowPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainShadowPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TerrainShadowPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
+	if (FAILED(D3DCompile(c_achTerrainShadowChrPixelProgram, sizeof(c_achTerrainShadowChrPixelProgram) - 1, "TerrainShadowChrPixelProgram",
+						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
+		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainShadowChrPixelShader)))
+	{
+		TraceError("CGraphicShaderPool: failed to build TerrainShadowChrPixelProgram [ %s ].",
+				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
+		safe_release(pCode);
+		safe_release(pError);
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	safe_release(pCode);
+	safe_release(pError);
+
 	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPNTElements, &m_lpPNTDeclaration)))
 	{
 		TraceError("CGraphicShaderPool: failed to create PNT vertex declaration.");
@@ -1399,6 +1522,25 @@ bool CGraphicShaderPool::BindTerrainSplat(bool bBase)
 bool CGraphicShaderPool::BindTerrainFogFlat()
 {
 	return __Bind(m_lpPNDeclaration, m_lpTerrainSplatVertexShader, m_lpTerrainFogFlatPixelShader);
+}
+
+bool CGraphicShaderPool::BindTerrainShadow(bool bChrShadow)
+{
+	if (!__Bind(m_lpPNDeclaration, m_lpTerrainLitShadowVertexShader,
+				bChrShadow ? m_lpTerrainShadowChrPixelShader : m_lpTerrainShadowPixelShader))
+		return false;
+
+	D3DXMATRIX matTemp;
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE0, &matTemp);
+	D3DXMatrixTranspose(&matTemp, &matTemp);
+	STATEMANAGER.SetVertexShaderConstant(4, &matTemp, 2);
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTemp);
+	D3DXMatrixTranspose(&matTemp, &matTemp);
+	STATEMANAGER.SetVertexShaderConstant(6, &matTemp, 2);
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matTemp);
+	D3DXMatrixTranspose(&matTemp, &matTemp);
+	STATEMANAGER.SetVertexShaderConstant(14, &matTemp, 3);
+	return true;
 }
 
 

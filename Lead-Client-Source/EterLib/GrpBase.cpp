@@ -297,6 +297,18 @@ bool CGraphicBase::BeginTerrainFogFlatShader()
 	return gs_kShaderPool.BindTerrainFogFlat();
 }
 
+bool CGraphicBase::BeginTerrainShadowShader(bool bChrShadow)
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	if (!gs_kShaderPool.BindTerrainShadow(bChrShadow))
+		return false;
+
+	__UploadGrannyLightingConstants();
+	return true;
+}
+
 
 bool CGraphicBase::BeginGrannyMeshShader()
 {

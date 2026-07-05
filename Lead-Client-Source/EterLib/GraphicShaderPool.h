@@ -56,6 +56,9 @@ class CGraphicShaderPool
 		bool BindTerrainSplat(bool bBase);
 		// Beyond-fog patches: solid TEXTUREFACTOR fill on the same vertex path.
 		bool BindTerrainFogFlat();
+		// Terrain shadow multiply overlay on the identical patch vertex path;
+		// lighting constants (c8-c10) uploaded by the caller.
+		bool BindTerrainShadow(bool bChrShadow);
 		void Unbind();
 
 		void Destroy();
@@ -75,6 +78,7 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpPNT2RecvVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitRecvVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpTerrainSplatVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpTerrainLitShadowVertexShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpDiffusePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
@@ -94,6 +98,8 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpTerrainSplatPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTerrainSplatBasePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTerrainFogFlatPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTerrainShadowPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpTerrainShadowChrPixelShader;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPDTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNTDeclaration;

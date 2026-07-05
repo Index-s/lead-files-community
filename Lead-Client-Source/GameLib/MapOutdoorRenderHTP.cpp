@@ -663,7 +663,15 @@ void CMapOutdoor::__HardwareTransformPatch_RenderPatchSplat(long patchnum, WORD 
 		}
 
 		ms_faceCount += wPrimitiveCount;
-		STATEMANAGER.DrawIndexedPrimitive(ePrimitiveType, 0, m_iPatchTerrainVertexCount, 0, wPrimitiveCount);
+		if (CGraphicBase::BeginTerrainShadowShader(m_bDrawChrShadow ? true : false))
+		{
+			STATEMANAGER.DrawIndexedPrimitive(ePrimitiveType, 0, m_iPatchTerrainVertexCount, 0, wPrimitiveCount);
+			CGraphicBase::EndPDTShader();
+		}
+		else
+		{
+			STATEMANAGER.DrawIndexedPrimitive(ePrimitiveType, 0, m_iPatchTerrainVertexCount, 0, wPrimitiveCount);
+		}
   		++m_iRenderedSplatNum;
 
 		if (m_bDrawChrShadow)
