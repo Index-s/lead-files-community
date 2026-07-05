@@ -19,6 +19,7 @@
     <ClCompile Include="GrpColorInstance.cpp" />
     <ClCompile Include="GrpDetector.cpp" />
     <ClCompile Include="GrpDevice.cpp" />
+    <ClCompile Include="GrpSamplerKeyDX12.cpp" />
     <ClCompile Include="GrpFormatDX12.cpp" />
     <ClCompile Include="GrpDescriptorRingDX12.cpp" />
     <ClCompile Include="GrpRootSignatureDX12.cpp" />
@@ -100,6 +101,7 @@
     <ClInclude Include="GrpColorInstance.h" />
     <ClInclude Include="GrpDetector.h" />
     <ClInclude Include="GrpDevice.h" />
+    <ClInclude Include="GrpSamplerKeyDX12.h" />
     <ClInclude Include="GrpFormatDX12.h" />
     <ClInclude Include="GrpDescriptorRingDX12.h" />
     <ClInclude Include="GrpRootSignatureDX12.h" />
