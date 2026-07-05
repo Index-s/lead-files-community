@@ -1003,7 +1003,7 @@ HRESULT CGraphicBase::CreateDeviceTexture(UINT uWidth, UINT uHeight, UINT uLevel
 	{
 		if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
 		{
-			if (pkBackend->RegisterRenderTarget(*ppTexture, uWidth, uHeight))
+			if (pkBackend->RegisterRenderTarget(*ppTexture, uWidth, uHeight) && CStateManager::InstancePtr())
 			{
 				// GetSRVHandleDX12 lives inside the backend record; register the
 				// texture pointer so SetTexture resolves the twin SRV.

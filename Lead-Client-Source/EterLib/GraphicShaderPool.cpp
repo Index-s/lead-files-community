@@ -1234,6 +1234,8 @@ void CGraphicShaderPool::Destroy()
 	safe_release(m_lpPDT2Declaration);
 	safe_release(m_lpPNDeclaration);
 	// DX12 mirror: map every created shader to its registry program.
+	if (CStateManager::InstancePtr())
+	{
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpPDTVertexShader, "PDTVertexProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpModulatePixelShader, "ModulatePixelProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpModulateNoFogPixelShader, "ModulateNoFogPixelProgram");
@@ -1278,6 +1280,7 @@ void CGraphicShaderPool::Destroy()
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainLitShadowVertexShader, "TerrainLitShadowVertexProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainShadowPixelShader, "TerrainShadowPixelProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainShadowChrPixelShader, "TerrainShadowChrPixelProgram");
+	}
 
 	m_bCreateFailed = false;
 }

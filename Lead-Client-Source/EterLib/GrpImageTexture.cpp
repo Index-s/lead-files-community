@@ -164,7 +164,7 @@ void CGraphicImageTexture::Unlock(int level)
 	{
 		CreateDX12Twin(m_width, m_height, m_d3dFmt, m_pvLockedPixelsDX12,
 					   static_cast<UINT>(m_nLockedPitchDX12));
-		if (m_lpd3dTexture && HasDX12Twin())
+		if (m_lpd3dTexture && HasDX12Twin() && CStateManager::InstancePtr())
 			STATEMANAGER.RegisterTextureSRVDX12(m_lpd3dTexture, GetSRVHandleDX12());
 		m_pvLockedPixelsDX12 = NULL;
 	}
