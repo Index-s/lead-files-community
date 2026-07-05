@@ -33,6 +33,9 @@ class CGraphicShaderPool
 		// XYZ|NORMAL|TEX1 with fixed-function directional lighting evaluated in the
 		// vertex shader; lighting constants (c8-c10) are uploaded by the caller.
 		bool BindPNTLit();
+		// SpeedTree branches/fronds: precomputed vertex lighting, optional
+		// self-shadow map on the second UV set.
+		bool BindSpeedTreeBranch(bool bSelfShadow);
 		// Lit PNT plus the sphere-map specular layer: TEXCOORD1 = camera-space
 		// reflection vector through the TEXTURE1 transform (granny specular).
 		bool BindPNTLitSpecular();
@@ -60,6 +63,7 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpPTVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPDTTexMatVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitVertexShader;
+		LPDIRECT3DVERTEXSHADER9			m_lpSpeedTreeBranchVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitSpecVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNTLitOmniVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpPNT2VertexShader;
@@ -75,6 +79,7 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorOnlyPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTexTFactorAlphaPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLitSpecPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpSpeedTreeShadowPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLightmapPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLitShadowPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTFactorShadowPixelShader;
@@ -82,4 +87,5 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNTDeclaration;
 		LPDIRECT3DVERTEXDECLARATION9	m_lpPNT2Declaration;
+		LPDIRECT3DVERTEXDECLARATION9	m_lpPDT2Declaration;
 };
