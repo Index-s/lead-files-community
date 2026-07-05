@@ -269,6 +269,22 @@ bool CGraphicBase::BeginEffectShader(DWORD dwColorOp)
 	}
 }
 
+bool CGraphicBase::BeginTerrainSplatShader(bool bBase)
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindTerrainSplat(bBase);
+}
+
+bool CGraphicBase::BeginTerrainFogFlatShader()
+{
+	if (!ms_bUseShaderFFP)
+		return false;
+
+	return gs_kShaderPool.BindTerrainFogFlat();
+}
+
 
 bool CGraphicBase::BeginGrannyMeshShader()
 {

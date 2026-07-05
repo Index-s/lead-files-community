@@ -228,6 +228,8 @@ class CGraphicBase
 		static bool BeginPDTCloudShader();	// scrolling-UV cloud layer (MODULATEINVALPHA_ADDCOLOR)
 		static bool BeginEffectShader(DWORD dwColorOp);	// effect COLOROP(TFACTOR, TEXTURE); false = unsupported op, use FFP
 		static bool BeginGrannyMeshShader();	// lit PNT mesh w/ base modulate cascade; false = keep FFP
+		static bool BeginTerrainSplatShader(bool bBase);	// terrain patch splat layers; false = keep FFP
+		static bool BeginTerrainFogFlatShader();	// beyond-fog terrain patches (TFACTOR fill)
 		static void EndPDTShader();		// call only after a successful Begin*Shader
 		static void DestroyShaderPool();
 
