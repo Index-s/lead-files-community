@@ -886,6 +886,56 @@ const char c_achTexturePixelProgram[] =
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
 		"    return kFinal;\n"
 		"}\n";
+
+	// Every pool program by name and source: the DX12 backend compiles
+	// the same HLSL against SM5 targets from this table.
+	const CGraphicShaderPool::TProgramInfo c_akProgramTable[] =
+	{
+		{ "PDTVertexProgram", c_achPDTVertexProgram, sizeof(c_achPDTVertexProgram) - 1, true },
+		{ "ModulatePixelProgram", c_achModulatePixelProgram, sizeof(c_achModulatePixelProgram) - 1, false },
+		{ "ModulateNoFogPixelProgram", c_achModulateNoFogPixelProgram, sizeof(c_achModulateNoFogPixelProgram) - 1, false },
+		{ "LitBlendPixelProgram", c_achLitBlendPixelProgram, sizeof(c_achLitBlendPixelProgram) - 1, false },
+		{ "LitAddPixelProgram", c_achLitAddPixelProgram, sizeof(c_achLitAddPixelProgram) - 1, false },
+		{ "DiffusePixelProgram", c_achDiffusePixelProgram, sizeof(c_achDiffusePixelProgram) - 1, false },
+		{ "FlatTFactorPixelProgram", c_achFlatTFactorPixelProgram, sizeof(c_achFlatTFactorPixelProgram) - 1, false },
+		{ "PTVertexProgram", c_achPTVertexProgram, sizeof(c_achPTVertexProgram) - 1, true },
+		{ "WaterVertexProgram", c_achWaterVertexProgram, sizeof(c_achWaterVertexProgram) - 1, true },
+		{ "WaterPixelProgram", c_achWaterPixelProgram, sizeof(c_achWaterPixelProgram) - 1, false },
+		{ "TexturePixelProgram", c_achTexturePixelProgram, sizeof(c_achTexturePixelProgram) - 1, false },
+		{ "ModulateTexAlphaPixelProgram", c_achModulateTexAlphaPixelProgram, sizeof(c_achModulateTexAlphaPixelProgram) - 1, false },
+		{ "MiniMapVertexProgram", c_achMiniMapVertexProgram, sizeof(c_achMiniMapVertexProgram) - 1, true },
+		{ "MiniMapPixelProgram", c_achMiniMapPixelProgram, sizeof(c_achMiniMapPixelProgram) - 1, false },
+		{ "MiniMapTFactorPixelProgram", c_achMiniMapTFactorPixelProgram, sizeof(c_achMiniMapTFactorPixelProgram) - 1, false },
+		{ "PDTTexMatVertexProgram", c_achPDTTexMatVertexProgram, sizeof(c_achPDTTexMatVertexProgram) - 1, true },
+		{ "SpeedTreeBranchVertexProgram", c_achSpeedTreeBranchVertexProgram, sizeof(c_achSpeedTreeBranchVertexProgram) - 1, true },
+		{ "SpeedTreeShadowPixelProgram", c_achSpeedTreeShadowPixelProgram, sizeof(c_achSpeedTreeShadowPixelProgram) - 1, false },
+		{ "PNTLitVertexProgram", c_achPNTLitVertexProgram, sizeof(c_achPNTLitVertexProgram) - 1, true },
+		{ "PNTLitOmniVertexProgram", c_achPNTLitOmniVertexProgram, sizeof(c_achPNTLitOmniVertexProgram) - 1, true },
+		{ "PNTLitSpecVertexProgram", c_achPNTLitSpecVertexProgram, sizeof(c_achPNTLitSpecVertexProgram) - 1, true },
+		{ "LitSpecPixelProgram", c_achLitSpecPixelProgram, sizeof(c_achLitSpecPixelProgram) - 1, false },
+		{ "PNT2VertexProgram", c_achPNT2VertexProgram, sizeof(c_achPNT2VertexProgram) - 1, true },
+		{ "LightmapPixelProgram", c_achLightmapPixelProgram, sizeof(c_achLightmapPixelProgram) - 1, false },
+		{ "PNTLitRecvVertexProgram", c_achPNTLitRecvVertexProgram, sizeof(c_achPNTLitRecvVertexProgram) - 1, true },
+		{ "LitShadowPixelProgram", c_achLitShadowPixelProgram, sizeof(c_achLitShadowPixelProgram) - 1, false },
+		{ "PNT2RecvVertexProgram", c_achPNT2RecvVertexProgram, sizeof(c_achPNT2RecvVertexProgram) - 1, true },
+		{ "TFactorShadowPixelProgram", c_achTFactorShadowPixelProgram, sizeof(c_achTFactorShadowPixelProgram) - 1, false },
+		{ "TerrainSplatVertexProgram", c_achTerrainSplatVertexProgram, sizeof(c_achTerrainSplatVertexProgram) - 1, true },
+		{ "TerrainSplatPixelProgram", c_achTerrainSplatPixelProgram, sizeof(c_achTerrainSplatPixelProgram) - 1, false },
+		{ "TerrainSplatBasePixelProgram", c_achTerrainSplatBasePixelProgram, sizeof(c_achTerrainSplatBasePixelProgram) - 1, false },
+		{ "TerrainFogFlatPixelProgram", c_achTerrainFogFlatPixelProgram, sizeof(c_achTerrainFogFlatPixelProgram) - 1, false },
+		{ "TerrainLitShadowVertexProgram", c_achTerrainLitShadowVertexProgram, sizeof(c_achTerrainLitShadowVertexProgram) - 1, true },
+		{ "TerrainShadowPixelProgram", c_achTerrainShadowPixelProgram, sizeof(c_achTerrainShadowPixelProgram) - 1, false },
+		{ "TerrainShadowChrPixelProgram", c_achTerrainShadowChrPixelProgram, sizeof(c_achTerrainShadowChrPixelProgram) - 1, false },
+		{ "TerrainAttrPixelProgram", c_achTerrainAttrPixelProgram, sizeof(c_achTerrainAttrPixelProgram) - 1, false },
+		{ "InvAlphaAddPixelProgram", c_achInvAlphaAddPixelProgram, sizeof(c_achInvAlphaAddPixelProgram) - 1, false },
+		{ "TFactorModulatePixelProgram", c_achTFactorModulatePixelProgram, sizeof(c_achTFactorModulatePixelProgram) - 1, false },
+		{ "TFactorAddPixelProgram", c_achTFactorAddPixelProgram, sizeof(c_achTFactorAddPixelProgram) - 1, false },
+		{ "TFactorOnlyPixelProgram", c_achTFactorOnlyPixelProgram, sizeof(c_achTFactorOnlyPixelProgram) - 1, false },
+		{ "TexTFactorAlphaPixelProgram", c_achTexTFactorAlphaPixelProgram, sizeof(c_achTexTFactorAlphaPixelProgram) - 1, false },
+		{ "TFactorModulate2XPixelProgram", c_achTFactorModulate2XPixelProgram, sizeof(c_achTFactorModulate2XPixelProgram) - 1, false },
+		{ "TFactorModulate4XPixelProgram", c_achTFactorModulate4XPixelProgram, sizeof(c_achTFactorModulate4XPixelProgram) - 1, false },
+		{ "TFactorAddSignedPixelProgram", c_achTFactorAddSignedPixelProgram, sizeof(c_achTFactorAddSignedPixelProgram) - 1, false },
+	};
 }
 
 CGraphicShaderPool::CGraphicShaderPool()
@@ -2187,4 +2237,16 @@ void CGraphicShaderPool::Unbind()
 {
 	STATEMANAGER.SetVertexShader(NULL);
 	STATEMANAGER.SetPixelShader(NULL);
+}
+
+UINT CGraphicShaderPool::GetProgramCount()
+{
+	return sizeof(c_akProgramTable) / sizeof(c_akProgramTable[0]);
+}
+
+const CGraphicShaderPool::TProgramInfo* CGraphicShaderPool::GetProgramInfo(UINT uIndex)
+{
+	if (uIndex >= GetProgramCount())
+		return NULL;
+	return &c_akProgramTable[uIndex];
 }

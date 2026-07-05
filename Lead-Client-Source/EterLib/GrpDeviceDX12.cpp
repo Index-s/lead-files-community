@@ -53,6 +53,43 @@ ID3D12GraphicsCommandList* CGraphicDeviceDX12::GetCommandList() const
 	return m_pkCommandList;
 }
 
+ID3D12CommandQueue* CGraphicDeviceDX12::GetCommandQueue() const
+{
+	return m_pkCommandQueue;
+}
+
+UINT64 CGraphicDeviceDX12::GetLastSubmittedFenceValue() const
+{
+	return m_auFenceValues[m_uFrameIndex];
+}
+
+UINT64 CGraphicDeviceDX12::GetCompletedFenceValue() const
+{
+	return m_pkFence ? m_pkFence->GetCompletedValue() : 0;
+}
+
+UINT CGraphicDeviceDX12::GetWidth() const
+{
+	return m_uCreateWidth;
+}
+
+UINT CGraphicDeviceDX12::GetHeight() const
+{
+	return m_uCreateHeight;
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE CGraphicDeviceDX12::GetCurrentRTVHandle() const
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE kHandle = m_pkRTVHeap->GetCPUDescriptorHandleForHeapStart();
+	kHandle.ptr += static_cast<SIZE_T>(m_uFrameIndex) * m_uRTVDescriptorSize;
+	return kHandle;
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE CGraphicDeviceDX12::GetDSVHandle() const
+{
+	return m_pkDSVHeap->GetCPUDescriptorHandleForHeapStart();
+}
+
 bool CGraphicDeviceDX12::Create(HWND hWnd, UINT uWidth, UINT uHeight, bool bWindowed)
 {
 	Destroy();
@@ -93,6 +130,11 @@ bool CGraphicDeviceDX12::Create(HWND hWnd, UINT uWidth, UINT uHeight, bool bWind
 bool CGraphicDeviceDX12::IsDeviceRemoved() const
 {
 	return m_bDeviceRemoved;
+}
+
+void CGraphicDeviceDX12::WaitForGPU()
+{
+	__WaitForGPU();
 }
 
 bool CGraphicDeviceDX12::Recreate()
