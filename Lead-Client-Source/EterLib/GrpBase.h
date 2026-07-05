@@ -235,6 +235,8 @@ class CGraphicBase
 		static bool BeginPDTModulateTexAlphaShader();	// rgb = texture*diffuse, alpha = texture
 		static bool BeginMiniMapShader(bool bTexture);	// minimap tiles x texgen cover; false = keep FFP
 		static bool BeginPDTCloudShader();	// scrolling-UV cloud layer (MODULATEINVALPHA_ADDCOLOR)
+		static bool BeginSpeedTreeLeafShader();	// pixel-only bind, leaves keep their vertex shader
+		static void EndSpeedTreeLeafShader();
 		static bool BeginSpeedTreeBranchShader(bool bSelfShadow);	// tree branches/fronds; false = keep FFP
 		static bool BeginEffectShader(DWORD dwColorOp);	// effect COLOROP(TFACTOR, TEXTURE); false = unsupported op, use FFP
 		static bool BeginGrannyMeshShader();	// lit PNT mesh w/ base modulate cascade; false = keep FFP

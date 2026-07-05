@@ -76,6 +76,10 @@ class CGraphicShaderPool
 		// Terrain shadow multiply overlay on the identical patch vertex path;
 		// lighting constants (c8-c10) uploaded by the caller.
 		bool BindTerrainShadow(bool bChrShadow);
+		// Pixel-shader-only bind for draws that keep their own vertex shader
+		// (SpeedTree leaves); pair with UnbindPixelOnly.
+		bool BindPixelOnlyModulate();
+		void UnbindPixelOnly();
 		void Unbind();
 
 		void Destroy();

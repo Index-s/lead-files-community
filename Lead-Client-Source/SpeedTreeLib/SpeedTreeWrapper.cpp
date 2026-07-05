@@ -1182,7 +1182,15 @@ void CSpeedTreeWrapper::RenderLeaves(void) const
 			STATEMANAGER.SetRenderState(D3DRS_ALPHAREF, DWORD(pLeaf->m_fAlphaTestValue));
 			
 			ms_faceCount += pLeaf->m_usLeafCount * 2;
-			STATEMANAGER.DrawPrimitive(D3DPT_TRIANGLELIST, 0, pLeaf->m_usLeafCount * 2);
+			if (CGraphicBase::BeginSpeedTreeLeafShader())
+			{
+				STATEMANAGER.DrawPrimitive(D3DPT_TRIANGLELIST, 0, pLeaf->m_usLeafCount * 2);
+				CGraphicBase::EndSpeedTreeLeafShader();
+			}
+			else
+			{
+				STATEMANAGER.DrawPrimitive(D3DPT_TRIANGLELIST, 0, pLeaf->m_usLeafCount * 2);
+			}
 		}
 	}
 }
@@ -1235,7 +1243,15 @@ void CSpeedTreeWrapper::RenderBillboards(void) const
 		STATEMANAGER.SetRenderState(D3DRS_ALPHAREF, DWORD(m_pGeometryCache->m_sBillboard0.m_fAlphaTestValue));
 		
 		ms_faceCount += 2;
-		STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+		if (CGraphicBase::BeginPTTextureShader())
+		{
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+			CGraphicBase::EndPDTShader();
+		}
+		else
+		{
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+		}
 	}
 	
 	// if tree supports 360 degree billboards, render the second
@@ -1253,7 +1269,15 @@ void CSpeedTreeWrapper::RenderBillboards(void) const
 		STATEMANAGER.SetRenderState(D3DRS_ALPHAREF, DWORD(m_pGeometryCache->m_sBillboard1.m_fAlphaTestValue));
 		
 		ms_faceCount += 2;
-		STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+		if (CGraphicBase::BeginPTTextureShader())
+		{
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+			CGraphicBase::EndPDTShader();
+		}
+		else
+		{
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+		}
 	}
 	
 #ifdef WRAPPER_RENDER_HORIZONTAL_BILLBOARD
@@ -1272,7 +1296,15 @@ void CSpeedTreeWrapper::RenderBillboards(void) const
 		STATEMANAGER.SetRenderState(D3DRS_ALPHAREF, DWORD(m_pGeometryCache->m_sHorizontalBillboard.m_fAlphaTestValue));
 		
 		ms_faceCount += 2;
-		STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+		if (CGraphicBase::BeginPTTextureShader())
+		{
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+			CGraphicBase::EndPDTShader();
+		}
+		else
+		{
+			STATEMANAGER.DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, sVertex, sizeof(SBillboardVertex));
+		}
 	}
 	
 #endif
