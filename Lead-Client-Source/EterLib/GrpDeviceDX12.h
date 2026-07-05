@@ -29,6 +29,11 @@ class CGraphicDeviceDX12
 
 		bool	Resize(UINT uWidth, UINT uHeight);
 
+		// TDR path: Present flags removal; the frame loop then rebuilds the
+		// whole device with the parameters remembered from Create.
+		bool	IsDeviceRemoved() const;
+		bool	Recreate();
+
 		ID3D12Device*				GetDevice() const;
 		ID3D12GraphicsCommandList*	GetCommandList() const;
 
@@ -56,4 +61,11 @@ class CGraphicDeviceDX12
 		UINT						m_uFrameIndex;
 		UINT						m_uRTVDescriptorSize;
 		bool						m_bCreated;
+
+		// Creation parameters kept for Recreate; survive Destroy.
+		HWND						m_hCreateWindow;
+		UINT						m_uCreateWidth;
+		UINT						m_uCreateHeight;
+		bool						m_bCreateWindowed;
+		bool						m_bDeviceRemoved;
 };
