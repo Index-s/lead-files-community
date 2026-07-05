@@ -1,6 +1,8 @@
 ﻿#include "StdAfx.h"
 #include "../eterBase/Stl.h"
 #include "GrpIndexBuffer.h"
+#include "GrpBackendDX12.h"
+#include "StateManager.h"
 #include "StateManager.h"
 
 LPDIRECT3DINDEXBUFFER9 CGraphicIndexBuffer::GetD3DIndexBuffer() const
@@ -27,6 +29,7 @@ bool CGraphicIndexBuffer::Lock(void** pretIndices) const
 		return false;
 	}
 
+	__CaptureLockDX12(*pretIndices, m_dwBufferSize);
 	return true;
 }
 
@@ -34,6 +37,7 @@ void CGraphicIndexBuffer::Unlock() const
 {
 	assert(m_lpd3dIdxBuf!=NULL);
 
+	__RefreshTwinDX12();
 	m_lpd3dIdxBuf->Unlock();
 }
 
@@ -48,6 +52,7 @@ bool CGraphicIndexBuffer::Lock(void** pretIndices)
 		return false;
 	}
 
+	__CaptureLockDX12(*pretIndices, m_dwBufferSize);
 	return true;
 }
 
@@ -55,6 +60,7 @@ void CGraphicIndexBuffer::Unlock()
 {
 	assert(m_lpd3dIdxBuf!=NULL);
 
+	__RefreshTwinDX12();
 	m_lpd3dIdxBuf->Unlock();
 }
 
@@ -72,6 +78,8 @@ bool CGraphicIndexBuffer::Copy(int bufSize, const void* srcIndices)
 
 	memcpy(dstIndices, srcIndices, bufSize);
 
+	__CaptureLockDX12(dstIndices, m_dwBufferSize);
+	__RefreshTwinDX12();
 	m_lpd3dIdxBuf->Unlock();
 
 	return true;
@@ -92,6 +100,8 @@ bool CGraphicIndexBuffer::Create(int faceCount, TFace* faces)
 		return false;
 	}
 
+	__CaptureLockDX12(dstIndices, m_dwBufferSize);
+
 	for (int i = 0; i<faceCount; ++i, dstIndices+=3)
 	{		
 		TFace * curFace=faces+i;
@@ -100,6 +110,7 @@ bool CGraphicIndexBuffer::Create(int faceCount, TFace* faces)
 		dstIndices[2]=curFace->indices[2];
 	}
 
+	__RefreshTwinDX12();
 	m_lpd3dIdxBuf->Unlock();
 	return true;
 }
@@ -118,8 +129,54 @@ bool CGraphicIndexBuffer::CreateDeviceObjects()
 	return true;
 }
 
+void CGraphicIndexBuffer::__CaptureLockDX12(void* pvLocked, UINT uLockedBytes) const
+{
+	if (CGraphicBackendDX12::GetInstance())
+	{
+		m_pvLockedDX12 = pvLocked;
+		m_uLockedBytesDX12 = uLockedBytes;
+	}
+}
+
+void CGraphicIndexBuffer::__RefreshTwinDX12() const
+{
+	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (!pkBackend || !m_pvLockedDX12)
+	{
+		m_pvLockedDX12 = NULL;
+		return;
+	}
+
+	__DestroyTwinDX12();
+
+	m_pkBufferDX12 = pkBackend->GetUploader().CreateStaticBuffer(
+		pkBackend->GetDevice().GetCommandQueue(), m_pvLockedDX12, m_uLockedBytesDX12,
+		D3D12_RESOURCE_STATE_INDEX_BUFFER);
+	if (m_pkBufferDX12)
+		STATEMANAGER.RegisterBufferDX12(m_lpd3dIdxBuf, m_pkBufferDX12,
+										D3DFMT_INDEX16 == m_d3dFmt ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT);
+
+	m_pvLockedDX12 = NULL;
+}
+
+void CGraphicIndexBuffer::__DestroyTwinDX12() const
+{
+	if (!m_pkBufferDX12)
+		return;
+
+	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (pkBackend)
+	{
+		pkBackend->GetDevice().WaitForGPU();
+		STATEMANAGER.UnregisterBufferDX12(m_lpd3dIdxBuf);
+	}
+
+	safe_release(m_pkBufferDX12);
+}
+
 void CGraphicIndexBuffer::DestroyDeviceObjects()
 {
+	__DestroyTwinDX12();
 	safe_release(m_lpd3dIdxBuf);
 }
 

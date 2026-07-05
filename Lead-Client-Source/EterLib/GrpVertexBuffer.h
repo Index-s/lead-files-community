@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <d3d12.h>
+#include <vector>
+
 #include "GrpBase.h"
 
 class CGraphicVertexBuffer : public CGraphicBase
@@ -38,6 +41,13 @@ class CGraphicVertexBuffer : public CGraphicBase
 	protected:
 		void	Initialize();
 
+		// DX12 twin: source data is captured while a lock is open and the
+		// twin rebuilds on unlock (const paths write through the engine's
+		// loose lock constness, hence the mutable state).
+		void	__CaptureLockDX12(void* pvLocked, UINT uLockedBytes) const;
+		void	__RefreshTwinDX12() const;
+		void	__DestroyTwinDX12() const;
+
 	protected:
 		LPDIRECT3DVERTEXBUFFER9 m_lpd3dVB;
 
@@ -47,4 +57,8 @@ class CGraphicVertexBuffer : public CGraphicBase
 		D3DPOOL					m_d3dPool;
 		int						m_vtxCount;
 		DWORD					m_dwLockFlag;
+
+		mutable ID3D12Resource*	m_pkBufferDX12 = NULL;
+		mutable void*			m_pvLockedDX12 = NULL;
+		mutable UINT			m_uLockedBytesDX12 = 0;
 };

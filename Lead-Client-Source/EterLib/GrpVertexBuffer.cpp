@@ -1,6 +1,8 @@
 ﻿#include "StdAfx.h"
 #include "../eterBase/Stl.h"
 #include "GrpVertexBuffer.h"
+#include "GrpBackendDX12.h"
+#include "StateManager.h"
 #include "StateManager.h"
 
 // Local replacement for D3DXGetFVFVertexSize.
@@ -79,6 +81,7 @@ bool CGraphicVertexBuffer::LockRange(unsigned count, void** pretVertices) const
 		return false;
 	}
 
+	__CaptureLockDX12(*pretVertices, dwLockSize);
 	return true;
 }
 
@@ -95,6 +98,7 @@ bool CGraphicVertexBuffer::Lock(void ** pretVertices) const
 		return false;
 	}
 
+	__CaptureLockDX12(*pretVertices, dwLockSize);
 	return true;
 }
 
@@ -102,6 +106,8 @@ bool CGraphicVertexBuffer::Unlock() const
 {
 	if (!m_lpd3dVB)
 		return false;
+
+	__RefreshTwinDX12();
 
 	if ( FAILED(m_lpd3dVB->Unlock()) )
 		return false;
@@ -128,6 +134,7 @@ bool CGraphicVertexBuffer::LockDynamic(void** pretVertices)
 		return false;
 	}
 
+	__CaptureLockDX12(*pretVertices, m_dwBufferSize);
 	return true;
 }
 
@@ -143,6 +150,7 @@ bool CGraphicVertexBuffer::Lock(void ** pretVertices)
 		return false;
 	}
 
+	__CaptureLockDX12(*pretVertices, m_dwBufferSize);
 	return true;
 }
 
@@ -150,6 +158,8 @@ bool CGraphicVertexBuffer::Unlock()
 {
 	if (!m_lpd3dVB)
 		return false;
+
+	__RefreshTwinDX12();
 
 	if ( FAILED(m_lpd3dVB->Unlock()) )
 		return false;
@@ -187,8 +197,54 @@ bool CGraphicVertexBuffer::CreateDeviceObjects()
 	return true;
 }
 
+void CGraphicVertexBuffer::__CaptureLockDX12(void* pvLocked, UINT uLockedBytes) const
+{
+	if (CGraphicBackendDX12::GetInstance())
+	{
+		m_pvLockedDX12 = pvLocked;
+		m_uLockedBytesDX12 = uLockedBytes;
+	}
+}
+
+void CGraphicVertexBuffer::__RefreshTwinDX12() const
+{
+	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (!pkBackend || !m_pvLockedDX12)
+	{
+		m_pvLockedDX12 = NULL;
+		return;
+	}
+
+	__DestroyTwinDX12();
+
+	m_pkBufferDX12 = pkBackend->GetUploader().CreateStaticBuffer(
+		pkBackend->GetDevice().GetCommandQueue(), m_pvLockedDX12, m_uLockedBytesDX12,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+	if (m_pkBufferDX12)
+		STATEMANAGER.RegisterBufferDX12(m_lpd3dVB, m_pkBufferDX12, DXGI_FORMAT_UNKNOWN);
+
+	m_pvLockedDX12 = NULL;
+}
+
+void CGraphicVertexBuffer::__DestroyTwinDX12() const
+{
+	if (!m_pkBufferDX12)
+		return;
+
+	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (pkBackend)
+	{
+		// In-flight frames may still read the old twin.
+		pkBackend->GetDevice().WaitForGPU();
+		STATEMANAGER.UnregisterBufferDX12(m_lpd3dVB);
+	}
+
+	safe_release(m_pkBufferDX12);
+}
+
 void CGraphicVertexBuffer::DestroyDeviceObjects()
 {
+	__DestroyTwinDX12();
 	safe_release(m_lpd3dVB);
 }
 
