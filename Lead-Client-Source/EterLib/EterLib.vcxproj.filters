@@ -24,6 +24,7 @@
     <ClCompile Include="GrpInputLayoutDX12.cpp" />
     <ClCompile Include="GrpResourceUploadDX12.cpp" />
     <ClCompile Include="GrpPipelineKeyDX12.cpp" />
+    <ClCompile Include="GrpPipelineCacheDX12.cpp" />
     <ClCompile Include="GrpDeviceDX12.cpp" />
     <ClCompile Include="GrpUploadRingDX12.cpp" />
     <ClCompile Include="GrpDIB.cpp" />
@@ -103,6 +104,7 @@
     <ClInclude Include="GrpInputLayoutDX12.h" />
     <ClInclude Include="GrpResourceUploadDX12.h" />
     <ClInclude Include="GrpPipelineKeyDX12.h" />
+    <ClInclude Include="GrpPipelineCacheDX12.h" />
     <ClInclude Include="GrpDeviceDX12.h" />
     <ClInclude Include="GrpUploadRingDX12.h" />
     <ClInclude Include="GrpDIB.h" />
