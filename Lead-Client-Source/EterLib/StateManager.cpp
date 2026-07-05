@@ -583,6 +583,14 @@ void CStateManager::SetRenderState(D3DRENDERSTATETYPE Type, DWORD Value)
 		SetPixelShaderConstant(1, afColor, 1);
 	}
 
+	// DX12 alpha test is a clip() shader variant reading the ref from c2;
+	// DX9 never sees this write (several ps_2_0 programs bake defs at c2).
+	if (D3DRS_ALPHAREF == Type && CGraphicBackendDX12::GetInstance())
+	{
+		const float afAlphaRef[4] = { (Value & 0xff) / 255.0f, 0.0f, 0.0f, 0.0f };
+		SetPixelShaderConstant(2, afAlphaRef, 1);
+	}
+
 	if (m_CurrentState.m_RenderStates[Type] == Value)
 		return;
 

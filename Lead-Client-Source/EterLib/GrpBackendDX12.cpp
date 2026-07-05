@@ -17,6 +17,7 @@ CGraphicBackendDX12* CGraphicBackendDX12::GetInstance()
 
 CGraphicBackendDX12::CGraphicBackendDX12()
 	: m_apkProgramBytecode(NULL)
+	, m_apkProgramBytecodeAlphaTest(NULL)
 	, m_uProgramCount(0)
 	, m_akInputElements(NULL)
 	, m_uInputElementCount(0)
@@ -93,6 +94,13 @@ void CGraphicBackendDX12::Destroy()
 		delete [] m_apkProgramBytecode;
 		m_apkProgramBytecode = NULL;
 	}
+	if (m_apkProgramBytecodeAlphaTest)
+	{
+		for (UINT u = 0; u < m_uProgramCount; ++u)
+			safe_release(m_apkProgramBytecodeAlphaTest[u]);
+		delete [] m_apkProgramBytecodeAlphaTest;
+		m_apkProgramBytecodeAlphaTest = NULL;
+	}
 	m_uProgramCount = 0;
 
 	safe_release(m_pkWhiteTexture);
@@ -149,27 +157,41 @@ bool CGraphicBackendDX12::__CompilePrograms()
 {
 	m_uProgramCount = CGraphicShaderPool::GetProgramCount();
 	m_apkProgramBytecode = new ID3DBlob*[m_uProgramCount];
+	m_apkProgramBytecodeAlphaTest = new ID3DBlob*[m_uProgramCount];
 	for (UINT u = 0; u < m_uProgramCount; ++u)
+	{
 		m_apkProgramBytecode[u] = NULL;
+		m_apkProgramBytecodeAlphaTest[u] = NULL;
+	}
+
+	static const D3D_SHADER_MACRO c_akAlphaTestMacros[] = { { "ALPHA_TEST", "1" }, { NULL, NULL } };
 
 	for (UINT u = 0; u < m_uProgramCount; ++u)
 	{
 		const CGraphicShaderPool::TProgramInfo* pkInfo = CGraphicShaderPool::GetProgramInfo(u);
 
-		ID3DBlob* pkErrors = NULL;
-		const HRESULT hrCompile = D3DCompile(pkInfo->c_szSource, pkInfo->uSourceLength,
-											 pkInfo->c_szName, NULL, NULL, "main",
-											 pkInfo->bVertexProgram ? "vs_5_0" : "ps_5_0",
-											 D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY, 0,
-											 &m_apkProgramBytecode[u], &pkErrors);
-		if (FAILED(hrCompile))
+		for (UINT uVariant = 0; uVariant < 2; ++uVariant)
 		{
-			TraceError("CGraphicBackendDX12: SM5 build of %s failed [ %s ].", pkInfo->c_szName,
-					   pkErrors ? (const char*)pkErrors->GetBufferPointer() : "unknown");
+			// Alpha test exists only as a pixel-shader clip() variant.
+			if (uVariant && pkInfo->bVertexProgram)
+				continue;
+
+			ID3DBlob** ppkTarget = uVariant ? &m_apkProgramBytecodeAlphaTest[u] : &m_apkProgramBytecode[u];
+			ID3DBlob* pkErrors = NULL;
+			const HRESULT hrCompile = D3DCompile(pkInfo->c_szSource, pkInfo->uSourceLength,
+												 pkInfo->c_szName, uVariant ? c_akAlphaTestMacros : NULL, NULL, "main",
+												 pkInfo->bVertexProgram ? "vs_5_0" : "ps_5_0",
+												 D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY, 0,
+												 ppkTarget, &pkErrors);
+			if (FAILED(hrCompile))
+			{
+				TraceError("CGraphicBackendDX12: SM5 build of %s (variant %u) failed [ %s ].", pkInfo->c_szName,
+						   uVariant, pkErrors ? (const char*)pkErrors->GetBufferPointer() : "unknown");
+				safe_release(pkErrors);
+				return false;
+			}
 			safe_release(pkErrors);
-			return false;
 		}
-		safe_release(pkErrors);
 	}
 
 	return true;
@@ -359,7 +381,8 @@ bool CGraphicBackendDX12::__ApplyState(D3D_PRIMITIVE_TOPOLOGY eTopology)
 	m_kPipelineKey.m_uTopologyType = ToTopologyTypeDX12(eTopology);
 
 	ID3DBlob* pkVertexShader = m_apkProgramBytecode[m_uVertexProgram];
-	ID3DBlob* pkPixelShader = m_apkProgramBytecode[m_uPixelProgram];
+	ID3DBlob* pkPixelShader = (m_kPipelineKey.m_bAlphaTestEnable && m_apkProgramBytecodeAlphaTest[m_uPixelProgram])
+		? m_apkProgramBytecodeAlphaTest[m_uPixelProgram] : m_apkProgramBytecode[m_uPixelProgram];
 
 	D3D12_SHADER_BYTECODE kVSBytecode = { pkVertexShader->GetBufferPointer(), pkVertexShader->GetBufferSize() };
 	D3D12_SHADER_BYTECODE kPSBytecode = { pkPixelShader->GetBufferPointer(), pkPixelShader->GetBufferSize() };
