@@ -99,7 +99,8 @@ static void GetDDSLevelLayout(EPixFormat eFormat, DWORD dwRGBBitCount, int nWidt
 	const DWORD dwLevelWidth = (DWORD)((nWidth >> iLevel) > 1 ? (nWidth >> iLevel) : 1);
 	const DWORD dwLevelHeight = (DWORD)((nHeight >> iLevel) > 1 ? (nHeight >> iLevel) : 1);
 
-	if (eFormat == PF_DXT1 || eFormat == PF_DXT3 || eFormat == PF_DXT5)
+	if (eFormat == PF_DXT1 || eFormat == PF_DXT2 || eFormat == PF_DXT3 ||
+		eFormat == PF_DXT4 || eFormat == PF_DXT5)
 	{
 		const DWORD dwBlockBytes = (eFormat == PF_DXT1) ? 8 : 16;
 		*pdwRowBytes = ((dwLevelWidth + 3) / 4) * dwBlockBytes;
@@ -221,7 +222,9 @@ bool CDXTCImage::LoadHeaderFromMemory(const BYTE * c_pbMap)
 	DecodePixelFormat(m_strFormat, &m_xddPixelFormat);
 
 	if (m_CompFormat != PF_DXT1 &&
+		m_CompFormat != PF_DXT2 &&
 		m_CompFormat != PF_DXT3 &&
+		m_CompFormat != PF_DXT4 &&
 		m_CompFormat != PF_DXT5)
 	{
 		return false;
@@ -371,10 +374,14 @@ void CDXTCImage::Decompress(int miplevel, DWORD * pdwDest)
 			DecompressDXT1(miplevel, pdwDest);
 			break;
 
+		// DXT2/DXT4 share the DXT3/DXT5 block layout; only the alpha
+		// premultiplication convention differs, which the decode ignores.
+		case PF_DXT2:
 		case PF_DXT3:
 			DecompressDXT3(miplevel, pdwDest);
 			break;
-			
+
+		case PF_DXT4:
 		case PF_DXT5:
 			DecompressDXT5(miplevel, pdwDest);
 			break;
