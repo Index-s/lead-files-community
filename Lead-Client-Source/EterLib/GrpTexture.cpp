@@ -138,6 +138,11 @@ void CGraphicTexture::DestroyDX12Twin()
 		STATEMANAGER.UnregisterTextureSRVDX12(m_lpd3dTexture);
 
 	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (pkBackend && m_pkTextureDX12)
+	{
+		// In-flight frames may still sample the old twin (canvas refreshes).
+		pkBackend->GetDevice().WaitForGPU();
+	}
 	if (pkBackend && m_kSRVHandleDX12.ptr)
 		pkBackend->FreeTextureSRV(m_kSRVHandleDX12);
 

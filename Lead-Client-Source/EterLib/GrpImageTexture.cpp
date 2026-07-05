@@ -3,6 +3,7 @@
 #include "../eterPack/EterPackManager.h"
 #include "GrpImageTexture.h"
 #include "GrpBackendDX12.h"
+#include "StateManager.h"
 #include "GrpFormatDX12.h"
 #include "ImageFileDecoder.h"
 
@@ -145,13 +146,29 @@ bool CGraphicImageTexture::Lock(int* pRetPitch, void** ppRetPixels, int level)
 	}
 
 	*pRetPitch = lockedRect.Pitch;
-	*ppRetPixels = (void*)lockedRect.pBits;	
+	*ppRetPixels = (void*)lockedRect.pBits;
+
+	if (0 == level && CGraphicBackendDX12::GetInstance())
+	{
+		m_pvLockedPixelsDX12 = lockedRect.pBits;
+		m_nLockedPitchDX12 = lockedRect.Pitch;
+	}
 	return true;
 }
 
 void CGraphicImageTexture::Unlock(int level)
 {
 	assert(m_lpd3dTexture != NULL);
+
+	if (0 == level && m_pvLockedPixelsDX12)
+	{
+		CreateDX12Twin(m_width, m_height, m_d3dFmt, m_pvLockedPixelsDX12,
+					   static_cast<UINT>(m_nLockedPitchDX12));
+		if (m_lpd3dTexture && HasDX12Twin())
+			STATEMANAGER.RegisterTextureSRVDX12(m_lpd3dTexture, GetSRVHandleDX12());
+		m_pvLockedPixelsDX12 = NULL;
+	}
+
 	m_lpd3dTexture->UnlockRect(level);
 }
 
@@ -163,6 +180,8 @@ void CGraphicImageTexture::Initialize()
 
 	m_d3dFmt=D3DFMT_UNKNOWN;
 	m_dwFilter=0;
+	m_pvLockedPixelsDX12 = NULL;
+	m_nLockedPitchDX12 = 0;
 }
 
 void CGraphicImageTexture::Destroy()
