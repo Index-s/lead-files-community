@@ -255,6 +255,7 @@ class CGraphicBase
 		// Resource-creation seam: every device object the renderer allocates
 		// goes through these, so a future backend can swap allocation in one place.
 		static HRESULT CreateDeviceTexture(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture);
+		static HRESULT __CreateDeviceTextureImpl(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture);
 		static HRESULT CreateDeviceVertexBuffer(UINT uLength, DWORD dwUsage, DWORD dwFVF, D3DPOOL ePool, LPDIRECT3DVERTEXBUFFER9* ppVertexBuffer);
 		static HRESULT CreateDeviceIndexBuffer(UINT uLength, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DINDEXBUFFER9* ppIndexBuffer);
 		static HRESULT CreateDeviceDepthStencilSurface(UINT uWidth, UINT uHeight, D3DFORMAT eFormat, D3DMULTISAMPLE_TYPE eMultiSample, DWORD dwMultisampleQuality, BOOL bDiscard, LPDIRECT3DSURFACE9* ppSurface);
