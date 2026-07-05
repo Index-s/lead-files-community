@@ -19,6 +19,11 @@ CGraphicDeviceDX12::CGraphicDeviceDX12()
 	, m_uFrameIndex(0)
 	, m_uRTVDescriptorSize(0)
 	, m_bCreated(false)
+	, m_hCreateWindow(NULL)
+	, m_uCreateWidth(0)
+	, m_uCreateHeight(0)
+	, m_bCreateWindowed(true)
+	, m_bDeviceRemoved(false)
 {
 	for (UINT u = 0; u < FRAME_COUNT; ++u)
 	{
@@ -76,7 +81,38 @@ bool CGraphicDeviceDX12::Create(HWND hWnd, UINT uWidth, UINT uHeight, bool bWind
 		return false;
 	}
 
+	m_hCreateWindow = hWnd;
+	m_uCreateWidth = uWidth;
+	m_uCreateHeight = uHeight;
+	m_bCreateWindowed = bWindowed;
+	m_bDeviceRemoved = false;
 	m_bCreated = true;
+	return true;
+}
+
+bool CGraphicDeviceDX12::IsDeviceRemoved() const
+{
+	return m_bDeviceRemoved;
+}
+
+bool CGraphicDeviceDX12::Recreate()
+{
+	const HWND hWnd = m_hCreateWindow;
+	const UINT uWidth = m_uCreateWidth;
+	const UINT uHeight = m_uCreateHeight;
+	const bool bWindowed = m_bCreateWindowed;
+
+	if (!hWnd)
+		return false;
+
+	Destroy();
+
+	if (!Create(hWnd, uWidth, uHeight, bWindowed))
+	{
+		TraceError("CGraphicDeviceDX12: recreate after device removal failed.");
+		return false;
+	}
+
 	return true;
 }
 
@@ -294,6 +330,7 @@ bool CGraphicDeviceDX12::Present()
 	if (DXGI_ERROR_DEVICE_REMOVED == hr || DXGI_ERROR_DEVICE_RESET == hr)
 	{
 		TraceError("CGraphicDeviceDX12: device removed (0x%08x).", static_cast<unsigned>(m_pkDevice->GetDeviceRemovedReason()));
+		m_bDeviceRemoved = true;
 		return false;
 	}
 
@@ -323,6 +360,8 @@ bool CGraphicDeviceDX12::Resize(UINT uWidth, UINT uHeight)
 	}
 
 	m_uFrameIndex = m_pkSwapChain->GetCurrentBackBufferIndex();
+	m_uCreateWidth = uWidth;
+	m_uCreateHeight = uHeight;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE kRTVHandle = m_pkRTVHeap->GetCPUDescriptorHandleForHeapStart();
 	for (UINT u = 0; u < FRAME_COUNT; ++u)
