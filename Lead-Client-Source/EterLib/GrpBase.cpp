@@ -433,6 +433,20 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		__UploadGrannyLightingConstants();
 		return true;
 	}
+	if (D3DTOP_SELECTARG2 == dwValue)
+	{
+		// Actor fade (BlendRender): alpha comes from TFACTOR, stage1 off.
+		STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAARG2, &dwValue);
+		if (D3DTA_TFACTOR != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwValue);
+		if (D3DTOP_DISABLE != dwValue)
+			return false;
+		if (!gs_kShaderPool.BindPNTLitBlend())
+			return false;
+		__UploadGrannyLightingConstants();
+		return true;
+	}
 	if (D3DTOP_MODULATE != dwValue)
 		return false;
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAARG1, &dwValue);
@@ -464,6 +478,24 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		if (!pEnvTexture)
 			return false;
 		bSpecular = true;
+	}
+	else if (!bSpecularAlpha && D3DTOP_ADD == dwValue)
+	{
+		// Actor hit flash (AddRender): stage1 adds TFACTOR to the lit base.
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG1, &dwValue);
+		if (D3DTA_CURRENT != dwValue)
+			return false;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG2, &dwValue);
+		if (D3DTA_TFACTOR != dwValue)
+			return false;
+		LPDIRECT3DBASETEXTURE9 pkAddTexture;
+		STATEMANAGER.GetTexture(0, &pkAddTexture);
+		if (!pkAddTexture)
+			return false;
+		if (!gs_kShaderPool.BindPNTLitAdd())
+			return false;
+		__UploadGrannyLightingConstants();
+		return true;
 	}
 	else if (bSpecularAlpha || D3DTOP_DISABLE != dwValue)
 		return false;

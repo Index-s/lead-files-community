@@ -42,6 +42,10 @@ class CGraphicShaderPool
 		// XYZ|NORMAL|TEX1 with fixed-function directional lighting evaluated in the
 		// vertex shader; lighting constants (c8-c10) are uploaded by the caller.
 		bool BindPNTLit();
+		// Lit PNT actor fade: alpha = TFACTOR (BlendRender cascade).
+		bool BindPNTLitBlend();
+		// Lit PNT hit flash: rgb += TFACTOR (AddRender cascade).
+		bool BindPNTLitAdd();
 		// PNT stream drawn as a solid TEXTUREFACTOR silhouette (shadow cast).
 		bool BindPNTFlatTFactor();
 		// Lit PNT plus the sphere-map specular layer: TEXCOORD1 = camera-space
@@ -90,6 +94,8 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpTerrainSplatVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpTerrainLitShadowVertexShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpLitBlendPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpLitAddPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpDiffusePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpFlatTFactorPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
