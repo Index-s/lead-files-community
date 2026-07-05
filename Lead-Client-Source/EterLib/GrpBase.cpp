@@ -270,6 +270,12 @@ bool CGraphicBase::BeginEffectShader(DWORD dwColorOp)
 			return gs_kShaderPool.BindPTTFactorOnly();
 		case D3DTOP_SELECTARG2:
 			return gs_kShaderPool.BindPTTexTFactorAlpha();
+		case D3DTOP_MODULATE2X:
+			return gs_kShaderPool.BindPTTFactorModulate2X();
+		case D3DTOP_MODULATE4X:
+			return gs_kShaderPool.BindPTTFactorModulate4X();
+		case D3DTOP_ADDSIGNED:
+			return gs_kShaderPool.BindPTTFactorAddSigned();
 		default:
 			return false;	// uncommon combiner: keep the fixed-function path
 	}
