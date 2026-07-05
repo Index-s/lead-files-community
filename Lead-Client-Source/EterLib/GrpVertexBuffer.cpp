@@ -220,7 +220,7 @@ void CGraphicVertexBuffer::__RefreshTwinDX12() const
 	m_pkBufferDX12 = pkBackend->GetUploader().CreateStaticBuffer(
 		pkBackend->GetDevice().GetCommandQueue(), m_pvLockedDX12, m_uLockedBytesDX12,
 		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-	if (m_pkBufferDX12)
+	if (m_pkBufferDX12 && CStateManager::InstancePtr())
 		STATEMANAGER.RegisterBufferDX12(m_lpd3dVB, m_pkBufferDX12, DXGI_FORMAT_UNKNOWN);
 
 	m_pvLockedDX12 = NULL;
@@ -236,7 +236,8 @@ void CGraphicVertexBuffer::__DestroyTwinDX12() const
 	{
 		// In-flight frames may still read the old twin.
 		pkBackend->GetDevice().WaitForGPU();
-		STATEMANAGER.UnregisterBufferDX12(m_lpd3dVB);
+		if (CStateManager::InstancePtr())
+			STATEMANAGER.UnregisterBufferDX12(m_lpd3dVB);
 	}
 
 	safe_release(m_pkBufferDX12);

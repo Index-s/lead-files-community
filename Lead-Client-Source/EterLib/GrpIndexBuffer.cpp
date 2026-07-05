@@ -152,7 +152,7 @@ void CGraphicIndexBuffer::__RefreshTwinDX12() const
 	m_pkBufferDX12 = pkBackend->GetUploader().CreateStaticBuffer(
 		pkBackend->GetDevice().GetCommandQueue(), m_pvLockedDX12, m_uLockedBytesDX12,
 		D3D12_RESOURCE_STATE_INDEX_BUFFER);
-	if (m_pkBufferDX12)
+	if (m_pkBufferDX12 && CStateManager::InstancePtr())
 		STATEMANAGER.RegisterBufferDX12(m_lpd3dIdxBuf, m_pkBufferDX12,
 										D3DFMT_INDEX16 == m_d3dFmt ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT);
 
@@ -168,7 +168,8 @@ void CGraphicIndexBuffer::__DestroyTwinDX12() const
 	if (pkBackend)
 	{
 		pkBackend->GetDevice().WaitForGPU();
-		STATEMANAGER.UnregisterBufferDX12(m_lpd3dIdxBuf);
+		if (CStateManager::InstancePtr())
+			STATEMANAGER.UnregisterBufferDX12(m_lpd3dIdxBuf);
 	}
 
 	safe_release(m_pkBufferDX12);
