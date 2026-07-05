@@ -375,6 +375,34 @@ bool CGraphicBackendDX12::__ApplyState(D3D_PRIMITIVE_TOPOLOGY eTopology)
 	return true;
 }
 
+bool CGraphicBackendDX12::DrawBuffers(D3D_PRIMITIVE_TOPOLOGY eTopology,
+									   const D3D12_VERTEX_BUFFER_VIEW& rkVertexView,
+									   UINT uStartVertex, UINT uVertexCount,
+									   const D3D12_INDEX_BUFFER_VIEW* pkIndexView,
+									   UINT uStartIndex, UINT uIndexCount, INT nBaseVertex)
+{
+	if (!m_bCreated || !m_bInFrame || !m_akInputElements)
+		return false;
+
+	if (!__ApplyState(eTopology))
+		return false;
+
+	ID3D12GraphicsCommandList* pkCommandList = m_kDevice.GetCommandList();
+	pkCommandList->IASetVertexBuffers(0, 1, &rkVertexView);
+
+	if (pkIndexView)
+	{
+		pkCommandList->IASetIndexBuffer(pkIndexView);
+		pkCommandList->DrawIndexedInstanced(uIndexCount, 1, uStartIndex, nBaseVertex, 0);
+	}
+	else
+	{
+		pkCommandList->DrawInstanced(uVertexCount, 1, uStartVertex, 0);
+	}
+
+	return true;
+}
+
 bool CGraphicBackendDX12::DrawTransient(D3D_PRIMITIVE_TOPOLOGY eTopology,
 										const void* pvVertices, UINT uVertexCount, UINT uStrideBytes,
 										const WORD* awIndices, UINT uIndexCount)

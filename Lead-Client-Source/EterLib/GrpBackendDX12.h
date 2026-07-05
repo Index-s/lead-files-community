@@ -64,6 +64,13 @@ class CGraphicBackendDX12
 		bool	SetVSConstants(UINT uStartRegister, const float* afData, UINT uVector4Count);
 		bool	SetPSConstants(UINT uStartRegister, const float* afData, UINT uVector4Count);
 
+		// Static-buffer draw; pkIndexView NULL = non-indexed.
+		bool	DrawBuffers(D3D_PRIMITIVE_TOPOLOGY eTopology,
+							const D3D12_VERTEX_BUFFER_VIEW& rkVertexView,
+							UINT uStartVertex, UINT uVertexCount,
+							const D3D12_INDEX_BUFFER_VIEW* pkIndexView,
+							UINT uStartIndex, UINT uIndexCount, INT nBaseVertex);
+
 		// UP-style draw through the upload ring; awIndices NULL = non-indexed.
 		bool	DrawTransient(D3D_PRIMITIVE_TOPOLOGY eTopology,
 							  const void* pvVertices, UINT uVertexCount, UINT uStrideBytes,

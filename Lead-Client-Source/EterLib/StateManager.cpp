@@ -976,6 +976,12 @@ void CStateManager::SetStreamSource(UINT StreamNumber, LPDIRECT3DVERTEXBUFFER9 p
 
 	m_lpD3DDev->SetStreamSource(StreamNumber, pStreamData, 0, Stride);
 	m_CurrentState.m_StreamData[StreamNumber] = kStreamData;
+
+	if (0 == StreamNumber)
+	{
+		m_pvStream0DX12 = pStreamData;
+		m_uStream0StrideDX12 = Stride;
+	}
 }
 
 void CStateManager::SaveIndices(LPDIRECT3DINDEXBUFFER9 pIndexData, UINT BaseVertexIndex)
@@ -998,10 +1004,28 @@ void CStateManager::SetIndices(LPDIRECT3DINDEXBUFFER9 pIndexData, UINT BaseVerte
 	
 	m_lpD3DDev->SetIndices(pIndexData);
 	m_CurrentState.m_IndexData = kIndexData;
+
+	m_pvIndicesDX12 = pIndexData;
 }
 
 HRESULT CStateManager::DrawPrimitive(D3DPRIMITIVETYPE PrimitiveType, UINT StartVertex, UINT PrimitiveCount)
 {
+	if (CGraphicBackendDX12::GetInstance())
+	{
+		UINT uVertexCount = 0;
+		switch (PrimitiveType)
+		{
+			case D3DPT_POINTLIST:		uVertexCount = PrimitiveCount; break;
+			case D3DPT_LINELIST:		uVertexCount = PrimitiveCount * 2; break;
+			case D3DPT_LINESTRIP:		uVertexCount = PrimitiveCount + 1; break;
+			case D3DPT_TRIANGLELIST:	uVertexCount = PrimitiveCount * 3; break;
+			case D3DPT_TRIANGLESTRIP:	uVertexCount = PrimitiveCount + 2; break;
+			default: break;
+		}
+		if (uVertexCount)
+			__MirrorDrawBuffersDX12(PrimitiveType, StartVertex, uVertexCount, 0, 0, 0);
+	}
+
 	return (m_lpD3DDev->DrawPrimitive(PrimitiveType, StartVertex, PrimitiveCount));
 }
 
@@ -1030,6 +1054,20 @@ HRESULT CStateManager::DrawPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, UINT Prim
 
 HRESULT CStateManager::DrawIndexedPrimitive(D3DPRIMITIVETYPE PrimitiveType, UINT minIndex, UINT NumVertices, UINT startIndex, UINT primCount)
 {
+	if (CGraphicBackendDX12::GetInstance())
+	{
+		UINT uIndexCount = 0;
+		switch (PrimitiveType)
+		{
+			case D3DPT_LINELIST:		uIndexCount = primCount * 2; break;
+			case D3DPT_TRIANGLELIST:	uIndexCount = primCount * 3; break;
+			case D3DPT_TRIANGLESTRIP:	uIndexCount = primCount + 2; break;
+			default: break;
+		}
+		if (uIndexCount)
+			__MirrorDrawBuffersDX12(PrimitiveType, 0, 0, startIndex, uIndexCount, static_cast<INT>(minIndex));
+	}
+
 	return (m_lpD3DDev->DrawIndexedPrimitive(PrimitiveType, minIndex, 0, NumVertices, startIndex, primCount));
 }
 
@@ -1085,9 +1123,7 @@ void CStateManager::UnregisterTextureSRVDX12(const void* pkTexture)
 		m_kTextureSRVMapDX12.erase(pkTexture);
 }
 
-bool CStateManager::__MirrorDrawDX12(D3DPRIMITIVETYPE ePrimitiveType,
-									 const void* pvVertices, UINT uVertexCount, UINT uStrideBytes,
-									 const WORD* awIndices, UINT uIndexCount)
+bool CStateManager::__MirrorPrepareDX12(D3DPRIMITIVETYPE ePrimitiveType, D3D_PRIMITIVE_TOPOLOGY* peTopologyOut)
 {
 	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
 	if (!pkBackend)
@@ -1102,14 +1138,13 @@ bool CStateManager::__MirrorDrawDX12(D3DPRIMITIVETYPE ePrimitiveType,
 	if (itLayout == m_kDeclLayoutMapDX12.end())
 		return false;
 
-	D3D_PRIMITIVE_TOPOLOGY eTopology;
 	switch (ePrimitiveType)
 	{
-		case D3DPT_POINTLIST:		eTopology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST; break;
-		case D3DPT_LINELIST:		eTopology = D3D_PRIMITIVE_TOPOLOGY_LINELIST; break;
-		case D3DPT_LINESTRIP:		eTopology = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP; break;
-		case D3DPT_TRIANGLELIST:	eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; break;
-		case D3DPT_TRIANGLESTRIP:	eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP; break;
+		case D3DPT_POINTLIST:		*peTopologyOut = D3D_PRIMITIVE_TOPOLOGY_POINTLIST; break;
+		case D3DPT_LINELIST:		*peTopologyOut = D3D_PRIMITIVE_TOPOLOGY_LINELIST; break;
+		case D3DPT_LINESTRIP:		*peTopologyOut = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP; break;
+		case D3DPT_TRIANGLELIST:	*peTopologyOut = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; break;
+		case D3DPT_TRIANGLESTRIP:	*peTopologyOut = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP; break;
 		default:
 			return false;
 	}
@@ -1131,5 +1166,72 @@ bool CStateManager::__MirrorDrawDX12(D3DPRIMITIVETYPE ePrimitiveType,
 	pkBackend->SetInputLayout(itLayout->second.uLayoutID, itLayout->second.akElements,
 							  itLayout->second.uElementCount);
 
-	return pkBackend->DrawTransient(eTopology, pvVertices, uVertexCount, uStrideBytes, awIndices, uIndexCount);
+	return true;
+}
+
+bool CStateManager::__MirrorDrawDX12(D3DPRIMITIVETYPE ePrimitiveType,
+									 const void* pvVertices, UINT uVertexCount, UINT uStrideBytes,
+									 const WORD* awIndices, UINT uIndexCount)
+{
+	D3D_PRIMITIVE_TOPOLOGY eTopology;
+	if (!__MirrorPrepareDX12(ePrimitiveType, &eTopology))
+		return false;
+
+	return CGraphicBackendDX12::GetInstance()->DrawTransient(eTopology, pvVertices, uVertexCount,
+															  uStrideBytes, awIndices, uIndexCount);
+}
+
+bool CStateManager::__MirrorDrawBuffersDX12(D3DPRIMITIVETYPE ePrimitiveType,
+											UINT uStartVertex, UINT uVertexCount,
+											UINT uStartIndex, UINT uIndexCount, INT nBaseVertex)
+{
+	std::unordered_map<const void*, TBufferDX12>::const_iterator itVertexBuffer =
+		m_pvStream0DX12 ? m_kBufferMapDX12.find(m_pvStream0DX12) : m_kBufferMapDX12.end();
+	if (itVertexBuffer == m_kBufferMapDX12.end())
+		return false;
+
+	D3D_PRIMITIVE_TOPOLOGY eTopology;
+	if (!__MirrorPrepareDX12(ePrimitiveType, &eTopology))
+		return false;
+
+	D3D12_VERTEX_BUFFER_VIEW kVertexView;
+	kVertexView.BufferLocation = itVertexBuffer->second.pkResource->GetGPUVirtualAddress();
+	kVertexView.SizeInBytes = static_cast<UINT>(itVertexBuffer->second.pkResource->GetDesc().Width);
+	kVertexView.StrideInBytes = m_uStream0StrideDX12;
+
+	if (uIndexCount)
+	{
+		std::unordered_map<const void*, TBufferDX12>::const_iterator itIndexBuffer =
+			m_pvIndicesDX12 ? m_kBufferMapDX12.find(m_pvIndicesDX12) : m_kBufferMapDX12.end();
+		if (itIndexBuffer == m_kBufferMapDX12.end() || DXGI_FORMAT_UNKNOWN == itIndexBuffer->second.eIndexFormat)
+			return false;
+
+		D3D12_INDEX_BUFFER_VIEW kIndexView;
+		kIndexView.BufferLocation = itIndexBuffer->second.pkResource->GetGPUVirtualAddress();
+		kIndexView.SizeInBytes = static_cast<UINT>(itIndexBuffer->second.pkResource->GetDesc().Width);
+		kIndexView.Format = itIndexBuffer->second.eIndexFormat;
+
+		return CGraphicBackendDX12::GetInstance()->DrawBuffers(eTopology, kVertexView, 0, 0,
+																&kIndexView, uStartIndex, uIndexCount, nBaseVertex);
+	}
+
+	return CGraphicBackendDX12::GetInstance()->DrawBuffers(eTopology, kVertexView, uStartVertex, uVertexCount,
+															NULL, 0, 0, 0);
+}
+
+void CStateManager::RegisterBufferDX12(const void* pkBuffer, ID3D12Resource* pkResource, DXGI_FORMAT eIndexFormat)
+{
+	if (!pkBuffer || !pkResource)
+		return;
+
+	TBufferDX12 kEntry;
+	kEntry.pkResource = pkResource;
+	kEntry.eIndexFormat = eIndexFormat;
+	m_kBufferMapDX12[pkBuffer] = kEntry;
+}
+
+void CStateManager::UnregisterBufferDX12(const void* pkBuffer)
+{
+	if (pkBuffer)
+		m_kBufferMapDX12.erase(pkBuffer);
 }
