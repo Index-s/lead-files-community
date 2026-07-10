@@ -3,12 +3,31 @@
 
 #include "../eterLib/ResourceManager.h"
 #include "../eterlib/StateManager.h"
+#include "../eterlib/GrpBackendDX12.h"
 #include "../EterPack/EterPackManager.h"
 
 #include "AreaTerrain.h"
 #include "MapOutdoor.h"
 
 CDynamicPool<CTerrain>		CTerrain::ms_kPool;
+
+namespace
+{
+	void UnregisterTerrainTwin(LPDIRECT3DTEXTURE9 pkTexture)
+	{
+		if (!pkTexture)
+			return;
+		if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+			pkBackend->UnregisterRawTextureTwin(pkTexture);
+	}
+
+	void PackAlphaLevel(const BYTE* pbyAlpha, UINT uSize, std::vector<DWORD>& rkOut)
+	{
+		rkOut.resize(static_cast<size_t>(uSize) * uSize);
+		for (size_t i = 0; i != rkOut.size(); ++i)
+			rkOut[i] = static_cast<DWORD>(pbyAlpha[i]) << 24;
+	}
+}
 
 void CTerrain::DestroySystem()
 {
@@ -48,6 +67,7 @@ void CTerrain::SetMapOutDoor(CMapOutdoor * pOwnerOutdoorMap)
 void CTerrain::Clear()
 {
 	DeallocateMarkedSplats();
+	RAW_DeallocateSplats();
 	CTerrainImpl::Clear();
   	Initialize();
 }
@@ -546,13 +566,7 @@ void CTerrain::RAW_DeallocateSplats(bool bBGLoading)
 		TTerainSplat & rSplat = m_TerrainSplatPatch.Splats[i];
 
 		if (m_lpAlphaTexture[i])
-		{
-			ULONG ulRef;
-			do
-			{
-				ulRef = m_lpAlphaTexture[i]->Release();
-			} while(ulRef > 0);
-		}
+			UnregisterTerrainTwin(m_lpAlphaTexture[i]);
 
 		rSplat.pd3dTexture = m_lpAlphaTexture[i] = NULL;
  	}
@@ -653,15 +667,7 @@ void CTerrain::RAW_GenerateSplat(bool bBGLoading)
 				if (rSplat.Active)   // We already have an alpha map which needs to be updated
 				{
 					if (m_lpAlphaTexture[i])
-					{
-						ULONG ulRef;
-						do
-						{
-							ulRef = m_lpAlphaTexture[i]->Release();
-							if (ulRef > 0)
-								TraceError(" CTerrain::RAW_GenerateSplat - TileCount > 0 : Alpha Texture Release(%d) ERROR", ulRef);
-						} while(ulRef > 0);
-					}
+						UnregisterTerrainTwin(m_lpAlphaTexture[i]);
 
 					rSplat.pd3dTexture = m_lpAlphaTexture[i] = NULL;
  				}
@@ -738,16 +744,8 @@ void CTerrain::RAW_GenerateSplat(bool bBGLoading)
 				if (rSplat.Active)
 				{
 					if (m_lpAlphaTexture[i])
-					{
-						ULONG ulRef;
-						do
-						{
-							ulRef = m_lpAlphaTexture[i]->Release();
-							if (ulRef > 0)
-								TraceError(" CTerrain::RAW_GenerateSplat - TileDount 0 : Alpha Texture Release(%d) ERROR", ulRef);
-						} while(ulRef > 0);
-					}
-					
+						UnregisterTerrainTwin(m_lpAlphaTexture[i]);
+
 					rSplat.pd3dTexture = m_lpAlphaTexture[i] = NULL;
  				}
 				rSplat.NeedsUpdate = 0;
@@ -762,34 +760,11 @@ LPDIRECT3DTEXTURE9 CTerrain::AddTexture32(BYTE byImageNum, BYTE * pbyImage, long
 	assert(NULL==m_lpAlphaTexture[byImageNum]);
 
 	if (m_lpAlphaTexture[byImageNum])
-		m_lpAlphaTexture[byImageNum]->Release();
+		UnregisterTerrainTwin(m_lpAlphaTexture[byImageNum]);
 
 	m_lpAlphaTexture[byImageNum]=NULL;
 
-	HRESULT hr;
-	D3DFORMAT format;
-
-	if(ms_bSupportDXT)
-		format = D3DFMT_A8R8G8B8;
-	else
-		format = D3DFMT_A4R4G4B4;
-
-
-	bool bResizedAndSuccess = false;
-
-	IDirect3DTexture9* pkTex=NULL;
-
-	UINT uiNewWidth = 256;
-	UINT uiNewHeight = 256;
-	hr = CreateDeviceTexture(
-		uiNewWidth, uiNewHeight, 5, D3DUSAGE_DYNAMIC,
-		format, D3DPOOL_DEFAULT, &pkTex);
-	if (FAILED(hr))
-	{
-		TraceError("CTerrain::AddTexture32 - CreateTexture failed hr=0x%08X w=%u h=%u levels=%u usage=%u fmt=%u pool=%u", hr, uiNewWidth, uiNewHeight, 5u, (unsigned)D3DUSAGE_DYNAMIC, (unsigned)format, (unsigned)D3DPOOL_DEFAULT);
-		return NULL;
-	}
-	
+	LPDIRECT3DTEXTURE9 pkTex = (LPDIRECT3DTEXTURE9)&m_lpAlphaTexture[byImageNum];
 
 	BYTE abResizeImage[256*256];
 	{
@@ -808,22 +783,11 @@ LPDIRECT3DTEXTURE9 CTerrain::AddTexture32(BYTE byImageNum, BYTE * pbyImage, long
 				>>3)+pbSrcPixel[259])>>1;
 			}
 		}
-
-		D3DLOCKED_RECT  d3dlr;
-		hr = pkTex->LockRect(0, &d3dlr, 0, 0);
-		if (FAILED(hr))
-		{
-			pkTex->Release();
-			return NULL;
-		}
-		
-		if(ms_bSupportDXT)
-			PutImage32(abResizeImage, (BYTE*) d3dlr.pBits, 256, d3dlr.Pitch, 256, 256, bResizedAndSuccess);
-		else
-			PutImage16(abResizeImage, (BYTE*) d3dlr.pBits, 256, d3dlr.Pitch, 256, 256, bResizedAndSuccess);
-
-		pkTex->UnlockRect(0);
 	}
+
+	std::vector<std::vector<DWORD> > kTwinLevels;
+	kTwinLevels.push_back(std::vector<DWORD>());
+	PackAlphaLevel(abResizeImage, 256, kTwinLevels.back());
 
 	BYTE abResizeImage2[128*128];
 
@@ -831,8 +795,8 @@ LPDIRECT3DTEXTURE9 CTerrain::AddTexture32(BYTE byImageNum, BYTE * pbyImage, long
 	BYTE* pbDstBuffer=abResizeImage2;
 
 	UINT uSrcSize=256;
-	
-	for (UINT uMipMapLevel=1; uMipMapLevel!=pkTex->GetLevelCount(); ++uMipMapLevel)
+
+	for (UINT uMipMapLevel=1; uMipMapLevel!=5; ++uMipMapLevel)
 	{
 		UINT uDstSize=uSrcSize>>1;
 
@@ -848,59 +812,32 @@ LPDIRECT3DTEXTURE9 CTerrain::AddTexture32(BYTE byImageNum, BYTE * pbyImage, long
 			}
 		}
 
-		D3DLOCKED_RECT  d3dlr;
-	
-		hr = pkTex->LockRect(uMipMapLevel, &d3dlr, 0, 0);
-		if (FAILED(hr))
-			continue;
+		kTwinLevels.push_back(std::vector<DWORD>());
+		PackAlphaLevel(pbDstBuffer, uDstSize, kTwinLevels.back());
 
-		if(ms_bSupportDXT)
-			PutImage32(pbDstBuffer, (BYTE*) d3dlr.pBits, uDstSize, d3dlr.Pitch, uDstSize, uDstSize, bResizedAndSuccess);
-		else
-			PutImage16(pbDstBuffer, (BYTE*) d3dlr.pBits, uDstSize, d3dlr.Pitch, uDstSize, uDstSize, bResizedAndSuccess);
-
-		hr = pkTex->UnlockRect(uMipMapLevel);
-		
 		std::swap(pbSrcBuffer, pbDstBuffer);
 		uSrcSize=uDstSize;
+	}
+
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+	{
+		std::vector<TTextureLevelData> kLevels(kTwinLevels.size());
+		for (size_t i = 0; i != kTwinLevels.size(); ++i)
+		{
+			kLevels[i].pvPixels = &kTwinLevels[i][0];
+			kLevels[i].uRowPitch = (256u >> i) * 4;
+		}
+		if (!pkBackend->RegisterRawTextureTwin(pkTex, 256, 256, DXGI_FORMAT_B8G8R8A8_UNORM,
+											   &kLevels[0], static_cast<UINT>(kLevels.size())))
+		{
+			TraceError("CTerrain::AddTexture32 - RegisterRawTextureTwin failed w=%u h=%u levels=%u", 256u, 256u, static_cast<UINT>(kLevels.size()));
+			return NULL;
+		}
 	}
 
 	m_lpAlphaTexture[byImageNum]=pkTex;
 
 	return pkTex;
-}
-
-void CTerrain::PutImage32(BYTE *src, BYTE *dst, long src_pitch, long dst_pitch, long texturewidth, long textureheight, bool bResize)
-{
-	for (int y = 0; y < textureheight; ++y)
-    {
-		for (int x = 0; x < texturewidth; ++x)
-		{
-			DWORD packed_pixel = src[x] << 24;
-			*((DWORD*)(dst+x*4)) = packed_pixel;
-
-		}
-
-		dst += dst_pitch;
-		src += src_pitch;
-    }
-}
-
-void CTerrain::PutImage16(BYTE *src, BYTE *dst, long src_pitch, long dst_pitch, long texturewidth, long textureheight, bool bResize)
-{
-	for (int y = 0; y < textureheight; ++y)
-    {
-		for (int x = 0; x < texturewidth; ++x)
-		{
-			WORD packed_pixel = src[x] << 8;
-			// & It's a waste to calculate it once
-			//WORD packed_pixel = (src[x]&0xF0) << 8;
-			*((WORD*)(dst+x*2)) = packed_pixel;
-		}
-
-		dst += dst_pitch;
-		src += src_pitch;
-    }
 }
 
 void CTerrain::SetCoordinate(WORD wCoordX, WORD wCoordY)
@@ -1140,37 +1077,29 @@ void CTerrain::_CalculateTerrainPatch(BYTE byPatchNumX, BYTE byPatchNumY)
 void CTerrain::AllocateMarkedSplats(BYTE * pbyAlphaMap)
 {
 	TTerainSplat & rAttrSplat = m_MarkedSplatPatch.Splats[0];
-	HRESULT hr;
 
 	if (m_lpMarkedTexture)
+		UnregisterTerrainTwin(m_lpMarkedTexture);
+
+	m_lpMarkedTexture = (LPDIRECT3DTEXTURE9)&m_lpMarkedTexture;
+
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
 	{
-		ULONG ulRef;
-		do
+		std::vector<DWORD> kPixels(static_cast<size_t>(ATTRMAP_XSIZE) * ATTRMAP_YSIZE);
+		for (size_t i = 0; i != kPixels.size(); ++i)
+			kPixels[i] = static_cast<DWORD>(pbyAlphaMap[i]) << 24;
+
+		TTextureLevelData kLevel;
+		kLevel.pvPixels = &kPixels[0];
+		kLevel.uRowPitch = ATTRMAP_XSIZE * 4;
+		if (!pkBackend->RegisterRawTextureTwin(m_lpMarkedTexture, ATTRMAP_XSIZE, ATTRMAP_YSIZE,
+											   DXGI_FORMAT_B8G8R8A8_UNORM, &kLevel, 1))
 		{
-			ulRef = m_lpMarkedTexture->Release();
-		} while(ulRef > 0);
+			TraceError("CTerrain::AllocateMarkedSplats - RegisterRawTextureTwin failed w=%u h=%u", static_cast<UINT>(ATTRMAP_XSIZE), static_cast<UINT>(ATTRMAP_YSIZE));
+			m_lpMarkedTexture = NULL;
+			return;
+		}
 	}
-
-	hr = CreateDeviceTexture(ATTRMAP_XSIZE, ATTRMAP_YSIZE, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_lpMarkedTexture);
-	if (FAILED(hr))
-	{
-		TraceError("CTerrain::AllocateMarkedSplats - CreateTexture failed hr=0x%08X", hr);
-		return;
-	}
-
-	D3DLOCKED_RECT d3dlr;
-	hr = m_lpMarkedTexture->LockRect(0, &d3dlr, 0, 0);
-	if (FAILED(hr))
-	{
-		TraceError("CTerrain::AllocateMarkedSplats - LockRect failed hr=0x%08X", hr);
-		m_lpMarkedTexture->Release();
-		m_lpMarkedTexture = NULL;
-		return;
-	}
-
-	PutImage32(pbyAlphaMap, (BYTE*) d3dlr.pBits, ATTRMAP_XSIZE, d3dlr.Pitch, ATTRMAP_XSIZE, ATTRMAP_YSIZE);
-
-	m_lpMarkedTexture->UnlockRect(0);
 
 	rAttrSplat.pd3dTexture = m_lpMarkedTexture;
 	m_bMarked = true;
@@ -1180,13 +1109,7 @@ void CTerrain::DeallocateMarkedSplats()
 {
 	TTerainSplat & rSplat = m_MarkedSplatPatch.Splats[0];
 	if (m_lpMarkedTexture)
-	{
-		ULONG ulRef;
-		do
-		{
-			ulRef = m_lpMarkedTexture->Release();
-		} while(ulRef > 0);
-	}
+		UnregisterTerrainTwin(m_lpMarkedTexture);
 
 	rSplat.pd3dTexture = NULL;
 	m_lpMarkedTexture = NULL;

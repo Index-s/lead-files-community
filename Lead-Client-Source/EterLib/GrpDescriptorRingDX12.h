@@ -36,7 +36,7 @@ class CGraphicDescriptorRingDX12
 	private:
 		struct TFrameSpan
 		{
-			UINT	uHead;
+			UINT64	uHead;
 			UINT64	uFenceValue;
 		};
 
@@ -45,8 +45,8 @@ class CGraphicDescriptorRingDX12
 		ID3D12DescriptorHeap*	m_pkHeap;
 		UINT					m_uCapacity;
 		UINT					m_uIncrementSize;
-		UINT					m_uHead;
-		UINT					m_uTail;
+		UINT64					m_uHead;
+		UINT64					m_uTail;
 		TFrameSpan				m_akSpans[MAX_SPANS];
 		UINT					m_uSpanCount;
 };

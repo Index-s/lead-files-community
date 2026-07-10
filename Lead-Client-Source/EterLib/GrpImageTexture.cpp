@@ -58,9 +58,11 @@ namespace
 		}
 	}
 
-	// Full-mip-chain A8R8G8B8 texture from decoded pixels (staging -> default, like the DDS path).
-	LPDIRECT3DTEXTURE9 CreateTextureFromDecodedImage(const SDecodedImage& c_rkImage)
+	bool BuildImageLevels(const SDecodedImage& c_rkImage, std::vector<SDecodedImage>& rkLevels)
 	{
+		if (!c_rkImage.uWidth || !c_rkImage.uHeight)
+			return false;
+
 		UINT uMipCount = 1;
 		{
 			UINT uWidth = c_rkImage.uWidth;
@@ -73,20 +75,6 @@ namespace
 			}
 		}
 
-		LPDIRECT3DTEXTURE9 lpd3dStaging = NULL;
-		LPDIRECT3DTEXTURE9 lpd3dTexture = NULL;
-
-		if (FAILED(CGraphicBase::CreateDeviceTexture(c_rkImage.uWidth, c_rkImage.uHeight,
-										   uMipCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &lpd3dStaging)))
-			return NULL;
-
-		if (FAILED(CGraphicBase::CreateDeviceTexture(c_rkImage.uWidth, c_rkImage.uHeight,
-										   uMipCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &lpd3dTexture)))
-		{
-			lpd3dStaging->Release();
-			return NULL;
-		}
-
 		std::vector<BYTE> kLevelPixels = c_rkImage.kPixels;
 		std::vector<BYTE> kNextPixels;
 		UINT uLevelWidth = c_rkImage.uWidth;
@@ -94,19 +82,11 @@ namespace
 
 		for (UINT uLevel = 0; uLevel < uMipCount; ++uLevel)
 		{
-			D3DLOCKED_RECT lockedRect;
-			if (SUCCEEDED(lpd3dStaging->LockRect(uLevel, &lockedRect, NULL, 0)))
-			{
-				const BYTE* pbySrcRow = kLevelPixels.data();
-				BYTE* pbyDstRow = (BYTE*)lockedRect.pBits;
-				for (UINT y = 0; y < uLevelHeight; ++y)
-				{
-					memcpy(pbyDstRow, pbySrcRow, size_t(uLevelWidth) * 4);
-					pbySrcRow += size_t(uLevelWidth) * 4;
-					pbyDstRow += lockedRect.Pitch;
-				}
-				lpd3dStaging->UnlockRect(uLevel);
-			}
+			rkLevels.push_back(SDecodedImage());
+			SDecodedImage& rkLevel = rkLevels.back();
+			rkLevel.uWidth = uLevelWidth;
+			rkLevel.uHeight = uLevelHeight;
+			rkLevel.kPixels = kLevelPixels;
 
 			if (uLevel + 1 < uMipCount)
 			{
@@ -119,40 +99,38 @@ namespace
 			}
 		}
 
-		if (FAILED(CGraphicBase::UpdateDeviceTexture(lpd3dStaging, lpd3dTexture)))
-		{
-			lpd3dStaging->Release();
-			lpd3dTexture->Release();
-			return NULL;
-		}
+		return true;
+	}
 
-		lpd3dStaging->Release();
-		return lpd3dTexture;
+	UINT GetFormatBytesPerPixel(D3DFORMAT eFormat)
+	{
+		switch (eFormat)
+		{
+			case D3DFMT_A8R8G8B8:
+			case D3DFMT_X8R8G8B8:
+				return 4;
+			case D3DFMT_A4R4G4B4:
+			case D3DFMT_A1R5G5B5:
+			case D3DFMT_R5G6B5:
+				return 2;
+			default:
+				TraceError("CGraphicImageTexture: unexpected canvas format %u",
+						   static_cast<unsigned>(eFormat));
+				return 4;
+		}
 	}
 }
 
 bool CGraphicImageTexture::Lock(int* pRetPitch, void** ppRetPixels, int level)
 {
-	D3DLOCKED_RECT lockedRect;
-	HRESULT hr = m_lpd3dTexture->LockRect(level, &lockedRect, NULL, 0);
-	if (FAILED(hr))
-	{
-		D3DSURFACE_DESC desc;
-		if (SUCCEEDED(m_lpd3dTexture->GetLevelDesc(level, &desc)))
-			TraceError("CGraphicImageTexture::LockRect: hr=0x%08X pool=%u format=%u", hr, desc.Pool, desc.Format);
-		else
-			TraceError("CGraphicImageTexture::LockRect: hr=0x%08X", hr);
+	if (0 != level)
 		return false;
-	}
 
-	*pRetPitch = lockedRect.Pitch;
-	*ppRetPixels = (void*)lockedRect.pBits;
+	if (m_kCanvas.empty())
+		return false;
 
-	if (0 == level && CGraphicBackendDX12::GetInstance())
-	{
-		m_pvLockedPixelsDX12 = lockedRect.pBits;
-		m_nLockedPitchDX12 = lockedRect.Pitch;
-	}
+	*pRetPitch = m_width * static_cast<int>(GetFormatBytesPerPixel(m_d3dFmt));
+	*ppRetPixels = &m_kCanvas[0];
 	return true;
 }
 
@@ -160,16 +138,13 @@ void CGraphicImageTexture::Unlock(int level)
 {
 	assert(m_lpd3dTexture != NULL);
 
-	if (0 == level && m_pvLockedPixelsDX12)
-	{
-		CreateDX12Twin(m_width, m_height, m_d3dFmt, m_pvLockedPixelsDX12,
-					   static_cast<UINT>(m_nLockedPitchDX12));
-		if (m_lpd3dTexture && HasDX12Twin() && CStateManager::InstancePtr())
-			STATEMANAGER.RegisterTextureSRVDX12(m_lpd3dTexture, GetSRVHandleDX12());
-		m_pvLockedPixelsDX12 = NULL;
-	}
+	if (0 != level || m_kCanvas.empty())
+		return;
 
-	m_lpd3dTexture->UnlockRect(level);
+	CreateDX12Twin(m_width, m_height, m_d3dFmt, &m_kCanvas[0],
+				   m_width * GetFormatBytesPerPixel(m_d3dFmt));
+	if (m_lpd3dTexture && HasDX12Twin() && CStateManager::InstancePtr())
+		STATEMANAGER.RegisterTextureSRVDX12(m_lpd3dTexture, GetSRVHandleDX12());
 }
 
 void CGraphicImageTexture::Initialize()
@@ -180,8 +155,7 @@ void CGraphicImageTexture::Initialize()
 
 	m_d3dFmt=D3DFMT_UNKNOWN;
 	m_dwFilter=0;
-	m_pvLockedPixelsDX12 = NULL;
-	m_nLockedPitchDX12 = 0;
+	std::vector<BYTE>().swap(m_kCanvas);
 }
 
 void CGraphicImageTexture::Destroy()
@@ -198,8 +172,9 @@ bool CGraphicImageTexture::CreateDeviceObjects()
 
 	if (m_stFileName.empty())
 	{
-		if (FAILED(CreateDeviceTexture(m_width, m_height, 1, D3DUSAGE_DYNAMIC, m_d3dFmt, D3DPOOL_DEFAULT, &m_lpd3dTexture)))
-			return false;
+		const UINT uBytesPerPixel = GetFormatBytesPerPixel(m_d3dFmt);
+		m_kCanvas.assign(static_cast<size_t>(m_width) * m_height * uBytesPerPixel, 0);
+		m_lpd3dTexture = (LPDIRECT3DTEXTURE9)this;
 	}
 	else
 	{
@@ -237,15 +212,9 @@ bool CGraphicImageTexture::Create(UINT width, UINT height, D3DFORMAT d3dFmt, DWO
 
 void CGraphicImageTexture::CreateFromTexturePointer(const CGraphicTexture * c_pSrcTexture)
 {
-	if (m_lpd3dTexture)
-		m_lpd3dTexture->Release();
-	
 	m_width = c_pSrcTexture->GetWidth();
 	m_height = c_pSrcTexture->GetHeight();
 	m_lpd3dTexture = c_pSrcTexture->GetD3DTexture();
-	
-	if (m_lpd3dTexture)
-		m_lpd3dTexture->AddRef();
 
 	m_bEmpty = false;
 }
@@ -255,8 +224,6 @@ bool CGraphicImageTexture::CreateDDSTexture(CDXTCImage & image, const BYTE * /*c
 	int mipmapCount = image.m_dwMipMapCount == 0 ? 1 : image.m_dwMipMapCount;
 
 	D3DFORMAT format;
-	LPDIRECT3DTEXTURE9 lpd3dTexture = NULL;
-	LPDIRECT3DTEXTURE9 lpd3dStaging = NULL;
 
 	if(image.m_CompFormat == PF_DXT5)
 		format = D3DFMT_DXT5;
@@ -269,72 +236,47 @@ bool CGraphicImageTexture::CreateDDSTexture(CDXTCImage & image, const BYTE * /*c
 	else
 		format = D3DFMT_DXT1;
 
-	if (FAILED(CreateDeviceTexture(	image.m_nWidth, image.m_nHeight,
-										mipmapCount, 0, format, D3DPOOL_SYSTEMMEM, &lpd3dStaging)))
-	{
-		TraceError("CreateDDSTexture: Cannot creatre texture" );
-		return false;
-	}
-
-	if (FAILED(CreateDeviceTexture(	image.m_nWidth, image.m_nHeight,
-									mipmapCount, 0, format, D3DPOOL_DEFAULT, &lpd3dTexture)))
-	{
-		TraceError("CreateDDSTexture: Cannot creatre texture");
-		lpd3dStaging->Release();
-		return false;
-	}
-
-	for (DWORD i = 0; i < mipmapCount; ++i)
-	{
-		D3DLOCKED_RECT lockedRect;
-		HRESULT hr = lpd3dStaging->LockRect(i, &lockedRect, NULL, 0);
-		if (FAILED(hr))
-		{
-			D3DSURFACE_DESC desc;
-			if (SUCCEEDED(lpd3dStaging->GetLevelDesc(i, &desc)))
-				TraceError("CreateDDSTexture: LockRect failed hr=0x%08X pool=%u format=%u level=%u", hr, desc.Pool, desc.Format, i);
-			else
-				TraceError("CreateDDSTexture: LockRect failed hr=0x%08X level=%u", hr, i);
-		}
-		else
-		{
-			image.Copy(i, (BYTE*)lockedRect.pBits, lockedRect.Pitch);
-			lpd3dStaging->UnlockRect(i);
-		}
-	}
-
-	HRESULT hrUpdate = UpdateDeviceTexture(lpd3dStaging, lpd3dTexture);
-	if (FAILED(hrUpdate))
-	{
-		TraceError("CreateDDSTexture: UpdateTexture failed hr=0x%08X", hrUpdate);
-		lpd3dStaging->Release();
-		lpd3dTexture->Release();
-		return false;
-	}
-
-	lpd3dStaging->Release();
-
-	m_lpd3dTexture = lpd3dTexture;
-
 	m_width = image.m_nWidth;
 	m_height = image.m_nHeight;
-	m_bEmpty = false;
+	m_lpd3dTexture = (LPDIRECT3DTEXTURE9)this;
 
-	// DX12 twin from the top level of the source image.
-	if (CGraphicBackendDX12::GetInstance())
+	bool bWiden = false;
+	const DXGI_FORMAT eFormatDX12 = CGraphicFormatDX12::ToTextureFormatDX12(format, &bWiden);
+	if (DXGI_FORMAT_UNKNOWN != eFormatDX12)
 	{
-		bool bWiden = false;
-		const DXGI_FORMAT eFormatDX12 = CGraphicFormatDX12::ToTextureFormatDX12(format, &bWiden);
-		if (DXGI_FORMAT_UNKNOWN != eFormatDX12)
+		const UINT uLevelCount = static_cast<UINT>(mipmapCount);
+		std::vector<std::vector<BYTE> > kLevelStore(uLevelCount);
+		std::vector<TTextureLevelData> kLevels(uLevelCount);
+
+		UINT uLevelWidth = image.m_nWidth;
+		UINT uLevelHeight = image.m_nHeight;
+		bool bCopied = true;
+		for (UINT i = 0; i != uLevelCount && bCopied; ++i)
 		{
-			const UINT uPitch = CGraphicFormatDX12::GetRowPitch(eFormatDX12, image.m_nWidth);
-			const UINT uRows = CGraphicFormatDX12::GetRowCount(eFormatDX12, image.m_nHeight);
-			std::vector<BYTE> kTopLevel(static_cast<size_t>(uPitch) * uRows);
-			if (image.Copy(0, &kTopLevel[0], uPitch))
-				CreateDX12Twin(image.m_nWidth, image.m_nHeight, format, &kTopLevel[0], uPitch);
+			const UINT uPitch = CGraphicFormatDX12::GetRowPitch(eFormatDX12, uLevelWidth);
+			const UINT uRows = CGraphicFormatDX12::GetRowCount(eFormatDX12, uLevelHeight);
+			kLevelStore[i].resize(static_cast<size_t>(uPitch) * uRows);
+			bCopied = image.Copy(static_cast<int>(i), &kLevelStore[i][0], uPitch);
+			kLevels[i].pvPixels = &kLevelStore[i][0];
+			kLevels[i].uRowPitch = uPitch;
+			uLevelWidth = uLevelWidth > 1 ? uLevelWidth / 2 : 1;
+			uLevelHeight = uLevelHeight > 1 ? uLevelHeight / 2 : 1;
 		}
+
+		if (bCopied)
+			CreateTwinFromLevels(image.m_nWidth, image.m_nHeight, format,
+								 &kLevels[0], uLevelCount);
 	}
 
+	if (!HasDX12Twin())
+	{
+		TraceError("CreateDDSTexture: Cannot create texture (%dx%d fmt %u mips %d)",
+				   image.m_nWidth, image.m_nHeight, static_cast<unsigned>(format), mipmapCount);
+		Destroy();
+		return false;
+	}
+
+	m_bEmpty = false;
 	return true;
 }
 
@@ -366,8 +308,8 @@ bool CGraphicImageTexture::CreateFromMemoryFile(UINT bufSize, const void * c_pvB
 
 		ApplyColorKey(kImage, 0xffff00ff);
 
-		m_lpd3dTexture = CreateTextureFromDecodedImage(kImage);
-		if (!m_lpd3dTexture)
+		std::vector<SDecodedImage> kTwinLevels;
+		if (!BuildImageLevels(kImage, kTwinLevels))
 		{
 			TraceError("CreateFromMemoryFile: Cannot create texture");
 			return false;
@@ -375,9 +317,24 @@ bool CGraphicImageTexture::CreateFromMemoryFile(UINT bufSize, const void * c_pvB
 
 		m_width = kImage.uWidth;
 		m_height = kImage.uHeight;
+		m_lpd3dTexture = (LPDIRECT3DTEXTURE9)this;
 
-		CreateDX12Twin(kImage.uWidth, kImage.uHeight, D3DFMT_A8R8G8B8,
-					   &kImage.kPixels[0], kImage.uWidth * 4);
+		std::vector<TTextureLevelData> kLevels(kTwinLevels.size());
+		for (size_t i = 0; i != kTwinLevels.size(); ++i)
+		{
+			kLevels[i].pvPixels = &kTwinLevels[i].kPixels[0];
+			kLevels[i].uRowPitch = kTwinLevels[i].uWidth * 4;
+		}
+		CreateTwinFromLevels(kImage.uWidth, kImage.uHeight, D3DFMT_A8R8G8B8,
+							 &kLevels[0], static_cast<UINT>(kLevels.size()));
+
+		if (!HasDX12Twin())
+		{
+			TraceError("CreateFromMemoryFile: Cannot create texture (%ux%u)",
+					   kImage.uWidth, kImage.uHeight);
+			Destroy();
+			return false;
+		}
 	}
 
 	m_bEmpty = false;

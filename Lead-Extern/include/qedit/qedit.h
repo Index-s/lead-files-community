@@ -508,7 +508,10 @@ typedef struct DxtKey DxtKey;
 /* header files for imported files */
 #include "oaidl.h"
 #include "ocidl.h"
-#include "dx9/dxtrans.h"
+#define __IDxtCompositor_INTERFACE_DEFINED__
+#define __IDxtAlphaSetter_INTERFACE_DEFINED__
+#define __IDxtJpeg_INTERFACE_DEFINED__
+#define __IDxtKey_INTERFACE_DEFINED__
 #include "amstream.h"
 
 #ifdef __cplusplus

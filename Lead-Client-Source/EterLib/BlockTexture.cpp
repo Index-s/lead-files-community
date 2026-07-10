@@ -2,6 +2,7 @@
 #include "BlockTexture.h"
 #include "GrpBase.h"
 #include "GrpDib.h"
+#include "GrpBackendDX12.h"
 #include "../eterbase/Stl.h"
 #include "../eterlib/StateManager.h"
 
@@ -62,29 +63,29 @@ void CBlockTexture::Render(int ix, int iy)
 		}
 	}
 
-	TPDTVertex vertices[4];	
-	vertices[0].position.x	= isx - 0.5f;
-	vertices[0].position.y	= isy - 0.5f;
+	TPDTVertex vertices[4];
+	vertices[0].position.x	= float(isx);
+	vertices[0].position.y	= float(isy);
 	vertices[0].position.z	= 0.0f;
 	vertices[0].texCoord	= TTextureCoordinate(su, sv);
 	vertices[0].diffuse		= 0xffffffff;
 
-	vertices[1].position.x	= iex - 0.5f;
-	vertices[1].position.y	= isy - 0.5f;
+	vertices[1].position.x	= float(iex);
+	vertices[1].position.y	= float(isy);
 	vertices[1].position.z	= 0.0f;
 	vertices[1].texCoord	= TTextureCoordinate(eu, sv);
 	vertices[1].diffuse		= 0xffffffff;
 
-	vertices[2].position.x	= isx - 0.5f;
-	vertices[2].position.y	= iey - 0.5f;
+	vertices[2].position.x	= float(isx);
+	vertices[2].position.y	= float(iey);
 	vertices[2].position.z	= 0.0f;
 	vertices[2].texCoord	= TTextureCoordinate(su, ev);
 	vertices[2].diffuse		= 0xffffffff;
 
-	vertices[3].position.x	= iex - 0.5f;
-	vertices[3].position.y	= iey - 0.5f;
+	vertices[3].position.x	= float(iex);
+	vertices[3].position.y	= float(iey);
 	vertices[3].position.z	= 0.0f;
-	vertices[3].texCoord	= TTextureCoordinate(eu, ev);	
+	vertices[3].texCoord	= TTextureCoordinate(eu, ev);
 	vertices[3].diffuse		= 0xffffffff;
 
 	if (CGraphicBase::SetPDTStream(vertices, 4))
@@ -93,8 +94,16 @@ void CBlockTexture::Render(int ix, int iy)
 
 		STATEMANAGER.SetTexture(0, m_lpd3dTexture);
 		STATEMANAGER.SetTexture(1, NULL);
-		STATEMANAGER.SetFVF(D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_DIFFUSE);
-		STATEMANAGER.DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 4, 0, 2);
+		if (CGraphicBase::BeginPDTShader())
+		{
+			STATEMANAGER.DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 4, 0, 2);
+			CGraphicBase::EndPDTShader();
+		}
+		else
+		{
+			STATEMANAGER.SetFVF(D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_DIFFUSE);
+			STATEMANAGER.DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 4, 0, 2);
+		}
 	}
 }
 
@@ -121,21 +130,17 @@ void CBlockTexture::InvalidateRect(const RECT & c_rsrcRect)
 	// END_OF_DIBBAR_LONGSIZE_BUGFIX
 
 
+	if (m_kPixels.empty())
+		return;
+
 	DWORD * pdwSrc;
 	pdwSrc = (DWORD *)m_pDIB->GetPointer();
 	pdwSrc += dstRect.left + dstRect.top*m_pDIB->GetWidth();
 
-	D3DLOCKED_RECT lockedRect;
-	if (FAILED(m_lpd3dTexture->LockRect(0, &lockedRect, &clipRect, 0)))
-	{
-		Tracef("InvalidateRect() - Failed to LockRect");
-		return;
-	}
-
 	int iclipWidth = clipRect.right - clipRect.left;
 	int iclipHeight = clipRect.bottom - clipRect.top;
-	DWORD * pdwDst = (DWORD *)lockedRect.pBits;
-	DWORD dwDstWidth = lockedRect.Pitch>>2;
+	DWORD * pdwDst = &m_kPixels[0] + static_cast<size_t>(clipRect.top) * m_dwWidth + clipRect.left;
+	DWORD dwDstWidth = m_dwWidth;
 	DWORD dwSrcWidth = m_pDIB->GetWidth();
 	for (int i = 0; i < iclipHeight; ++i)
 	{
@@ -150,22 +155,37 @@ void CBlockTexture::InvalidateRect(const RECT & c_rsrcRect)
 		pdwSrc += dwSrcWidth;
 	}
 
-	m_lpd3dTexture->UnlockRect(0);
+	__RegisterTwin();
+}
+
+void CBlockTexture::__RegisterTwin()
+{
+	if (m_kPixels.empty() || !m_lpd3dTexture)
+		return;
+
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+	{
+		TTextureLevelData kLevel;
+		kLevel.pvPixels = &m_kPixels[0];
+		kLevel.uRowPitch = m_dwWidth * 4;
+		if (!pkBackend->RegisterRawTextureTwin(m_lpd3dTexture, m_dwWidth, m_dwHeight,
+											   DXGI_FORMAT_B8G8R8A8_UNORM, &kLevel, 1))
+			TraceError("CBlockTexture::__RegisterTwin - RegisterRawTextureTwin failed %ux%u", m_dwWidth, m_dwHeight);
+	}
 }
 
 bool CBlockTexture::Create(CGraphicDib * pDIB, const RECT & c_rRect, DWORD dwWidth, DWORD dwHeight)
-{	
-	if (FAILED(CreateDeviceTexture(dwWidth, dwHeight, 0, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_lpd3dTexture)))
-	{
-		Tracef("Failed to create block texture %u, %u\n", dwWidth, dwHeight);
-		return false;
-	}
-
+{
 	m_pDIB = pDIB;
 	m_rect = c_rRect;
 	m_dwWidth = dwWidth;
 	m_dwHeight = dwHeight;
 	m_bClipEnable = FALSE;
+
+	m_kPixels.assign(static_cast<size_t>(dwWidth) * dwHeight, 0);
+	m_lpd3dTexture = (LPDIRECT3DTEXTURE9)this;
+
+	__RegisterTwin();
 
 	return true;
 }
@@ -178,6 +198,10 @@ CBlockTexture::CBlockTexture()
 
 CBlockTexture::~CBlockTexture()
 {
-	safe_release(m_lpd3dTexture);
+	if (m_lpd3dTexture)
+	{
+		if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+			pkBackend->UnregisterRawTextureTwin(m_lpd3dTexture);
+	}
 	m_lpd3dTexture = NULL;
 }

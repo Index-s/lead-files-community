@@ -1,6 +1,5 @@
 ﻿#include "StdAfx.h"
 #include "PythonSystem.h"
-#include "../EterLib/GrpDevice.h"
 #include "PythonApplication.h"
 
 #define DEFAULT_VALUE_ALWAYS_SHOW_NAME		true
@@ -37,30 +36,20 @@ void CPythonSystem::GetDisplaySettings()
 	memset(m_ResolutionList, 0, sizeof(TResolution) * RESOLUTION_MAX_NUM);
 	m_ResolutionCount = 0;
 
-	D3DADAPTER_IDENTIFIER9 d3dAdapterIdentifier;
-	D3DDISPLAYMODE d3ddmDesktop;
+	DEVMODE DisplayMode;
+	memset(&DisplayMode, 0, sizeof(DisplayMode));
+	DisplayMode.dmSize = sizeof(DEVMODE);
 
-	CGraphicBase::GetAdapterIdentifier(&d3dAdapterIdentifier);
-	CGraphicBase::GetAdapterDisplayMode(&d3ddmDesktop);
-
-	// AI ¾iμªAI°¡ °¡Ao°i AO´A μ?½ºCA·¡AI ¸?μa°¹¼o¸| ³ª¿­CN´U..
-	DWORD dwNumAdapterModes = CGraphicBase::GetAdapterModeCount(d3ddmDesktop.Format);
-
-	for (UINT iMode = 0; iMode < dwNumAdapterModes; iMode++)
+	for (DWORD iMode = 0; EnumDisplaySettings(NULL, iMode, &DisplayMode); iMode++)
 	{
-		D3DDISPLAYMODE DisplayMode;
-		CGraphicBase::EnumAdapterModes(d3ddmDesktop.Format, iMode, &DisplayMode);
 		DWORD bpp = 0;
 
-		// Filters out only those above 800 and 600.
-		if (DisplayMode.Width < 800 || DisplayMode.Height < 600)
+		if (DisplayMode.dmPelsWidth < 800 || DisplayMode.dmPelsHeight < 600)
 			continue;
 
-		// First, let's only deal with 16bbp and 32bbp.
-		// Only 16bbp was processed - [levites]
-		if (DisplayMode.Format == D3DFMT_R5G6B5)
+		if (DisplayMode.dmBitsPerPel == 16)
 			bpp = 16;
-		else if (DisplayMode.Format == D3DFMT_X8R8G8B8)
+		else if (DisplayMode.dmBitsPerPel == 32)
 			bpp = 32;
 		else
 			continue;
@@ -70,16 +59,15 @@ void CPythonSystem::GetDisplaySettings()
 		for (int i = 0; !check_res && i < m_ResolutionCount; ++i)
 		{
 			if (m_ResolutionList[i].bpp != bpp ||
-				m_ResolutionList[i].width != DisplayMode.Width ||
-				m_ResolutionList[i].height != DisplayMode.Height)
+				m_ResolutionList[i].width != DisplayMode.dmPelsWidth ||
+				m_ResolutionList[i].height != DisplayMode.dmPelsHeight)
 				continue;
 
 			int check_fre = false;
 
-			// Since only the frequency is different, set only the frequency.
 			for (int j = 0; j < m_ResolutionList[i].frequency_count; ++j)
 			{
-				if (m_ResolutionList[i].frequency[j] == DisplayMode.RefreshRate)
+				if (m_ResolutionList[i].frequency[j] == DisplayMode.dmDisplayFrequency)
 				{
 					check_fre = true;
 					break;
@@ -88,20 +76,19 @@ void CPythonSystem::GetDisplaySettings()
 
 			if (!check_fre)
 				if (m_ResolutionList[i].frequency_count < FREQUENCY_MAX_NUM)
-					m_ResolutionList[i].frequency[m_ResolutionList[i].frequency_count++] = DisplayMode.RefreshRate;
+					m_ResolutionList[i].frequency[m_ResolutionList[i].frequency_count++] = DisplayMode.dmDisplayFrequency;
 
 			check_res = true;
 		}
 
 		if (!check_res)
 		{
-			// It's new, so let's add it.
 			if (m_ResolutionCount < RESOLUTION_MAX_NUM)
 			{
-				m_ResolutionList[m_ResolutionCount].width			= DisplayMode.Width;
-				m_ResolutionList[m_ResolutionCount].height			= DisplayMode.Height;
+				m_ResolutionList[m_ResolutionCount].width			= DisplayMode.dmPelsWidth;
+				m_ResolutionList[m_ResolutionCount].height			= DisplayMode.dmPelsHeight;
 				m_ResolutionList[m_ResolutionCount].bpp				= bpp;
-				m_ResolutionList[m_ResolutionCount].frequency[0]	= DisplayMode.RefreshRate;
+				m_ResolutionList[m_ResolutionCount].frequency[0]	= DisplayMode.dmDisplayFrequency;
 				m_ResolutionList[m_ResolutionCount].frequency_count	= 1;
 
 				++m_ResolutionCount;
@@ -306,7 +293,6 @@ void CPythonSystem::SetDefaultConfig()
 	m_Config.bAlwaysShowName	= DEFAULT_VALUE_ALWAYS_SHOW_NAME;
 	m_Config.bShowDamage		= true;
 	m_Config.bShowSalesText		= true;
-	m_Config.byRendererBackend = 0;
 }
 
 bool CPythonSystem::IsWindowed()
@@ -456,14 +442,7 @@ bool CPythonSystem::LoadConfig()
 			m_Config.bShowDamage = atoi(value) == 1 ? true : false;
 		else if (!_stricmp(command, "SHOW_SALESTEXT"))
 			m_Config.bShowSalesText = atoi(value) == 1 ? true : false;
-		else if (!_stricmp(command, "RENDERER"))
-			m_Config.byRendererBackend = _stricmp(value, "dx12") ? 0 : 1;
-		else if (!_stricmp(command, "SHADER_FFP"))
-			CGraphicBase::SetUseShaderFFP(atoi(value) == 1 ? true : false);
 	}
-
-	CGraphicDevice::SetRequestedBackend(
-		1 == m_Config.byRendererBackend ? CGraphicDevice::BACKEND_DX12 : CGraphicDevice::BACKEND_DX9);
 
 	if (m_Config.bWindowed)
 	{

@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "GrpBase.h"
-#include "GrpDetector.h"
 #include "StateManager.h"
 
 class CGraphicDevice : public CGraphicBase
@@ -26,17 +25,6 @@ public:
 	CGraphicDevice();
 	virtual ~CGraphicDevice();
 
-	// Renderer backend selection seam: the DX12 backend plugs in here;
-	// until it exists every request resolves to DX9.
-	enum EBackend
-	{
-		BACKEND_DX9,
-		BACKEND_DX12,
-	};
-
-	static void		SetRequestedBackend(EBackend eBackend);
-	static EBackend	GetBackend();
-
 	void			InitBackBufferCount(UINT uBackBufferCount);
 
 	void			Destroy();
@@ -51,7 +39,6 @@ public:
 
 protected:
 	void __Initialize();
-	bool __IsInDriverBlackList(D3D_CAdapterInfo& rkD3DAdapterInfo);
 	void __WarningMessage(HWND hWnd, UINT uiMsg);
 
 	void __InitializeDefaultIndexBufferList();
@@ -66,7 +53,6 @@ protected:
 	LPDIRECT3DVERTEXDECLARATION9 CreatePTStreamVertexDeclaration();
 	LPDIRECT3DVERTEXDECLARATION9 CreatePNTStreamVertexDeclaration();
 	LPDIRECT3DVERTEXDECLARATION9 CreatePNT2StreamVertexDeclaration();
-	LPDIRECT3DVERTEXDECLARATION9 CreateDoublePNTStreamVertexDeclaration();
 
 protected:
 	DWORD						m_uBackBufferCount;

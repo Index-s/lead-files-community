@@ -1,47 +1,7 @@
-﻿/******************************************************************************
-
-  Copyright (C) 1999, 2000 NVIDIA Corporation
-
-  This file is provided without support, instruction, or implied warranty of any
-  kind.  NVIDIA makes no guarantee of its fitness for a particular purpose and is
-  not liable under any circumstances for any damages or loss whatsoever arising
-  from the use or inability to use this file or items derived from it.
-
-    Comments:
-
-      A simple class to manage rendering state.  Created as a singleton.
-	  Create it as a static global, or with new.  It doesn't matter as long as it is created
-	  before you use the CStateManager::GetSingleton() API to get a reference to it.
-
-	  Call it with STATEMANAGER.SetRenderState(...)
-	  Call it with STATEMANAGER.SetTextureStageState(...), etc.
-
-	  Call the 'Save' versions of the function if you want to deviate from the current state.
-	  Call the 'Restore' version to retrieve the last Save.
-
-	  There are two levels of caching:
-	  - All Sets/Saves/Restores are tracked for redundancy.  This reduces the size of the batch to
-	  be flushed
-	  - The flush function is called before rendering, and only copies state that is
-	  different from the current chip state.
-
-  If you get an assert it is probably because an API call failed.
-
-  See NVLink for a good example of how this class is used.
-
-  Don't be afraid of the vector being used to track the flush batch.  It will grow as big as
-  it needs to be and then stop, so it shouldn't be reallocated.
-
-  The state manager holds a reference to the d3d device.
-
-  - cmaughan@nvidia.com
-
-******************************************************************************/
-
 #ifndef __CSTATEMANAGER_H
 #define __CSTATEMANAGER_H
 
-#include <dx9/d3d9.h>
+#include <d3d9.h>
 #include <d3dx9math_shim.h>
 
 #include <vector>
@@ -51,26 +11,18 @@
 
 #include "../eterBase/Singleton.h"
 
-#define CHECK_D3DAPI(a)		\
-{							\
-	HRESULT hr = (a);		\
-							\
-	if (hr != S_OK)			\
-		assert(!#a);		\
-}
-
 static const DWORD STATEMANAGER_MAX_RENDERSTATES = 256;
 static const DWORD STATEMANAGER_MAX_TEXTURESTATES = 128;
 static const DWORD STATEMANAGER_MAX_STAGES = 8;
 static const DWORD STATEMANAGER_MAX_VCONSTANTS = 96;
 static const DWORD STATEMANAGER_MAX_PCONSTANTS = 8;
-static const DWORD STATEMANAGER_MAX_TRANSFORMSTATES = 300;	// World1 lives way up there...
+static const DWORD STATEMANAGER_MAX_TRANSFORMSTATES = 300;
 static const DWORD STATEMANAGER_MAX_STREAMS = 16;
 
 class CStreamData
 {
 	public:
-		CStreamData(LPDIRECT3DVERTEXBUFFER9 pStreamData = NULL, UINT Stride = 0) : m_lpStreamData(pStreamData), m_Stride(Stride)
+		CStreamData(const void* pStreamData = NULL, UINT Stride = 0) : m_lpStreamData(pStreamData), m_Stride(Stride)
 		{
 		}
 
@@ -79,14 +31,14 @@ class CStreamData
 			return ((m_lpStreamData == rhs.m_lpStreamData) && (m_Stride == rhs.m_Stride));
 		}
 
-		LPDIRECT3DVERTEXBUFFER9	m_lpStreamData;
+		const void*				m_lpStreamData;
 		UINT					m_Stride;
 };
 
 class CIndexData
 {
 	public:
-		CIndexData(LPDIRECT3DINDEXBUFFER9 pIndexData = NULL, UINT BaseVertexIndex = 0)
+		CIndexData(const void* pIndexData = NULL, UINT BaseVertexIndex = 0)
 			: m_lpIndexData(pIndexData),
 		m_BaseVertexIndex(BaseVertexIndex)
 		{
@@ -97,11 +49,10 @@ class CIndexData
 			return ((m_lpIndexData == rhs.m_lpIndexData) && (m_BaseVertexIndex == rhs.m_BaseVertexIndex));
 		}
 
-		LPDIRECT3DINDEXBUFFER9	m_lpIndexData;
+		const void*				m_lpIndexData;
 		UINT					m_BaseVertexIndex;
 };
 
-// State types managed by the class
 typedef enum eStateType
 {
 	STATE_MATERIAL = 0,
@@ -177,6 +128,10 @@ class CStateManagerState
 				for (y = 0; y < STATEMANAGER_MAX_TEXTURESTATES; y++)
 					m_TextureStates[i][y] = 0x7FFFFFFF;
 
+			for (i = 0; i < STATEMANAGER_MAX_STAGES; i++)
+				for (y = 0; y < STATEMANAGER_MAX_TEXTURESTATES; y++)
+					m_SamplerStates[i][y] = 0x7FFFFFFF;
+
 			for (i = 0; i < STATEMANAGER_MAX_STREAMS; i++)
 				m_StreamData[i] = CStreamData();
 
@@ -185,8 +140,6 @@ class CStateManagerState
 			for (i = 0; i < STATEMANAGER_MAX_STAGES; i++)
 				m_Textures[i] = NULL;
 
-			// Matrices and constants are not cached, just restored.  It's silly to check all the
-			// data elements (by which time the driver could have been sent them).
 			for (i = 0; i < STATEMANAGER_MAX_TRANSFORMSTATES; i++)
 				D3DXMatrixIdentity(&m_Matrices[i]);
 
@@ -196,35 +149,29 @@ class CStateManagerState
 			for (i = 0; i < STATEMANAGER_MAX_PCONSTANTS; i++)
 				m_PixelShaderConstants[i] = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
 
-			m_dwPixelShader = 0;
-			m_dwVertexShader = 0;
-			m_dwVertexDeclaration = 0;
+			m_dwPixelShader = NULL;
+			m_dwVertexShader = NULL;
+			m_dwVertexDeclaration = NULL;
 			m_dwFVF = D3DFVF_XYZ;
 			m_bVertexProcessing = FALSE;
 
 			ZeroMemory(&m_Matrices, sizeof(D3DXMATRIX) * STATEMANAGER_MAX_TRANSFORMSTATES);
 		}
 
-		// Renderstates
 		DWORD					m_RenderStates[STATEMANAGER_MAX_RENDERSTATES];
 
-		// Texture stage states
 		DWORD					m_TextureStates[STATEMANAGER_MAX_STAGES][STATEMANAGER_MAX_TEXTURESTATES];
 		DWORD					m_SamplerStates[STATEMANAGER_MAX_STAGES][STATEMANAGER_MAX_TEXTURESTATES];
 
-		// Vertex shader constants
 		D3DXVECTOR4				m_VertexShaderConstants[STATEMANAGER_MAX_VCONSTANTS];
 
-		// Pixel shader constants
 		D3DXVECTOR4				m_PixelShaderConstants[STATEMANAGER_MAX_PCONSTANTS];
 
-		// Textures
-		LPDIRECT3DBASETEXTURE9	m_Textures[STATEMANAGER_MAX_STAGES];
+		const void*				m_Textures[STATEMANAGER_MAX_STAGES];
 
-		// Shaders
-		LPDIRECT3DPIXELSHADER9  m_dwPixelShader;
-		LPDIRECT3DVERTEXSHADER9 m_dwVertexShader;
-		LPDIRECT3DVERTEXDECLARATION9 m_dwVertexDeclaration;
+		const void*				m_dwPixelShader;
+		const void*				m_dwVertexShader;
+		const void*				m_dwVertexDeclaration;
 		DWORD					m_dwFVF;
 
 		D3DXMATRIX				m_Matrices[STATEMANAGER_MAX_TRANSFORMSTATES];
@@ -240,7 +187,7 @@ class CStateManagerState
 class CStateManager : public CSingleton<CStateManager>
 {
 	public:
-		CStateManager(LPDIRECT3DDEVICE9EX lpDevice);
+		CStateManager();
 		virtual ~CStateManager();
 
 		void	SetDefaultState();
@@ -248,10 +195,7 @@ class CStateManager : public CSingleton<CStateManager>
 
 		bool	BeginScene();
 		void	EndScene();
-		HRESULT	Present(CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride);
-		HRESULT	GetBackBuffer(UINT iSwapChain, UINT iBackBuffer, D3DBACKBUFFER_TYPE eType, LPDIRECT3DSURFACE9* ppBackBuffer);
 
-		// Material
 		void	SaveMaterial();
 		void	SaveMaterial(const D3DMATERIAL9 * pMaterial);
 		void	RestoreMaterial();
@@ -269,21 +213,25 @@ class CStateManager : public CSingleton<CStateManager>
 		void	SaveViewport();
 		void	RestoreViewport();
 
-		HRESULT	GetRenderTarget(DWORD RenderTargetIndex, LPDIRECT3DSURFACE9* ppRenderTarget);
-		HRESULT	SetRenderTarget(DWORD RenderTargetIndex, LPDIRECT3DSURFACE9 pRenderTarget);
-		HRESULT	GetDepthStencilSurface(LPDIRECT3DSURFACE9* ppZStencilSurface);
-		HRESULT	SetDepthStencilSurface(LPDIRECT3DSURFACE9 pNewZStencil);
+		const void*	GetRenderTarget(DWORD RenderTargetIndex);
+		HRESULT		SetRenderTarget(DWORD RenderTargetIndex, const void* pRenderTarget);
+		const void*	GetDepthStencilSurface();
+		HRESULT		SetDepthStencilSurface(const void* pNewZStencil);
 
-		HRESULT	CreateVertexShader(CONST DWORD* pFunction, LPDIRECT3DVERTEXSHADER9* ppShader);
-		HRESULT	CreateVertexDeclaration(CONST D3DVERTEXELEMENT9* pVertexElements, LPDIRECT3DVERTEXDECLARATION9* ppDecl);
-		HRESULT	CreatePixelShader(CONST DWORD* pFunction, LPDIRECT3DPIXELSHADER9* ppShader);
+		const void*	CreateVertexShader(CONST DWORD* pFunction);
+		const void*	CreateVertexDeclaration(CONST D3DVERTEXELEMENT9* pVertexElements);
+		const void*	CreatePixelShader(CONST DWORD* pFunction);
 
-		// DX12 mirror: identity maps from D3D9 objects to backend resources.
 		void	RegisterShaderProgramDX12(const void* pkShader, const char* c_szProgramName);
 		void	RegisterTextureSRVDX12(const void* pkTexture, D3D12_CPU_DESCRIPTOR_HANDLE kSRVHandle);
 		void	UnregisterTextureSRVDX12(const void* pkTexture);
 		void	RegisterBufferDX12(const void* pkBuffer, struct ID3D12Resource* pkResource, DXGI_FORMAT eIndexFormat);
 		void	UnregisterBufferDX12(const void* pkBuffer);
+		void	SetTransientStream(const void* pvVertices, UINT uVertexCount, UINT uStride);
+		void	RegisterIndexData(const void* pkIndexBuffer, const WORD* awIndices, UINT uIndexCount);
+		void	UnregisterIndexData(const void* pkIndexBuffer);
+		void	RegisterVertexData(const void* pkVertexBuffer, const void* pvVertices, UINT uByteCount, UINT uStride);
+		void	UnregisterVertexData(const void* pkVertexBuffer);
 
 	private:
 		struct TInputLayoutDX12
@@ -300,6 +248,10 @@ class CStateManager : public CSingleton<CStateManager>
 		bool	__MirrorDrawBuffersDX12(D3DPRIMITIVETYPE ePrimitiveType,
 										UINT uStartVertex, UINT uVertexCount,
 										UINT uStartIndex, UINT uIndexCount, INT nBaseVertex);
+		bool	__MirrorDrawRegisteredDX12(D3DPRIMITIVETYPE ePrimitiveType,
+										   UINT uStartVertex, UINT uVertexCount,
+										   UINT uStartIndex, UINT uIndexCount, INT nBaseVertex);
+		bool	__GetStream0Data(const BYTE** ppbyVertices, UINT* puVertexCount, UINT* puStride) const;
 
 		std::unordered_map<const void*, UINT>				m_kShaderProgramMapDX12;
 		std::unordered_map<const void*, TInputLayoutDX12>	m_kDeclLayoutMapDX12;
@@ -313,103 +265,107 @@ class CStateManager : public CSingleton<CStateManager>
 		const void*	m_pvStream0DX12 = NULL;
 		UINT		m_uStream0StrideDX12 = 0;
 		const void*	m_pvIndicesDX12 = NULL;
+		std::vector<BYTE>	m_kTransientVertexData;
+		UINT		m_uTransientVertexCount = 0;
+		UINT		m_uTransientVertexStride = 0;
+		bool		m_bTransientStream0 = false;
+		struct TIndexData
+		{
+			std::vector<WORD>		kIndices;
+			UINT64					uFrameStamp;
+			D3D12_INDEX_BUFFER_VIEW	kRingView;
+		};
+		std::unordered_map<const void*, TIndexData>	m_kIndexDataMap;
+		struct TVertexData
+		{
+			std::vector<BYTE>			kBytes;
+			UINT						uStride;
+			UINT64						uFrameStamp;
+			D3D12_VERTEX_BUFFER_VIEW	kRingView;
+		};
+		std::unordered_map<const void*, TVertexData>	m_kVertexDataMap;
 		UINT	m_uNextLayoutIDDX12 = 1;
 		UINT	m_uVertexProgramDX12 = 0xFFFFFFFF;
 		UINT	m_uPixelProgramDX12 = 0xFFFFFFFF;
 
 	public:
 
-		// Renderstates
 		void	SaveRenderState(D3DRENDERSTATETYPE Type, DWORD dwValue);
 		void	RestoreRenderState(D3DRENDERSTATETYPE Type);
 		void	SetRenderState(D3DRENDERSTATETYPE Type, DWORD Value);
 		void	GetRenderState(D3DRENDERSTATETYPE Type, DWORD * pdwValue);
 
-		// Textures
-		void	SaveTexture(DWORD dwStage, LPDIRECT3DBASETEXTURE9 pTexture);
+		void	SaveTexture(DWORD dwStage, const void* pTexture);
 		void	RestoreTexture(DWORD dwStage);
-		void	SetTexture(DWORD dwStage, LPDIRECT3DBASETEXTURE9 pTexture);
-		void	GetTexture(DWORD dwStage, LPDIRECT3DBASETEXTURE9 * ppTexture);
+		void	SetTexture(DWORD dwStage, const void* pTexture);
+		void	GetTexture(DWORD dwStage, const void** ppTexture);
 
-		// Texture stage states
 		void	SaveTextureStageState(DWORD dwStage, D3DTEXTURESTAGESTATETYPE Type, DWORD dwValue);
 		void	RestoreTextureStageState(DWORD dwStage, D3DTEXTURESTAGESTATETYPE Type);
 		void	SetTextureStageState(DWORD dwStage, D3DTEXTURESTAGESTATETYPE Type, DWORD dwValue);
 		void	GetTextureStageState(DWORD dwStage, D3DTEXTURESTAGESTATETYPE Type, DWORD * pdwValue);
-		void	SetBestFiltering(DWORD dwStage); // if possible set anisotropy filtering, or use trilinear
+		void	SetBestFiltering(DWORD dwStage);
 
-		// Sampler states
 		void	SaveSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE Type, DWORD dwValue);
 		void	RestoreSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE Type);
 		void	SetSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE Type, DWORD dwValue);
 		void	GetSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE Type, DWORD * pdwValue);
 
-		// Vertex Shader
-		void	SaveVertexShader(LPDIRECT3DVERTEXSHADER9 dwShader);
+		void	SaveVertexShader(const void* pShader);
 		void	RestoreVertexShader();
-		void	SetVertexShader(LPDIRECT3DVERTEXSHADER9 dwShader);
-		void	GetVertexShader(LPDIRECT3DVERTEXSHADER9 * pdwShader);
+		void	SetVertexShader(const void* pShader);
+		void	GetVertexShader(const void** ppShader);
 
-		// Vertex Declaration
-		void	SaveVertexDeclaration(LPDIRECT3DVERTEXDECLARATION9 dwShader);
+		void	SaveVertexDeclaration(const void* pDeclaration);
 		void	RestoreVertexDeclaration();
-		void	SetVertexDeclaration(LPDIRECT3DVERTEXDECLARATION9 dwShader);
-		void	GetVertexDeclaration(LPDIRECT3DVERTEXDECLARATION9 * pdwShader);
+		void	SetVertexDeclaration(const void* pDeclaration);
+		void	GetVertexDeclaration(const void** ppDeclaration);
 
-		// FVF
 		void	SaveFVF(DWORD dwFVF);
 		void	RestoreFVF();
 		void	SetFVF(DWORD dwFVF);
 		void	GetFVF(DWORD *pdwFVF);
 
-		// Pixel Shader
-		void	SavePixelShader(LPDIRECT3DPIXELSHADER9 dwShader);
+		void	SavePixelShader(const void* pShader);
 		void	RestorePixelShader();
-		void	SetPixelShader(LPDIRECT3DPIXELSHADER9 dwShader);
-		void	GetPixelShader(LPDIRECT3DPIXELSHADER9 * pdwShader);
+		void	SetPixelShader(const void* pShader);
+		void	GetPixelShader(const void** ppShader);
 
-		// *** These states are cached, but not protected from multiple sends of the same value.
-		// Transform
 		void SaveTransform(D3DTRANSFORMSTATETYPE Transform, const D3DMATRIX* pMatrix);
 		void RestoreTransform(D3DTRANSFORMSTATETYPE Transform);
 
-		// VertexProcessing
 		void SaveVertexProcessing(BOOL IsON);
 		void RestoreVertexProcessing();
 
-		// Don't cache-check the transform.  To much to do
 		void SetTransform(D3DTRANSFORMSTATETYPE Type, const D3DMATRIX* pMatrix);
 		void GetTransform(D3DTRANSFORMSTATETYPE Type, D3DMATRIX * pMatrix);
 
-		// SetVertexShaderConstant
 		void SaveVertexShaderConstant(DWORD dwRegister, CONST void* pConstantData, DWORD dwConstantCount);
 		void RestoreVertexShaderConstant(DWORD dwRegister, DWORD dwConstantCount);
 		void SetVertexShaderConstant(DWORD dwRegister, CONST void* pConstantData, DWORD dwConstantCount);
 
-		// SetPixelShaderConstant
 		void SavePixelShaderConstant(DWORD dwRegister, CONST void* pConstantData, DWORD dwConstantCount);
 		void RestorePixelShaderConstant(DWORD dwRegister, DWORD dwConstantCount);
 		void SetPixelShaderConstant(DWORD dwRegister, CONST void* pConstantData, DWORD dwConstantCount);
 
-		void SaveStreamSource(UINT StreamNumber, LPDIRECT3DVERTEXBUFFER9 pStreamData, UINT Stride);
+		void SaveStreamSource(UINT StreamNumber, const void* pStreamData, UINT Stride);
 		void RestoreStreamSource(UINT StreamNumber);
-		void SetStreamSource(UINT StreamNumber, LPDIRECT3DVERTEXBUFFER9 pStreamData, UINT Stride);
+		void SetStreamSource(UINT StreamNumber, const void* pStreamData, UINT Stride);
 		UINT GetStreamStride(UINT StreamNumber) const { return m_CurrentState.m_StreamData[StreamNumber].m_Stride; }
 
-		void SaveIndices(LPDIRECT3DINDEXBUFFER9 pIndexData, UINT BaseVertexIndex);
+		void SaveIndices(const void* pIndexData, UINT BaseVertexIndex);
 		void RestoreIndices();
-		void SetIndices(LPDIRECT3DINDEXBUFFER9 pIndexData,UINT BaseVertexIndex);
-		
+		void SetIndices(const void* pIndexData, UINT BaseVertexIndex);
+
 		HRESULT DrawPrimitive(D3DPRIMITIVETYPE PrimitiveType, UINT StartVertex, UINT PrimitiveCount);
 		HRESULT DrawPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, UINT PrimitiveCount, const void* pVertexStreamZeroData, UINT VertexStreamZeroStride);
 		HRESULT DrawIndexedPrimitive(D3DPRIMITIVETYPE PrimitiveType, UINT minIndex, UINT NumVertices, UINT startIndex, UINT primCount);
 		HRESULT DrawIndexedPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, UINT MinVertexIndex, UINT NumVertexIndices, UINT PrimitiveCount, CONST void * pIndexData, D3DFORMAT IndexDataFormat, CONST void * pVertexStreamZeroData, UINT VertexStreamZeroStride);
 
-		// Codes For Debug
 		DWORD GetRenderState(D3DRENDERSTATETYPE Type);
 
 	private:
-		void SetDevice(LPDIRECT3DDEVICE9EX lpDevice);
+		void Initialize();
 
 	private:
 		CStateManagerState	m_ChipState;
@@ -418,20 +374,19 @@ class CStateManager : public CSingleton<CStateManager>
 		TStateID			m_DirtyStates;
 		bool				m_bForce;
 		bool				m_bScene;
+		D3DVIEWPORT9		m_kViewport;
 		D3DVIEWPORT9		m_SavedViewport;
 		DWORD				m_dwBestMinFilter;
 		DWORD				m_dwBestMagFilter;
-		LPDIRECT3DDEVICE9EX	m_lpD3DDev;
 
 #ifdef _DEBUG
-		// Saving Flag
 		BOOL				m_bRenderStateSavingFlag[STATEMANAGER_MAX_RENDERSTATES];
 		BOOL				m_bTextureStageStateSavingFlag[STATEMANAGER_MAX_STAGES][STATEMANAGER_MAX_TEXTURESTATES];
 		BOOL				m_bSamplerStateSavingFlag[STATEMANAGER_MAX_STAGES][STATEMANAGER_MAX_TEXTURESTATES];
 		BOOL				m_bTransformSavingFlag[STATEMANAGER_MAX_TRANSFORMSTATES];
-#endif _DEBUG
+#endif
 };
 
 #define STATEMANAGER (CStateManager::Instance())
 
-#endif __CSTATEMANAGER_H
+#endif

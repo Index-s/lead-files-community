@@ -58,7 +58,10 @@ class CGraphicVertexBuffer : public CGraphicBase
 		int						m_vtxCount;
 		DWORD					m_dwLockFlag;
 
+		mutable std::vector<BYTE>	m_kStorage;
+
 		mutable ID3D12Resource*	m_pkBufferDX12 = NULL;
 		mutable void*			m_pvLockedDX12 = NULL;
 		mutable UINT			m_uLockedBytesDX12 = 0;
+		mutable UINT			m_uRefreshCount = 0;
 };

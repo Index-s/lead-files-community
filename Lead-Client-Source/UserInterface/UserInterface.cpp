@@ -44,7 +44,6 @@ volatile int _AVOID_FLOATING_POINT_LIBRARY_BUG = _fltused;
 #endif
 #pragma comment( lib, "dinput8.lib" )
 #pragma comment( lib, "dxguid.lib" )
-#pragma comment( lib, "d3d9.lib" )
 #pragma comment( lib, "ws2_32.lib" )
 #pragma comment( lib, "strmiids.lib" )
 #pragma comment( lib, "ddraw.lib" )

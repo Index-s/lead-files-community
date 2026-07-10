@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <d3d12.h>
+#include <vector>
 
 #include "GrpBase.h"
 
@@ -43,6 +44,8 @@ class CGraphicIndexBuffer : public CGraphicBase
 		DWORD					m_dwBufferSize;
 		D3DFORMAT				m_d3dFmt;
 		int						m_iidxCount;
+
+		mutable std::vector<BYTE>	m_kStorage;
 
 		mutable ID3D12Resource*	m_pkBufferDX12 = NULL;
 		mutable void*			m_pvLockedDX12 = NULL;

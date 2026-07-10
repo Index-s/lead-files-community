@@ -1,6 +1,7 @@
 ﻿#include "StdAfx.h"
 #include "../eterLib/StateManager.h"
 #include "../eterlib/Camera.h"
+#include "../eterlib/GrpBackendDX12.h"
 
 #include "MapOutdoor.h"
 
@@ -32,35 +33,34 @@ void CMapOutdoor::CreateCharacterShadowTexture()
 	m_ShadowMapViewport.MinZ = 0.0f;
 	m_ShadowMapViewport.MaxZ = 1.0f;
 
-	HRESULT hr = CreateDeviceTexture(m_wShadowMapSize, m_wShadowMapSize, 1, D3DUSAGE_RENDERTARGET, D3DFMT_R5G6B5, D3DPOOL_DEFAULT, &m_lpCharacterShadowMapTexture);
-	if (FAILED(hr))
+	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (!pkBackend)
+		return;
+
+	LPDIRECT3DTEXTURE9 pkKey = (LPDIRECT3DTEXTURE9)&m_lpCharacterShadowMapTexture;
+	if (!pkBackend->RegisterRenderTarget(pkKey, m_wShadowMapSize, m_wShadowMapSize))
 	{
-		TraceError("CMapOutdoor::CreateCharacterShadowTexture - CreateTexture failed hr=0x%08X", hr);
+		TraceError("CMapOutdoor::CreateCharacterShadowTexture - RegisterRenderTarget failed size=%u", static_cast<UINT>(m_wShadowMapSize));
 		return;
 	}
 
-	hr = m_lpCharacterShadowMapTexture->GetSurfaceLevel(0, &m_lpCharacterShadowMapRenderTargetSurface);
-	if (FAILED(hr))
-	{
-		TraceError("CMapOutdoor::CreateCharacterShadowTexture - GetSurfaceLevel failed hr=0x%08X", hr);
-		ReleaseCharacterShadowTexture();
-		return;
-	}
+	if (CStateManager::InstancePtr())
+		STATEMANAGER.RegisterTextureSRVDX12(pkKey, pkBackend->GetRenderTargetSRV(pkKey));
 
-	hr = CreateDeviceDepthStencilSurface(m_wShadowMapSize, m_wShadowMapSize, D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, TRUE, &m_lpCharacterShadowMapDepthSurface);
-	if (FAILED(hr))
-	{
-		TraceError("CMapOutdoor::CreateCharacterShadowTexture - CreateDepthStencilSurface failed hr=0x%08X", hr);
-		ReleaseCharacterShadowTexture();
-		return;
-	}
+	m_lpCharacterShadowMapTexture = pkKey;
 }
 
 void CMapOutdoor::ReleaseCharacterShadowTexture()
 {
-	SAFE_RELEASE(m_lpCharacterShadowMapRenderTargetSurface);
-	SAFE_RELEASE(m_lpCharacterShadowMapDepthSurface);
-	SAFE_RELEASE(m_lpCharacterShadowMapTexture);
+	if (m_lpCharacterShadowMapTexture)
+	{
+		if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+			pkBackend->UnregisterRenderTarget(m_lpCharacterShadowMapTexture);
+		if (CStateManager::InstancePtr())
+			STATEMANAGER.UnregisterTextureSRVDX12(m_lpCharacterShadowMapTexture);
+	}
+
+	m_lpCharacterShadowMapTexture = NULL;
 }
 
 DWORD dwLightEnable = FALSE;
@@ -110,26 +110,7 @@ bool CMapOutdoor::BeginRenderCharacterShadowToTexture()
 
 	bool bSuccess = true;
 
-	// Backup Device Context
-	if (FAILED(STATEMANAGER.GetRenderTarget(0, &m_lpBackupRenderTargetSurface)))
-	{
-		TraceError("CMapOutdoor::BeginRenderCharacterShadowToTexture : Unable to Save Window Render Target\n");
-		bSuccess = false;
-	}
-
-	if (FAILED(STATEMANAGER.GetDepthStencilSurface(&m_lpBackupDepthSurface)))
-	{
-		TraceError("CMapOutdoor::BeginRenderCharacterShadowToTexture : Unable to Save Window Depth Surface\n");
-		bSuccess = false;
-	}
-
-	if (FAILED(STATEMANAGER.SetRenderTarget(0, m_lpCharacterShadowMapRenderTargetSurface)))
-	{
-		TraceError("CMapOutdoor::BeginRenderCharacterShadowToTexture : Unable to Set Shadow Map Render Target\n");
-		bSuccess = false;
-	}
-
-	if (FAILED(STATEMANAGER.SetDepthStencilSurface(m_lpCharacterShadowMapDepthSurface)))
+	if (FAILED(STATEMANAGER.SetRenderTarget(0, m_lpCharacterShadowMapTexture)))
 	{
 		TraceError("CMapOutdoor::BeginRenderCharacterShadowToTexture : Unable to Set Shadow Map Render Target\n");
 		bSuccess = false;
@@ -160,11 +141,8 @@ void CMapOutdoor::EndRenderCharacterShadowToTexture()
 {
 	STATEMANAGER.SetViewport(&m_BackupViewport);
 
-	STATEMANAGER.SetDepthStencilSurface(m_lpBackupDepthSurface);
-	STATEMANAGER.SetRenderTarget(0, m_lpBackupRenderTargetSurface);
-
-	SAFE_RELEASE(m_lpBackupDepthSurface);
-	SAFE_RELEASE(m_lpBackupRenderTargetSurface);
+	STATEMANAGER.SetDepthStencilSurface(NULL);
+	STATEMANAGER.SetRenderTarget(0, NULL);
 
 	STATEMANAGER.RestoreTransform(D3DTS_VIEW);
 	STATEMANAGER.RestoreTransform(D3DTS_PROJECTION);

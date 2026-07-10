@@ -1,6 +1,7 @@
 ﻿#include "StdAfx.h"
 #include "../eterLib/StateManager.h"
 #include "../eterLib/JpegFile.h"
+#include "../eterLib/GrpBackendDX12.h"
 #include "PythonGraphic.h"
 
 bool g_isScreenShotKey = false;
@@ -118,32 +119,8 @@ void CPythonGraphic::RestoreViewport()
 
 void CPythonGraphic::SetGamma(float fGammaFactor)
 {
-	D3DGAMMARAMP	NewRamp;
-	int				ui, val;
-
-	if (!SupportsFullscreenGamma())
-		return;
-
-	for (int i = 0; i < 256; ++i)
-	{
-		val	= (int) (i * fGammaFactor * 255.0f);
-		ui = 0;
-		
-		if (val > 32767)
-		{
-			val = val - 32767;
-			ui = 1;
-		}
-
-		if (val > 32767)
-			val = 32767;
-		
-		NewRamp.red[i] = (WORD) (val | (32768 * ui));
-		NewRamp.green[i] = (WORD) (val | (32768 * ui));
-		NewRamp.blue[i] = (WORD) (val | (32768 * ui));
-	}
-
-	SetDeviceGammaRamp(&NewRamp);
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
+		pkBackend->SetGammaFactor(fGammaFactor);
 }
 
 void GenScreenShotTag(const char* src, DWORD crc32, char* leaf, size_t leafLen)
@@ -161,220 +138,129 @@ bool CPythonGraphic::SaveJPEG(const char * pszFileName, LPBYTE pbyBuffer, UINT u
 	return jpeg_save(pbyBuffer, uWidth, uHeight, 85, pszFileName) != 0;
 }
 
+static void EmbedScreenShotTag(const char* c_pszFileName)
+{
+	if (!g_isScreenShotKey)
+		return;
+
+	FILE* srcFilePtr = NULL;
+	fopen_s(&srcFilePtr, c_pszFileName, "rb");
+	if (!srcFilePtr)
+		return;
+
+	fseek(srcFilePtr, 0, SEEK_END);
+	size_t fileSize = ftell(srcFilePtr);
+	fseek(srcFilePtr, 0, SEEK_SET);
+
+	char head[21];
+	size_t tailSize = fileSize - sizeof(head);
+	char* tail = (char*)malloc(tailSize);
+
+	fread(head, sizeof(head), 1, srcFilePtr);
+	fread(tail, tailSize, 1, srcFilePtr);
+	fclose(srcFilePtr);
+
+	char imgDesc[64];
+	GenScreenShotTag(c_pszFileName, GetCRC32(tail, tailSize), imgDesc, sizeof(imgDesc));
+
+	size_t imgDescLen = strlen(imgDesc) + 1;
+
+	unsigned char exifHeader[] = {
+		0xe1,
+		0, // blockLen[1],
+		0, // blockLen[0],
+		0x45,
+		0x78,
+		0x69,
+		0x66,
+		0x0,
+		0x0,
+		0x49,
+		0x49,
+		0x2a,
+		0x0,
+		0x8,
+		0x0,
+		0x0,
+		0x0,
+		0x1,
+		0x0,
+		0xe,
+		0x1,
+		0x2,
+		0x0,
+		static_cast<unsigned char>(imgDescLen & 0xFF), // textLen[0]
+		0, // textLen[1],
+		0, // textLen[2],
+		0, // textLen[3],
+		0x1a,
+		0x0,
+		0x0,
+		0x0,
+		0x0,
+		0x0,
+		0x0,
+		0x0,
+	};
+
+	exifHeader[2] = static_cast<unsigned char>(sizeof(exifHeader) + imgDescLen);
+
+	FILE* dstFilePtr = NULL;
+	fopen_s(&dstFilePtr, c_pszFileName, "wb");
+	if (dstFilePtr)
+	{
+		fwrite(head, sizeof(head), 1, dstFilePtr);
+		fwrite(exifHeader, sizeof(exifHeader), 1, dstFilePtr);
+		fwrite(imgDesc, imgDescLen, 1, dstFilePtr);
+		fputc(0x00, dstFilePtr);
+		fputc(0xff, dstFilePtr);
+		fwrite(tail, tailSize, 1, dstFilePtr);
+		fclose(dstFilePtr);
+	}
+
+	free(tail);
+}
+
 bool CPythonGraphic::SaveScreenShot(const char * c_pszFileName)
 {
-	HRESULT hr;
-	LPDIRECT3DSURFACE9 lpSurface;
-	D3DSURFACE_DESC stSurfaceDesc;
+	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (!pkBackend)
+		return false;
 
-	if (FAILED(hr = STATEMANAGER.GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &lpSurface)))
+	std::vector<BYTE> kPixels;
+	UINT uCaptureWidth = 0;
+	UINT uCaptureHeight = 0;
+	if (!pkBackend->CaptureBackBuffer(kPixels, &uCaptureWidth, &uCaptureHeight))
 	{
-		TraceError("Failed to get back buffer (0x%08x)", hr);
+		TraceError("Failed to read the back buffer");
 		return false;
 	}
 
-	if (FAILED(hr = lpSurface->GetDesc(&stSurfaceDesc)))
+	BYTE* pbyCapture = new BYTE[uCaptureWidth * uCaptureHeight * 3];
+	const BYTE* pbyCaptureSource = &kPixels[0];
+	BYTE* pbyCaptureDest = pbyCapture;
+	for (UINT y = 0; y < uCaptureHeight; ++y)
 	{
-		TraceError("Failed to get surface desc (0x%08x)", hr);
-		SAFE_RELEASE(lpSurface);
-		return false;
-	}
-
-	UINT uWidth = stSurfaceDesc.Width;
-	UINT uHeight = stSurfaceDesc.Height;
-
-	switch( stSurfaceDesc.Format ) {
-	case D3DFMT_R8G8B8 :
-	case D3DFMT_A8R8G8B8 :
-	case D3DFMT_X8R8G8B8 :
-	case D3DFMT_R5G6B5 :
-	case D3DFMT_X1R5G5B5 :
-	case D3DFMT_A1R5G5B5 :
-		break;
-	case D3DFMT_A4R4G4B4 :
-	case D3DFMT_R3G3B2 :
-	case D3DFMT_A8R3G3B2 :
-	case D3DFMT_X4R4G4B4 :
-	case D3DFMT_A2B10G10R10 :
-		TraceError("Unsupported BackBuffer Format(%d). Please contact Metin 2 Administrator.", stSurfaceDesc.Format);
-		SAFE_RELEASE(lpSurface);
-		return false;
-	}
-
-	D3DLOCKED_RECT lockRect;
-	if (FAILED(hr = lpSurface->LockRect(&lockRect, NULL, D3DLOCK_NO_DIRTY_UPDATE | D3DLOCK_READONLY | D3DLOCK_NOSYSLOCK)))
-	{
-		TraceError("Failed to lock the surface (0x%08x)", hr);
-		SAFE_RELEASE(lpSurface);
-		return false;
-	}
-
-	BYTE* pbyBuffer = new BYTE[uWidth * uHeight * 3];
-	if (pbyBuffer == NULL) {
-		lpSurface->UnlockRect();
-		lpSurface->Release();
-		lpSurface = NULL;
-		TraceError("Failed to allocate screenshot buffer");
-		return false;
-	}
-	BYTE* pbySource = (BYTE*) lockRect.pBits;
-	BYTE* pbyDestination = (BYTE*) pbyBuffer;
-	for(UINT y = 0; y < uHeight; ++y) {
-		BYTE *pRow = pbySource;
-
-		switch( stSurfaceDesc.Format ) {
-		case D3DFMT_R8G8B8 :
-			for(UINT x = 0; x < uWidth; ++x) {
-				*pbyDestination++ = pRow[2];	// Blue
-				*pbyDestination++ = pRow[1];	// Green
-				*pbyDestination++ = pRow[0];	// Red
-				pRow += 3;
-			}
-			break;
-		case D3DFMT_A8R8G8B8 :
-		case D3DFMT_X8R8G8B8 :
-			for(UINT x = 0; x < uWidth; ++x) {
-				*pbyDestination++ = pRow[2];	// Blue
-				*pbyDestination++ = pRow[1];	// Green
-				*pbyDestination++ = pRow[0];	// Red
-				pRow += 4;
-			}
-			break;
-		case D3DFMT_R5G6B5 :
-			{
-				for(UINT x = 0; x < uWidth; ++x) {
-					UINT uColor		= *((UINT *) pRow);
-					BYTE byBlue		= (uColor >> 11) & 0x1F;
-					BYTE byGreen	= (uColor >> 5) & 0x3F;
-					BYTE byRed		= uColor & 0x1F;
-
-					*pbyDestination++ = (byBlue << 3)	| (byBlue >> 2);		// Blue
-					*pbyDestination++ = (byGreen << 2)	| (byGreen >> 2);		// Green
-					*pbyDestination++ = (byRed << 3)	| (byRed >> 2);			// Red
-					pRow += 2;
-				}
-			}
-			break;
-		case D3DFMT_X1R5G5B5 :
-		case D3DFMT_A1R5G5B5 :
-			{
-				for(UINT x = 0; x < uWidth; ++x) {
-					UINT uColor		= *((UINT *) pRow);
-					BYTE byBlue		= (uColor >> 10) & 0x1F;
-					BYTE byGreen	= (uColor >> 5) & 0x1F;
-					BYTE byRed		= uColor & 0x1F;
-
-					*pbyDestination++ = (byBlue << 3)	| (byBlue >> 2);		// Blue
-					*pbyDestination++ = (byGreen << 3)	| (byGreen >> 2);		// Green
-					*pbyDestination++ = (byRed << 3)	| (byRed >> 2);			// Red
-					pRow += 2;
-				}
-			}
-			break;
-		}
-
-		// increase by one line
-		pbySource += lockRect.Pitch;
-	}
-
-	if(lpSurface) {
-		lpSurface->UnlockRect();
-		lpSurface->Release();
-		lpSurface = NULL;
-	}
-
-	bool bSaved = SaveJPEG(c_pszFileName, pbyBuffer, uWidth, uHeight);
-
-	if(pbyBuffer) {
-		delete [] pbyBuffer;
-		pbyBuffer = NULL;
-	}
-
-	if(bSaved == false) {
-		TraceError("Failed to save JPEG file. (%s, %d, %d)", c_pszFileName, uWidth, uHeight);
-		return false;
-	}
-
-	if (g_isScreenShotKey)
-	{
-		FILE* srcFilePtr = NULL;
-		fopen_s(&srcFilePtr, c_pszFileName, "rb");
-		if (srcFilePtr)
+		const BYTE* pRow = pbyCaptureSource + static_cast<size_t>(y) * uCaptureWidth * 4;
+		for (UINT x = 0; x < uCaptureWidth; ++x)
 		{
-			fseek(srcFilePtr, 0, SEEK_END);		
-			size_t fileSize = ftell(srcFilePtr);
-			fseek(srcFilePtr, 0, SEEK_SET);
-
-			char head[21];
-			size_t tailSize = fileSize - sizeof(head);
-			char* tail = (char*)malloc(tailSize);
-			
-			fread(head, sizeof(head), 1, srcFilePtr);
-			fread(tail, tailSize, 1, srcFilePtr);
-			fclose(srcFilePtr);
-
-			char imgDesc[64];
-			GenScreenShotTag(c_pszFileName, GetCRC32(tail, tailSize), imgDesc, sizeof(imgDesc));
-
-			size_t imgDescLen = strlen(imgDesc) + 1;
-			
-			unsigned char exifHeader[] = {
-				0xe1,
-				0, // blockLen[1],
-				0, // blockLen[0],
-				0x45,
-				0x78,
-				0x69,
-				0x66,
-				0x0,
-				0x0,
-				0x49,
-				0x49,
-				0x2a,
-				0x0,
-				0x8,
-				0x0,
-				0x0,
-				0x0,
-				0x1,
-				0x0,
-				0xe,
-				0x1,
-				0x2,
-				0x0,
-				static_cast<unsigned char>(imgDescLen & 0xFF), // textLen[0]
-				0, // textLen[1],
-				0, // textLen[2],
-				0, // textLen[3],
-				0x1a,
-				0x0,
-				0x0,
-				0x0,
-				0x0,
-				0x0,
-				0x0,
-				0x0,
-			};
-
-			exifHeader[2] = static_cast<unsigned char>(sizeof(exifHeader) + imgDescLen);
-
-			FILE* dstFilePtr = NULL;
-			fopen_s(&dstFilePtr, c_pszFileName, "wb");
-			//FILE* dstFilePtr = fopen("temp.jpg", "wb");
-			if (dstFilePtr)
-			{
-				fwrite(head, sizeof(head), 1, dstFilePtr);
-				fwrite(exifHeader, sizeof(exifHeader), 1, dstFilePtr);
-				fwrite(imgDesc, imgDescLen, 1, dstFilePtr);
-				fputc(0x00, dstFilePtr);
-				fputc(0xff, dstFilePtr);
-				fwrite(tail, tailSize, 1, dstFilePtr);
-				fclose(dstFilePtr);
-			}
-
-			free(tail);
+			*pbyCaptureDest++ = pRow[2];
+			*pbyCaptureDest++ = pRow[1];
+			*pbyCaptureDest++ = pRow[0];
+			pRow += 4;
 		}
 	}
+
+	const bool bCaptureSaved = SaveJPEG(c_pszFileName, pbyCapture, uCaptureWidth, uCaptureHeight);
+	delete [] pbyCapture;
+
+	if (!bCaptureSaved)
+	{
+		TraceError("Failed to save JPEG file. (%s, %d, %d)", c_pszFileName, uCaptureWidth, uCaptureHeight);
+		return false;
+	}
+
+	EmbedScreenShotTag(c_pszFileName);
 	return true;
 }
 

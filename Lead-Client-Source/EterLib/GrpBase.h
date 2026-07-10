@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include "GrpDetector.h"
+#include <d3d9.h>
+
 #include "Ray.h"
 #include <vector>
 
@@ -208,12 +209,6 @@ class CGraphicBase
 		
 		void		SetViewport(DWORD dwX, DWORD dwY, DWORD dwWidth, DWORD dwHeight, float fMinZ, float fMaxZ);
 		static void		GetBackBufferSize(UINT* puWidth, UINT* puHeight);
-		static bool		SupportsFullscreenGamma();
-		static void		SetDeviceGammaRamp(CONST D3DGAMMARAMP* pRamp);
-		static HRESULT	GetAdapterIdentifier(D3DADAPTER_IDENTIFIER9* pIdentifier);
-		static HRESULT	GetAdapterDisplayMode(D3DDISPLAYMODE* pMode);
-		static UINT		GetAdapterModeCount(D3DFORMAT eFormat);
-		static HRESULT	EnumAdapterModes(D3DFORMAT eFormat, UINT uMode, D3DDISPLAYMODE* pMode);
 		static bool		IsTLVertexClipping();
 		static bool		IsFastTNL();
 		static bool		IsLowTextureMemory();
@@ -224,9 +219,6 @@ class CGraphicBase
 		static bool SetPDTStream(SPDTVertexRaw* pVertices, UINT uVtxCount);
 		static bool SetPDTStream(SPDTVertex* pVertices, UINT uVtxCount);
 
-		// Fixed-function replacement shaders (DX12 migration); default off.
-		static void SetUseShaderFFP(bool bEnable);
-		static bool IsUseShaderFFP();
 		static bool BeginPDTShader();	// true = shader pipeline bound; else use the FVF path
 		static bool BeginPDTDiffuseShader();	// variant for NULL-texture draws (diffuse passthrough)
 		static bool BeginPTTextureShader();	// XYZ|TEX1 draws (texture passthrough)
@@ -251,15 +243,6 @@ class CGraphicBase
 		static void __UploadGrannyLightingConstants();
 		static void __UploadOmniLightingConstants();
 	public:
-
-		// Resource-creation seam: every device object the renderer allocates
-		// goes through these, so a future backend can swap allocation in one place.
-		static HRESULT CreateDeviceTexture(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture);
-		static HRESULT __CreateDeviceTextureImpl(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture);
-		static HRESULT CreateDeviceVertexBuffer(UINT uLength, DWORD dwUsage, DWORD dwFVF, D3DPOOL ePool, LPDIRECT3DVERTEXBUFFER9* ppVertexBuffer);
-		static HRESULT CreateDeviceIndexBuffer(UINT uLength, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DINDEXBUFFER9* ppIndexBuffer);
-		static HRESULT CreateDeviceDepthStencilSurface(UINT uWidth, UINT uHeight, D3DFORMAT eFormat, D3DMULTISAMPLE_TYPE eMultiSample, DWORD dwMultisampleQuality, BOOL bDiscard, LPDIRECT3DSURFACE9* ppSurface);
-		static HRESULT UpdateDeviceTexture(LPDIRECT3DBASETEXTURE9 pSourceTexture, LPDIRECT3DBASETEXTURE9 pDestinationTexture);
 
 	protected:
 		static D3DXMATRIX				ms_matIdentity;
@@ -290,35 +273,16 @@ class CGraphicBase
 	protected:
 		static HRESULT					ms_hLastResult;
 
-		static bool						ms_bUseShaderFFP;
-
 		static int						ms_iWidth;
 		static int						ms_iHeight;
 
-		static UINT						ms_iD3DAdapterInfo;
-		static UINT						ms_iD3DDevInfo;
-		static UINT						ms_iD3DModeInfo;		
-		static D3D_CDisplayModeAutoDetector				ms_kD3DDetector;
-
 		static HWND						ms_hWnd;
 		static HDC						ms_hDC;
-
-		// The raw device lives behind the StateManager/CGraphicBase seam; only the
-		// device-management layer may touch it directly.
-	private:
-		friend class CGraphicDevice;
-		static LPDIRECT3D9EX				ms_lpd3d;
-		static LPDIRECT3DDEVICE9EX		ms_lpd3dDevice;
 
-	protected:
 		static ID3DXMatrixStack*		ms_lpd3dMatStack;
 		static D3DVIEWPORT9				ms_Viewport;
 
 		static DWORD					ms_faceCount;
-		static D3DCAPS9					ms_d3dCaps;
-		static D3DPRESENT_PARAMETERS	ms_d3dPresentParameter;
-		
-		static DWORD					ms_dwD3DBehavior;
 		static LPDIRECT3DVERTEXDECLARATION9 ms_ptDecl;
 		static LPDIRECT3DVERTEXDECLARATION9 ms_pntDecl;
 		static LPDIRECT3DVERTEXDECLARATION9 ms_pnt2Decl;

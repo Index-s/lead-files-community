@@ -15,8 +15,6 @@ public:
 	bool Begin();
 	void End();
 	void Show(HWND hWnd = NULL);
-	void Show(RECT * pSrcRect);
-	void Show(RECT * pSrcRect, HWND hWnd);
 
 	void RenderLine2d(float sx, float sy, float ex, float ey, float z=0.0f);
 	void RenderBox2d(float sx, float sy, float ex, float ey, float z=0.0f);

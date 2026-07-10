@@ -4,7 +4,7 @@
 //#define SPHERELIB_STRICT
 //#include <crtdbg.h>
 
-#include <dx9/d3d9.h>
+#include <d3d9.h>
 #include <d3dx9math_shim.h>
 
 #include <stdio.h>

@@ -1,10 +1,7 @@
 ﻿#include "StdAfx.h"
-#include <d3dcompiler.h>
 #include "../eterBase/Stl.h"
 #include "GraphicShaderPool.h"
 #include "StateManager.h"
-
-#pragma comment(lib, "d3dcompiler.lib")
 
 namespace
 {
@@ -32,7 +29,7 @@ namespace
 		"float4 g_avWVP[4] : register(c0);\n"
 		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vPadCoord1 : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -45,6 +42,7 @@ namespace
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		FOG_VS_BODY
 		"    Out.fFixedFog = 1.0f;\n"
+		"    Out.vPadCoord1 = 0;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -55,10 +53,43 @@ namespace
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord) * vDiffuse;\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"#ifdef ALPHA_TEST\n"
+		"    clip(kFinal.a - g_kAlphaRef.x);\n"
+		"#endif\n"
+		"    return kFinal;\n"
+		"}\n";
+
+	const char c_achModulateSpecAlphaPixelProgram[] =
+		"#ifdef ALPHA_TEST\n"
+		"float4 g_kAlphaRef : register(c2);\n"
+		"#endif\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 g_kFogColor : register(c1);\n"
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
+		"{\n"
+		"    float4 kTex = tex2D(g_kSampler0, vTexCoord);\n"
+		"    float4 kFinal = kTex * vDiffuse;\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"    kFinal.a = kTex.a * g_kTFactor.a;\n"
 		"#ifdef ALPHA_TEST\n"
 		"    clip(kFinal.a - g_kAlphaRef.x);\n"
 		"#endif\n"
@@ -70,7 +101,12 @@ namespace
 		"float4 g_kAlphaRef : register(c2);\n"
 		"#endif\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord) * vDiffuse;\n"
 		"#ifdef ALPHA_TEST\n"
@@ -88,7 +124,14 @@ namespace
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = float4(tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb, g_kTFactor.a);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -106,7 +149,14 @@ namespace
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float4 kFinal = float4(kTexel.rgb * vDiffuse.rgb + g_kTFactor.rgb, kTexel.a * vDiffuse.a);\n"
@@ -123,7 +173,14 @@ namespace
 		"float4 g_kAlphaRef : register(c2);\n"
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vPadCoord0 : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = vDiffuse;\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -141,7 +198,14 @@ namespace
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vPadCoord0 : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = float4(g_kTFactor.rgb, 1.0f);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -156,7 +220,7 @@ namespace
 		"float4 g_avWVP[4] : register(c0);\n"
 		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vPadDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vPadCoord1 : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -168,6 +232,8 @@ namespace
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		FOG_VS_BODY
 		"    Out.fFixedFog = 1.0f;\n"
+		"    Out.vPadDiffuse = 0;\n"
+		"    Out.vPadCoord1 = 0;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -182,7 +248,7 @@ namespace
 		"float4 g_vFogParams : register(c28);\n"
 		"float4 g_vFogParams2 : register(c29);\n"
 		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vPadCoord1 : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -203,6 +269,7 @@ namespace
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
 		"    Out.fFixedFog = 1.0f;\n"
+		"    Out.vPadCoord1 = 0;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -214,7 +281,14 @@ namespace
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = float4(tex2D(g_kSampler0, vTexCoord).rgb, vDiffuse.a);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -230,7 +304,14 @@ const char c_achTexturePixelProgram[] =
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -247,10 +328,101 @@ const char c_achTexturePixelProgram[] =
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float4 kFinal = float4(kTexel.rgb * vDiffuse.rgb, kTexel.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"#ifdef ALPHA_TEST\n"
+		"    clip(kFinal.a - g_kAlphaRef.x);\n"
+		"#endif\n"
+		"    return kFinal;\n"
+		"}\n";
+
+	// Fixed-function two-texture materials: stage0 MODULATE(TEXTURE,DIFFUSE),
+	// stage1 MODULATE(TEXTURE,CURRENT) sharing the single UV set, alpha from
+	// the lit vertex color (stage0 ALPHAOP=DISABLE).
+	const char c_achLitTwoTexPixelProgram[] =
+		"#ifdef ALPHA_TEST\n"
+		"float4 g_kAlphaRef : register(c2);\n"
+		"#endif\n"
+		"float4 g_kFogColor : register(c1);\n"
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
+		"{\n"
+		"    float4 kBase = tex2D(g_kSampler0, vTexCoord);\n"
+		"    float3 kSecond = tex2D(g_kSampler1, vTexCoord).rgb;\n"
+		"    float4 kFinal = float4(kBase.rgb * vDiffuse.rgb * kSecond, vDiffuse.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"#ifdef ALPHA_TEST\n"
+		"    clip(kFinal.a - g_kAlphaRef.x);\n"
+		"#endif\n"
+		"    return kFinal;\n"
+		"}\n";
+
+	// Fixed-function tint pass: stage0 MODULATE(TEXTURE,DIFFUSE) for color and
+	// alpha, stage1 MODULATE(CURRENT,TFACTOR) multiplying the tint in.
+	const char c_achLitTFactorTintPixelProgram[] =
+		"#ifdef ALPHA_TEST\n"
+		"float4 g_kAlphaRef : register(c2);\n"
+		"#endif\n"
+		"float4 g_kTFactor : register(c0);\n"
+		"float4 g_kFogColor : register(c1);\n"
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    float4 kFinal = float4(kTexel.rgb * vDiffuse.rgb * g_kTFactor.rgb, kTexel.a * vDiffuse.a);\n"
+		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
+		"#ifdef ALPHA_TEST\n"
+		"    clip(kFinal.a - g_kAlphaRef.x);\n"
+		"#endif\n"
+		"    return kFinal;\n"
+		"}\n";
+
+	// Blocking-building fade (RenderPCBlocker): rgb = lit base texture, alpha
+	// sampled from the screen-projected blocker mask on the generated
+	// TEXCOORD1 (stage1 ALPHAOP=SELECTARG1(TEXTURE) via CAMERASPACEPOSITION).
+	const char c_achLitProjectedAlphaPixelProgram[] =
+		"#ifdef ALPHA_TEST\n"
+		"float4 g_kAlphaRef : register(c2);\n"
+		"#endif\n"
+		"float4 g_kFogColor : register(c1);\n"
+		"sampler2D g_kSampler0 : register(s0);\n"
+		"sampler2D g_kSampler1 : register(s1);\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vProjectedCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
+		"{\n"
+		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
+		"    float4 kFinal = float4(kTexel.rgb * vDiffuse.rgb, tex2D(g_kSampler1, vProjectedCoord).a);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
 		"#ifdef ALPHA_TEST\n"
 		"    clip(kFinal.a - g_kAlphaRef.x);\n"
@@ -268,7 +440,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_vFogParams : register(c28);\n"
 		"float4 g_vFogParams2 : register(c29);\n"
 		"struct VS_INPUT { float3 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vCoverCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vPadDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vCoverCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -289,6 +461,7 @@ const char c_achTexturePixelProgram[] =
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
 		"    Out.fFixedFog = 1.0f;\n"
+		"    Out.vPadDiffuse = 0;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -299,12 +472,21 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kAlphaRef : register(c2);\n"
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
-		"sampler2D g_kSampler0 : register(s0);\n"
-		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vCoverCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
+		"Texture2D g_kTexture0 : register(t0);\n"
+		"Texture2D g_kTexture1 : register(t1);\n"
+		"SamplerState g_kSampler0 : register(s0);\n"
+		"SamplerState g_kSampler1 : register(s1);\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vCoverCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    float4 kCover = tex2D(g_kSampler1, vCoverCoord);\n"
-		"    float4 kFinal = float4(tex2D(g_kSampler0, vTexCoord).rgb * kCover.rgb, kCover.a);\n"
+		"    float4 kCover = g_kTexture1.Sample(g_kSampler1, vCoverCoord);\n"
+		"    float4 kFinal = float4(g_kTexture0.Sample(g_kSampler0, vTexCoord).rgb * kCover.rgb, kCover.a);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
 		"#ifdef ALPHA_TEST\n"
 		"    clip(kFinal.a - g_kAlphaRef.x);\n"
@@ -318,11 +500,19 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kAlphaRef : register(c2);\n"
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
-		"sampler2D g_kSampler1 : register(s1);\n"
+		"Texture2D g_kTexture1 : register(t1);\n"
+		"SamplerState g_kSampler1 : register(s1);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vCoverCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vPadCoord0 : TEXCOORD0,\n"
+		"    float2 vCoverCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    float4 kCover = tex2D(g_kSampler1, vCoverCoord);\n"
+		"    float4 kCover = g_kTexture1.Sample(g_kSampler1, vCoverCoord);\n"
 		"    float4 kFinal = float4(g_kTFactor.rgb * kCover.rgb, kCover.a);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
 		"#ifdef ALPHA_TEST\n"
@@ -337,7 +527,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_avTexMat[2] : register(c4);\n"
 		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vPadCoord1 : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -352,6 +542,7 @@ const char c_achTexturePixelProgram[] =
 		"    Out.vTexCoord.y = dot(vTexCoord, g_avTexMat[1]);\n"
 		FOG_VS_BODY
 		"    Out.fFixedFog = 1.0f;\n"
+		"    Out.vPadCoord1 = 0;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -395,7 +586,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vShadowCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord) * vDiffuse * tex2D(g_kSampler1, vShadowCoord);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -415,7 +613,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kLitAmbient : register(c10);\n"
 		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vPadCoord1 : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -434,6 +632,7 @@ const char c_achTexturePixelProgram[] =
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		FOG_VS_BODY
 		"    Out.fFixedFog = 1.0f;\n"
+		"    Out.vPadCoord1 = 0;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -456,7 +655,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kPointAmbient : register(c26);\n"
 		"float4 g_kBaseColor : register(c27);\n"     // rgb = mat.Ambient*RS_AMBIENT + mat.Emissive, w = mat.Diffuse.a
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; float2 vTexCoord : TEXCOORD0; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vPadCoord1 : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -499,6 +698,7 @@ const char c_achTexturePixelProgram[] =
 		"    Out.vTexCoord = In.vTexCoord;\n"
 		FOG_VS_BODY
 		"    Out.fFixedFog = 1.0f;\n"
+		"    Out.vPadCoord1 = 0;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -562,7 +762,14 @@ const char c_achTexturePixelProgram[] =
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vSpecCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vSpecCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float3 vColor = kTexel.rgb * vDiffuse.rgb;\n"
@@ -582,7 +789,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_avWVP[4] : register(c0);\n"
 		FOG_VS_DECLARATIONS
 		"struct VS_INPUT { float3 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vPadDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vLightCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -595,6 +802,7 @@ const char c_achTexturePixelProgram[] =
 		"    Out.vLightCoord = In.vLightCoord;\n"
 		FOG_VS_BODY
 		"    Out.fFixedFog = 1.0f;\n"
+		"    Out.vPadDiffuse = 0;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -606,7 +814,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vLightCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vLightCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord) * tex2D(g_kSampler1, vLightCoord);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -668,7 +883,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vShadowCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float3 vColor = tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb;\n"
 		"    vColor *= tex2D(g_kSampler1, vShadowCoord).rgb;\n"
@@ -689,7 +911,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_avTexMat1[2] : register(c15);\n"
 		FOG_VS_PARAMS
 		"struct VS_INPUT { float3 vPosition : POSITION; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vShadowCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vPadDiffuse : COLOR0; float2 vPadCoord0 : TEXCOORD0; float2 vShadowCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -709,6 +931,8 @@ const char c_achTexturePixelProgram[] =
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
 		"    Out.fFixedFog = 1.0f;\n"
+		"    Out.vPadDiffuse = 0;\n"
+		"    Out.vPadCoord0 = 0;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -719,11 +943,19 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kAlphaRef : register(c2);\n"
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
-		"sampler2D g_kSampler1 : register(s1);\n"
+		"Texture2D g_kTexture1 : register(t1);\n"
+		"SamplerState g_kSampler1 : register(s1);\n"
 		"float4 g_vTFactor : register(c0);\n"
-		"float4 main(float2 vShadowCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vPadCoord0 : TEXCOORD0,\n"
+		"    float2 vShadowCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    float4 kFinal = float4(g_vTFactor.rgb * tex2D(g_kSampler1, vShadowCoord).rgb, 1.0f);\n"
+		"    float4 kFinal = float4(g_vTFactor.rgb * g_kTexture1.Sample(g_kSampler1, vShadowCoord).rgb, 1.0f);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
 		"#ifdef ALPHA_TEST\n"
 		"    clip(kFinal.a - g_kAlphaRef.x);\n"
@@ -742,7 +974,7 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_vFogParams : register(c28);\n"
 		"float4 g_vFogParams2 : register(c29);\n"
 		"struct VS_INPUT { float3 vPosition : POSITION; float3 vNormal : NORMAL; };\n"
-		"struct VS_OUTPUT { float4 vPosition : POSITION; float2 vTexCoord : TEXCOORD0; float2 vSplatCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
+		"struct VS_OUTPUT { float4 vPosition : POSITION; float4 vPadDiffuse : COLOR0; float2 vTexCoord : TEXCOORD0; float2 vSplatCoord : TEXCOORD1; float fFog : TEXCOORD7; float fFixedFog : FOG; };\n"
 		"VS_OUTPUT main(VS_INPUT In)\n"
 		"{\n"
 		"    VS_OUTPUT Out;\n"
@@ -764,6 +996,7 @@ const char c_achTexturePixelProgram[] =
 		"    Out.fFog = saturate(fFogDist * g_vFogParams.x + g_vFogParams.y) * g_vFogParams.z\n"
 		"             + exp2(-fFogDist * g_vFogParams2.x) * g_vFogParams.w;\n"
 		"    Out.fFixedFog = 1.0f;\n"
+		"    Out.vPadDiffuse = 0;\n"
 		"    return Out;\n"
 		"}\n";
 
@@ -776,7 +1009,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float2 vSplatCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vSplatCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = float4(tex2D(g_kSampler0, vTexCoord).rgb, tex2D(g_kSampler1, vSplatCoord).a);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -793,7 +1033,14 @@ const char c_achTexturePixelProgram[] =
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = tex2D(g_kSampler0, vTexCoord);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -810,7 +1057,14 @@ const char c_achTexturePixelProgram[] =
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vPadCoord0 : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = float4(g_kTFactor.rgb, 1.0f);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -876,7 +1130,14 @@ const char c_achTexturePixelProgram[] =
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kFinal = float4(tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb, vDiffuse.a);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
@@ -895,7 +1156,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"sampler2D g_kSampler1 : register(s1);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float2 vShadowCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vShadowCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float3 vColor = tex2D(g_kSampler0, vTexCoord).rgb * vDiffuse.rgb;\n"
 		"    vColor *= tex2D(g_kSampler1, vShadowCoord).rgb;\n"
@@ -914,11 +1182,19 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kAlphaRef : register(c2);\n"
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
-		"sampler2D g_kSampler1 : register(s1);\n"
+		"Texture2D g_kTexture1 : register(t1);\n"
+		"SamplerState g_kSampler1 : register(s1);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vSplatCoord : TEXCOORD1, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vPadCoord0 : TEXCOORD0,\n"
+		"    float2 vSplatCoord : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
-		"    float4 kFinal = float4(g_kTFactor.rgb, g_kTFactor.a * tex2D(g_kSampler1, vSplatCoord).a);\n"
+		"    float4 kFinal = float4(g_kTFactor.rgb, g_kTFactor.a * g_kTexture1.Sample(g_kSampler1, vSplatCoord).a);\n"
 		"    kFinal.rgb = lerp(g_kFogColor.rgb, kFinal.rgb, saturate(fFog));\n"
 		"#ifdef ALPHA_TEST\n"
 		"    clip(kFinal.a - g_kAlphaRef.x);\n"
@@ -933,7 +1209,14 @@ const char c_achTexturePixelProgram[] =
 		"#endif\n"
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
-		"float4 main(float4 vDiffuse : COLOR0, float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float4 kFinal = float4(kTexel.rgb + vDiffuse.rgb * (1.0f - kTexel.a), kTexel.a);\n"
@@ -952,7 +1235,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float4 kFinal = float4(kTexel.rgb * g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
@@ -969,7 +1259,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float4 kFinal = float4(kTexel.rgb + g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
@@ -986,7 +1283,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float4 kFinal = float4(g_kTFactor.rgb, kTexel.a * g_kTFactor.a);\n"
@@ -1003,7 +1307,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float4 kFinal = float4(kTexel.rgb, kTexel.a * g_kTFactor.a);\n"
@@ -1023,7 +1334,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float4 kFinal = float4(kTexel.rgb * g_kTFactor.rgb * 2.0f, kTexel.a * g_kTFactor.a);\n"
@@ -1040,7 +1358,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float4 kFinal = float4(kTexel.rgb * g_kTFactor.rgb * 4.0f, kTexel.a * g_kTFactor.a);\n"
@@ -1057,7 +1382,14 @@ const char c_achTexturePixelProgram[] =
 		"float4 g_kFogColor : register(c1);\n"
 		"sampler2D g_kSampler0 : register(s0);\n"
 		"float4 g_kTFactor : register(c0);\n"
-		"float4 main(float2 vTexCoord : TEXCOORD0, float fFog : TEXCOORD7) : COLOR0\n"
+		"float4 main(\n"
+		"#ifdef SM5\n"
+		"    float4 vScreenPosition : SV_POSITION,\n"
+		"#endif\n"
+		"    float4 vPadDiffuse : COLOR0,\n"
+		"    float2 vTexCoord : TEXCOORD0,\n"
+		"    float2 vPadCoord1 : TEXCOORD1,\n"
+		"    float fFog : TEXCOORD7) : COLOR0\n"
 		"{\n"
 		"    float4 kTexel = tex2D(g_kSampler0, vTexCoord);\n"
 		"    float4 kFinal = float4(kTexel.rgb + g_kTFactor.rgb - 0.5f, kTexel.a * g_kTFactor.a);\n"
@@ -1068,12 +1400,50 @@ const char c_achTexturePixelProgram[] =
 		"    return kFinal;\n"
 		"}\n";
 
+	const char c_achSpeedTreeLeafVertexProgram[] =
+		"float4 g_avConstants[86] : register(c0);\n"
+		"struct VS_INPUT\n"
+		"{\n"
+		"    float3 vPosition  : POSITION;\n"
+		"    float4 vColor     : COLOR0;\n"
+		"    float2 vTexCoord  : TEXCOORD0;\n"
+		"    float4 vPlacement : TEXCOORD2;\n"
+		"};\n"
+		"struct VS_OUTPUT\n"
+		"{\n"
+		"    float4 vPosition : POSITION;\n"
+		"    float4 vDiffuse  : COLOR0;\n"
+		"    float2 vTexCoord : TEXCOORD0;\n"
+		"    float2 vPadCoord1 : TEXCOORD1;\n"
+		"    float  fFog      : TEXCOORD7;\n"
+		"    float  fFixedFog : FOG;\n"
+		"};\n"
+		"VS_OUTPUT main(VS_INPUT In)\n"
+		"{\n"
+		"    VS_OUTPUT Out;\n"
+		"    Out.vTexCoord = In.vTexCoord;\n"
+		"    float4 r0 = float4(In.vPosition, 1.0f);\n"
+		"    r0 += g_avConstants[(int)In.vPlacement.z] * In.vPlacement.w;\n"
+		"    r0 += g_avConstants[52];\n"
+		"    Out.vPosition.x = dot(r0, g_avConstants[0]);\n"
+		"    Out.vPosition.y = dot(r0, g_avConstants[1]);\n"
+		"    Out.vPosition.z = dot(r0, g_avConstants[2]);\n"
+		"    Out.vPosition.w = dot(r0, g_avConstants[3]);\n"
+		"    Out.fFog = (g_avConstants[85].y - dot(r0, g_avConstants[2])) * g_avConstants[85].z;\n"
+		"    Out.vDiffuse = In.vColor;\n"
+		"    Out.vPadCoord1 = 0;\n"
+		"    Out.fFixedFog = 1.0f;\n"
+		"    return Out;\n"
+		"}\n";
+
 	// Every pool program by name and source: the DX12 backend compiles
 	// the same HLSL against SM5 targets from this table.
 	const CGraphicShaderPool::TProgramInfo c_akProgramTable[] =
 	{
+		{ "SpeedTreeLeafVertexProgram", c_achSpeedTreeLeafVertexProgram, sizeof(c_achSpeedTreeLeafVertexProgram) - 1, true },
 		{ "PDTVertexProgram", c_achPDTVertexProgram, sizeof(c_achPDTVertexProgram) - 1, true },
 		{ "ModulatePixelProgram", c_achModulatePixelProgram, sizeof(c_achModulatePixelProgram) - 1, false },
+		{ "ModulateSpecAlphaPixelProgram", c_achModulateSpecAlphaPixelProgram, sizeof(c_achModulateSpecAlphaPixelProgram) - 1, false },
 		{ "ModulateNoFogPixelProgram", c_achModulateNoFogPixelProgram, sizeof(c_achModulateNoFogPixelProgram) - 1, false },
 		{ "LitBlendPixelProgram", c_achLitBlendPixelProgram, sizeof(c_achLitBlendPixelProgram) - 1, false },
 		{ "LitAddPixelProgram", c_achLitAddPixelProgram, sizeof(c_achLitAddPixelProgram) - 1, false },
@@ -1084,6 +1454,9 @@ const char c_achTexturePixelProgram[] =
 		{ "WaterPixelProgram", c_achWaterPixelProgram, sizeof(c_achWaterPixelProgram) - 1, false },
 		{ "TexturePixelProgram", c_achTexturePixelProgram, sizeof(c_achTexturePixelProgram) - 1, false },
 		{ "ModulateTexAlphaPixelProgram", c_achModulateTexAlphaPixelProgram, sizeof(c_achModulateTexAlphaPixelProgram) - 1, false },
+		{ "LitTwoTexPixelProgram", c_achLitTwoTexPixelProgram, sizeof(c_achLitTwoTexPixelProgram) - 1, false },
+		{ "LitTFactorTintPixelProgram", c_achLitTFactorTintPixelProgram, sizeof(c_achLitTFactorTintPixelProgram) - 1, false },
+		{ "LitProjectedAlphaPixelProgram", c_achLitProjectedAlphaPixelProgram, sizeof(c_achLitProjectedAlphaPixelProgram) - 1, false },
 		{ "MiniMapVertexProgram", c_achMiniMapVertexProgram, sizeof(c_achMiniMapVertexProgram) - 1, true },
 		{ "MiniMapPixelProgram", c_achMiniMapPixelProgram, sizeof(c_achMiniMapPixelProgram) - 1, false },
 		{ "MiniMapTFactorPixelProgram", c_achMiniMapTFactorPixelProgram, sizeof(c_achMiniMapTFactorPixelProgram) - 1, false },
@@ -1136,6 +1509,7 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTerrainSplatVertexShader(NULL)
 	, m_lpTerrainLitShadowVertexShader(NULL)
 	, m_lpModulatePixelShader(NULL)
+	, m_lpModulateSpecAlphaPixelShader(NULL)
 	, m_lpModulateNoFogPixelShader(NULL)
 	, m_lpLitBlendPixelShader(NULL)
 	, m_lpLitAddPixelShader(NULL)
@@ -1144,6 +1518,9 @@ CGraphicShaderPool::CGraphicShaderPool()
 	, m_lpTexturePixelShader(NULL)
 	, m_lpWaterPixelShader(NULL)
 	, m_lpModulateTexAlphaPixelShader(NULL)
+	, m_lpLitTwoTexPixelShader(NULL)
+	, m_lpLitTFactorTintPixelShader(NULL)
+	, m_lpLitProjectedAlphaPixelShader(NULL)
 	, m_lpMiniMapPixelShader(NULL)
 	, m_lpMiniMapTFactorPixelShader(NULL)
 	, m_lpInvAlphaAddPixelShader(NULL)
@@ -1182,62 +1559,242 @@ CGraphicShaderPool::~CGraphicShaderPool()
 
 void CGraphicShaderPool::Destroy()
 {
-	safe_release(m_lpPDTVertexShader);
-	safe_release(m_lpPTVertexShader);
-	safe_release(m_lpWaterVertexShader);
-	safe_release(m_lpPDTTexMatVertexShader);
-	safe_release(m_lpMiniMapVertexShader);
-	safe_release(m_lpPNTLitVertexShader);
-	safe_release(m_lpSpeedTreeBranchVertexShader);
-	safe_release(m_lpPNTLitSpecVertexShader);
-	safe_release(m_lpPNTLitOmniVertexShader);
-	safe_release(m_lpPNT2VertexShader);
-	safe_release(m_lpPNT2RecvVertexShader);
-	safe_release(m_lpPNTLitRecvVertexShader);
-	safe_release(m_lpTerrainSplatVertexShader);
-	safe_release(m_lpTerrainLitShadowVertexShader);
-	safe_release(m_lpModulatePixelShader);
-	safe_release(m_lpModulateNoFogPixelShader);
-	safe_release(m_lpLitBlendPixelShader);
-	safe_release(m_lpLitAddPixelShader);
-	safe_release(m_lpDiffusePixelShader);
-	safe_release(m_lpFlatTFactorPixelShader);
-	safe_release(m_lpTexturePixelShader);
-	safe_release(m_lpWaterPixelShader);
-	safe_release(m_lpModulateTexAlphaPixelShader);
-	safe_release(m_lpMiniMapPixelShader);
-	safe_release(m_lpMiniMapTFactorPixelShader);
-	safe_release(m_lpInvAlphaAddPixelShader);
-	safe_release(m_lpTFactorModulatePixelShader);
-	safe_release(m_lpTFactorAddPixelShader);
-	safe_release(m_lpTFactorOnlyPixelShader);
-	safe_release(m_lpTexTFactorAlphaPixelShader);
-	safe_release(m_lpTFactorModulate2XPixelShader);
-	safe_release(m_lpTFactorModulate4XPixelShader);
-	safe_release(m_lpTFactorAddSignedPixelShader);
-	safe_release(m_lpLitSpecPixelShader);
-	safe_release(m_lpSpeedTreeShadowPixelShader);
-	safe_release(m_lpLightmapPixelShader);
-	safe_release(m_lpLitShadowPixelShader);
-	safe_release(m_lpTFactorShadowPixelShader);
-	safe_release(m_lpTerrainSplatPixelShader);
-	safe_release(m_lpTerrainSplatBasePixelShader);
-	safe_release(m_lpTerrainFogFlatPixelShader);
-	safe_release(m_lpTerrainAttrPixelShader);
-	safe_release(m_lpTerrainShadowPixelShader);
-	safe_release(m_lpTerrainShadowChrPixelShader);
-	safe_release(m_lpPDTDeclaration);
-	safe_release(m_lpPTDeclaration);
-	safe_release(m_lpPDDeclaration);
-	safe_release(m_lpPNTDeclaration);
-	safe_release(m_lpPNT2Declaration);
-	safe_release(m_lpPDT2Declaration);
-	safe_release(m_lpPNDeclaration);
+	m_lpPDTVertexShader = NULL;
+	m_lpPTVertexShader = NULL;
+	m_lpWaterVertexShader = NULL;
+	m_lpPDTTexMatVertexShader = NULL;
+	m_lpMiniMapVertexShader = NULL;
+	m_lpPNTLitVertexShader = NULL;
+	m_lpSpeedTreeBranchVertexShader = NULL;
+	m_lpPNTLitSpecVertexShader = NULL;
+	m_lpPNTLitOmniVertexShader = NULL;
+	m_lpPNT2VertexShader = NULL;
+	m_lpPNT2RecvVertexShader = NULL;
+	m_lpPNTLitRecvVertexShader = NULL;
+	m_lpTerrainSplatVertexShader = NULL;
+	m_lpTerrainLitShadowVertexShader = NULL;
+	m_lpModulatePixelShader = NULL;
+	m_lpModulateSpecAlphaPixelShader = NULL;
+	m_lpModulateNoFogPixelShader = NULL;
+	m_lpLitBlendPixelShader = NULL;
+	m_lpLitAddPixelShader = NULL;
+	m_lpDiffusePixelShader = NULL;
+	m_lpFlatTFactorPixelShader = NULL;
+	m_lpTexturePixelShader = NULL;
+	m_lpWaterPixelShader = NULL;
+	m_lpModulateTexAlphaPixelShader = NULL;
+	m_lpLitTwoTexPixelShader = NULL;
+	m_lpLitTFactorTintPixelShader = NULL;
+	m_lpLitProjectedAlphaPixelShader = NULL;
+	m_lpMiniMapPixelShader = NULL;
+	m_lpMiniMapTFactorPixelShader = NULL;
+	m_lpInvAlphaAddPixelShader = NULL;
+	m_lpTFactorModulatePixelShader = NULL;
+	m_lpTFactorAddPixelShader = NULL;
+	m_lpTFactorOnlyPixelShader = NULL;
+	m_lpTexTFactorAlphaPixelShader = NULL;
+	m_lpTFactorModulate2XPixelShader = NULL;
+	m_lpTFactorModulate4XPixelShader = NULL;
+	m_lpTFactorAddSignedPixelShader = NULL;
+	m_lpLitSpecPixelShader = NULL;
+	m_lpSpeedTreeShadowPixelShader = NULL;
+	m_lpLightmapPixelShader = NULL;
+	m_lpLitShadowPixelShader = NULL;
+	m_lpTFactorShadowPixelShader = NULL;
+	m_lpTerrainSplatPixelShader = NULL;
+	m_lpTerrainSplatBasePixelShader = NULL;
+	m_lpTerrainFogFlatPixelShader = NULL;
+	m_lpTerrainAttrPixelShader = NULL;
+	m_lpTerrainShadowPixelShader = NULL;
+	m_lpTerrainShadowChrPixelShader = NULL;
+	m_lpPDTDeclaration = NULL;
+	m_lpPTDeclaration = NULL;
+	m_lpPDDeclaration = NULL;
+	m_lpPNTDeclaration = NULL;
+	m_lpPNT2Declaration = NULL;
+	m_lpPDT2Declaration = NULL;
+	m_lpPNDeclaration = NULL;
+
+	m_bCreateFailed = false;
+}
+
+bool CGraphicShaderPool::__Create()
+{
+	if (m_bCreateFailed)
+		return false;
+
+	const D3DVERTEXELEMENT9 akPDTElements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,    0 },
+		{ 0, 16, D3DDECLTYPE_FLOAT2,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		D3DDECL_END()
+	};
+
+	m_lpPDTVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpModulatePixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpModulateSpecAlphaPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpModulateNoFogPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpLitBlendPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpLitAddPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpDiffusePixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpFlatTFactorPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+
+	if (NULL == (m_lpPDTDeclaration = (LPDIRECT3DVERTEXDECLARATION9)STATEMANAGER.CreateVertexDeclaration(akPDTElements)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PDT vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+
+	const D3DVERTEXELEMENT9 akPTElements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		D3DDECL_END()
+	};
+
+	m_lpPTVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpTexturePixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpModulateTexAlphaPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpLitTwoTexPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpLitTFactorTintPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpLitProjectedAlphaPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpMiniMapVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpMiniMapPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpMiniMapTFactorPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpPDTTexMatVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpInvAlphaAddPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTFactorModulatePixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTFactorAddPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTFactorOnlyPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTexTFactorAlphaPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTFactorModulate2XPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTFactorModulate4XPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTFactorAddSignedPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+
+	if (NULL == (m_lpPTDeclaration = (LPDIRECT3DVERTEXDECLARATION9)STATEMANAGER.CreateVertexDeclaration(akPTElements)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PT vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	const D3DVERTEXELEMENT9 akPDElements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,    0 },
+		D3DDECL_END()
+	};
+
+	if (NULL == (m_lpPDDeclaration = (LPDIRECT3DVERTEXDECLARATION9)STATEMANAGER.CreateVertexDeclaration(akPDElements)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PD vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	m_lpWaterVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpWaterPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+
+	const D3DVERTEXELEMENT9 akPNTElements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,   0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		D3DDECL_END()
+	};
+
+	m_lpPNTLitVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpSpeedTreeBranchVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpSpeedTreeShadowPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+
+	const D3DVERTEXELEMENT9 akPDT2Elements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,    0 },
+		{ 0, 16, D3DDECLTYPE_FLOAT2,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT2,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
+		D3DDECL_END()
+	};
+
+	if (NULL == (m_lpPDT2Declaration = (LPDIRECT3DVERTEXDECLARATION9)STATEMANAGER.CreateVertexDeclaration(akPDT2Elements)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PDT2 vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	m_lpPNTLitSpecVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpPNTLitOmniVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpLitSpecPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpPNT2VertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpLightmapPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpPNTLitRecvVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpLitShadowPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpPNT2RecvVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpTFactorShadowPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+
+	const D3DVERTEXELEMENT9 akPNT2Elements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,   0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		{ 0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
+		D3DDECL_END()
+	};
+
+	if (NULL == (m_lpPNT2Declaration = (LPDIRECT3DVERTEXDECLARATION9)STATEMANAGER.CreateVertexDeclaration(akPNT2Elements)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PNT2 vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	const D3DVERTEXELEMENT9 akPNElements[] =
+	{
+		{ 0,  0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,   0 },
+		D3DDECL_END()
+	};
+
+	if (NULL == (m_lpPNDeclaration = (LPDIRECT3DVERTEXDECLARATION9)STATEMANAGER.CreateVertexDeclaration(akPNElements)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PN vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
+	m_lpTerrainSplatVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpTerrainSplatPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTerrainSplatBasePixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTerrainFogFlatPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTerrainAttrPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTerrainLitShadowVertexShader = (LPDIRECT3DVERTEXSHADER9)STATEMANAGER.CreateVertexShader(NULL);
+	m_lpTerrainShadowPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+	m_lpTerrainShadowChrPixelShader = (LPDIRECT3DPIXELSHADER9)STATEMANAGER.CreatePixelShader(NULL);
+
+	if (NULL == (m_lpPNTDeclaration = (LPDIRECT3DVERTEXDECLARATION9)STATEMANAGER.CreateVertexDeclaration(akPNTElements)))
+	{
+		TraceError("CGraphicShaderPool: failed to create PNT vertex declaration.");
+		Destroy();
+		m_bCreateFailed = true;
+		return false;
+	}
+
 	// DX12 mirror: map every created shader to its registry program.
 	if (CStateManager::InstancePtr())
 	{
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpPDTVertexShader, "PDTVertexProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpModulatePixelShader, "ModulatePixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpModulateSpecAlphaPixelShader, "ModulateSpecAlphaPixelProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpModulateNoFogPixelShader, "ModulateNoFogPixelProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpLitBlendPixelShader, "LitBlendPixelProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpLitAddPixelShader, "LitAddPixelProgram");
@@ -1246,6 +1803,9 @@ void CGraphicShaderPool::Destroy()
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpPTVertexShader, "PTVertexProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpTexturePixelShader, "TexturePixelProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpModulateTexAlphaPixelShader, "ModulateTexAlphaPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpLitTwoTexPixelShader, "LitTwoTexPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpLitTFactorTintPixelShader, "LitTFactorTintPixelProgram");
+	STATEMANAGER.RegisterShaderProgramDX12(m_lpLitProjectedAlphaPixelShader, "LitProjectedAlphaPixelProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpMiniMapVertexShader, "MiniMapVertexProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpMiniMapPixelShader, "MiniMapPixelProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpMiniMapTFactorPixelShader, "MiniMapTFactorPixelProgram");
@@ -1280,849 +1840,6 @@ void CGraphicShaderPool::Destroy()
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainLitShadowVertexShader, "TerrainLitShadowVertexProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainShadowPixelShader, "TerrainShadowPixelProgram");
 	STATEMANAGER.RegisterShaderProgramDX12(m_lpTerrainShadowChrPixelShader, "TerrainShadowChrPixelProgram");
-	}
-
-	m_bCreateFailed = false;
-}
-
-bool CGraphicShaderPool::__Create()
-{
-	if (m_bCreateFailed)
-		return false;
-
-	const D3DVERTEXELEMENT9 akPDTElements[] =
-	{
-		{ 0,  0, D3DDECLTYPE_FLOAT3,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-		{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,    0 },
-		{ 0, 16, D3DDECLTYPE_FLOAT2,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-		D3DDECL_END()
-	};
-
-	ID3DBlob* pCode = NULL;
-	ID3DBlob* pError = NULL;
-
-	if (FAILED(D3DCompile(c_achPDTVertexProgram, sizeof(c_achPDTVertexProgram) - 1, "PDTVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPDTVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build PDT vertex shader [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achModulatePixelProgram, sizeof(c_achModulatePixelProgram) - 1, "ModulatePixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpModulatePixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build modulate pixel shader [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achModulateNoFogPixelProgram, sizeof(c_achModulateNoFogPixelProgram) - 1, "ModulateNoFogPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpModulateNoFogPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build modulate no-fog pixel shader [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achLitBlendPixelProgram, sizeof(c_achLitBlendPixelProgram) - 1, "LitBlendPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLitBlendPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build LitBlendPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achLitAddPixelProgram, sizeof(c_achLitAddPixelProgram) - 1, "LitAddPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLitAddPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build LitAddPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achDiffusePixelProgram, sizeof(c_achDiffusePixelProgram) - 1, "DiffusePixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpDiffusePixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build diffuse pixel shader [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achFlatTFactorPixelProgram, sizeof(c_achFlatTFactorPixelProgram) - 1, "FlatTFactorPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpFlatTFactorPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build FlatTFactorPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPDTElements, &m_lpPDTDeclaration)))
-	{
-		TraceError("CGraphicShaderPool: failed to create PDT vertex declaration.");
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-
-	const D3DVERTEXELEMENT9 akPTElements[] =
-	{
-		{ 0,  0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-		{ 0, 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-		D3DDECL_END()
-	};
-
-	if (FAILED(D3DCompile(c_achPTVertexProgram, sizeof(c_achPTVertexProgram) - 1, "PTVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPTVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build PT vertex shader [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTexturePixelProgram, sizeof(c_achTexturePixelProgram) - 1, "TexturePixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTexturePixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build texture pixel shader [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achModulateTexAlphaPixelProgram, sizeof(c_achModulateTexAlphaPixelProgram) - 1, "ModulateTexAlphaPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpModulateTexAlphaPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build modulate-tex-alpha pixel shader [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achMiniMapVertexProgram, sizeof(c_achMiniMapVertexProgram) - 1, "MiniMapVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpMiniMapVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build MiniMapVertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achMiniMapPixelProgram, sizeof(c_achMiniMapPixelProgram) - 1, "MiniMapPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpMiniMapPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build MiniMapPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achMiniMapTFactorPixelProgram, sizeof(c_achMiniMapTFactorPixelProgram) - 1, "MiniMapTFactorPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpMiniMapTFactorPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build MiniMapTFactorPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achPDTTexMatVertexProgram, sizeof(c_achPDTTexMatVertexProgram) - 1, "PDTTexMatVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPDTTexMatVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build PDTTexMatVertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achInvAlphaAddPixelProgram, sizeof(c_achInvAlphaAddPixelProgram) - 1, "InvAlphaAddPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpInvAlphaAddPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build InvAlphaAddPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTFactorModulatePixelProgram, sizeof(c_achTFactorModulatePixelProgram) - 1, "TFactorModulatePixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorModulatePixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TFactorModulatePixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTFactorAddPixelProgram, sizeof(c_achTFactorAddPixelProgram) - 1, "TFactorAddPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorAddPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TFactorAddPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTFactorOnlyPixelProgram, sizeof(c_achTFactorOnlyPixelProgram) - 1, "TFactorOnlyPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorOnlyPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TFactorOnlyPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTexTFactorAlphaPixelProgram, sizeof(c_achTexTFactorAlphaPixelProgram) - 1, "TexTFactorAlphaPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTexTFactorAlphaPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TexTFactorAlphaPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTFactorModulate2XPixelProgram, sizeof(c_achTFactorModulate2XPixelProgram) - 1, "TFactorModulate2XPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorModulate2XPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TFactorModulate2XPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTFactorModulate4XPixelProgram, sizeof(c_achTFactorModulate4XPixelProgram) - 1, "TFactorModulate4XPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorModulate4XPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TFactorModulate4XPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTFactorAddSignedPixelProgram, sizeof(c_achTFactorAddSignedPixelProgram) - 1, "TFactorAddSignedPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorAddSignedPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TFactorAddSignedPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPTElements, &m_lpPTDeclaration)))
-	{
-		TraceError("CGraphicShaderPool: failed to create PT vertex declaration.");
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	const D3DVERTEXELEMENT9 akPDElements[] =
-	{
-		{ 0,  0, D3DDECLTYPE_FLOAT3,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-		{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,    0 },
-		D3DDECL_END()
-	};
-
-	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPDElements, &m_lpPDDeclaration)))
-	{
-		TraceError("CGraphicShaderPool: failed to create PD vertex declaration.");
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	if (FAILED(D3DCompile(c_achWaterVertexProgram, sizeof(c_achWaterVertexProgram) - 1, "WaterVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpWaterVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build WaterVertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achWaterPixelProgram, sizeof(c_achWaterPixelProgram) - 1, "WaterPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpWaterPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build WaterPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-
-	const D3DVERTEXELEMENT9 akPNTElements[] =
-	{
-		{ 0,  0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,   0 },
-		{ 0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-		D3DDECL_END()
-	};
-
-	if (FAILED(D3DCompile(c_achPNTLitVertexProgram, sizeof(c_achPNTLitVertexProgram) - 1, "PNTLitVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNTLitVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build PNT lit vertex shader [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achSpeedTreeBranchVertexProgram, sizeof(c_achSpeedTreeBranchVertexProgram) - 1, "SpeedTreeBranchVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpSpeedTreeBranchVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build SpeedTreeBranchVertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achSpeedTreeShadowPixelProgram, sizeof(c_achSpeedTreeShadowPixelProgram) - 1, "SpeedTreeShadowPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpSpeedTreeShadowPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build SpeedTreeShadowPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	const D3DVERTEXELEMENT9 akPDT2Elements[] =
-	{
-		{ 0,  0, D3DDECLTYPE_FLOAT3,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-		{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,    0 },
-		{ 0, 16, D3DDECLTYPE_FLOAT2,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-		{ 0, 24, D3DDECLTYPE_FLOAT2,   D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
-		D3DDECL_END()
-	};
-
-	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPDT2Elements, &m_lpPDT2Declaration)))
-	{
-		TraceError("CGraphicShaderPool: failed to create PDT2 vertex declaration.");
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achPNTLitSpecVertexProgram, sizeof(c_achPNTLitSpecVertexProgram) - 1, "PNTLitSpecVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNTLitSpecVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build PNTLitSpecVertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achPNTLitOmniVertexProgram, sizeof(c_achPNTLitOmniVertexProgram) - 1, "PNTLitOmniVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNTLitOmniVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build PNTLitOmniVertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achLitSpecPixelProgram, sizeof(c_achLitSpecPixelProgram) - 1, "LitSpecPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLitSpecPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build LitSpecPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achPNT2VertexProgram, sizeof(c_achPNT2VertexProgram) - 1, "PNT2VertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNT2VertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build PNT2VertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achLightmapPixelProgram, sizeof(c_achLightmapPixelProgram) - 1, "LightmapPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLightmapPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build LightmapPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achPNTLitRecvVertexProgram, sizeof(c_achPNTLitRecvVertexProgram) - 1, "PNTLitRecvVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNTLitRecvVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build PNTLitRecvVertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achLitShadowPixelProgram, sizeof(c_achLitShadowPixelProgram) - 1, "LitShadowPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpLitShadowPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build LitShadowPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achPNT2RecvVertexProgram, sizeof(c_achPNT2RecvVertexProgram) - 1, "PNT2RecvVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpPNT2RecvVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build PNT2RecvVertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTFactorShadowPixelProgram, sizeof(c_achTFactorShadowPixelProgram) - 1, "TFactorShadowPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTFactorShadowPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TFactorShadowPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	const D3DVERTEXELEMENT9 akPNT2Elements[] =
-	{
-		{ 0,  0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,   0 },
-		{ 0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-		{ 0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
-		D3DDECL_END()
-	};
-
-	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPNT2Elements, &m_lpPNT2Declaration)))
-	{
-		TraceError("CGraphicShaderPool: failed to create PNT2 vertex declaration.");
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	const D3DVERTEXELEMENT9 akPNElements[] =
-	{
-		{ 0,  0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,   0 },
-		D3DDECL_END()
-	};
-
-	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPNElements, &m_lpPNDeclaration)))
-	{
-		TraceError("CGraphicShaderPool: failed to create PN vertex declaration.");
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	if (FAILED(D3DCompile(c_achTerrainSplatVertexProgram, sizeof(c_achTerrainSplatVertexProgram) - 1, "TerrainSplatVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainSplatVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TerrainSplatVertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTerrainSplatPixelProgram, sizeof(c_achTerrainSplatPixelProgram) - 1, "TerrainSplatPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainSplatPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TerrainSplatPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTerrainSplatBasePixelProgram, sizeof(c_achTerrainSplatBasePixelProgram) - 1, "TerrainSplatBasePixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainSplatBasePixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TerrainSplatBasePixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTerrainFogFlatPixelProgram, sizeof(c_achTerrainFogFlatPixelProgram) - 1, "TerrainFogFlatPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainFogFlatPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TerrainFogFlatPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTerrainAttrPixelProgram, sizeof(c_achTerrainAttrPixelProgram) - 1, "TerrainAttrPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainAttrPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TerrainAttrPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	safe_release(pCode);
-	safe_release(pError);
-
-
-	if (FAILED(D3DCompile(c_achTerrainLitShadowVertexProgram, sizeof(c_achTerrainLitShadowVertexProgram) - 1, "TerrainLitShadowVertexProgram",
-						  NULL, NULL, "main", "vs_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreateVertexShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainLitShadowVertexShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TerrainLitShadowVertexProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTerrainShadowPixelProgram, sizeof(c_achTerrainShadowPixelProgram) - 1, "TerrainShadowPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainShadowPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TerrainShadowPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(D3DCompile(c_achTerrainShadowChrPixelProgram, sizeof(c_achTerrainShadowChrPixelProgram) - 1, "TerrainShadowChrPixelProgram",
-						  NULL, NULL, "main", "ps_2_0", 0, 0, &pCode, &pError)) ||
-		FAILED(STATEMANAGER.CreatePixelShader((const DWORD*)pCode->GetBufferPointer(), &m_lpTerrainShadowChrPixelShader)))
-	{
-		TraceError("CGraphicShaderPool: failed to build TerrainShadowChrPixelProgram [ %s ].",
-				   pError ? (const char*)pError->GetBufferPointer() : "unknown");
-		safe_release(pCode);
-		safe_release(pError);
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
-	}
-
-	safe_release(pCode);
-	safe_release(pError);
-
-	if (FAILED(STATEMANAGER.CreateVertexDeclaration(akPNTElements, &m_lpPNTDeclaration)))
-	{
-		TraceError("CGraphicShaderPool: failed to create PNT vertex declaration.");
-		Destroy();
-		m_bCreateFailed = true;
-		return false;
 	}
 
 	return true;
@@ -2192,6 +1909,11 @@ bool CGraphicShaderPool::__Bind(LPDIRECT3DVERTEXDECLARATION9 lpDeclaration, LPDI
 bool CGraphicShaderPool::BindPDTModulate()
 {
 	return __Bind(m_lpPDTDeclaration, m_lpPDTVertexShader, m_lpModulatePixelShader);
+}
+
+bool CGraphicShaderPool::BindPDTTFactorModulate()
+{
+	return __Bind(m_lpPDTDeclaration, m_lpPDTVertexShader, m_lpTFactorModulatePixelShader);
 }
 
 bool CGraphicShaderPool::BindPDTDiffuse()
@@ -2287,6 +2009,42 @@ bool CGraphicShaderPool::BindPTTFactorAddSigned()
 	return __Bind(m_lpPTDeclaration, m_lpPTVertexShader, m_lpTFactorAddSignedPixelShader);
 }
 
+bool CGraphicShaderPool::BindPNTLitTexAlpha()
+{
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitVertexShader, m_lpModulateTexAlphaPixelShader))
+		return false;
+
+	D3DXMATRIX matWorld;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
+	return true;
+}
+
+bool CGraphicShaderPool::BindPNTLitTwoTexture()
+{
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitVertexShader, m_lpLitTwoTexPixelShader))
+		return false;
+
+	D3DXMATRIX matWorld;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
+	return true;
+}
+
+bool CGraphicShaderPool::BindPNTLitTFactorTint()
+{
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitVertexShader, m_lpLitTFactorTintPixelShader))
+		return false;
+
+	D3DXMATRIX matWorld;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
+	return true;
+}
+
 bool CGraphicShaderPool::BindPNTLit()
 {
 	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitVertexShader, m_lpModulatePixelShader))
@@ -2349,9 +2107,10 @@ bool CGraphicShaderPool::BindPNTLitSpecular()
 	return true;
 }
 
-bool CGraphicShaderPool::BindPNTLitOmni()
+bool CGraphicShaderPool::BindPNTLitOmni(bool bSpecular)
 {
-	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitOmniVertexShader, m_lpModulatePixelShader))
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitOmniVertexShader,
+				bSpecular ? m_lpModulateSpecAlphaPixelShader : m_lpModulatePixelShader))
 		return false;
 
 	D3DXMATRIX matWorld;
@@ -2369,6 +2128,21 @@ bool CGraphicShaderPool::BindPNT2Lightmap()
 bool CGraphicShaderPool::BindPNTLitShadowReceiver()
 {
 	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitRecvVertexShader, m_lpLitShadowPixelShader))
+		return false;
+
+	D3DXMATRIX matWorld, matTexture;
+	STATEMANAGER.GetTransform(D3DTS_WORLD, &matWorld);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	STATEMANAGER.SetVertexShaderConstant(4, &matWorld, 3);
+	STATEMANAGER.GetTransform(D3DTS_TEXTURE1, &matTexture);
+	D3DXMatrixTranspose(&matTexture, &matTexture);
+	STATEMANAGER.SetVertexShaderConstant(15, &matTexture, 2);
+	return true;
+}
+
+bool CGraphicShaderPool::BindPNTLitProjectedAlpha()
+{
+	if (!__Bind(m_lpPNTDeclaration, m_lpPNTLitRecvVertexShader, m_lpLitProjectedAlphaPixelShader))
 		return false;
 
 	D3DXMATRIX matWorld, matTexture;
@@ -2451,10 +2225,22 @@ bool CGraphicShaderPool::BindPixelOnlyModulate()
 	if (!m_lpPDTDeclaration && !__Create())
 		return false;
 
-	if (!m_lpModulateNoFogPixelShader)
+	if (!m_lpModulatePixelShader)
 		return false;
 
-	STATEMANAGER.SetPixelShader(m_lpModulateNoFogPixelShader);
+	// The SpeedTree leaf vertices already carry world-space positions plus the
+	// tree offset in c52, so c0-c3 must hold VIEW*PROJECTION without the world
+	// transform the branch/frond binds leave behind. The leaf vertex program
+	// feeds its own fog factor through TEXCOORD7, so the fogged modulate
+	// pixel program applies distance fog like the legacy path.
+	D3DXMATRIX matView, matProj, matViewProj;
+	STATEMANAGER.GetTransform(D3DTS_VIEW, &matView);
+	STATEMANAGER.GetTransform(D3DTS_PROJECTION, &matProj);
+	D3DXMatrixMultiply(&matViewProj, &matView, &matProj);
+	D3DXMatrixTranspose(&matViewProj, &matViewProj);
+	STATEMANAGER.SetVertexShaderConstant(0, &matViewProj, 4);
+
+	STATEMANAGER.SetPixelShader(m_lpModulatePixelShader);
 	return true;
 }
 

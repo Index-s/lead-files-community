@@ -611,8 +611,8 @@ void CGraphicTextInstance::Render(RECT * pClipRect)
 					}
 				}
 
-				fFontSx = fCurX - 0.5f;
-				fFontSy = fCurY - 0.5f;
+				fFontSx = fCurX;
+				fFontSy = fCurY;
 				fFontEx = fFontSx + fFontWidth;
 				fFontEy = fFontSy + fFontHeight;
 
@@ -709,8 +709,8 @@ void CGraphicTextInstance::Render(RECT * pClipRect)
 				}
 			}
 
-			fFontSx = fCurX - 0.5f;
-			fFontSy = fCurY - 0.5f;
+			fFontSx = fCurX;
+			fFontSy = fCurY;
 			fFontEx = fFontSx + fFontWidth;
 			fFontEy = fFontSy + fFontHeight;
 
@@ -755,7 +755,8 @@ void CGraphicTextInstance::Render(RECT * pClipRect)
 				UINT batchCount = remaining > LARGE_PDT_VERTEX_BUFFER_SIZE ? LARGE_PDT_VERTEX_BUFFER_SIZE : static_cast<UINT>(remaining);
 
 				if (CGraphicBase::SetPDTStream(&*f, batchCount))
-					STATEMANAGER.DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, batchCount - 2);
+					for (UINT q = 0; q + 4 <= batchCount; q += 4)
+						STATEMANAGER.DrawPrimitive(D3DPT_TRIANGLESTRIP, q, 2);
 				f += batchCount;
 			}
 		}

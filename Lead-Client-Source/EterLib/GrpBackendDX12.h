@@ -7,8 +7,10 @@
 
 #include <d3d12.h>
 #include <unordered_map>
+#include <vector>
 
 #include "GrpDeviceDX12.h"
+#include "GrpGammaPassDX12.h"
 #include "GrpUploadRingDX12.h"
 #include "GrpDescriptorRingDX12.h"
 #include "GrpRootSignatureDX12.h"
@@ -26,9 +28,9 @@ class CGraphicBackendDX12
 		enum
 		{
 			TEXTURE_STAGE_COUNT = 2,
-			UPLOAD_RING_BYTES = 16 * 1024 * 1024,
-			SRV_RING_CAPACITY = 4096,
-			SAMPLER_TABLE_CAPACITY = 64,
+			UPLOAD_RING_BYTES = 64 * 1024 * 1024,
+			SRV_RING_CAPACITY = 131072,
+			SAMPLER_TABLE_CAPACITY = 256,
 		};
 
 		CGraphicBackendDX12();
@@ -52,15 +54,26 @@ class CGraphicBackendDX12
 		bool	BeginFrame(DWORD dwClearColor);
 		bool	EndFrame();
 
+		bool	CaptureBackBuffer(std::vector<BYTE>& rkPixels, UINT* puWidth, UINT* puHeight);
+		void	SetGammaFactor(float fFactor);
+
 		// Offscreen render-target twins (character shadow map). Registered
 		// by texture-creation hooks; SetRenderTargetTexture redirects the
 		// output merger, RestoreDefaultTarget returns to the backbuffer and
 		// flips the twin to shader-readable for the receive pass.
 		bool	RegisterRenderTarget(const void* pkTextureD3D9, UINT uWidth, UINT uHeight);
+		void	UnregisterRenderTarget(const void* pkTextureD3D9);
 		bool	SetRenderTargetTexture(const void* pkTextureD3D9);
 		void	RestoreDefaultTarget();
 		bool	IsRenderTarget(const void* pkTextureD3D9) const;
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetRenderTargetSRV(const void* pkTextureD3D9) const;
+
+		bool	RegisterRawTextureTwin(const void* pkTextureD3D9, UINT uWidth, UINT uHeight,
+									   DXGI_FORMAT eFormat,
+									   const TTextureLevelData* akLevels, UINT uLevelCount);
+		void	UnregisterRawTextureTwin(const void* pkTextureD3D9);
+
+		void	RetireResource(ID3D12Resource* pkResource);
 
 		void	SetViewport(const D3DVIEWPORT9& rkViewport);
 
@@ -92,12 +105,20 @@ class CGraphicBackendDX12
 							  const void* pvVertices, UINT uVertexCount, UINT uStrideBytes,
 							  const WORD* awIndices, UINT uIndexCount);
 
+		UINT64	GetFrameOrdinal() const;
+		bool	UploadVertices(const void* pvVertices, UINT uStrideBytes, UINT uVertexCount,
+							   D3D12_VERTEX_BUFFER_VIEW* pkViewOut);
+		bool	UploadIndices(const WORD* awIndices, UINT uIndexCount,
+							  D3D12_INDEX_BUFFER_VIEW* pkViewOut);
+
 		static UINT	ToTopologyTypeDX12(D3D_PRIMITIVE_TOPOLOGY eTopology);
 
 	private:
 		bool	__CompilePrograms();
 		bool	__CreateWhiteTexture();
 		bool	__ApplyState(D3D_PRIMITIVE_TOPOLOGY eTopology);
+		void	__RecordGammaPass();
+		void	__ReleaseRetiredResources();
 
 		CGraphicDeviceDX12				m_kDevice;
 		CGraphicRootSignatureDX12		m_kRootSignature;
@@ -142,10 +163,33 @@ class CGraphicBackendDX12
 			bool						bShaderReadable;
 		};
 		std::unordered_map<const void*, TRenderTargetDX12>	m_kRenderTargetMap;
+
+		struct TRawTextureTwin
+		{
+			ID3D12Resource*				pkTexture;
+			D3D12_CPU_DESCRIPTOR_HANDLE	kSRV;
+		};
+		std::unordered_map<const void*, TRawTextureTwin>	m_kRawTextureTwinMap;
+
+		struct TRetiredResource
+		{
+			ID3D12Resource*	pkResource;
+			UINT64			uFrameOrdinal;
+		};
+		std::vector<TRetiredResource>	m_kRetiredResources;
+		UINT64							m_uFrameOrdinal;
 		TRenderTargetDX12*				m_pkBoundRenderTarget;
 		D3D12_CPU_DESCRIPTOR_HANDLE		m_kCurrentRTV;
 		D3D12_CPU_DESCRIPTOR_HANDLE		m_kCurrentDSV;
 		bool							m_bInFrame;
 		D3D12_CPU_DESCRIPTOR_HANDLE		m_kWhiteSRV;
 		bool							m_bCreated;
+
+		CGraphicGammaPassDX12			m_kGammaPass;
+		float							m_fGammaFactor;
+		ID3D12Resource*					m_pkSceneCopy;
+		D3D12_CPU_DESCRIPTOR_HANDLE		m_kSceneCopySRV;
+		UINT							m_uSceneCopyWidth;
+		UINT							m_uSceneCopyHeight;
+		bool							m_bSceneCopyReadable;
 };

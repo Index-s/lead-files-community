@@ -70,34 +70,31 @@ void CGraphicVertexBuffer::SetStream(int stride, int layer) const
 
 bool CGraphicVertexBuffer::LockRange(unsigned count, void** pretVertices) const
 {
-	if (!m_lpd3dVB)
+	if (!m_lpd3dVB || m_kStorage.empty())
 		return false;
 
 	DWORD dwLockSize=GetVertexStride() * count;
-	HRESULT hr = m_lpd3dVB->Lock(0, dwLockSize, pretVertices, m_dwLockFlag);
-	if (FAILED(hr))
+	if (dwLockSize > m_dwBufferSize)
 	{
-		TraceError("CGraphicVertexBuffer::LockRange: hr=0x%08X usage=%u lock=%u pool=%u", hr, m_dwUsage, m_dwLockFlag, m_d3dPool);
+		TraceError("CGraphicVertexBuffer::LockRange: size %u exceeds buffer %u", dwLockSize, m_dwBufferSize);
 		return false;
 	}
 
+	*pretVertices = &m_kStorage[0];
 	__CaptureLockDX12(*pretVertices, dwLockSize);
 	return true;
 }
 
 bool CGraphicVertexBuffer::Lock(void ** pretVertices) const
 {
-	if (!m_lpd3dVB)
+	if (!m_lpd3dVB || m_kStorage.empty())
 		return false;
 
 	DWORD dwLockSize=GetVertexStride()*GetVertexCount();
-	HRESULT hr = m_lpd3dVB->Lock(0, dwLockSize, pretVertices, m_dwLockFlag);
-	if (FAILED(hr))
-	{
-		TraceError("CGraphicVertexBuffer::Lock: hr=0x%08X usage=%u lock=%u pool=%u", hr, m_dwUsage, m_dwLockFlag, m_d3dPool);
-		return false;
-	}
+	if (dwLockSize > m_dwBufferSize)
+		dwLockSize = m_dwBufferSize;
 
+	*pretVertices = &m_kStorage[0];
 	__CaptureLockDX12(*pretVertices, dwLockSize);
 	return true;
 }
@@ -108,9 +105,6 @@ bool CGraphicVertexBuffer::Unlock() const
 		return false;
 
 	__RefreshTwinDX12();
-
-	if ( FAILED(m_lpd3dVB->Unlock()) )
-		return false;
 	return true;
 }
 
@@ -124,32 +118,20 @@ bool CGraphicVertexBuffer::IsEmpty() const
 
 bool CGraphicVertexBuffer::LockDynamic(void** pretVertices)
 {
-	if (!m_lpd3dVB)
+	if (!m_lpd3dVB || m_kStorage.empty())
 		return false;
 
-	HRESULT hr = m_lpd3dVB->Lock(0, 0, pretVertices, 0);
-	if (FAILED(hr))
-	{
-		TraceError("CGraphicVertexBuffer::LockDynamic: hr=0x%08X usage=%u lock=0 pool=%u", hr, m_dwUsage, m_d3dPool);
-		return false;
-	}
-
+	*pretVertices = &m_kStorage[0];
 	__CaptureLockDX12(*pretVertices, m_dwBufferSize);
 	return true;
 }
 
 bool CGraphicVertexBuffer::Lock(void ** pretVertices)
 {
-	if (!m_lpd3dVB)
+	if (!m_lpd3dVB || m_kStorage.empty())
 		return false;
 
-	HRESULT hr = m_lpd3dVB->Lock(0, 0, pretVertices, m_dwLockFlag);
-	if (FAILED(hr))
-	{
-		TraceError("CGraphicVertexBuffer::Lock: hr=0x%08X usage=%u lock=%u pool=%u", hr, m_dwUsage, m_dwLockFlag, m_d3dPool);
-		return false;
-	}
-
+	*pretVertices = &m_kStorage[0];
 	__CaptureLockDX12(*pretVertices, m_dwBufferSize);
 	return true;
 }
@@ -160,9 +142,6 @@ bool CGraphicVertexBuffer::Unlock()
 		return false;
 
 	__RefreshTwinDX12();
-
-	if ( FAILED(m_lpd3dVB->Unlock()) )
-		return false;
 	return true;
 }
 
@@ -184,16 +163,11 @@ bool CGraphicVertexBuffer::CreateDeviceObjects()
 	assert(IsDeviceCreated());
 	assert(m_lpd3dVB == NULL);
 
-	if (FAILED(
-		CreateDeviceVertexBuffer(
-		m_dwBufferSize,
-		m_dwUsage,
-		m_dwFVF,
-		m_d3dPool,
-		&m_lpd3dVB)
-		))
+	if (0 == m_dwBufferSize)
 		return false;
 
+	m_kStorage.assign(m_dwBufferSize, 0);
+	m_lpd3dVB = (LPDIRECT3DVERTEXBUFFER9)this;
 	return true;
 }
 
@@ -215,6 +189,20 @@ void CGraphicVertexBuffer::__RefreshTwinDX12() const
 		return;
 	}
 
+	++m_uRefreshCount;
+	if ((m_uRefreshCount > 1 || D3DUSAGE_DYNAMIC == m_dwUsage) &&
+		!m_kStorage.empty() && GetVertexStride() > 0)
+	{
+		if (m_pkBufferDX12)
+			__DestroyTwinDX12();
+		if (CStateManager::InstancePtr())
+			STATEMANAGER.RegisterVertexData(m_lpd3dVB, &m_kStorage[0],
+											static_cast<UINT>(m_kStorage.size()),
+											static_cast<UINT>(GetVertexStride()));
+		m_pvLockedDX12 = NULL;
+		return;
+	}
+
 	__DestroyTwinDX12();
 
 	m_pkBufferDX12 = pkBackend->GetUploader().CreateStaticBuffer(
@@ -222,6 +210,10 @@ void CGraphicVertexBuffer::__RefreshTwinDX12() const
 		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 	if (m_pkBufferDX12 && CStateManager::InstancePtr())
 		STATEMANAGER.RegisterBufferDX12(m_lpd3dVB, m_pkBufferDX12, DXGI_FORMAT_UNKNOWN);
+	else if (!m_pkBufferDX12 && !m_kStorage.empty() && GetVertexStride() > 0 && CStateManager::InstancePtr())
+		STATEMANAGER.RegisterVertexData(m_lpd3dVB, &m_kStorage[0],
+										static_cast<UINT>(m_kStorage.size()),
+										static_cast<UINT>(GetVertexStride()));
 
 	m_pvLockedDX12 = NULL;
 }
@@ -234,19 +226,23 @@ void CGraphicVertexBuffer::__DestroyTwinDX12() const
 	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
 	if (pkBackend)
 	{
-		// In-flight frames may still read the old twin.
-		pkBackend->GetDevice().WaitForGPU();
 		if (CStateManager::InstancePtr())
 			STATEMANAGER.UnregisterBufferDX12(m_lpd3dVB);
+		pkBackend->RetireResource(m_pkBufferDX12);
+		m_pkBufferDX12 = NULL;
 	}
-
-	safe_release(m_pkBufferDX12);
+	else
+		safe_release(m_pkBufferDX12);
 }
 
 void CGraphicVertexBuffer::DestroyDeviceObjects()
 {
 	__DestroyTwinDX12();
-	safe_release(m_lpd3dVB);
+	if (m_lpd3dVB && CStateManager::InstancePtr())
+		STATEMANAGER.UnregisterVertexData(m_lpd3dVB);
+	m_uRefreshCount = 0;
+	std::vector<BYTE>().swap(m_kStorage);
+	m_lpd3dVB = NULL;
 }
 
 bool CGraphicVertexBuffer::Create(int vtxCount, DWORD fvf, DWORD usage, D3DPOOL d3dPool)

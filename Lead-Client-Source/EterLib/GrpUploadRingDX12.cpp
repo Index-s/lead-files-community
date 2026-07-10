@@ -75,32 +75,33 @@ bool CGraphicUploadRingDX12::Allocate(UINT64 uByteSize, UINT64 uAlignment, TAllo
 	if (!m_pkBuffer || !uByteSize || uByteSize > m_uByteSize)
 		return false;
 
-	UINT64 uAligned = (m_uHead + (uAlignment - 1)) & ~(uAlignment - 1);
+	UINT64 uStart = (m_uHead + (uAlignment - 1)) & ~(uAlignment - 1);
+	UINT64 uOffset = uStart % m_uByteSize;
 
-	// Wrap when the request does not fit the buffer tail.
-	if (uAligned + uByteSize > m_uByteSize)
-		uAligned = 0;
-
-	// The region [tail, head) is still owned by in-flight frames; refuse to
-	// overrun it - the caller then flushes or the ring was sized too small.
-	if (m_uSpanCount > 0)
+	// Allocations must be contiguous; skip the buffer tail when it cannot
+	// hold one. The buffer size is a power of two, so the skipped start
+	// keeps the requested alignment.
+	if (uOffset + uByteSize > m_uByteSize)
 	{
-		const UINT64 uOldestTail = m_uTail;
-		const bool bWrapped = uAligned < m_uHead;
-		if (bWrapped && uAligned + uByteSize > uOldestTail)
-		{
-			TraceError("CGraphicUploadRingDX12: ring exhausted (%llu in flight).",
-					   static_cast<unsigned long long>(m_uSpanCount));
-			return false;
-		}
+		uStart += m_uByteSize - uOffset;
+		uOffset = 0;
 	}
 
-	pkAllocation->pvCPUAddress = m_pbyMapped + uAligned;
-	pkAllocation->uGPUAddress = m_pkBuffer->GetGPUVirtualAddress() + uAligned;
-	pkAllocation->pkResource = m_pkBuffer;
-	pkAllocation->uOffset = uAligned;
+	// The region [tail, head) is still owned by in-flight frames; refuse to
+	// overrun it - the caller then drops the work or the ring was sized too small.
+	if (uStart + uByteSize - m_uTail > m_uByteSize)
+	{
+		TraceError("CGraphicUploadRingDX12: ring exhausted (%llu bytes, %u spans in flight).",
+				   static_cast<unsigned long long>(m_uByteSize), m_uSpanCount);
+		return false;
+	}
 
-	m_uHead = uAligned + uByteSize;
+	pkAllocation->pvCPUAddress = m_pbyMapped + uOffset;
+	pkAllocation->uGPUAddress = m_pkBuffer->GetGPUVirtualAddress() + uOffset;
+	pkAllocation->pkResource = m_pkBuffer;
+	pkAllocation->uOffset = uOffset;
+
+	m_uHead = uStart + uByteSize;
 	return true;
 }
 
@@ -135,7 +136,4 @@ void CGraphicUploadRingDX12::OnFrameCompleted(UINT64 uCompletedFenceValue)
 			m_akSpans[u - uReleased] = m_akSpans[u];
 		m_uSpanCount -= uReleased;
 	}
-
-	if (0 == m_uSpanCount)
-		m_uTail = m_uHead;
 }

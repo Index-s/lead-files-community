@@ -63,27 +63,28 @@ bool CGraphicDescriptorRingDX12::Allocate(UINT uDescriptorCount, TTable* pkTable
 	if (!m_pkHeap || !uDescriptorCount || uDescriptorCount > m_uCapacity)
 		return false;
 
-	UINT uStart = m_uHead;
+	UINT64 uStart = m_uHead;
+	UINT uSlot = static_cast<UINT>(uStart % m_uCapacity);
 
-	// Tables must be contiguous; wrap when the heap tail cannot hold one.
-	if (uStart + uDescriptorCount > m_uCapacity)
-		uStart = 0;
+	// Tables must be contiguous; skip the heap tail when it cannot hold one.
+	if (uSlot + uDescriptorCount > m_uCapacity)
+	{
+		uStart += m_uCapacity - uSlot;
+		uSlot = 0;
+	}
 
 	// The region [tail, head) still belongs to in-flight frames.
-	if (m_uSpanCount > 0)
+	if (uStart + uDescriptorCount - m_uTail > m_uCapacity)
 	{
-		const bool bWrapped = uStart < m_uHead;
-		if (bWrapped && uStart + uDescriptorCount > m_uTail)
-		{
-			TraceError("CGraphicDescriptorRingDX12: ring exhausted (%u in flight).", m_uSpanCount);
-			return false;
-		}
+		TraceError("CGraphicDescriptorRingDX12: ring exhausted (%u slots, %u spans in flight).",
+				   m_uCapacity, m_uSpanCount);
+		return false;
 	}
 
 	pkTable->kCPUHandle = m_pkHeap->GetCPUDescriptorHandleForHeapStart();
-	pkTable->kCPUHandle.ptr += static_cast<SIZE_T>(uStart) * m_uIncrementSize;
+	pkTable->kCPUHandle.ptr += static_cast<SIZE_T>(uSlot) * m_uIncrementSize;
 	pkTable->kGPUHandle = m_pkHeap->GetGPUDescriptorHandleForHeapStart();
-	pkTable->kGPUHandle.ptr += static_cast<UINT64>(uStart) * m_uIncrementSize;
+	pkTable->kGPUHandle.ptr += static_cast<UINT64>(uSlot) * m_uIncrementSize;
 
 	m_uHead = uStart + uDescriptorCount;
 	return true;
@@ -120,7 +121,4 @@ void CGraphicDescriptorRingDX12::OnFrameCompleted(UINT64 uCompletedFenceValue)
 			m_akSpans[u - uReleased] = m_akSpans[u];
 		m_uSpanCount -= uReleased;
 	}
-
-	if (0 == m_uSpanCount)
-		m_uTail = m_uHead;
 }

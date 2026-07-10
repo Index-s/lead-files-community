@@ -34,4 +34,5 @@ class CGraphicSamplerKeyDX12
 		DWORD	m_uAddressU;
 		DWORD	m_uAddressV;
 		DWORD	m_uMaxAnisotropy;
+		DWORD	m_uBorderColor;
 };

@@ -133,23 +133,6 @@ CSpeedTreeForestDirectX8::Instance().UpdateSystem(ELTimer_GetMSec() / 1000.0f);
 	
 // 	SetupBranchForTreeType();
 	{
-		// update the branch geometry for CPU wind
-#ifdef WRAPPER_USE_CPU_WIND
-		m_pSpeedTree->GetGeometry(*m_pGeometryCache, SpeedTree_BranchGeometry);
-		
-		if (m_pGeometryCache->m_sBranches.m_usNumStrips > 0)
-		{
-			// update the vertex array
-			SFVFBranchVertex* pVertexBuffer = NULL;
-			m_pBranchVertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&pVertexBuffer), D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK);
-			for (UINT i = 0; i < m_unBranchVertexCount; ++i)
-			{
-				memcpy(&(pVertexBuffer[i].m_vPosition), &(m_pGeometryCache->m_sBranches.m_pCoords[i * 3]), 3 * sizeof(float));
-			}
-			m_pBranchVertexBuffer->Unlock();
-		}
-#endif
-		
 		LPDIRECT3DTEXTURE9 lpd3dTexture;
 		
 		// set texture map
@@ -172,22 +155,6 @@ CSpeedTreeForestDirectX8::Instance().UpdateSystem(ELTimer_GetMSec() / 1000.0f);
 	
 // 	SetupFrondForTreeType();
 	{
-		// update the frond geometry for CPU wind
-#ifdef WRAPPER_USE_CPU_WIND
-		m_pSpeedTree->GetGeometry(*m_pGeometryCache, SpeedTree_FrondGeometry);
-		if (m_pGeometryCache->m_sFronds.m_usNumStrips > 0)
-		{
-			// update the vertex array
-			SFVFBranchVertex * pVertexBuffer = NULL;
-			m_pFrondVertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&pVertexBuffer), D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK);
-			for (UINT i = 0; i < m_unFrondVertexCount; ++i)
-			{
-				memcpy(&(pVertexBuffer[i].m_vPosition), &(m_pGeometryCache->m_sFronds.m_pCoords[i * 3]), 3 * sizeof(float));
-			}
-			m_pFrondVertexBuffer->Unlock();
-		}
-#endif
-		
 		if (!m_CompositeImageInstance.IsEmpty())
 			STATEMANAGER.SetTexture(0, m_CompositeImageInstance.GetTextureReference().GetD3DTexture());
 		
@@ -311,26 +278,38 @@ CSpeedTreeWrapper::~CSpeedTreeWrapper()
 	{
 		if (m_unBranchVertexCount > 0)
 		{
-			SAFE_RELEASE(m_pBranchVertexBuffer);
-			SAFE_RELEASE(m_pBranchIndexBuffer);
+			if (CStateManager::InstancePtr())
+			{
+				STATEMANAGER.UnregisterVertexData(m_pBranchVertexBuffer);
+				STATEMANAGER.UnregisterIndexData(m_pBranchIndexBuffer);
+			}
+			SAFE_DELETE(m_pBranchVertexBuffer);
+			SAFE_DELETE(m_pBranchIndexBuffer);
 			SAFE_DELETE_ARRAY(m_pBranchIndexCounts);
 		}
-		
+
 		if (m_unFrondVertexCount > 0)
-		{	
-			SAFE_RELEASE(m_pFrondVertexBuffer);
-			SAFE_RELEASE(m_pFrondIndexBuffer);
+		{
+			if (CStateManager::InstancePtr())
+			{
+				STATEMANAGER.UnregisterVertexData(m_pFrondVertexBuffer);
+				STATEMANAGER.UnregisterIndexData(m_pFrondIndexBuffer);
+			}
+			SAFE_DELETE(m_pFrondVertexBuffer);
+			SAFE_DELETE(m_pFrondIndexBuffer);
 			SAFE_DELETE_ARRAY(m_pFrondIndexCounts);
 		}
-		
+
 		for (short i = 0; i < m_usNumLeafLods; ++i)
-		{			
-			m_pSpeedTree->GetGeometry(*m_pGeometryCache, SpeedTree_LeafGeometry, -1, -1, i);
-			
-			if (m_pGeometryCache->m_sLeaves0.m_usLeafCount > 0)
-				SAFE_RELEASE(m_pLeafVertexBuffer[i]);
+		{
+			if (m_pLeafVertexBuffer && m_pLeafVertexBuffer[i])
+			{
+				if (CStateManager::InstancePtr())
+					STATEMANAGER.UnregisterVertexData(m_pLeafVertexBuffer[i]);
+				SAFE_DELETE(m_pLeafVertexBuffer[i]);
+			}
 		}
-		
+
 		SAFE_DELETE_ARRAY(m_pLeavesUpdatedByCpu);
 		SAFE_DELETE_ARRAY(m_pLeafVertexBuffer);
 		
@@ -484,18 +463,9 @@ void CSpeedTreeWrapper::SetupBranchBuffers(void)
 	// check if this tree has branches
 	if (m_unBranchVertexCount > 1)
 	{
-		// create the vertex buffer for storing branch vertices
-		SFVFBranchVertex * pVertexBuffer = NULL;
-		
-#ifndef WRAPPER_USE_CPU_WIND
-		CreateDeviceVertexBuffer(m_unBranchVertexCount * sizeof(SFVFBranchVertex), D3DUSAGE_WRITEONLY, D3DFVF_SPEEDTREE_BRANCH_VERTEX, D3DPOOL_DEFAULT, &m_pBranchVertexBuffer);
-		// fill the vertex buffer by interleaving SpeedTree data
-		m_pBranchVertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&pVertexBuffer), 0);
-#else
-		CreateDeviceVertexBuffer(m_unBranchVertexCount * sizeof(SFVFBranchVertex), D3DUSAGE_DYNAMIC, D3DFVF_SPEEDTREE_BRANCH_VERTEX, D3DPOOL_DEFAULT, &m_pBranchVertexBuffer);
-		// fill the vertex buffer by interleaving SpeedTree data
-		m_pBranchVertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&pVertexBuffer), D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK);
-#endif
+		m_pBranchVertexBuffer = new std::vector<BYTE>(m_unBranchVertexCount * sizeof(SFVFBranchVertex));
+		SFVFBranchVertex * pVertexBuffer = reinterpret_cast<SFVFBranchVertex*>(&(*m_pBranchVertexBuffer)[0]);
+		SFVFBranchVertex* pVertexBase = pVertexBuffer;
 		{
 			for (UINT i = 0; i < m_unBranchVertexCount; ++i)
 			{
@@ -527,7 +497,8 @@ void CSpeedTreeWrapper::SetupBranchBuffers(void)
 				
 				++pVertexBuffer;
 			}
-			m_pBranchVertexBuffer->Unlock();
+			STATEMANAGER.RegisterVertexData(m_pBranchVertexBuffer, pVertexBase,
+											m_unBranchVertexCount * sizeof(SFVFBranchVertex), sizeof(SFVFBranchVertex));
 		}
 		
 		// create and fill the index counts for each LOD
@@ -549,13 +520,14 @@ void CSpeedTreeWrapper::SetupBranchBuffers(void)
 		
 		// the first LOD level contains the most indices of all the levels, so
 		// we use its size to allocate the index buffer
-		CreateDeviceIndexBuffer(m_pBranchIndexCounts[0] * sizeof(unsigned short), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &m_pBranchIndexBuffer);
-		
-		// fill the index buffer
-		unsigned short* pIndexBuffer = NULL;
-		m_pBranchIndexBuffer->Lock(0, 0, reinterpret_cast<void**>(&pIndexBuffer), 0);
-		memcpy(pIndexBuffer, pBranches->m_pStrips[0], pBranches->m_pStripLengths[0] * sizeof(unsigned short));
-		m_pBranchIndexBuffer->Unlock();
+		if (m_pBranchIndexCounts[0] > 0)
+		{
+			m_pBranchIndexBuffer = new std::vector<WORD>(m_pBranchIndexCounts[0]);
+
+			// fill the index buffer
+			memcpy(&(*m_pBranchIndexBuffer)[0], pBranches->m_pStrips[0], pBranches->m_pStripLengths[0] * sizeof(unsigned short));
+			STATEMANAGER.RegisterIndexData(m_pBranchIndexBuffer, &(*m_pBranchIndexBuffer)[0], pBranches->m_pStripLengths[0]);
+		}
 	}
 }
 
@@ -572,17 +544,9 @@ void CSpeedTreeWrapper::SetupFrondBuffers(void)
 	// check if tree has fronds
 	if (m_unFrondVertexCount > 1)
 	{
-		// create the vertex buffer for storing frond vertices
-		SFVFBranchVertex * pVertexBuffer = NULL;
-#ifndef WRAPPER_USE_CPU_WIND
-		CreateDeviceVertexBuffer(m_unFrondVertexCount * sizeof(SFVFBranchVertex), D3DUSAGE_WRITEONLY, D3DFVF_SPEEDTREE_BRANCH_VERTEX, D3DPOOL_DEFAULT, &m_pFrondVertexBuffer);
-		// fill the vertex buffer by interleaving SpeedTree data
-		m_pFrondVertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&pVertexBuffer), 0);
-#else
-		CreateDeviceVertexBuffer(m_unFrondVertexCount * sizeof(SFVFBranchVertex), D3DUSAGE_DYNAMIC, D3DFVF_SPEEDTREE_BRANCH_VERTEX, D3DPOOL_DEFAULT, &m_pFrondVertexBuffer);
-		// fill the vertex buffer by interleaving SpeedTree data
-		m_pFrondVertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&pVertexBuffer), D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK);
-#endif		
+		m_pFrondVertexBuffer = new std::vector<BYTE>(m_unFrondVertexCount * sizeof(SFVFBranchVertex));
+		SFVFBranchVertex * pVertexBuffer = reinterpret_cast<SFVFBranchVertex*>(&(*m_pFrondVertexBuffer)[0]);
+		SFVFBranchVertex* pVertexBase = pVertexBuffer;
 		for (UINT i = 0; i < m_unFrondVertexCount; ++i)
 		{
 			// position
@@ -613,8 +577,9 @@ void CSpeedTreeWrapper::SetupFrondBuffers(void)
 			
 			++pVertexBuffer;
 		}
-		m_pFrondVertexBuffer->Unlock();
-		
+		STATEMANAGER.RegisterVertexData(m_pFrondVertexBuffer, pVertexBase,
+										m_unFrondVertexCount * sizeof(SFVFBranchVertex), sizeof(SFVFBranchVertex));
+
 		// create and fill the index counts for each LOD
 		UINT unNumLodLevels = m_pSpeedTree->GetNumFrondLodLevels();
 		m_pFrondIndexCounts = new unsigned short[unNumLodLevels];
@@ -634,13 +599,14 @@ void CSpeedTreeWrapper::SetupFrondBuffers(void)
 		
 		// the first LOD level contains the most indices of all the levels, so
 		// we use its size to allocate the index buffer
-		CreateDeviceIndexBuffer(m_pFrondIndexCounts[0] * sizeof(unsigned short), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &m_pFrondIndexBuffer);
-		
-		// fill the index buffer
-		unsigned short * pIndexBuffer = NULL;
-		m_pFrondIndexBuffer->Lock(0, 0, reinterpret_cast<void**>(&pIndexBuffer), 0);
-		memcpy(pIndexBuffer, pFronds->m_pStrips[0], pFronds->m_pStripLengths[0] * sizeof(unsigned short));
-		m_pFrondIndexBuffer->Unlock();
+		if (m_pFrondIndexCounts[0] > 0)
+		{
+			m_pFrondIndexBuffer = new std::vector<WORD>(m_pFrondIndexCounts[0]);
+
+			// fill the index buffer
+			memcpy(&(*m_pFrondIndexBuffer)[0], pFronds->m_pStrips[0], pFronds->m_pStripLengths[0] * sizeof(unsigned short));
+			STATEMANAGER.RegisterIndexData(m_pFrondIndexBuffer, &(*m_pFrondIndexBuffer)[0], pFronds->m_pStripLengths[0]);
+		}
 	}
 }
 
@@ -658,7 +624,7 @@ void CSpeedTreeWrapper::SetupLeafBuffers(void)
 	m_usNumLeafLods = m_pSpeedTree->GetNumLeafLodLevels();
 	
 	// create array of vertex buffers (one for each LOD)
-	m_pLeafVertexBuffer = new LPDIRECT3DVERTEXBUFFER9[m_usNumLeafLods];
+	m_pLeafVertexBuffer = new std::vector<BYTE>*[m_usNumLeafLods];
 	
 	// create array of bools for CPU updating (so we don't update for each instance)
 	m_pLeavesUpdatedByCpu = new bool[m_usNumLeafLods];
@@ -675,17 +641,8 @@ void CSpeedTreeWrapper::SetupLeafBuffers(void)
 		if (usLeafCount < 1)
 			continue;
 		
-		SFVFLeafVertex* pVertexBuffer = NULL;
-		// create the vertex buffer for storing leaf vertices
-#ifndef WRAPPER_USE_CPU_LEAF_PLACEMENT
-		CreateDeviceVertexBuffer(usLeafCount * 6 * sizeof(SFVFLeafVertex), D3DUSAGE_WRITEONLY, D3DFVF_SPEEDTREE_LEAF_VERTEX, D3DPOOL_DEFAULT, &m_pLeafVertexBuffer[unLod]);
-		// fill the vertex buffer by interleaving SpeedTree data
-		m_pLeafVertexBuffer[unLod]->Lock(0, 0, reinterpret_cast<void**>(&pVertexBuffer), 0);
-#else
-		CreateDeviceVertexBuffer(usLeafCount * 6 * sizeof(SFVFLeafVertex), D3DUSAGE_DYNAMIC, D3DFVF_SPEEDTREE_LEAF_VERTEX, D3DPOOL_DEFAULT, &m_pLeafVertexBuffer[unLod]);
-		// fill the vertex buffer by interleaving SpeedTree data
-		m_pLeafVertexBuffer[unLod]->Lock(0, 0, reinterpret_cast<void**>(&pVertexBuffer), D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK);
-#endif
+		m_pLeafVertexBuffer[unLod] = new std::vector<BYTE>(usLeafCount * 6 * sizeof(SFVFLeafVertex));
+		SFVFLeafVertex* pVertexBuffer = reinterpret_cast<SFVFLeafVertex*>(&(*m_pLeafVertexBuffer[unLod])[0]);
 		SFVFLeafVertex* pVertex = pVertexBuffer;
 		for (UINT unLeaf = 0; unLeaf < usLeafCount; ++unLeaf)
 		{
@@ -721,7 +678,8 @@ void CSpeedTreeWrapper::SetupLeafBuffers(void)
 				++pVertex;
 			}
 		}
-		m_pLeafVertexBuffer[unLod]->Unlock();
+		STATEMANAGER.RegisterVertexData(m_pLeafVertexBuffer[unLod], pVertexBuffer,
+										usLeafCount * 6 * sizeof(SFVFLeafVertex), sizeof(SFVFLeafVertex));
 	}
 }
 
@@ -839,24 +797,7 @@ void CSpeedTreeWrapper::SetupBranchForTreeType(void) const
 	STATEMANAGER.SetMaterial(m_cBranchMaterial.Get());
 	SetShaderConstants(m_pSpeedTree->GetBranchMaterial());
 #endif
-	
-	// update the branch geometry for CPU wind
-#ifdef WRAPPER_USE_CPU_WIND
-	m_pSpeedTree->GetGeometry(*m_pGeometryCache, SpeedTree_BranchGeometry);
-	
-	if (m_pGeometryCache->m_sBranches.m_usNumStrips > 0)
-	{
-		// update the vertex array
-		SFVFBranchVertex* pVertexBuffer = NULL;
-		m_pBranchVertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&pVertexBuffer), D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK);
-		for (UINT i = 0; i < m_unBranchVertexCount; ++i)
-		{
-			memcpy(&(pVertexBuffer[i].m_vPosition), &(m_pGeometryCache->m_sBranches.m_pCoords[i * 3]), 3 * sizeof(float));
-		}
-		m_pBranchVertexBuffer->Unlock();
-	}
-#endif
-	
+
 	LPDIRECT3DTEXTURE9 lpd3dTexture;
 	
     // set texture map
@@ -900,7 +841,7 @@ void CSpeedTreeWrapper::RenderBranches(void) const
 			m_pBranchIndexCounts[m_pGeometryCache->m_sBranches.m_nDiscreteLodLevel] > 0)
 		{
 			ms_faceCount += m_pBranchIndexCounts[m_pGeometryCache->m_sBranches.m_nDiscreteLodLevel] - 2;
-			LPDIRECT3DBASETEXTURE9 pkShadowTexture = NULL;
+			const void* pkShadowTexture = NULL;
 			STATEMANAGER.GetTexture(1, &pkShadowTexture);
 			if (CGraphicBase::BeginSpeedTreeBranchShader(NULL != pkShadowTexture))
 			{
@@ -926,23 +867,7 @@ void CSpeedTreeWrapper::SetupFrondForTreeType(void) const
 	STATEMANAGER.SetMaterial(m_cFrondMaterial.Get());
 	SetShaderConstants(m_pSpeedTree->GetFrondMaterial());
 #endif
-	
-	// update the frond geometry for CPU wind
-#ifdef WRAPPER_USE_CPU_WIND
-	m_pSpeedTree->GetGeometry(*m_pGeometryCache, SpeedTree_FrondGeometry);
-	if (m_pGeometryCache->m_sFronds.m_usNumStrips > 0)
-	{
-		// update the vertex array
-		SFVFBranchVertex * pVertexBuffer = NULL;
-		m_pFrondVertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&pVertexBuffer), D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK);
-		for (UINT i = 0; i < m_unFrondVertexCount; ++i)
-		{
-			memcpy(&(pVertexBuffer[i].m_vPosition), &(m_pGeometryCache->m_sFronds.m_pCoords[i * 3]), 3 * sizeof(float));
-		}
-		m_pFrondVertexBuffer->Unlock();
-	}
-#endif
-	
+
 	if (!m_CompositeImageInstance.IsEmpty())
 		STATEMANAGER.SetTexture(0, m_CompositeImageInstance.GetTextureReference().GetD3DTexture());
 	
@@ -984,7 +909,7 @@ void CSpeedTreeWrapper::RenderFronds(void) const
 		{
 			ms_faceCount += m_pFrondIndexCounts[m_pGeometryCache->m_sFronds.m_nDiscreteLodLevel] - 2;
 			{
-				LPDIRECT3DBASETEXTURE9 pkShadowTexture = NULL;
+				const void* pkShadowTexture = NULL;
 				STATEMANAGER.GetTexture(1, &pkShadowTexture);
 				if (CGraphicBase::BeginSpeedTreeBranchShader(NULL != pkShadowTexture))
 				{
@@ -1051,120 +976,6 @@ void CSpeedTreeWrapper::RenderLeaves(void) const
 	// update leaf geometry
 	m_pSpeedTree->GetGeometry(*m_pGeometryCache, SpeedTree_LeafGeometry);
 	
-	// update the LOD level vertex arrays we need
-#if defined(WRAPPER_USE_GPU_LEAF_PLACEMENT) && defined(WRAPPER_USE_GPU_WIND)
-	// do nothing, needs no updates
-#else
-#if !defined WRAPPER_USE_NO_WIND || defined WRAPPER_USE_CPU_LEAF_PLACEMENT
-	// possibly need to update both leaf LOD's
-	for (UINT i = 0; i < 2; ++i)
-	{
-		// reference to leaf structure
-		const CSpeedTreeRT::SGeometry::SLeaf* pLeaf = (i == 0) ? &m_pGeometryCache->m_sLeaves0 : &m_pGeometryCache->m_sLeaves1;
-		int unLod = pLeaf->m_nDiscreteLodLevel;
-		
-#if defined WRAPPER_USE_GPU_LEAF_PLACEMENT
-		if (pLeaf->m_bIsActive && !m_pLeavesUpdatedByCpu[unLod])
-		{
-			// update the centers
-			SFVFLeafVertex* pVertex = NULL;
-			m_pLeafVertexBuffer[unLod]->Lock(0, 0, reinterpret_cast<BYTE**>(&pVertex), D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK);
-			for (UINT unLeaf = 0; unLeaf < pLeaf->m_usLeafCount; ++unLeaf)
-			{
-				D3DXVECTOR3 vecCenter(&(pLeaf->m_pCenterCoords[unLeaf * 3]));
-				(pVertex++)->m_vPosition = vecCenter;		// vertex 0
-				(pVertex++)->m_vPosition = vecCenter;		// vertex 1
-				(pVertex++)->m_vPosition = vecCenter;		// vertex 2
-				(pVertex++)->m_vPosition = vecCenter;		// vertex 0
-				(pVertex++)->m_vPosition = vecCenter;		// vertex 2
-				(pVertex++)->m_vPosition = vecCenter;		// vertex 3
-			}
-			m_pLeafVertexBuffer[unLod]->Unlock();
-			m_pLeavesUpdatedByCpu[unLod] = true;
-		}
-#else
-		if (pLeaf->m_bIsActive && m_pLeafVertexBuffer[unLod])
-		{ 
-			// update the vertex positions
-			SFVFLeafVertex * pVertex = NULL;
-
-			const UINT VERTEX_NUM = 8192;
-			if (pLeaf->m_usLeafCount*3>=VERTEX_NUM)
-				return;
-
-			D3DXVECTOR3 akPosition[VERTEX_NUM];
-			D3DXVECTOR3*pkPosition=akPosition;
-			const float* center=pLeaf->m_pCenterCoords;
-			for (UINT unLeaf = 0; unLeaf < pLeaf->m_usLeafCount; ++unLeaf)
-			{
-				pkPosition[0].x=pLeaf->m_pLeafMapCoords[unLeaf][0]+center[0];
-				pkPosition[0].y=pLeaf->m_pLeafMapCoords[unLeaf][1]+center[1];
-				pkPosition[0].z=pLeaf->m_pLeafMapCoords[unLeaf][2]+center[2];
-				pkPosition[1].x=pLeaf->m_pLeafMapCoords[unLeaf][4]+center[0];
-				pkPosition[1].y=pLeaf->m_pLeafMapCoords[unLeaf][5]+center[1];
-				pkPosition[1].z=pLeaf->m_pLeafMapCoords[unLeaf][6]+center[2];			
-				pkPosition[2].x=pLeaf->m_pLeafMapCoords[unLeaf][8]+center[0];
-				pkPosition[2].y=pLeaf->m_pLeafMapCoords[unLeaf][9]+center[1];
-				pkPosition[2].z=pLeaf->m_pLeafMapCoords[unLeaf][10]+center[2];
-				pkPosition[3]=pkPosition[0];
-				pkPosition[4]=pkPosition[2];
-				pkPosition[5].x=pLeaf->m_pLeafMapCoords[unLeaf][12]+center[0];
-				pkPosition[5].y=pLeaf->m_pLeafMapCoords[unLeaf][13]+center[1];
-				pkPosition[5].z=pLeaf->m_pLeafMapCoords[unLeaf][14]+center[2];
-				pkPosition+=6;
-				center+=3;
-			}			
-			
-			if (SUCCEEDED(
-				m_pLeafVertexBuffer[unLod]->Lock(0, 0, reinterpret_cast<void**>(&pVertex), D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK)
-			))
-			{			
-				UINT uVtxCount=pLeaf->m_usLeafCount*6;
-				for (UINT i = 0; i<uVtxCount; ++i)
-					pVertex[i].m_vPosition=akPosition[i];
-				
-					/*
-					memcpy(vec0, pLeaf->m_pLeafMapCoords[unLeaf]+0, sizeof(D3DXVECTOR3));
-					memcpy(vec1, pLeaf->m_pLeafMapCoords[unLeaf]+4, sizeof(D3DXVECTOR3));
-					memcpy(vec2, pLeaf->m_pLeafMapCoords[unLeaf]+8, sizeof(D3DXVECTOR3));
-					memcpy(vec3, pLeaf->m_pLeafMapCoords[unLeaf]+12, sizeof(D3DXVECTOR3));
-					memcpy(vecCenter, pLeaf->m_pCenterCoords + unLeaf * 3, sizeof(D3DXVECTOR3));
-					vec0 += vecCenter;
-					vec1 += vecCenter;
-					vec2 += vecCenter;
-					vec3 += vecCenter;
-
-					pVertex[0].m_vPosition = vec0;
-					pVertex[3].m_vPosition = vec0;
-					pVertex[1].m_vPosition = vec1;
-					pVertex[4].m_vPosition = vec2;
-					pVertex[2].m_vPosition = vec2;
-					pVertex[5].m_vPosition = vec3;
-					*/
-				/*
-				for (UINT unLeaf = 0; unLeaf < pLeaf->m_usLeafCount; ++unLeaf)
-				{					
-					D3DXVECTOR3 vecCenter(&(pLeaf->m_pCenterCoords[unLeaf * 3]));
-					D3DXVECTOR3 vec0(&pLeaf->m_pLeafMapCoords[unLeaf][0]);
-					D3DXVECTOR3 vec1(&pLeaf->m_pLeafMapCoords[unLeaf][4]);
-					D3DXVECTOR3 vec2(&pLeaf->m_pLeafMapCoords[unLeaf][8]);
-					D3DXVECTOR3 vec3(&pLeaf->m_pLeafMapCoords[unLeaf][12]);
-					
-					(pVertex++)->m_vPosition = vecCenter + vec0;		// vertex 0
-					(pVertex++)->m_vPosition = vecCenter + vec1;		// vertex 1
-					(pVertex++)->m_vPosition = vecCenter + vec2;		// vertex 2
-					(pVertex++)->m_vPosition = vecCenter + vec0;		// vertex 0
-					(pVertex++)->m_vPosition = vecCenter + vec2;		// vertex 2
-					(pVertex++)->m_vPosition = vecCenter + vec3;		// vertex 3
-				}
-				*/
-				m_pLeafVertexBuffer[unLod]->Unlock();
-			}
-		}
-#endif
-	}
-#endif
-#endif
 	
 	PositionTree();
 	

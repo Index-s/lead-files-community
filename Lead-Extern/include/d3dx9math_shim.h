@@ -10,7 +10,7 @@
 //
 #pragma once
 
-#include <dx9/d3d9.h>
+#include <d3d9.h>
 #include <DirectXMath.h>
 #include <cmath>
 
@@ -712,6 +712,9 @@ inline HRESULT D3DXCreateMatrixStack(DWORD /*Flags*/, LPD3DXMATRIXSTACK* ppStack
 
 #endif // __D3DX9MATH_H__
 
-// Pull in the remaining D3DX surface (core/tex/mesh/effect/shader); the
-// deprecated math header is suppressed by the guard defined above.
-#include <dx9/d3dx9.h>
+#ifndef D3DX_FILTER_NONE
+#define D3DX_DEFAULT ((UINT)-1)
+#define D3DX_FILTER_NONE (1 << 0)
+#define D3DX_FILTER_POINT (2 << 0)
+#define D3DX_FILTER_LINEAR (3 << 0)
+#endif

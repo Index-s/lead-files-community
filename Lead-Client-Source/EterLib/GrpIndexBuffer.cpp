@@ -22,13 +22,10 @@ bool CGraphicIndexBuffer::Lock(void** pretIndices) const
 {
 	assert(m_lpd3dIdxBuf!=NULL);
 
-	HRESULT hr = m_lpd3dIdxBuf->Lock(0, 0, pretIndices, 0);
-	if (FAILED(hr))
-	{
-		TraceError("CGraphicIndexBuffer::Lock: hr=0x%08X flags=0 pool=%u", hr, D3DPOOL_DEFAULT);
+	if (!m_lpd3dIdxBuf || m_kStorage.empty())
 		return false;
-	}
 
+	*pretIndices = &m_kStorage[0];
 	__CaptureLockDX12(*pretIndices, m_dwBufferSize);
 	return true;
 }
@@ -38,20 +35,16 @@ void CGraphicIndexBuffer::Unlock() const
 	assert(m_lpd3dIdxBuf!=NULL);
 
 	__RefreshTwinDX12();
-	m_lpd3dIdxBuf->Unlock();
 }
 
 bool CGraphicIndexBuffer::Lock(void** pretIndices)
 {
 	assert(m_lpd3dIdxBuf!=NULL);
 
-	HRESULT hr = m_lpd3dIdxBuf->Lock(0, 0, pretIndices, 0);
-	if (FAILED(hr))
-	{
-		TraceError("CGraphicIndexBuffer::Lock: hr=0x%08X flags=0 pool=%u", hr, D3DPOOL_DEFAULT);
+	if (!m_lpd3dIdxBuf || m_kStorage.empty())
 		return false;
-	}
 
+	*pretIndices = &m_kStorage[0];
 	__CaptureLockDX12(*pretIndices, m_dwBufferSize);
 	return true;
 }
@@ -61,7 +54,6 @@ void CGraphicIndexBuffer::Unlock()
 	assert(m_lpd3dIdxBuf!=NULL);
 
 	__RefreshTwinDX12();
-	m_lpd3dIdxBuf->Unlock();
 }
 
 bool CGraphicIndexBuffer::Copy(int bufSize, const void* srcIndices)
@@ -69,19 +61,12 @@ bool CGraphicIndexBuffer::Copy(int bufSize, const void* srcIndices)
 	assert(m_lpd3dIdxBuf!=NULL);
 
 	BYTE* dstIndices;
-	HRESULT hr = m_lpd3dIdxBuf->Lock(0, 0, (void**)&dstIndices, 0);
-	if (FAILED(hr))
-	{
-		TraceError("CGraphicIndexBuffer::Lock: hr=0x%08X flags=0 pool=%u", hr, D3DPOOL_DEFAULT);
+	if (!Lock((void**)&dstIndices))
 		return false;
-	}
 
 	memcpy(dstIndices, srcIndices, bufSize);
 
-	__CaptureLockDX12(dstIndices, m_dwBufferSize);
-	__RefreshTwinDX12();
-	m_lpd3dIdxBuf->Unlock();
-
+	Unlock();
 	return true;
 }
 
@@ -93,39 +78,28 @@ bool CGraphicIndexBuffer::Create(int faceCount, TFace* faces)
 		return false;
 
 	WORD* dstIndices;
-	HRESULT hr = m_lpd3dIdxBuf->Lock(0, 0, (void**)&dstIndices, 0);
-	if (FAILED(hr))
-	{
-		TraceError("CGraphicIndexBuffer::Lock: hr=0x%08X flags=0 pool=%u", hr, D3DPOOL_DEFAULT);
+	if (!Lock((void**)&dstIndices))
 		return false;
-	}
-
-	__CaptureLockDX12(dstIndices, m_dwBufferSize);
 
 	for (int i = 0; i<faceCount; ++i, dstIndices+=3)
-	{		
+	{
 		TFace * curFace=faces+i;
 		dstIndices[0]=curFace->indices[0];
 		dstIndices[1]=curFace->indices[1];
 		dstIndices[2]=curFace->indices[2];
 	}
 
-	__RefreshTwinDX12();
-	m_lpd3dIdxBuf->Unlock();
+	Unlock();
 	return true;
 }
 
 bool CGraphicIndexBuffer::CreateDeviceObjects()
 {
-	if (FAILED(CreateDeviceIndexBuffer(
-			m_dwBufferSize,
-			D3DUSAGE_WRITEONLY,
-			m_d3dFmt,
-			D3DPOOL_DEFAULT,
-			&m_lpd3dIdxBuf)
-			))
-			return false;
+	if (0 == m_dwBufferSize)
+		return false;
 
+	m_kStorage.assign(m_dwBufferSize, 0);
+	m_lpd3dIdxBuf = (LPDIRECT3DINDEXBUFFER9)this;
 	return true;
 }
 
@@ -156,6 +130,11 @@ void CGraphicIndexBuffer::__RefreshTwinDX12() const
 		STATEMANAGER.RegisterBufferDX12(m_lpd3dIdxBuf, m_pkBufferDX12,
 										D3DFMT_INDEX16 == m_d3dFmt ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT);
 
+	if (D3DFMT_INDEX16 == m_d3dFmt && !m_kStorage.empty() && CStateManager::InstancePtr())
+		STATEMANAGER.RegisterIndexData(m_lpd3dIdxBuf,
+									   reinterpret_cast<const WORD*>(&m_kStorage[0]),
+									   static_cast<UINT>(m_kStorage.size() / sizeof(WORD)));
+
 	m_pvLockedDX12 = NULL;
 }
 
@@ -167,18 +146,22 @@ void CGraphicIndexBuffer::__DestroyTwinDX12() const
 	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
 	if (pkBackend)
 	{
-		pkBackend->GetDevice().WaitForGPU();
 		if (CStateManager::InstancePtr())
 			STATEMANAGER.UnregisterBufferDX12(m_lpd3dIdxBuf);
+		pkBackend->RetireResource(m_pkBufferDX12);
+		m_pkBufferDX12 = NULL;
 	}
-
-	safe_release(m_pkBufferDX12);
+	else
+		safe_release(m_pkBufferDX12);
 }
 
 void CGraphicIndexBuffer::DestroyDeviceObjects()
 {
 	__DestroyTwinDX12();
-	safe_release(m_lpd3dIdxBuf);
+	if (m_lpd3dIdxBuf && CStateManager::InstancePtr())
+		STATEMANAGER.UnregisterIndexData(m_lpd3dIdxBuf);
+	std::vector<BYTE>().swap(m_kStorage);
+	m_lpd3dIdxBuf = NULL;
 }
 
 bool CGraphicIndexBuffer::Create(int idxCount, D3DFORMAT d3dFmt)

@@ -26,6 +26,8 @@ class CGraphicShaderPool
 		// XYZ|DIFFUSE|TEX1 vertices through WORLD*VIEW*PROJECTION,
 		// pixel = texture * diffuse (the fixed-function default cascade).
 		bool BindPDTModulate();
+		// Same vertex path, pixel = texture * TEXTUREFACTOR (tinted marks).
+		bool BindPDTTFactorModulate();
 		// Same vertex path, pixel = diffuse only (fixed-function NULL-texture draws).
 		bool BindPDTDiffuse();
 		// XYZ|TEX1 vertices, pixel = texture only (fixed-function SELECTARG1(TEXTURE)).
@@ -55,6 +57,14 @@ class CGraphicShaderPool
 		// XYZ|NORMAL|TEX1 with fixed-function directional lighting evaluated in the
 		// vertex shader; lighting constants (c8-c10) are uploaded by the caller.
 		bool BindPNTLit();
+		// Lit PNT variant with alpha taken from the texture only.
+		bool BindPNTLitTexAlpha();
+		// Lit PNT two-texture materials: base times the second texture on the
+		// shared UV set, alpha from the lit vertex color.
+		bool BindPNTLitTwoTexture();
+		// Lit PNT with the TEXTUREFACTOR tint multiplied in (stage1 MODULATE
+		// of CURRENT and TFACTOR).
+		bool BindPNTLitTFactorTint();
 		// SpeedTree branches/fronds: precomputed vertex lighting, optional
 		// self-shadow map on the second UV set.
 		bool BindSpeedTreeBranch(bool bSelfShadow);
@@ -69,12 +79,15 @@ class CGraphicShaderPool
 		bool BindPNTLitSpecular();
 		// PNT with the fixed-function spot + point vertex lighting used by the
 		// character-preview screens; light constants (c18-c27) uploaded by the caller.
-		bool BindPNTLitOmni();
+		bool BindPNTLitOmni(bool bSpecular);
 		// XYZ|NORMAL|TEX1|TEX2 dungeon blocks: tex0 * lightmap(tex1), no lighting.
 		bool BindPNT2Lightmap();
 		// Lit PNT with the character-shadow projection: TEXCOORD1 = camera-space
 		// position through the TEXTURE1 transform (shadow-receiver re-render pass).
 		bool BindPNTLitShadowReceiver();
+		// Blocking-building fade: same projected TEXCOORD1, alpha taken from
+		// the projected mask texture instead of the base texture.
+		bool BindPNTLitProjectedAlpha();
 		// Dungeon-block shadow receiver: TFACTOR times the projected shadow map,
 		// position through the same WVP math as the PNT2 lightmap pass.
 		bool BindPNT2ShadowReceiver();
@@ -117,6 +130,7 @@ class CGraphicShaderPool
 		LPDIRECT3DVERTEXSHADER9			m_lpTerrainSplatVertexShader;
 		LPDIRECT3DVERTEXSHADER9			m_lpTerrainLitShadowVertexShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulatePixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpModulateSpecAlphaPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulateNoFogPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLitBlendPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpLitAddPixelShader;
@@ -125,6 +139,9 @@ class CGraphicShaderPool
 		LPDIRECT3DPIXELSHADER9			m_lpTexturePixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpWaterPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpModulateTexAlphaPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpLitTwoTexPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpLitTFactorTintPixelShader;
+		LPDIRECT3DPIXELSHADER9			m_lpLitProjectedAlphaPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpMiniMapPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpMiniMapTFactorPixelShader;
 		LPDIRECT3DPIXELSHADER9			m_lpInvAlphaAddPixelShader;

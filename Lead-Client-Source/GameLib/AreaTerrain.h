@@ -108,8 +108,6 @@ class CTerrain : public CTerrainImpl, public CGraphicBase
 		virtual void RAW_CountTiles();
 
 		LPDIRECT3DTEXTURE9 AddTexture32(BYTE byImageNum, BYTE * pbyImage, long lTextureWidth, long lTextureHeight);
-		void PutImage32(BYTE * pbySrc, BYTE * pbyDst, long src_pitch, long dst_pitch, long lTextureWidth, long lTextureHeight, bool bResize = false);
-		void PutImage16(BYTE * pbySrc, BYTE * pbyDst, long src_pitch, long dst_pitch, long lTextureWidth, long lTextureHeight, bool bResize = false);
 
 	protected:
 		void CalculateNormal(long x, long y);

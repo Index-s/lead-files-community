@@ -7,6 +7,12 @@
 
 #include <d3d12.h>
 
+struct TTextureLevelData
+{
+	const void*	pvPixels;
+	UINT		uRowPitch;
+};
+
 class CGraphicResourceUploaderDX12
 {
 	public:
@@ -31,6 +37,15 @@ class CGraphicResourceUploaderDX12
 										DXGI_FORMAT eFormat,
 										const void* pvPixels,
 										UINT uSrcRowPitch);
+
+		enum { TEXTURE_MAX_LEVELS = 16 };
+
+		ID3D12Resource*	CreateTexture2D(ID3D12CommandQueue* pkQueue,
+										UINT uWidth,
+										UINT uHeight,
+										DXGI_FORMAT eFormat,
+										const TTextureLevelData* akLevels,
+										UINT uLevelCount);
 
 	private:
 		bool	__ExecuteAndWait(ID3D12CommandQueue* pkQueue);

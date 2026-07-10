@@ -133,8 +133,6 @@ bool CMapOutdoor::Initialize()
 	//////////////////////////////////////////////////////////////////////////
 	// Character Shadow
 	m_lpCharacterShadowMapTexture = NULL;
-	m_lpCharacterShadowMapRenderTargetSurface = NULL;
-	m_lpCharacterShadowMapDepthSurface = NULL;
 
 	m_lpBackupRenderTargetSurface = NULL;
 	m_lpBackupDepthSurface = NULL;

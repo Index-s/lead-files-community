@@ -15,6 +15,7 @@ void CGraphicSamplerKeyDX12::Reset()
 	m_uAddressU = D3DTADDRESS_WRAP;
 	m_uAddressV = D3DTADDRESS_WRAP;
 	m_uMaxAnisotropy = 1;
+	m_uBorderColor = 0;
 }
 
 void CGraphicSamplerKeyDX12::Capture(CStateManager& rkStateManager, DWORD dwStage)
@@ -25,17 +26,20 @@ void CGraphicSamplerKeyDX12::Capture(CStateManager& rkStateManager, DWORD dwStag
 	rkStateManager.GetSamplerState(dwStage, D3DSAMP_ADDRESSU, &m_uAddressU);
 	rkStateManager.GetSamplerState(dwStage, D3DSAMP_ADDRESSV, &m_uAddressV);
 	rkStateManager.GetSamplerState(dwStage, D3DSAMP_MAXANISOTROPY, &m_uMaxAnisotropy);
+	rkStateManager.GetSamplerState(dwStage, D3DSAMP_BORDERCOLOR, &m_uBorderColor);
 }
 
 UINT64 CGraphicSamplerKeyDX12::Hash() const
 {
-	// Six fields with small value ranges pack into one word directly.
-	return static_cast<UINT64>(m_uMinFilter & 0xFF)
-		| (static_cast<UINT64>(m_uMagFilter & 0xFF) << 8)
-		| (static_cast<UINT64>(m_uMipFilter & 0xFF) << 16)
-		| (static_cast<UINT64>(m_uAddressU & 0xFF) << 24)
-		| (static_cast<UINT64>(m_uAddressV & 0xFF) << 32)
-		| (static_cast<UINT64>(m_uMaxAnisotropy & 0xFF) << 40);
+	// The enum fields have tiny value ranges and pack into the low bits; the
+	// border color takes the upper half of the word.
+	return static_cast<UINT64>(m_uMinFilter & 0xF)
+		| (static_cast<UINT64>(m_uMagFilter & 0xF) << 4)
+		| (static_cast<UINT64>(m_uMipFilter & 0xF) << 8)
+		| (static_cast<UINT64>(m_uAddressU & 0xF) << 12)
+		| (static_cast<UINT64>(m_uAddressV & 0xF) << 16)
+		| (static_cast<UINT64>(m_uMaxAnisotropy & 0xFF) << 20)
+		| (static_cast<UINT64>(m_uBorderColor) << 28);
 }
 
 bool CGraphicSamplerKeyDX12::operator==(const CGraphicSamplerKeyDX12& rkKey) const
@@ -67,6 +71,11 @@ void CGraphicSamplerKeyDX12::ToSamplerDesc(D3D12_SAMPLER_DESC* pkDesc) const
 	pkDesc->AddressU = ToAddressModeDX12(m_uAddressU);
 	pkDesc->AddressV = ToAddressModeDX12(m_uAddressV);
 	pkDesc->AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	const float c_fInv255 = 1.0f / 255.0f;
+	pkDesc->BorderColor[0] = ((m_uBorderColor >> 16) & 0xff) * c_fInv255;
+	pkDesc->BorderColor[1] = ((m_uBorderColor >> 8) & 0xff) * c_fInv255;
+	pkDesc->BorderColor[2] = (m_uBorderColor & 0xff) * c_fInv255;
+	pkDesc->BorderColor[3] = ((m_uBorderColor >> 24) & 0xff) * c_fInv255;
 	pkDesc->MipLODBias = 0.0f;
 	pkDesc->MaxAnisotropy = m_uMaxAnisotropy < 1 ? 1 : m_uMaxAnisotropy;
 	pkDesc->ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;

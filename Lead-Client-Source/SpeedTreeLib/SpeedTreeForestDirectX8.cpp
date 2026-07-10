@@ -30,8 +30,8 @@
 #include "StdAfx.h"
 
 #include <stdio.h>
-#include <dx9/d3d9.h>
-#include <dx9/d3d9types.h>
+#include <d3d9.h>
+#include <d3d9types.h>
 #include <d3dx9math_shim.h>
 
 #include "../eterBase/Timer.h"

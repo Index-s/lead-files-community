@@ -202,7 +202,15 @@ bool CGraphicReadbackDX12::__ExecuteAndWait(ID3D12CommandQueue* pkQueue)
 			TraceError("CGraphicReadbackDX12: fence wait setup failed.");
 			return false;
 		}
-		WaitForSingleObject(m_hFenceEvent, INFINITE);
+		while (WAIT_TIMEOUT == WaitForSingleObject(m_hFenceEvent, 4000))
+		{
+			if (S_OK != m_pkDevice->GetDeviceRemovedReason())
+			{
+				TraceError("CGraphicReadbackDX12: device removed while reading back (0x%08x).",
+						   static_cast<unsigned>(m_pkDevice->GetDeviceRemovedReason()));
+				return false;
+			}
+		}
 	}
 
 	return true;

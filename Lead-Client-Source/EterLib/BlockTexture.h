@@ -2,6 +2,8 @@
 
 #include "GrpBase.h"
 
+#include <vector>
+
 class CGraphicDib;
 
 class CBlockTexture : public CGraphicBase
@@ -16,6 +18,9 @@ class CBlockTexture : public CGraphicBase
 		void InvalidateRect(const RECT & c_rsrcRect);
 
 	protected:
+		void __RegisterTwin();
+
+	protected:
 		CGraphicDib * m_pDIB;
 		RECT m_rect;
 		RECT m_clipRect;
@@ -23,4 +28,5 @@ class CBlockTexture : public CGraphicBase
 		DWORD m_dwWidth;
 		DWORD m_dwHeight;
 		LPDIRECT3DTEXTURE9 m_lpd3dTexture;
+		std::vector<DWORD> m_kPixels;
 };

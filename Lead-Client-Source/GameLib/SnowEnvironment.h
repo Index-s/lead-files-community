@@ -20,32 +20,20 @@ class CSnowEnvironment : public CScreen
 		void Deform();
 		void Render();
 
-	protected:		
+	protected:
 		void __Initialize();
-		bool __CreateBlurTexture();
 		bool __CreateGeometry();
-		void __BeginBlur();
-		void __ApplyBlur();
 
 	protected:
-		LPDIRECT3DSURFACE9 m_lpOldSurface;
-		LPDIRECT3DSURFACE9 m_lpOldDepthStencilSurface;
-
-		LPDIRECT3DTEXTURE9 m_lpSnowTexture;
-		LPDIRECT3DSURFACE9 m_lpSnowRenderTargetSurface;
-		LPDIRECT3DSURFACE9 m_lpSnowDepthSurface;
-
-		LPDIRECT3DVERTEXBUFFER9 m_pVB;
-		LPDIRECT3DINDEXBUFFER9 m_pIB;
+		std::vector<BYTE> m_kVertexData;
+		std::vector<WORD> m_kIndexData;
 
 		D3DXVECTOR3 m_v3Center;
 
-		WORD m_wBlurTextureSize;
 		CGraphicImageInstance * m_pImageInstance;
 		std::vector<CSnowParticle*> m_kVct_pkParticleSnow;
 
 		DWORD m_dwParticleMaxNum;
-		BOOL m_bBlurEnable;
 
 		BOOL m_bSnowEnable;
 };

@@ -21,31 +21,18 @@ void D3DXVECTOR3ToPixelPosition(const D3DXVECTOR3& c_rv3Src, D3DXVECTOR3* pv3Dst
 	pv3Dst->z=+c_rv3Src.z;
 }
 
-UINT					CGraphicBase::ms_iD3DAdapterInfo=0;
-UINT					CGraphicBase::ms_iD3DDevInfo=0;
-UINT					CGraphicBase::ms_iD3DModeInfo=0;		
-D3D_CDisplayModeAutoDetector				CGraphicBase::ms_kD3DDetector;
-
 HWND CGraphicBase::ms_hWnd;
 HDC CGraphicBase::ms_hDC;
 
-LPDIRECT3D9EX				CGraphicBase::ms_lpd3d = NULL;
-LPDIRECT3DDEVICE9EX		CGraphicBase::ms_lpd3dDevice = NULL;
 ID3DXMatrixStack *		CGraphicBase::ms_lpd3dMatStack = NULL;
-D3DPRESENT_PARAMETERS	CGraphicBase::ms_d3dPresentParameter = {};
 D3DVIEWPORT9			CGraphicBase::ms_Viewport;
 
 HRESULT					CGraphicBase::ms_hLastResult = NULL;
-bool					CGraphicBase::ms_bUseShaderFFP = false;
 
 int						CGraphicBase::ms_iWidth;
 int						CGraphicBase::ms_iHeight;
 
 DWORD					CGraphicBase::ms_faceCount = 0;
-
-D3DCAPS9				CGraphicBase::ms_d3dCaps;
-
-DWORD					CGraphicBase::ms_dwD3DBehavior = 0;
 
 LPDIRECT3DVERTEXDECLARATION9 CGraphicBase::ms_ptDecl = 0;
 LPDIRECT3DVERTEXDECLARATION9 CGraphicBase::ms_pntDecl = 0;
@@ -121,28 +108,19 @@ bool CGraphicBase::IsHighTextureMemory()
 }
 
 bool CGraphicBase::IsFastTNL()
-{ 
-	if (ms_dwD3DBehavior & D3DCREATE_HARDWARE_VERTEXPROCESSING ||
-		ms_dwD3DBehavior & D3DCREATE_MIXED_VERTEXPROCESSING)
-	{
-		if (ms_d3dCaps.VertexShaderVersion>D3DVS_VERSION(1,0))
-			return true;
-	}
-	return false;
+{
+	return true;
 }
 
 bool CGraphicBase::IsTLVertexClipping()
 {
-	if (ms_d3dCaps.PrimitiveMiscCaps & D3DPMISCCAPS_CLIPTLVERTS)
-		return true;
-
-	return false;
+	return true;
 }
 
 void CGraphicBase::GetBackBufferSize(UINT* puWidth, UINT* puHeight)
 {
-	*puWidth=ms_d3dPresentParameter.BackBufferWidth;
-	*puHeight=ms_d3dPresentParameter.BackBufferHeight;
+	*puWidth=UINT(ms_iWidth);
+	*puHeight=UINT(ms_iHeight);
 }
 
 void CGraphicBase::SetDefaultIndexBuffer(UINT eDefIB)
@@ -178,105 +156,66 @@ bool CGraphicBase::SetPDTStream(SPDTVertexRaw* pSrcVertices, UINT uVtxCount)
 	if (!vb)
 		return false;
 
-	const UINT bytes = sizeof(TPDTVertex) * uVtxCount;
-
-	TPDTVertex* pDstVertices;
-	if (FAILED(vb->Lock(0, bytes, (void**)&pDstVertices, D3DLOCK_DISCARD)))
-	{
-		STATEMANAGER.SetStreamSource(0, NULL, 0);
-		return false;
-	}
-
-	memcpy(pDstVertices, pSrcVertices, bytes);
-
-	vb->Unlock();
-
 	STATEMANAGER.SetStreamSource(0, vb, sizeof(TPDTVertex));
+	STATEMANAGER.SetTransientStream(pSrcVertices, uVtxCount, sizeof(TPDTVertex));
 
 	return true;
 }
 
 static CGraphicShaderPool gs_kShaderPool;
 
-void CGraphicBase::SetUseShaderFFP(bool bEnable)
-{
-	ms_bUseShaderFFP = bEnable;
-}
-
-bool CGraphicBase::IsUseShaderFFP()
-{
-	return ms_bUseShaderFFP;
-}
-
 bool CGraphicBase::BeginPDTShader()
 {
-	if (!ms_bUseShaderFFP)
-		return false;
+	// Minimap/atlas marks tint the white mark texture through TEXTUREFACTOR
+	// (stage0 MODULATE with a TFACTOR argument) instead of the vertex color.
+	DWORD dwColorOp, dwColorArg1, dwColorArg2;
+	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLOROP, &dwColorOp);
+	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG1, &dwColorArg1);
+	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG2, &dwColorArg2);
+	if (D3DTOP_MODULATE == dwColorOp &&
+		(D3DTA_TFACTOR == dwColorArg1 || D3DTA_TFACTOR == dwColorArg2))
+		return gs_kShaderPool.BindPDTTFactorModulate();
 
 	return gs_kShaderPool.BindPDTModulate();
 }
 
 bool CGraphicBase::BeginPDTDiffuseShader()
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindPDTDiffuse();
 }
 
 bool CGraphicBase::BeginPTTextureShader()
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindPTTexture();
 }
 
 bool CGraphicBase::BeginWaterShader(bool bTexture)
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindWater(bTexture);
 }
 
 bool CGraphicBase::BeginPDTTextureShader()
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindPDTTexture();
 }
 
 bool CGraphicBase::BeginPDTModulateTexAlphaShader()
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindPDTModulateTexAlpha();
 }
 
 bool CGraphicBase::BeginMiniMapShader(bool bTexture)
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindMiniMap(bTexture);
 }
 
 bool CGraphicBase::BeginPDTCloudShader()
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindPDTTexMatInvAlphaAdd();
 }
 
 bool CGraphicBase::BeginSpeedTreeLeafShader()
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindPixelOnlyModulate();
 }
 
@@ -287,17 +226,11 @@ void CGraphicBase::EndSpeedTreeLeafShader()
 
 bool CGraphicBase::BeginSpeedTreeBranchShader(bool bSelfShadow)
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindSpeedTreeBranch(bSelfShadow);
 }
 
 bool CGraphicBase::BeginEffectShader(DWORD dwColorOp)
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	switch (dwColorOp)
 	{
 		case D3DTOP_MODULATE:
@@ -321,33 +254,21 @@ bool CGraphicBase::BeginEffectShader(DWORD dwColorOp)
 
 bool CGraphicBase::BeginTerrainSplatShader(bool bBase)
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindTerrainSplat(bBase);
 }
 
 bool CGraphicBase::BeginTerrainFogFlatShader()
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindTerrainFogFlat();
 }
 
 bool CGraphicBase::BeginTerrainAttrShader()
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	return gs_kShaderPool.BindTerrainAttr();
 }
 
 bool CGraphicBase::BeginTerrainShadowShader(bool bChrShadow)
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	if (!gs_kShaderPool.BindTerrainShadow(bChrShadow))
 		return false;
 
@@ -358,9 +279,6 @@ bool CGraphicBase::BeginTerrainShadowShader(bool bChrShadow)
 
 bool CGraphicBase::BeginGrannyMeshShader()
 {
-	if (!ms_bUseShaderFFP)
-		return false;
-
 	// Route by the bound stream layout first: granny characters/objects use PNT,
 	// dungeon blocks PNT2. Anything else keeps the fixed-function path.
 	DWORD dwValue;
@@ -384,7 +302,7 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG2, &dwValue);
 		if (D3DTA_CURRENT != dwValue)
 			return false;
-		LPDIRECT3DBASETEXTURE9 pkTexture;
+		const void* pkTexture;
 		STATEMANAGER.GetTexture(1, &pkTexture);
 		if (!pkTexture)
 			return false;
@@ -410,9 +328,21 @@ bool CGraphicBase::BeginGrannyMeshShader()
 	if (sizeof(TPNTVertex) != uStride)
 		return false;
 
-	// Only the base cascade is converted: stage 0 MODULATE(TEXTURE, DIFFUSE) for
-	// color and alpha, stage 1 disabled, a texture bound. Specular, fades and
-	// two-texture materials keep the fixed-function path for now.
+	// Stage 1 counts as off when disabled outright, when it passes the stage-0
+	// result through (SELECTARG1 of CURRENT), or when its color op references
+	// a texture that is not bound - fixed function ends the cascade at the
+	// first stage sampling an unbound texture.
+	DWORD dwStage1ColorOp, dwStage1ColorArg1, dwStage1ColorArg2;
+	STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwStage1ColorOp);
+	STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG1, &dwStage1ColorArg1);
+	STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG2, &dwStage1ColorArg2);
+	const void* pkStage1BoundTexture;
+	STATEMANAGER.GetTexture(1, &pkStage1BoundTexture);
+	const bool bStage1Off = D3DTOP_DISABLE == dwStage1ColorOp ||
+		(D3DTOP_SELECTARG1 == dwStage1ColorOp && D3DTA_CURRENT == dwStage1ColorArg1) ||
+		(!pkStage1BoundTexture &&
+		 (D3DTA_TEXTURE == dwStage1ColorArg1 || D3DTA_TEXTURE == dwStage1ColorArg2));
+
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLOROP, &dwValue);
 	if (D3DTOP_SELECTARG1 == dwValue)
 	{
@@ -420,8 +350,7 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG1, &dwValue);
 		if (D3DTA_TFACTOR != dwValue)
 			return false;
-		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwValue);
-		if (D3DTOP_DISABLE != dwValue)
+		if (!bStage1Off)
 			return false;
 		return gs_kShaderPool.BindPNTFlatTFactor();
 	}
@@ -430,38 +359,61 @@ bool CGraphicBase::BeginGrannyMeshShader()
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG1, &dwValue);
 	if (D3DTA_TEXTURE != dwValue)
 		return false;
+	// At stage 0 the CURRENT register reads the diffuse color, so both
+	// spellings of the argument mean the same input.
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_COLORARG2, &dwValue);
-	if (D3DTA_DIFFUSE != dwValue)
+	if (D3DTA_DIFFUSE != dwValue && D3DTA_CURRENT != dwValue)
 		return false;
+
+	// Stage 1 modulating TFACTOR over the lit base is a plain tint.
+	const bool bStage1TFactorTint = D3DTOP_MODULATE == dwStage1ColorOp &&
+		((D3DTA_CURRENT == dwStage1ColorArg1 && D3DTA_TFACTOR == dwStage1ColorArg2) ||
+		 (D3DTA_TFACTOR == dwStage1ColorArg1 && D3DTA_CURRENT == dwStage1ColorArg2));
+
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAOP, &dwValue);
 	if (D3DTOP_DISABLE == dwValue)
 	{
-		// Character-shadow receiver re-render: stage1 projects the shadow map via
-		// CAMERASPACEPOSITION texgen. Must use the same vertex path as the main
-		// pass or the two passes z-fight.
-		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwValue);
-		if (D3DTOP_MODULATE != dwValue)
-			return false;
-		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG1, &dwValue);
-		if (D3DTA_TEXTURE != dwValue)
-			return false;
-		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG2, &dwValue);
-		if (D3DTA_CURRENT != dwValue)
-			return false;
-		STATEMANAGER.GetTextureStageState(1, D3DTSS_TEXCOORDINDEX, &dwValue);
-		if (D3DTSS_TCI_CAMERASPACEPOSITION != dwValue)
-			return false;
-		LPDIRECT3DBASETEXTURE9 pkShadowTexture;
-		STATEMANAGER.GetTexture(0, &pkShadowTexture);
-		if (!pkShadowTexture)
-			return false;
-		STATEMANAGER.GetTexture(1, &pkShadowTexture);
-		if (!pkShadowTexture)
-			return false;
-		if (!gs_kShaderPool.BindPNTLitShadowReceiver())
-			return false;
-		__UploadGrannyLightingConstants();
-		return true;
+		if (D3DTOP_MODULATE == dwStage1ColorOp &&
+			D3DTA_TEXTURE == dwStage1ColorArg1 && D3DTA_CURRENT == dwStage1ColorArg2)
+		{
+			const void* pkBaseTexture;
+			STATEMANAGER.GetTexture(0, &pkBaseTexture);
+			if (!pkBaseTexture)
+				return false;
+			const void* pkSecondTexture;
+			STATEMANAGER.GetTexture(1, &pkSecondTexture);
+			if (!pkSecondTexture)
+				return false;
+			STATEMANAGER.GetTextureStageState(1, D3DTSS_TEXCOORDINDEX, &dwValue);
+			if (D3DTSS_TCI_CAMERASPACEPOSITION == dwValue)
+			{
+				// Character-shadow receiver re-render: stage1 projects the shadow
+				// map via CAMERASPACEPOSITION texgen. Must use the same vertex
+				// path as the main pass or the two passes z-fight.
+				if (!gs_kShaderPool.BindPNTLitShadowReceiver())
+					return false;
+				__UploadGrannyLightingConstants();
+				return true;
+			}
+			// Two-texture materials modulate the second texture over the lit
+			// base on the shared UV set.
+			if (!gs_kShaderPool.BindPNTLitTwoTexture())
+				return false;
+			__UploadGrannyLightingConstants();
+			return true;
+		}
+		if (bStage1Off)
+		{
+			const void* pkBaseTexture;
+			STATEMANAGER.GetTexture(0, &pkBaseTexture);
+			if (!pkBaseTexture)
+				return false;
+			if (!gs_kShaderPool.BindPNTLit())
+				return false;
+			__UploadGrannyLightingConstants();
+			return true;
+		}
+		return false;
 	}
 	if (D3DTOP_SELECTARG2 == dwValue)
 	{
@@ -469,10 +421,44 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAARG2, &dwValue);
 		if (D3DTA_TFACTOR != dwValue)
 			return false;
-		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwValue);
-		if (D3DTOP_DISABLE != dwValue)
+		if (!bStage1Off)
 			return false;
 		if (!gs_kShaderPool.BindPNTLitBlend())
+			return false;
+		__UploadGrannyLightingConstants();
+		return true;
+	}
+	if (D3DTOP_SELECTARG1 == dwValue)
+	{
+		STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAARG1, &dwValue);
+		if (D3DTA_TEXTURE != dwValue)
+			return false;
+		const void* pkBaseTexture;
+		STATEMANAGER.GetTexture(0, &pkBaseTexture);
+		if (!pkBaseTexture)
+			return false;
+
+		// Blocking-building fade: alpha comes from the screen-projected mask
+		// bound at stage 1 (CAMERASPACEPOSITION texgen) instead of the base.
+		DWORD dwStage1AlphaOp, dwStage1AlphaArg1, dwStage1CoordIndex;
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_ALPHAOP, &dwStage1AlphaOp);
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_ALPHAARG1, &dwStage1AlphaArg1);
+		STATEMANAGER.GetTextureStageState(1, D3DTSS_TEXCOORDINDEX, &dwStage1CoordIndex);
+		const void* pkProjectedTexture;
+		STATEMANAGER.GetTexture(1, &pkProjectedTexture);
+		if (D3DTOP_SELECTARG1 == dwStage1AlphaOp && D3DTA_TEXTURE == dwStage1AlphaArg1 &&
+			D3DTSS_TCI_CAMERASPACEPOSITION == dwStage1CoordIndex && pkProjectedTexture)
+		{
+			if (!gs_kShaderPool.BindPNTLitProjectedAlpha())
+				return false;
+			__UploadGrannyLightingConstants();
+			return true;
+		}
+
+		// Alpha straight from the texture over the lit base.
+		if (!bStage1Off)
+			return false;
+		if (!gs_kShaderPool.BindPNTLitTexAlpha())
 			return false;
 		__UploadGrannyLightingConstants();
 		return true;
@@ -484,7 +470,7 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		return false;
 	STATEMANAGER.GetTextureStageState(0, D3DTSS_ALPHAARG2, &dwValue);
 	const bool bSpecularAlpha = (D3DTA_TFACTOR == dwValue);
-	if (D3DTA_DIFFUSE != dwValue && !bSpecularAlpha)
+	if (D3DTA_DIFFUSE != dwValue && D3DTA_CURRENT != dwValue && !bSpecularAlpha)
 		return false;
 	STATEMANAGER.GetTextureStageState(1, D3DTSS_COLOROP, &dwValue);
 	bool bSpecular = false;
@@ -503,7 +489,7 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		STATEMANAGER.GetTextureStageState(1, D3DTSS_TEXCOORDINDEX, &dwValue);
 		if (D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR != dwValue)
 			return false;
-		LPDIRECT3DBASETEXTURE9 pEnvTexture;
+		const void* pEnvTexture;
 		STATEMANAGER.GetTexture(1, &pEnvTexture);
 		if (!pEnvTexture)
 			return false;
@@ -518,7 +504,7 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		STATEMANAGER.GetTextureStageState(1, D3DTSS_COLORARG2, &dwValue);
 		if (D3DTA_TFACTOR != dwValue)
 			return false;
-		LPDIRECT3DBASETEXTURE9 pkAddTexture;
+		const void* pkAddTexture;
 		STATEMANAGER.GetTexture(0, &pkAddTexture);
 		if (!pkAddTexture)
 			return false;
@@ -527,10 +513,21 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		__UploadGrannyLightingConstants();
 		return true;
 	}
-	else if (bSpecularAlpha || D3DTOP_DISABLE != dwValue)
+	else if (!bSpecularAlpha && bStage1TFactorTint)
+	{
+		const void* pkTintTexture;
+		STATEMANAGER.GetTexture(0, &pkTintTexture);
+		if (!pkTintTexture)
+			return false;
+		if (!gs_kShaderPool.BindPNTLitTFactorTint())
+			return false;
+		__UploadGrannyLightingConstants();
+		return true;
+	}
+	else if (bSpecularAlpha || !bStage1Off)
 		return false;
 
-	LPDIRECT3DBASETEXTURE9 pTexture;
+	const void* pTexture;
 	STATEMANAGER.GetTexture(0, &pTexture);
 	if (!pTexture)
 		return false;
@@ -544,9 +541,7 @@ bool CGraphicBase::BeginGrannyMeshShader()
 		STATEMANAGER.GetLight(0, &kLight);
 		if (D3DLIGHT_SPOT == kLight.Type)
 		{
-			if (bSpecular)
-				return false;
-			if (!gs_kShaderPool.BindPNTLitOmni())
+			if (!gs_kShaderPool.BindPNTLitOmni(bSpecular))
 				return false;
 			__UploadOmniLightingConstants();
 			return true;
@@ -584,15 +579,32 @@ void CGraphicBase::__UploadGrannyLightingConstants()
 		const float fAmbientB = (dwAmbient & 0xff) * c_fInv255 + kLight.Ambient.b;
 		const float fAmbientA = ((dwAmbient >> 24) & 0xff) * c_fInv255 + kLight.Ambient.a;
 
+		// The fixed function keeps the lit alpha constant at the material
+		// diffuse alpha; only the color channels take the N.L term.
 		avConstants[0] = D3DXVECTOR4(-kLight.Direction.x, -kLight.Direction.y, -kLight.Direction.z, 0.0f);
 		avConstants[1] = D3DXVECTOR4(kMaterial.Diffuse.r * kLight.Diffuse.r,
 									 kMaterial.Diffuse.g * kLight.Diffuse.g,
 									 kMaterial.Diffuse.b * kLight.Diffuse.b,
-									 kMaterial.Diffuse.a * kLight.Diffuse.a);
+									 0.0f);
 		avConstants[2] = D3DXVECTOR4(kMaterial.Ambient.r * fAmbientR + kMaterial.Emissive.r,
 									 kMaterial.Ambient.g * fAmbientG + kMaterial.Emissive.g,
 									 kMaterial.Ambient.b * fAmbientB + kMaterial.Emissive.b,
-									 kMaterial.Ambient.a * fAmbientA + kMaterial.Emissive.a);
+									 kMaterial.Diffuse.a);
+	}
+	else if (STATEMANAGER.GetRenderState(D3DRS_LIGHTING))
+	{
+		// Lighting on with no enabled light: fixed function still evaluates the
+		// material, leaving ambient-scaled color plus emissive.
+		D3DMATERIAL9 kMaterial;
+		STATEMANAGER.GetMaterial(&kMaterial);
+		const DWORD dwAmbient = STATEMANAGER.GetRenderState(D3DRS_AMBIENT);
+		const float c_fInv255 = 1.0f / 255.0f;
+		avConstants[0] = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
+		avConstants[1] = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
+		avConstants[2] = D3DXVECTOR4(kMaterial.Ambient.r * (((dwAmbient >> 16) & 0xff) * c_fInv255) + kMaterial.Emissive.r,
+									 kMaterial.Ambient.g * (((dwAmbient >> 8) & 0xff) * c_fInv255) + kMaterial.Emissive.g,
+									 kMaterial.Ambient.b * ((dwAmbient & 0xff) * c_fInv255) + kMaterial.Emissive.b,
+									 kMaterial.Diffuse.a);
 	}
 	else
 	{
@@ -671,19 +683,7 @@ void CGraphicBase::DestroyShaderPool()
 
 DWORD CGraphicBase::GetAvailableTextureMemory()
 {
-	assert(ms_lpd3dDevice!=NULL && "CGraphicBase::GetAvailableTextureMemory - D3DDevice is EMPTY");
-
-	static DWORD s_dwNextUpdateTime=0;
-	static DWORD s_dwTexMemSize=0;//ms_lpd3dDevice->GetAvailableTextureMem();
-
-	DWORD dwCurTime=ELTimer_GetMSec();
-	if (s_dwNextUpdateTime<dwCurTime)
-	{
-		s_dwNextUpdateTime=dwCurTime+5000;
-		s_dwTexMemSize=ms_lpd3dDevice->GetAvailableTextureMem();
-	}
-
-	return s_dwTexMemSize;
+	return 512 * 1024 * 1024;
 }
 
 const D3DXMATRIX& CGraphicBase::GetViewMatrix()
@@ -990,85 +990,7 @@ HRESULT CGraphicBase::GetLastResult()
 
 bool CGraphicBase::IsDeviceCreated()
 {
-	return NULL != ms_lpd3dDevice;
-}
-
-HRESULT CGraphicBase::CreateDeviceTexture(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture)
-{
-	const HRESULT hrCreate = __CreateDeviceTextureImpl(uWidth, uHeight, uLevels, dwUsage, eFormat, ePool, ppTexture);
-
-	// DX12 mirror: render targets get a color+depth twin the shadow pass
-	// redirects into and the receive pass samples.
-	if (SUCCEEDED(hrCreate) && (dwUsage & D3DUSAGE_RENDERTARGET))
-	{
-		if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
-		{
-			if (pkBackend->RegisterRenderTarget(*ppTexture, uWidth, uHeight) && CStateManager::InstancePtr())
-			{
-				// GetSRVHandleDX12 lives inside the backend record; register the
-				// texture pointer so SetTexture resolves the twin SRV.
-				STATEMANAGER.RegisterTextureSRVDX12(*ppTexture, pkBackend->GetRenderTargetSRV(*ppTexture));
-			}
-		}
-	}
-
-	return hrCreate;
-}
-
-HRESULT CGraphicBase::__CreateDeviceTextureImpl(UINT uWidth, UINT uHeight, UINT uLevels, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DTEXTURE9* ppTexture)
-{
-	return ms_lpd3dDevice->CreateTexture(uWidth, uHeight, uLevels, dwUsage, eFormat, ePool, ppTexture, NULL);
-}
-
-HRESULT CGraphicBase::CreateDeviceVertexBuffer(UINT uLength, DWORD dwUsage, DWORD dwFVF, D3DPOOL ePool, LPDIRECT3DVERTEXBUFFER9* ppVertexBuffer)
-{
-	return ms_lpd3dDevice->CreateVertexBuffer(uLength, dwUsage, dwFVF, ePool, ppVertexBuffer, NULL);
-}
-
-HRESULT CGraphicBase::CreateDeviceIndexBuffer(UINT uLength, DWORD dwUsage, D3DFORMAT eFormat, D3DPOOL ePool, LPDIRECT3DINDEXBUFFER9* ppIndexBuffer)
-{
-	return ms_lpd3dDevice->CreateIndexBuffer(uLength, dwUsage, eFormat, ePool, ppIndexBuffer, NULL);
-}
-
-HRESULT CGraphicBase::CreateDeviceDepthStencilSurface(UINT uWidth, UINT uHeight, D3DFORMAT eFormat, D3DMULTISAMPLE_TYPE eMultiSample, DWORD dwMultisampleQuality, BOOL bDiscard, LPDIRECT3DSURFACE9* ppSurface)
-{
-	return ms_lpd3dDevice->CreateDepthStencilSurface(uWidth, uHeight, eFormat, eMultiSample, dwMultisampleQuality, bDiscard, ppSurface, NULL);
-}
-
-HRESULT CGraphicBase::UpdateDeviceTexture(LPDIRECT3DBASETEXTURE9 pSourceTexture, LPDIRECT3DBASETEXTURE9 pDestinationTexture)
-{
-	return ms_lpd3dDevice->UpdateTexture(pSourceTexture, pDestinationTexture);
-}
-
-
-bool CGraphicBase::SupportsFullscreenGamma()
-{
-	return D3DCAPS2_FULLSCREENGAMMA == (ms_d3dCaps.Caps2 & D3DCAPS2_FULLSCREENGAMMA);
-}
-
-void CGraphicBase::SetDeviceGammaRamp(CONST D3DGAMMARAMP* pRamp)
-{
-	ms_lpd3dDevice->SetGammaRamp(0, D3DSGR_NO_CALIBRATION, pRamp);
-}
-
-HRESULT CGraphicBase::GetAdapterIdentifier(D3DADAPTER_IDENTIFIER9* pIdentifier)
-{
-	return ms_lpd3d->GetAdapterIdentifier(0, 0, pIdentifier);
-}
-
-HRESULT CGraphicBase::GetAdapterDisplayMode(D3DDISPLAYMODE* pMode)
-{
-	return ms_lpd3d->GetAdapterDisplayMode(0, pMode);
-}
-
-UINT CGraphicBase::GetAdapterModeCount(D3DFORMAT eFormat)
-{
-	return ms_lpd3d->GetAdapterModeCount(0, eFormat);
-}
-
-HRESULT CGraphicBase::EnumAdapterModes(D3DFORMAT eFormat, UINT uMode, D3DDISPLAYMODE* pMode)
-{
-	return ms_lpd3d->EnumAdapterModes(0, eFormat, uMode, pMode);
+	return NULL != CGraphicBackendDX12::GetInstance();
 }
 
 CGraphicBase::CGraphicBase()

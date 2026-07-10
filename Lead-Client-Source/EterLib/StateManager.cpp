@@ -1,10 +1,11 @@
-﻿#include "StdAfx.h"
+#include "StdAfx.h"
 #include "StateManager.h"
 #include "GrpBackendDX12.h"
 #include "GraphicShaderPool.h"
 
-//#define StateManager_Assert(a) if (!(a)) puts("assert"#a)
 #define StateManager_Assert(a) assert(a)
+
+static uintptr_t gs_nextHandle = 1;
 
 struct SLightData
 {
@@ -22,23 +23,19 @@ void CStateManager::SetLight(DWORD index, CONST D3DLIGHT9* pLight)
 {
 	assert(index<SLightData::LIGHT_NUM);
 	m_kLightData.m_akD3DLight[index]=*pLight;
-
-	m_lpD3DDev->SetLight(index, pLight);
 }
 
 void CStateManager::LightEnable(DWORD index, BOOL bEnable)
 {
 	assert(index<SLightData::LIGHT_NUM);
 	m_kLightData.m_abLightEnable[index]=bEnable;
-
-	m_lpD3DDev->LightEnable(index, bEnable);
 }
 
 HRESULT CStateManager::Clear(DWORD Flags, D3DCOLOR Color, float Z, DWORD Stencil)
 {
 	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
 		pkBackend->ClearTargets(Flags, Color, Z, Stencil);
-	return m_lpD3DDev->Clear(0, NULL, Flags, Color, Z, Stencil);
+	return D3D_OK;
 }
 
 HRESULT CStateManager::SetViewport(const D3DVIEWPORT9* pViewport)
@@ -47,89 +44,83 @@ HRESULT CStateManager::SetViewport(const D3DVIEWPORT9* pViewport)
 	{
 		if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
 			pkBackend->SetViewport(*pViewport);
+
+		m_kViewport = *pViewport;
 	}
-	return m_lpD3DDev->SetViewport(pViewport);
+	return D3D_OK;
 }
 
 HRESULT CStateManager::GetViewport(D3DVIEWPORT9* pViewport)
 {
-	return m_lpD3DDev->GetViewport(pViewport);
+	if (pViewport)
+		*pViewport = m_kViewport;
+	return D3D_OK;
 }
 
 void CStateManager::SaveViewport()
 {
-	m_lpD3DDev->GetViewport(&m_SavedViewport);
+	m_SavedViewport = m_kViewport;
 }
 
 void CStateManager::RestoreViewport()
 {
-	m_lpD3DDev->SetViewport(&m_SavedViewport);
+	SetViewport(&m_SavedViewport);
 }
 
-HRESULT CStateManager::GetRenderTarget(DWORD RenderTargetIndex, LPDIRECT3DSURFACE9* ppRenderTarget)
+const void* CStateManager::GetRenderTarget(DWORD)
 {
-	return m_lpD3DDev->GetRenderTarget(RenderTargetIndex, ppRenderTarget);
+	return NULL;
 }
 
-HRESULT CStateManager::SetRenderTarget(DWORD RenderTargetIndex, LPDIRECT3DSURFACE9 pRenderTarget)
+HRESULT CStateManager::SetRenderTarget(DWORD RenderTargetIndex, const void* pRenderTarget)
 {
-	// DX12 mirror: resolve the surface's container texture; the backbuffer
-	// surface has no texture container, which signals the restore.
-	if (0 == RenderTargetIndex && pRenderTarget)
+	if (0 != RenderTargetIndex)
+		return D3D_OK;
+
+	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
 	{
-		if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
-		{
-			IDirect3DTexture9* pkContainer = NULL;
-			if (SUCCEEDED(pRenderTarget->GetContainer(__uuidof(IDirect3DTexture9), (void**)&pkContainer)) && pkContainer)
-			{
-				if (!pkBackend->SetRenderTargetTexture(pkContainer))
-					pkBackend->RestoreDefaultTarget();
-				pkContainer->Release();
-			}
-			else
-			{
-				pkBackend->RestoreDefaultTarget();
-			}
-		}
+		if (!pRenderTarget)
+			pkBackend->RestoreDefaultTarget();
+		else if (!pkBackend->SetRenderTargetTexture(pRenderTarget))
+			pkBackend->RestoreDefaultTarget();
 	}
-	return m_lpD3DDev->SetRenderTarget(RenderTargetIndex, pRenderTarget);
+	return D3D_OK;
 }
 
-HRESULT CStateManager::GetDepthStencilSurface(LPDIRECT3DSURFACE9* ppZStencilSurface)
+const void* CStateManager::GetDepthStencilSurface()
 {
-	return m_lpD3DDev->GetDepthStencilSurface(ppZStencilSurface);
+	return NULL;
 }
 
-HRESULT CStateManager::SetDepthStencilSurface(LPDIRECT3DSURFACE9 pNewZStencil)
+HRESULT CStateManager::SetDepthStencilSurface(const void*)
 {
-	return m_lpD3DDev->SetDepthStencilSurface(pNewZStencil);
+	return D3D_OK;
 }
 
-HRESULT CStateManager::CreateVertexShader(CONST DWORD* pFunction, LPDIRECT3DVERTEXSHADER9* ppShader)
+const void* CStateManager::CreateVertexShader(CONST DWORD*)
 {
-	return m_lpD3DDev->CreateVertexShader(pFunction, ppShader);
+	return reinterpret_cast<const void*>(gs_nextHandle++);
 }
 
-HRESULT CStateManager::CreateVertexDeclaration(CONST D3DVERTEXELEMENT9* pVertexElements, LPDIRECT3DVERTEXDECLARATION9* ppDecl)
+const void* CStateManager::CreateVertexDeclaration(CONST D3DVERTEXELEMENT9* pVertexElements)
 {
-	const HRESULT hr = m_lpD3DDev->CreateVertexDeclaration(pVertexElements, ppDecl);
+	const void* pkDecl = reinterpret_cast<const void*>(gs_nextHandle++);
 
-	// DX12 mirror: remember the input layout this declaration maps to.
-	if (SUCCEEDED(hr) && CGraphicBackendDX12::GetInstance())
+	if (CGraphicBackendDX12::GetInstance())
 	{
 		TInputLayoutDX12 kLayout;
 		if (CGraphicInputLayoutDX12::Build(pVertexElements, kLayout.akElements, 16, &kLayout.uElementCount))
 		{
 			kLayout.uLayoutID = m_uNextLayoutIDDX12++;
-			m_kDeclLayoutMapDX12[*ppDecl] = kLayout;
+			m_kDeclLayoutMapDX12[pkDecl] = kLayout;
 		}
 	}
-	return hr;
+	return pkDecl;
 }
 
-HRESULT CStateManager::CreatePixelShader(CONST DWORD* pFunction, LPDIRECT3DPIXELSHADER9* ppShader)
+const void* CStateManager::CreatePixelShader(CONST DWORD*)
 {
-	return m_lpD3DDev->CreatePixelShader(pFunction, ppShader);
+	return reinterpret_cast<const void*>(gs_nextHandle++);
 }
 
 void CStateManager::GetLight(DWORD index, D3DLIGHT9* pLight)
@@ -140,9 +131,8 @@ void CStateManager::GetLight(DWORD index, D3DLIGHT9* pLight)
 
 BOOL CStateManager::GetLightEnable(DWORD index)
 {
-	BOOL bEnable = FALSE;
-	m_lpD3DDev->GetLightEnable(index, &bEnable);
-	return bEnable;
+	assert(index<SLightData::LIGHT_NUM);
+	return m_kLightData.m_abLightEnable[index];
 }
 
 bool CStateManager::BeginScene()
@@ -159,77 +149,42 @@ bool CStateManager::BeginScene()
 	SetTransform(D3DTS_PROJECTION, &m4Proj);
 	SetTransform(D3DTS_VIEW, &m4View);
 
-	if (FAILED(m_lpD3DDev->BeginScene()))
-		return false;
 	return true;
 }
 
 void CStateManager::EndScene()
 {
-	m_lpD3DDev->EndScene();
 	m_bScene=false;
 }
 
-HRESULT CStateManager::Present(CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride)
+CStateManager::CStateManager()
 {
-	return m_lpD3DDev->PresentEx(pSourceRect, pDestRect, hDestWindowOverride, NULL, 0);
-}
-
-HRESULT CStateManager::GetBackBuffer(UINT iSwapChain, UINT iBackBuffer, D3DBACKBUFFER_TYPE eType, LPDIRECT3DSURFACE9* ppBackBuffer)
-{
-	return m_lpD3DDev->GetBackBuffer(iSwapChain, iBackBuffer, eType, ppBackBuffer);
-}
-
-CStateManager::CStateManager(LPDIRECT3DDEVICE9EX lpDevice) : m_lpD3DDev(NULL)
-{
-	m_bScene = false;
-	m_dwBestMinFilter = D3DTEXF_LINEAR;
-	m_dwBestMagFilter = D3DTEXF_LINEAR;
-	SetDevice(lpDevice);
+	Initialize();
 }
 
 CStateManager::~CStateManager()
 {
-	if (m_lpD3DDev)
-	{
-		m_lpD3DDev->Release();
-		m_lpD3DDev = NULL;
-	}
 }
 
-void CStateManager::SetDevice(LPDIRECT3DDEVICE9EX lpDevice)
+void CStateManager::Initialize()
 {
-	StateManager_Assert(lpDevice);
-	lpDevice->AddRef();
+	m_bScene = false;
+	m_bForce = false;
+	m_dwBestMinFilter = D3DTEXF_ANISOTROPIC;
+	m_dwBestMagFilter = D3DTEXF_ANISOTROPIC;
 
-	if (m_lpD3DDev)
-	{
-		m_lpD3DDev->Release();
-		m_lpD3DDev = NULL;
-	}
-
-	m_lpD3DDev = lpDevice;
-
-	D3DCAPS9 d3dCaps;
-	m_lpD3DDev->GetDeviceCaps(&d3dCaps);
-
-	if (d3dCaps.TextureFilterCaps & D3DPTFILTERCAPS_MAGFANISOTROPIC)
-		m_dwBestMagFilter = D3DTEXF_ANISOTROPIC;
-	else
-		m_dwBestMagFilter = D3DTEXF_LINEAR;
-
-	if (d3dCaps.TextureFilterCaps & D3DPTFILTERCAPS_MINFANISOTROPIC)
-		m_dwBestMinFilter = D3DTEXF_ANISOTROPIC;
-	else
-		m_dwBestMinFilter = D3DTEXF_LINEAR;
-
-	DWORD dwMax = d3dCaps.MaxAnisotropy;
-	dwMax = dwMax < 4 ? dwMax : 4;
-
-	for (int i = 0; i < 8; ++i)
-		m_lpD3DDev->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, dwMax);
+	m_kViewport.X = 0;
+	m_kViewport.Y = 0;
+	m_kViewport.Width = 0;
+	m_kViewport.Height = 0;
+	m_kViewport.MinZ = 0.0f;
+	m_kViewport.MaxZ = 1.0f;
+	m_SavedViewport = m_kViewport;
 
 	SetDefaultState();
+
+	for (int i = 0; i < 8; ++i)
+		SetSamplerState(i, D3DSAMP_MAXANISOTROPY, 4);
 }
 
 void CStateManager::SetBestFiltering(DWORD dwStage)
@@ -338,6 +293,8 @@ void CStateManager::SetDefaultState()
 	SetRenderState(D3DRS_ZENABLE, TRUE);
 	SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 	SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	SetRenderState(D3DRS_DEPTHBIAS, 0);
+	SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, 0);
 	SetRenderState(D3DRS_DITHERENABLE, TRUE);
 	SetRenderState(D3DRS_STENCILENABLE, FALSE);
 	SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
@@ -486,7 +443,7 @@ void CStateManager::SetDefaultState()
 	SetTexture(6, NULL);
 	SetTexture(7, NULL);
 
-	SetPixelShader(0);
+	SetPixelShader(NULL);
 	SetFVF(D3DFVF_XYZ);
 
 	D3DXVECTOR4 av4Null[STATEMANAGER_MAX_VCONSTANTS];
@@ -510,10 +467,9 @@ void CStateManager::SetDefaultState()
 			m_bTextureStageStateSavingFlag[j][i] = FALSE;
 			m_bSamplerStateSavingFlag[j][i] = FALSE;
 		}
-#endif _DEBUG
+#endif
 }
 
-// Material
 void CStateManager::SaveMaterial()
 {
 	m_CopyState.m_D3DMaterial = m_CurrentState.m_D3DMaterial;
@@ -521,7 +477,6 @@ void CStateManager::SaveMaterial()
 
 void CStateManager::SaveMaterial(const D3DMATERIAL9 * pMaterial)
 {
-	// Check that we have set this up before, if not, the default is this.
 	m_CopyState.m_D3DMaterial = m_CurrentState.m_D3DMaterial;
 	SetMaterial(pMaterial);
 }
@@ -533,17 +488,14 @@ void CStateManager::RestoreMaterial()
 
 void CStateManager::SetMaterial(const D3DMATERIAL9 * pMaterial)
 {
-	m_lpD3DDev->SetMaterial(pMaterial);
 	m_CurrentState.m_D3DMaterial = *pMaterial;
 }
 
 void CStateManager::GetMaterial(D3DMATERIAL9 * pMaterial)
 {
-	// Set the renderstate and remember it.
 	*pMaterial = m_CurrentState.m_D3DMaterial;
 }
 
-// Renderstates
 DWORD CStateManager::GetRenderState(D3DRENDERSTATETYPE Type)
 {
 	return m_CurrentState.m_RenderStates[Type];
@@ -558,9 +510,8 @@ void CStateManager::SaveRenderState(D3DRENDERSTATETYPE Type, DWORD dwValue)
 		StateManager_Assert(!" This render state is already saved!");
 	}
 	m_bRenderStateSavingFlag[Type] = TRUE;
-#endif _DEBUG
+#endif
 
-	// Check that we have set this up before, if not, the default is this.
 	m_CopyState.m_RenderStates[Type] = m_CurrentState.m_RenderStates[Type];
 	SetRenderState(Type, dwValue);
 }
@@ -574,14 +525,13 @@ void CStateManager::RestoreRenderState(D3DRENDERSTATETYPE Type)
 		StateManager_Assert(!" This render state was not saved!");
 	}
 	m_bRenderStateSavingFlag[Type] = FALSE;
-#endif _DEBUG
+#endif
 
 	SetRenderState(Type, m_CopyState.m_RenderStates[Type]);
 }
 
 void CStateManager::SetRenderState(D3DRENDERSTATETYPE Type, DWORD Value)
 {
-	// The shader pipeline reads TEXTUREFACTOR from pixel constant c0.
 	if (D3DRS_TEXTUREFACTOR == Type)
 	{
 		const float c_fInv255 = 1.0f / 255.0f;
@@ -595,7 +545,6 @@ void CStateManager::SetRenderState(D3DRENDERSTATETYPE Type, DWORD Value)
 		SetPixelShaderConstant(0, afColor, 1);
 	}
 
-	// The shader pipeline reads FOGCOLOR from pixel constant c1.
 	if (D3DRS_FOGCOLOR == Type)
 	{
 		const float c_fInv255 = 1.0f / 255.0f;
@@ -609,18 +558,22 @@ void CStateManager::SetRenderState(D3DRENDERSTATETYPE Type, DWORD Value)
 		SetPixelShaderConstant(1, afColor, 1);
 	}
 
-	// DX12 alpha test is a clip() shader variant reading the ref from c2;
-	// DX9 never sees this write (several ps_2_0 programs bake defs at c2).
-	if (D3DRS_ALPHAREF == Type && CGraphicBackendDX12::GetInstance())
+	if ((D3DRS_ALPHAREF == Type || D3DRS_ALPHAFUNC == Type) && CGraphicBackendDX12::GetInstance())
 	{
-		const float afAlphaRef[4] = { (Value & 0xff) / 255.0f, 0.0f, 0.0f, 0.0f };
+		const DWORD dwReference = (D3DRS_ALPHAREF == Type) ? Value : m_CurrentState.m_RenderStates[D3DRS_ALPHAREF];
+		const DWORD dwFunction = (D3DRS_ALPHAFUNC == Type) ? Value : m_CurrentState.m_RenderStates[D3DRS_ALPHAFUNC];
+		// The shader clip() implements GREATEREQUAL; strict compares bias the
+		// reference upward so pixels equal to it are discarded as well.
+		float fReference = (dwReference & 0xff) / 255.0f;
+		if (D3DCMP_GREATER == dwFunction || D3DCMP_NOTEQUAL == dwFunction)
+			fReference += 0.5f / 255.0f;
+		const float afAlphaRef[4] = { fReference, 0.0f, 0.0f, 0.0f };
 		SetPixelShaderConstant(2, afAlphaRef, 1);
 	}
 
 	if (m_CurrentState.m_RenderStates[Type] == Value)
 		return;
 
-	m_lpD3DDev->SetRenderState(Type, Value);
 	m_CurrentState.m_RenderStates[Type] = Value;
 }
 
@@ -629,10 +582,8 @@ void CStateManager::GetRenderState(D3DRENDERSTATETYPE Type, DWORD * pdwValue)
 	*pdwValue = m_CurrentState.m_RenderStates[Type];
 }
 
-// Textures
-void CStateManager::SaveTexture(DWORD dwStage, LPDIRECT3DBASETEXTURE9 pTexture)
+void CStateManager::SaveTexture(DWORD dwStage, const void* pTexture)
 {
-	// Check that we have set this up before, if not, the default is this.
 	m_CopyState.m_Textures[dwStage] = m_CurrentState.m_Textures[dwStage];
 	SetTexture(dwStage, pTexture);
 }
@@ -642,48 +593,23 @@ void CStateManager::RestoreTexture(DWORD dwStage)
 	SetTexture(dwStage, m_CopyState.m_Textures[dwStage]);
 }
 
-void CStateManager::SetTexture(DWORD dwStage, LPDIRECT3DBASETEXTURE9 pTexture)
+void CStateManager::SetTexture(DWORD dwStage, const void* pTexture)
 {
-	if (pTexture == m_CurrentState.m_Textures[dwStage])
-		return;
-
-	m_lpD3DDev->SetTexture(dwStage, pTexture);
 	m_CurrentState.m_Textures[dwStage] = pTexture;
-
-	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
-	{
-		std::unordered_map<const void*, SIZE_T>::const_iterator it =
-			pTexture ? m_kTextureSRVMapDX12.find(pTexture) : m_kTextureSRVMapDX12.end();
-		if (it != m_kTextureSRVMapDX12.end())
-		{
-			D3D12_CPU_DESCRIPTOR_HANDLE kHandle;
-			kHandle.ptr = it->second;
-			pkBackend->SetTextureSRV(dwStage, kHandle);
-		}
-		else
-		{
-			pkBackend->ClearTextureSRV(dwStage);
-		}
-	}
 }
 
-void CStateManager::GetTexture(DWORD dwStage, LPDIRECT3DBASETEXTURE9 * ppTexture)
+void CStateManager::GetTexture(DWORD dwStage, const void** ppTexture)
 {
 	*ppTexture = m_CurrentState.m_Textures[dwStage];
 }
 
-// Texture stage states
 void CStateManager::SaveTextureStageState(DWORD dwStage,D3DTEXTURESTAGESTATETYPE Type, DWORD dwValue)
 {
-	// Check that we have set this up before, if not, the default is this.
 #ifdef _DEBUG
 	if (m_bTextureStageStateSavingFlag[dwStage][Type])
-	{
 		Tracef(" CStateManager::SaveTextureStageState - This texture stage state is already saved [%d, %d]\n", dwStage, Type);
-		StateManager_Assert(!" This texture stage state is already saved!");
-	}
 	m_bTextureStageStateSavingFlag[dwStage][Type] = TRUE;
-#endif _DEBUG
+#endif
 	m_CopyState.m_TextureStates[dwStage][Type] = m_CurrentState.m_TextureStates[dwStage][Type];
 	SetTextureStageState(dwStage, Type, dwValue);
 }
@@ -692,12 +618,9 @@ void CStateManager::RestoreTextureStageState(DWORD dwStage, D3DTEXTURESTAGESTATE
 {
 #ifdef _DEBUG
 	if (!m_bTextureStageStateSavingFlag[dwStage][Type])
-	{
 		Tracef(" CStateManager::RestoreTextureStageState - This texture stage state was not saved [%d, %d]\n", dwStage, Type);
-		StateManager_Assert(!" This texture stage state was not saved!");
-	}
 	m_bTextureStageStateSavingFlag[dwStage][Type] = FALSE;
-#endif _DEBUG
+#endif
 	SetTextureStageState(dwStage, Type, m_CopyState.m_TextureStates[dwStage][Type]);
 }
 
@@ -706,7 +629,6 @@ void CStateManager::SetTextureStageState(DWORD dwStage, D3DTEXTURESTAGESTATETYPE
 	if (m_CurrentState.m_TextureStates[dwStage][Type] == dwValue)
 		return;
 
-	m_lpD3DDev->SetTextureStageState(dwStage, Type, dwValue);
 	m_CurrentState.m_TextureStates[dwStage][Type] = dwValue;
 }
 
@@ -715,17 +637,13 @@ void CStateManager::GetTextureStageState(DWORD dwStage, D3DTEXTURESTAGESTATETYPE
 	*pdwValue = m_CurrentState.m_TextureStates[dwStage][Type];
 }
 
-// Sampler states
 void CStateManager::SaveSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE Type, DWORD dwValue)
 {
 #ifdef _DEBUG
 	if (m_bSamplerStateSavingFlag[dwStage][Type])
-	{
-		Tracef(" CStateManager::SaveTextureStageState - This texture stage state is already saved [%d, %d]\n", dwStage, Type);
-		StateManager_Assert(!" This texture stage state is already saved!");
-	}
+		Tracef(" CStateManager::SaveSamplerState - This sampler state is already saved [%d, %d]\n", dwStage, Type);
 	m_bSamplerStateSavingFlag[dwStage][Type] = TRUE;
-#endif _DEBUG
+#endif
 	m_CopyState.m_SamplerStates[dwStage][Type] = m_CurrentState.m_SamplerStates[dwStage][Type];
 	SetSamplerState(dwStage, Type, dwValue);
 }
@@ -733,19 +651,15 @@ void CStateManager::RestoreSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE Type)
 {
 #ifdef _DEBUG
 	if (!m_bSamplerStateSavingFlag[dwStage][Type])
-	{
-		Tracef(" CStateManager::RestoreTextureStageState - This texture stage state was not saved [%d, %d]\n", dwStage, Type);
-		StateManager_Assert(!" This texture stage state was not saved!");
-	}
+		Tracef(" CStateManager::RestoreSamplerState - This sampler state was not saved [%d, %d]\n", dwStage, Type);
 	m_bSamplerStateSavingFlag[dwStage][Type] = FALSE;
-#endif _DEBUG
+#endif
 	SetSamplerState(dwStage, Type, m_CopyState.m_SamplerStates[dwStage][Type]);
 }
 void CStateManager::SetSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE Type, DWORD dwValue)
 {
 	if (m_CurrentState.m_SamplerStates[dwStage][Type] == dwValue)
 		return;
-	m_lpD3DDev->SetSamplerState(dwStage, Type, dwValue);
 	m_CurrentState.m_SamplerStates[dwStage][Type] = dwValue;
 }
 void CStateManager::GetSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE Type, DWORD * pdwValue)
@@ -753,11 +667,10 @@ void CStateManager::GetSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE Type, DWO
 	*pdwValue = m_CurrentState.m_SamplerStates[dwStage][Type];
 }
 
-// Vertex Shader
-void CStateManager::SaveVertexShader(LPDIRECT3DVERTEXSHADER9 dwShader)
+void CStateManager::SaveVertexShader(const void* pShader)
 {
 	m_CopyState.m_dwVertexShader = m_CurrentState.m_dwVertexShader;
-	SetVertexShader(dwShader);
+	SetVertexShader(pShader);
 }
 
 void CStateManager::RestoreVertexShader()
@@ -765,59 +678,53 @@ void CStateManager::RestoreVertexShader()
 	SetVertexShader(m_CopyState.m_dwVertexShader);
 }
 
-void CStateManager::SetVertexShader(LPDIRECT3DVERTEXSHADER9 dwShader)
+void CStateManager::SetVertexShader(const void* pShader)
 {
-	if (m_CurrentState.m_dwVertexShader == dwShader)
+	if (m_CurrentState.m_dwVertexShader == pShader)
 		return;
 
-	m_lpD3DDev->SetVertexShader(dwShader);
-	m_CurrentState.m_dwVertexShader = dwShader;
+	m_CurrentState.m_dwVertexShader = pShader;
 
 	if (CGraphicBackendDX12::GetInstance())
 	{
-		std::unordered_map<const void*, UINT>::const_iterator it = m_kShaderProgramMapDX12.find(dwShader);
+		std::unordered_map<const void*, UINT>::const_iterator it = m_kShaderProgramMapDX12.find(pShader);
 		m_uVertexProgramDX12 = (it != m_kShaderProgramMapDX12.end()) ? it->second : 0xFFFFFFFF;
 	}
 }
 
-void CStateManager::GetVertexShader(LPDIRECT3DVERTEXSHADER9 * pdwShader)
+void CStateManager::GetVertexShader(const void** ppShader)
 {
-	*pdwShader = m_CurrentState.m_dwVertexShader;
+	*ppShader = m_CurrentState.m_dwVertexShader;
 }
 
-// Vertex Processing
 void CStateManager::SaveVertexProcessing(BOOL IsON)
 {
 	m_CopyState.m_bVertexProcessing = m_CurrentState.m_bVertexProcessing;
-	m_lpD3DDev->SetSoftwareVertexProcessing(IsON);
 	m_CurrentState.m_bVertexProcessing = IsON;
 }
 void CStateManager::RestoreVertexProcessing()
 {
-	m_lpD3DDev->SetSoftwareVertexProcessing(m_CopyState.m_bVertexProcessing);
+	m_CurrentState.m_bVertexProcessing = m_CopyState.m_bVertexProcessing;
 }
 
-// Vertex Declaration
-void CStateManager::SaveVertexDeclaration(LPDIRECT3DVERTEXDECLARATION9 dwShader)
+void CStateManager::SaveVertexDeclaration(const void* pDeclaration)
 {
 	m_CopyState.m_dwVertexDeclaration = m_CurrentState.m_dwVertexDeclaration;
-	SetVertexDeclaration(dwShader);
+	SetVertexDeclaration(pDeclaration);
 }
 void CStateManager::RestoreVertexDeclaration()
 {
 	SetVertexDeclaration(m_CopyState.m_dwVertexDeclaration);
 }
-void CStateManager::SetVertexDeclaration(LPDIRECT3DVERTEXDECLARATION9 dwShader)
+void CStateManager::SetVertexDeclaration(const void* pDeclaration)
 {
-	m_lpD3DDev->SetVertexDeclaration(dwShader);
-	m_CurrentState.m_dwVertexDeclaration = dwShader;
+	m_CurrentState.m_dwVertexDeclaration = pDeclaration;
 }
-void CStateManager::GetVertexDeclaration(LPDIRECT3DVERTEXDECLARATION9 * pdwShader)
+void CStateManager::GetVertexDeclaration(const void** ppDeclaration)
 {
-	*pdwShader = m_CurrentState.m_dwVertexDeclaration;
+	*ppDeclaration = m_CurrentState.m_dwVertexDeclaration;
 }
 
-// FVF
 void CStateManager::SaveFVF(DWORD dwFVF)
 {
 	m_CopyState.m_dwFVF = m_CurrentState.m_dwFVF;
@@ -829,7 +736,6 @@ void CStateManager::RestoreFVF()
 }
 void CStateManager::SetFVF(DWORD dwFVF)
 {
-	m_lpD3DDev->SetFVF(dwFVF);
 	m_CurrentState.m_dwFVF = dwFVF;
 }
 void CStateManager::GetFVF(DWORD * pdwFVF)
@@ -837,11 +743,10 @@ void CStateManager::GetFVF(DWORD * pdwFVF)
 	*pdwFVF = m_CurrentState.m_dwFVF;
 }
 
-// Pixel Shader
-void CStateManager::SavePixelShader(LPDIRECT3DPIXELSHADER9 dwShader)
+void CStateManager::SavePixelShader(const void* pShader)
 {
 	m_CopyState.m_dwPixelShader = m_CurrentState.m_dwPixelShader;
-	SetPixelShader(dwShader);
+	SetPixelShader(pShader);
 }
 
 void CStateManager::RestorePixelShader()
@@ -849,28 +754,25 @@ void CStateManager::RestorePixelShader()
 	SetPixelShader(m_CopyState.m_dwPixelShader);
 }
 
-void CStateManager::SetPixelShader(LPDIRECT3DPIXELSHADER9 dwShader)
+void CStateManager::SetPixelShader(const void* pShader)
 {
-	if (m_CurrentState.m_dwPixelShader == dwShader)
+	if (m_CurrentState.m_dwPixelShader == pShader)
 		return;
 
-	m_lpD3DDev->SetPixelShader(dwShader);
-	m_CurrentState.m_dwPixelShader = dwShader;
+	m_CurrentState.m_dwPixelShader = pShader;
 
 	if (CGraphicBackendDX12::GetInstance())
 	{
-		std::unordered_map<const void*, UINT>::const_iterator it = m_kShaderProgramMapDX12.find(dwShader);
+		std::unordered_map<const void*, UINT>::const_iterator it = m_kShaderProgramMapDX12.find(pShader);
 		m_uPixelProgramDX12 = (it != m_kShaderProgramMapDX12.end()) ? it->second : 0xFFFFFFFF;
 	}
 }
 
-void CStateManager::GetPixelShader(LPDIRECT3DPIXELSHADER9* pdwShader)
+void CStateManager::GetPixelShader(const void** ppShader)
 {
-	*pdwShader = m_CurrentState.m_dwPixelShader;
+	*ppShader = m_CurrentState.m_dwPixelShader;
 }
 
-// *** These states are cached, but not protected from multiple sends of the same value.
-// Transform
 void CStateManager::SaveTransform(D3DTRANSFORMSTATETYPE Type, const D3DMATRIX* pMatrix)
 {
 #ifdef _DEBUG
@@ -880,7 +782,7 @@ void CStateManager::SaveTransform(D3DTRANSFORMSTATETYPE Type, const D3DMATRIX* p
 		StateManager_Assert(!" This trasform is already saved!");
 	}
 	m_bTransformSavingFlag[Type] = TRUE;
-#endif _DEBUG
+#endif
 
 	m_CopyState.m_Matrices[Type] = m_CurrentState.m_Matrices[Type];
 	SetTransform(Type, (D3DXMATRIX *)pMatrix);
@@ -895,23 +797,13 @@ void CStateManager::RestoreTransform(D3DTRANSFORMSTATETYPE Type)
 		StateManager_Assert(!" This render state was not saved!");
 	}
 	m_bTransformSavingFlag[Type] = FALSE;
-#endif _DEBUG
+#endif
 
 	SetTransform(Type, &m_CopyState.m_Matrices[Type]);
 }
 
-// Don't cache-check the transform.  To much to do
 void CStateManager::SetTransform(D3DTRANSFORMSTATETYPE Type, const D3DMATRIX* pMatrix)
 {
-	if (m_bScene)
-	{
-		m_lpD3DDev->SetTransform(Type, pMatrix);
-	}
-	else
-	{
-		assert(D3DTS_VIEW==Type || D3DTS_PROJECTION==Type || D3DTS_WORLD==Type);
-	}
-
 	m_CurrentState.m_Matrices[Type] = *pMatrix;
 }
 
@@ -920,7 +812,6 @@ void CStateManager::GetTransform(D3DTRANSFORMSTATETYPE Type, D3DMATRIX * pMatrix
 	*pMatrix = m_CurrentState.m_Matrices[Type];
 }
 
-// SetVertexShaderConstant
 void CStateManager::SaveVertexShaderConstant(DWORD dwRegister,CONST void* pConstantData,DWORD dwConstantCount)
 {
 	DWORD i;
@@ -941,9 +832,6 @@ void CStateManager::RestoreVertexShaderConstant(DWORD dwRegister, DWORD dwConsta
 
 void CStateManager::SetVertexShaderConstant(DWORD dwRegister,CONST void* pConstantData,DWORD dwConstantCount)
 {
-	m_lpD3DDev->SetVertexShaderConstantF(dwRegister, (const float*)pConstantData, dwConstantCount);
-
-	// Set the renderstate and remember it.
 	for (DWORD i = 0; i < dwConstantCount; i++)
 	{
 		StateManager_Assert((dwRegister + i) < STATEMANAGER_MAX_VCONSTANTS);
@@ -954,14 +842,13 @@ void CStateManager::SetVertexShaderConstant(DWORD dwRegister,CONST void* pConsta
 		pkBackend->SetVSConstants(dwRegister, (const float*)pConstantData, dwConstantCount);
 }
 
-// SetPixelShaderConstant
 void CStateManager::SavePixelShaderConstant(DWORD dwRegister,CONST void* pConstantData,DWORD dwConstantCount)
 {
 	DWORD i;
 
 	for (i = 0; i < dwConstantCount; i++)
 	{
-		StateManager_Assert((dwRegister + i) < STATEMANAGER_MAX_VCONSTANTS);
+		StateManager_Assert((dwRegister + i) < STATEMANAGER_MAX_PCONSTANTS);
 		m_CopyState.m_PixelShaderConstants[dwRegister + i] = *(((D3DXVECTOR4*)pConstantData) + i);
 	}
 
@@ -975,12 +862,9 @@ void CStateManager::RestorePixelShaderConstant(DWORD dwRegister, DWORD dwConstan
 
 void CStateManager::SetPixelShaderConstant(DWORD dwRegister,CONST void* pConstantData,DWORD dwConstantCount)
 {
-	m_lpD3DDev->SetPixelShaderConstantF(dwRegister, *(D3DXVECTOR4*)pConstantData, dwConstantCount);
-
-	// Set the renderstate and remember it.
 	for (DWORD i = 0; i < dwConstantCount; i++)
 	{
-		StateManager_Assert((dwRegister + i) < STATEMANAGER_MAX_VCONSTANTS);
+		StateManager_Assert((dwRegister + i) < STATEMANAGER_MAX_PCONSTANTS);
 		m_CurrentState.m_PixelShaderConstants[dwRegister + i] = *(((D3DXVECTOR4*)pConstantData) + i);
 	}
 
@@ -988,9 +872,8 @@ void CStateManager::SetPixelShaderConstant(DWORD dwRegister,CONST void* pConstan
 		pkBackend->SetPSConstants(dwRegister, (const float*)pConstantData, dwConstantCount);
 }
 
-void CStateManager::SaveStreamSource(UINT StreamNumber, LPDIRECT3DVERTEXBUFFER9 pStreamData,UINT Stride)
+void CStateManager::SaveStreamSource(UINT StreamNumber, const void* pStreamData,UINT Stride)
 {
-	// Check that we have set this up before, if not, the default is this.
 	m_CopyState.m_StreamData[StreamNumber] = m_CurrentState.m_StreamData[StreamNumber];
 	SetStreamSource(StreamNumber, pStreamData, Stride);
 }
@@ -1002,23 +885,23 @@ void CStateManager::RestoreStreamSource(UINT StreamNumber)
 					m_CopyState.m_StreamData[StreamNumber].m_Stride);
 }
 
-void CStateManager::SetStreamSource(UINT StreamNumber, LPDIRECT3DVERTEXBUFFER9 pStreamData, UINT Stride)
+void CStateManager::SetStreamSource(UINT StreamNumber, const void* pStreamData, UINT Stride)
 {
 	CStreamData kStreamData(pStreamData, Stride);
 	if (m_CurrentState.m_StreamData[StreamNumber] == kStreamData)
 		return;
 
-	m_lpD3DDev->SetStreamSource(StreamNumber, pStreamData, 0, Stride);
 	m_CurrentState.m_StreamData[StreamNumber] = kStreamData;
 
 	if (0 == StreamNumber)
 	{
 		m_pvStream0DX12 = pStreamData;
 		m_uStream0StrideDX12 = Stride;
+		m_bTransientStream0 = false;
 	}
 }
 
-void CStateManager::SaveIndices(LPDIRECT3DINDEXBUFFER9 pIndexData, UINT BaseVertexIndex)
+void CStateManager::SaveIndices(const void* pIndexData, UINT BaseVertexIndex)
 {
 	m_CopyState.m_IndexData = m_CurrentState.m_IndexData;
 	SetIndices(pIndexData, BaseVertexIndex);
@@ -1029,14 +912,13 @@ void CStateManager::RestoreIndices()
 	SetIndices(m_CopyState.m_IndexData.m_lpIndexData, m_CopyState.m_IndexData.m_BaseVertexIndex);
 }
 
-void CStateManager::SetIndices(LPDIRECT3DINDEXBUFFER9 pIndexData, UINT BaseVertexIndex)
+void CStateManager::SetIndices(const void* pIndexData, UINT BaseVertexIndex)
 {
 	CIndexData kIndexData(pIndexData, BaseVertexIndex);
 
 	if (m_CurrentState.m_IndexData == kIndexData)
 		return;
-	
-	m_lpD3DDev->SetIndices(pIndexData);
+
 	m_CurrentState.m_IndexData = kIndexData;
 
 	m_pvIndicesDX12 = pIndexData;
@@ -1057,15 +939,35 @@ HRESULT CStateManager::DrawPrimitive(D3DPRIMITIVETYPE PrimitiveType, UINT StartV
 			default: break;
 		}
 		if (uVertexCount)
-			__MirrorDrawBuffersDX12(PrimitiveType, StartVertex, uVertexCount, 0, 0, 0);
+		{
+			const BYTE* pbyVertices = NULL;
+			UINT uStreamVertexCount = 0;
+			UINT uStride = 0;
+			if (m_bTransientStream0)
+			{
+				if (__GetStream0Data(&pbyVertices, &uStreamVertexCount, &uStride) &&
+					StartVertex + uVertexCount <= uStreamVertexCount)
+					__MirrorDrawDX12(PrimitiveType,
+									 pbyVertices + static_cast<size_t>(StartVertex) * uStride,
+									 uVertexCount, uStride, NULL, 0);
+			}
+			else if (__GetStream0Data(&pbyVertices, &uStreamVertexCount, &uStride))
+			{
+				if (!__MirrorDrawRegisteredDX12(PrimitiveType, StartVertex, uVertexCount, 0, 0, 0))
+					__MirrorDrawBuffersDX12(PrimitiveType, StartVertex, uVertexCount, 0, 0, 0);
+			}
+			else
+				__MirrorDrawBuffersDX12(PrimitiveType, StartVertex, uVertexCount, 0, 0, 0);
+		}
 	}
 
-	return (m_lpD3DDev->DrawPrimitive(PrimitiveType, StartVertex, PrimitiveCount));
+	return D3D_OK;
 }
 
 HRESULT CStateManager::DrawPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, UINT PrimitiveCount, const void* pVertexStreamZeroData, UINT VertexStreamZeroStride)
 {
 	m_CurrentState.m_StreamData[0] = NULL;
+	m_bTransientStream0 = false;
 
 	if (CGraphicBackendDX12::GetInstance())
 	{
@@ -1083,7 +985,7 @@ HRESULT CStateManager::DrawPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, UINT Prim
 			__MirrorDrawDX12(PrimitiveType, pVertexStreamZeroData, uVertexCount, VertexStreamZeroStride, NULL, 0);
 	}
 
-	return (m_lpD3DDev->DrawPrimitiveUP(PrimitiveType, PrimitiveCount, pVertexStreamZeroData, VertexStreamZeroStride));
+	return D3D_OK;
 }
 
 HRESULT CStateManager::DrawIndexedPrimitive(D3DPRIMITIVETYPE PrimitiveType, UINT minIndex, UINT NumVertices, UINT startIndex, UINT primCount)
@@ -1099,16 +1001,52 @@ HRESULT CStateManager::DrawIndexedPrimitive(D3DPRIMITIVETYPE PrimitiveType, UINT
 			default: break;
 		}
 		if (uIndexCount)
-			__MirrorDrawBuffersDX12(PrimitiveType, 0, 0, startIndex, uIndexCount, static_cast<INT>(minIndex));
+		{
+			const BYTE* pbyVertices = NULL;
+			UINT uStreamVertexCount = 0;
+			UINT uStride = 0;
+			if (m_bTransientStream0)
+			{
+				if (__GetStream0Data(&pbyVertices, &uStreamVertexCount, &uStride))
+				{
+					std::unordered_map<const void*, TIndexData>::const_iterator itIndices =
+						m_pvIndicesDX12 ? m_kIndexDataMap.find(m_pvIndicesDX12) : m_kIndexDataMap.end();
+					if (itIndices != m_kIndexDataMap.end() &&
+						startIndex + uIndexCount <= itIndices->second.kIndices.size())
+					{
+						const WORD* awSource = &itIndices->second.kIndices[startIndex];
+						if (minIndex)
+						{
+							std::vector<WORD> kRebased(awSource, awSource + uIndexCount);
+							for (UINT u = 0; u != uIndexCount; ++u)
+								kRebased[u] = static_cast<WORD>(kRebased[u] + minIndex);
+							__MirrorDrawDX12(PrimitiveType, pbyVertices, uStreamVertexCount,
+											 uStride, &kRebased[0], uIndexCount);
+						}
+						else
+							__MirrorDrawDX12(PrimitiveType, pbyVertices, uStreamVertexCount,
+											 uStride, awSource, uIndexCount);
+					}
+				}
+			}
+			else if (__GetStream0Data(&pbyVertices, &uStreamVertexCount, &uStride))
+			{
+				if (!__MirrorDrawRegisteredDX12(PrimitiveType, 0, 0, startIndex, uIndexCount, static_cast<INT>(minIndex)))
+					__MirrorDrawBuffersDX12(PrimitiveType, 0, 0, startIndex, uIndexCount, static_cast<INT>(minIndex));
+			}
+			else
+				__MirrorDrawBuffersDX12(PrimitiveType, 0, 0, startIndex, uIndexCount, static_cast<INT>(minIndex));
+		}
 	}
 
-	return (m_lpD3DDev->DrawIndexedPrimitive(PrimitiveType, minIndex, 0, NumVertices, startIndex, primCount));
+	return D3D_OK;
 }
 
 HRESULT CStateManager::DrawIndexedPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, UINT MinVertexIndex, UINT NumVertexIndices, UINT PrimitiveCount, CONST void * pIndexData, D3DFORMAT IndexDataFormat, CONST void * pVertexStreamZeroData, UINT VertexStreamZeroStride)
 {
 	m_CurrentState.m_IndexData = NULL;
 	m_CurrentState.m_StreamData[0] = NULL;
+	m_bTransientStream0 = false;
 
 	if (CGraphicBackendDX12::GetInstance() && D3DFMT_INDEX16 == IndexDataFormat)
 	{
@@ -1125,7 +1063,7 @@ HRESULT CStateManager::DrawIndexedPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, UI
 							 (const WORD*)pIndexData, uIndexCount);
 	}
 
-	return (m_lpD3DDev->DrawIndexedPrimitiveUP(PrimitiveType, MinVertexIndex, NumVertexIndices, PrimitiveCount, pIndexData, IndexDataFormat, pVertexStreamZeroData, VertexStreamZeroStride));
+	return D3D_OK;
 }
 
 void CStateManager::RegisterShaderProgramDX12(const void* pkShader, const char* c_szProgramName)
@@ -1163,7 +1101,6 @@ bool CStateManager::__MirrorPrepareDX12(D3DPRIMITIVETYPE ePrimitiveType, D3D_PRI
 	if (!pkBackend)
 		return false;
 
-	// Only pool programs draw on DX12; FFP and foreign shaders wait for the flip.
 	if (0xFFFFFFFF == m_uVertexProgramDX12 || 0xFFFFFFFF == m_uPixelProgramDX12)
 		return false;
 
@@ -1192,6 +1129,18 @@ bool CStateManager::__MirrorPrepareDX12(D3DPRIMITIVETYPE ePrimitiveType, D3D_PRI
 	{
 		kSamplerKey.Capture(*this, u);
 		pkBackend->SetSamplerKey(u, kSamplerKey);
+
+		const void* pkTexture = m_CurrentState.m_Textures[u];
+		std::unordered_map<const void*, SIZE_T>::const_iterator itTexture =
+			pkTexture ? m_kTextureSRVMapDX12.find(pkTexture) : m_kTextureSRVMapDX12.end();
+		if (itTexture != m_kTextureSRVMapDX12.end())
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE kSRVHandle;
+			kSRVHandle.ptr = itTexture->second;
+			pkBackend->SetTextureSRV(u, kSRVHandle);
+		}
+		else
+			pkBackend->ClearTextureSRV(u);
 	}
 
 	if (!pkBackend->SetProgram(m_uVertexProgramDX12, m_uPixelProgramDX12))
@@ -1251,6 +1200,145 @@ bool CStateManager::__MirrorDrawBuffersDX12(D3DPRIMITIVETYPE ePrimitiveType,
 
 	return CGraphicBackendDX12::GetInstance()->DrawBuffers(eTopology, kVertexView, uStartVertex, uVertexCount,
 															NULL, 0, 0, 0);
+}
+
+bool CStateManager::__MirrorDrawRegisteredDX12(D3DPRIMITIVETYPE ePrimitiveType,
+											   UINT uStartVertex, UINT uVertexCount,
+											   UINT uStartIndex, UINT uIndexCount, INT nBaseVertex)
+{
+	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (!pkBackend || !m_pvStream0DX12)
+		return false;
+
+	std::unordered_map<const void*, TVertexData>::iterator itVertexData = m_kVertexDataMap.find(m_pvStream0DX12);
+	if (itVertexData == m_kVertexDataMap.end() ||
+		!itVertexData->second.uStride || itVertexData->second.kBytes.empty())
+		return false;
+
+	TVertexData& rkVertexData = itVertexData->second;
+	// The stride bound with the stream wins over the registered one: several
+	// callers create buffers with an approximate FVF but draw with the packed
+	// stride of their real vertex struct.
+	const UINT uStride = m_uStream0StrideDX12 ? m_uStream0StrideDX12 : rkVertexData.uStride;
+	const UINT uTotalVertexCount = static_cast<UINT>(rkVertexData.kBytes.size() / uStride);
+	if (!uIndexCount && uStartVertex + uVertexCount > uTotalVertexCount)
+		return false;
+
+	const UINT64 uFrameOrdinal = pkBackend->GetFrameOrdinal();
+	if (rkVertexData.uFrameStamp != uFrameOrdinal)
+	{
+		if (!pkBackend->UploadVertices(&rkVertexData.kBytes[0], uStride, uTotalVertexCount,
+									   &rkVertexData.kRingView))
+			return false;
+		rkVertexData.uFrameStamp = uFrameOrdinal;
+	}
+	rkVertexData.kRingView.StrideInBytes = uStride;
+
+	D3D_PRIMITIVE_TOPOLOGY eTopology;
+
+	if (uIndexCount)
+	{
+		std::unordered_map<const void*, TIndexData>::iterator itIndexData =
+			m_pvIndicesDX12 ? m_kIndexDataMap.find(m_pvIndicesDX12) : m_kIndexDataMap.end();
+		if (itIndexData == m_kIndexDataMap.end() ||
+			uStartIndex + uIndexCount > itIndexData->second.kIndices.size())
+			return false;
+
+		TIndexData& rkIndexData = itIndexData->second;
+		if (rkIndexData.uFrameStamp != uFrameOrdinal)
+		{
+			if (!pkBackend->UploadIndices(&rkIndexData.kIndices[0],
+										  static_cast<UINT>(rkIndexData.kIndices.size()),
+										  &rkIndexData.kRingView))
+				return false;
+			rkIndexData.uFrameStamp = uFrameOrdinal;
+		}
+
+		if (!__MirrorPrepareDX12(ePrimitiveType, &eTopology))
+			return false;
+
+		return pkBackend->DrawBuffers(eTopology, rkVertexData.kRingView, 0, 0,
+									  &rkIndexData.kRingView, uStartIndex, uIndexCount, nBaseVertex);
+	}
+
+	if (!__MirrorPrepareDX12(ePrimitiveType, &eTopology))
+		return false;
+
+	return pkBackend->DrawBuffers(eTopology, rkVertexData.kRingView, uStartVertex, uVertexCount,
+								  NULL, 0, 0, 0);
+}
+
+void CStateManager::SetTransientStream(const void* pvVertices, UINT uVertexCount, UINT uStride)
+{
+	if (!CGraphicBackendDX12::GetInstance() || !pvVertices || !uVertexCount || !uStride)
+		return;
+
+	const BYTE* pbySource = static_cast<const BYTE*>(pvVertices);
+	m_kTransientVertexData.assign(pbySource, pbySource + static_cast<size_t>(uVertexCount) * uStride);
+	m_uTransientVertexCount = uVertexCount;
+	m_uTransientVertexStride = uStride;
+	m_bTransientStream0 = true;
+}
+
+void CStateManager::RegisterIndexData(const void* pkIndexBuffer, const WORD* awIndices, UINT uIndexCount)
+{
+	if (!pkIndexBuffer || !awIndices || !uIndexCount)
+		return;
+
+	TIndexData& rkEntry = m_kIndexDataMap[pkIndexBuffer];
+	rkEntry.kIndices.assign(awIndices, awIndices + uIndexCount);
+	rkEntry.uFrameStamp = 0;
+}
+
+void CStateManager::UnregisterIndexData(const void* pkIndexBuffer)
+{
+	if (pkIndexBuffer)
+		m_kIndexDataMap.erase(pkIndexBuffer);
+}
+
+void CStateManager::RegisterVertexData(const void* pkVertexBuffer, const void* pvVertices, UINT uByteCount, UINT uStride)
+{
+	if (!pkVertexBuffer || !pvVertices || !uByteCount || !uStride)
+		return;
+
+	const BYTE* pbySource = static_cast<const BYTE*>(pvVertices);
+	TVertexData& rkEntry = m_kVertexDataMap[pkVertexBuffer];
+	rkEntry.kBytes.assign(pbySource, pbySource + uByteCount);
+	rkEntry.uStride = uStride;
+	rkEntry.uFrameStamp = 0;
+}
+
+void CStateManager::UnregisterVertexData(const void* pkVertexBuffer)
+{
+	if (pkVertexBuffer)
+		m_kVertexDataMap.erase(pkVertexBuffer);
+}
+
+bool CStateManager::__GetStream0Data(const BYTE** ppbyVertices, UINT* puVertexCount, UINT* puStride) const
+{
+	if (m_bTransientStream0)
+	{
+		if (m_kTransientVertexData.empty())
+			return false;
+		*ppbyVertices = &m_kTransientVertexData[0];
+		*puVertexCount = m_uTransientVertexCount;
+		*puStride = m_uTransientVertexStride;
+		return true;
+	}
+
+	if (m_pvStream0DX12)
+	{
+		std::unordered_map<const void*, TVertexData>::const_iterator it = m_kVertexDataMap.find(m_pvStream0DX12);
+		if (it != m_kVertexDataMap.end() && it->second.uStride && !it->second.kBytes.empty())
+		{
+			*ppbyVertices = &it->second.kBytes[0];
+			*puVertexCount = static_cast<UINT>(it->second.kBytes.size() / it->second.uStride);
+			*puStride = it->second.uStride;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void CStateManager::RegisterBufferDX12(const void* pkBuffer, ID3D12Resource* pkResource, DXGI_FORMAT eIndexFormat)

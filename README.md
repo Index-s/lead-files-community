@@ -189,3 +189,75 @@ qemu-system-x86_64 -machine q35 -accel kvm -m 4096 -smp 4 \
 
 Open the Visual Studio solutions in `Lead-Client-Source/` and `Lead-Server-Source/`
 (x64). See the per-directory notes for details.
+
+### Prerequisites
+
+| Requirement | Version | Notes |
+|-------------|---------|-------|
+| Visual Studio | 2022 (v17) or newer | The projects use the **`v145`** platform toolset and **C++20** (`stdcpp20`). |
+| Windows 10/11 SDK | any `10.0.x` | Targeted as `WindowsTargetPlatformVersion = 10.0`, which resolves to the **newest SDK installed**. Minimum is `10.0.10240` (first SDK that ships `d3d12.h`); the newest is recommended. |
+| Workload | *Desktop development with C++* | This workload includes the MSVC toolset **and** the Windows SDK. |
+
+The renderer is **DirectX 12**. No DirectX SDK is vendored and none needs to be:
+`d3d12.h` / `dxgi1_4.h` / `d3dcompiler.h` all come from the Windows SDK above, and
+they are linked via `#pragma comment(lib, ...)` in the sources — there is nothing to
+add to the project's library paths. See [Renderer / DirectX 12](#renderer--directx-12).
+
+### Check whether the Windows SDK is already installed
+
+Any one of these confirms a usable SDK is present:
+
+- **Visual Studio Installer** → *Modify* → *Individual components* → search "Windows
+  SDK". A checked "Windows 11 SDK (10.0.x)" or "Windows 10 SDK (10.0.x)" entry means
+  it is installed.
+- **PowerShell** (lists every installed SDK version; if it prints a `10.0.*` folder
+  you are set):
+  ```powershell
+  Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\Include" -Directory |
+      Select-Object -ExpandProperty Name
+  ```
+- **Confirm the DX12 headers specifically** exist under a listed version:
+  ```powershell
+  Test-Path "${env:ProgramFiles(x86)}\Windows Kits\10\Include\<version>\um\d3d12.h"
+  ```
+
+### Install the Windows SDK (if missing)
+
+- **Recommended — via Visual Studio Installer:** run the installer, *Modify* your VS
+  2022 install, tick **Desktop development with C++** (bundles the latest Windows SDK),
+  and under *Individual components* optionally tick a specific "Windows 11/10 SDK
+  (10.0.x)". Install.
+- **Standalone (no full VS):** download the *Windows SDK* from
+  <https://developer.microsoft.com/windows/downloads/windows-sdk/> and run the
+  installer. Building still requires the MSVC toolset (VS Build Tools).
+- **Command line (winget):**
+  ```powershell
+  winget install --id Microsoft.WindowsSDK.10.0.26100
+  ```
+
+After installing, reopen the solution; because the projects target `10.0` (newest),
+they pick up the new SDK automatically with no `.vcxproj` edit.
+
+> **End users need none of this.** The Windows SDK is a *build-time* requirement only.
+> The DirectX 12 **runtime** (`d3d12.dll`, `dxgi.dll`, `d3dcompiler_47.dll`) is part of
+> every Windows 10/11 install, so players do not install anything extra to run the
+> DirectX 12 client.
+
+### Renderer / DirectX 12
+
+The client renders exclusively through **DirectX 12** (the legacy Direct3D 9Ex path
+was removed). Key facts for building and shipping:
+
+- **Feature Level 11_0.** The device is created at `D3D_FEATURE_LEVEL_11_0` — the
+  Direct3D *feature level* is the hardware-capability baseline a GPU must meet,
+  independent of the API version. `11_0` corresponds to Direct3D 11-class hardware
+  (roughly any GPU from ~2010 onward: NVIDIA Fermi/GT 400, AMD TeraScale 2/HD 5000,
+  Intel HD Graphics of the Ivy Bridge era and later). DX12 running at FL 11_0 means
+  "use the modern DirectX 12 API, but only require GPU features that DX11-era cards
+  already have" — the widest possible compatibility for a 2005-era MMO.
+- **No Agility SDK.** The backend uses only OS-inbox Direct3D 12 (classic barriers,
+  Shader Model 5 via FXC, one direct queue). The DirectX 12 Agility SDK is neither
+  required nor bundled; it would only be needed to adopt newer features (enhanced
+  barriers, Shader Model 6 via DXC, DRED 1.2+) on older Windows 10 builds.
+- **Shaders** are compiled at runtime with FXC (`D3DCompile`, `vs_5_0`/`ps_5_0`,
+  `D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY`); no offline shader build step.

@@ -2,6 +2,8 @@
 #include "../eterBase/Stl.h"
 #include "GrpPipelineCacheDX12.h"
 
+#include <d3d12sdklayers.h>
+
 CGraphicPipelineCacheDX12::CGraphicPipelineCacheDX12()
 	: m_pkDevice(NULL)
 	, m_pkRootSignature(NULL)
@@ -74,10 +76,31 @@ ID3D12PipelineState* CGraphicPipelineCacheDX12::GetPipelineState(const CGraphicP
 	kDesc.SampleDesc.Count = 1;
 
 	ID3D12PipelineState* pkPipelineState = NULL;
-	if (FAILED(m_pkDevice->CreateGraphicsPipelineState(&kDesc, IID_PPV_ARGS(&pkPipelineState))))
+	const HRESULT hrCreate = m_pkDevice->CreateGraphicsPipelineState(&kDesc, IID_PPV_ARGS(&pkPipelineState));
+	if (FAILED(hrCreate))
 	{
-		TraceError("CGraphicPipelineCacheDX12: PSO creation failed (hash %llu).",
-				   static_cast<unsigned long long>(rkKey.Hash()));
+		TraceError("CGraphicPipelineCacheDX12: PSO creation failed (hr=0x%08X hash %llu).",
+				   hrCreate, static_cast<unsigned long long>(rkKey.Hash()));
+
+		ID3D12InfoQueue* pkInfoQueue = NULL;
+		if (SUCCEEDED(m_pkDevice->QueryInterface(IID_PPV_ARGS(&pkInfoQueue))))
+		{
+			const UINT64 uCount = pkInfoQueue->GetNumStoredMessages();
+			const UINT64 uFirst = uCount > 8 ? uCount - 8 : 0;
+			for (UINT64 u = uFirst; u < uCount; ++u)
+			{
+				SIZE_T uLength = 0;
+				pkInfoQueue->GetMessage(u, NULL, &uLength);
+				if (!uLength)
+					continue;
+				std::vector<BYTE> kStorage(uLength);
+				D3D12_MESSAGE* pkMessage = reinterpret_cast<D3D12_MESSAGE*>(&kStorage[0]);
+				if (SUCCEEDED(pkInfoQueue->GetMessage(u, pkMessage, &uLength)))
+					TraceError("D3D12: %s", pkMessage->pDescription);
+			}
+			pkInfoQueue->ClearStoredMessages();
+			pkInfoQueue->Release();
+		}
 		return NULL;
 	}
 

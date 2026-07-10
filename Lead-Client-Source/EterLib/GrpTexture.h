@@ -15,7 +15,6 @@ class CGraphicTexture : public CGraphicBase
 		void SetTextureStage(int stage) const;
 		LPDIRECT3DTEXTURE9 GetD3DTexture() const;
 
-		// DX12 twin, built beside the D3D9 texture while the backend is live.
 		bool HasDX12Twin() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE GetSRVHandleDX12() const;
 
@@ -28,11 +27,17 @@ class CGraphicTexture : public CGraphicBase
 		void Destroy();
 		void Initialize();
 
-		// Builds the twin from source pixels (top mip only); no-op without a
-		// live backend, non-fatal on failure - the texture stays DX9-only.
 		bool CreateDX12Twin(UINT uWidth, UINT uHeight, D3DFORMAT eFormat,
 							const void* pvPixels, UINT uSrcRowPitch);
+		bool CreateTwinFromLevels(UINT uWidth, UINT uHeight, D3DFORMAT eFormat,
+								  const struct TTextureLevelData* akLevels, UINT uLevelCount);
 		void DestroyDX12Twin();
+
+	private:
+		bool __UploadTwinLevels(UINT uWidth, UINT uHeight, DXGI_FORMAT eFormatDX12,
+									const struct TTextureLevelData* akLevels, UINT uLevelCount);
+
+	protected:
 
 	protected:
 		bool m_bEmpty;

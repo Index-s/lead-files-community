@@ -26,13 +26,11 @@ class CGraphicImageTexture : public CGraphicTexture
 
 	protected:
 		void		Initialize();
-		
+
 		D3DFORMAT	m_d3dFmt;
 		DWORD		m_dwFilter;
 
-		// Canvas textures (fonts, UI) refresh their DX12 twin on Unlock.
-		void*		m_pvLockedPixelsDX12;
-		int			m_nLockedPitchDX12;
+		std::vector<BYTE> m_kCanvas;
 
 		std::string m_stFileName;
 };

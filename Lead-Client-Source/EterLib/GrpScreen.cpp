@@ -733,7 +733,10 @@ bool CScreen::Begin()
 	}
 
 	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
-		pkBackend->BeginFrame(ms_clearColor);
+	{
+		if (!pkBackend->BeginFrame(ms_clearColor))
+			return false;
+	}
 
 	return true;
 }
@@ -743,47 +746,12 @@ void CScreen::End()
 	STATEMANAGER.EndScene();
 }
 
-extern bool g_isBrowserMode;
-extern RECT g_rcBrowser;
-
-void CScreen::Show(HWND hWnd)
+void CScreen::Show(HWND)
 {
 	assert(IsDeviceCreated());
 
 	if (CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance())
-	{
 		pkBackend->EndFrame();
-		return;
-	}
-
-	if (g_isBrowserMode)
-	{
-		RECT rcTop = { 0, 0, (LONG)ms_d3dPresentParameter.BackBufferWidth, g_rcBrowser.top };
-		RECT rcBottom = { 0, g_rcBrowser.bottom, (LONG)ms_d3dPresentParameter.BackBufferWidth, (LONG)ms_d3dPresentParameter.BackBufferHeight };
-		RECT rcLeft = { 0, g_rcBrowser.top, g_rcBrowser.left, g_rcBrowser.bottom };
-		RECT rcRight = { g_rcBrowser.right, g_rcBrowser.top, (LONG)ms_d3dPresentParameter.BackBufferWidth, g_rcBrowser.bottom };
-		
-		STATEMANAGER.Present(&rcTop, &rcTop, hWnd);
-		STATEMANAGER.Present(&rcBottom, &rcBottom, hWnd);
-		STATEMANAGER.Present(&rcLeft, &rcLeft, hWnd);
-		STATEMANAGER.Present(&rcRight, &rcRight, hWnd);
-	}
-	else
-	{
-		STATEMANAGER.Present(NULL, NULL, hWnd);
-	}	
-}
-
-void CScreen::Show(RECT * pSrcRect)
-{
-	assert(IsDeviceCreated());
-	STATEMANAGER.Present(pSrcRect, NULL, NULL);
-}
-
-void CScreen::Show(RECT * pSrcRect, HWND hWnd)
-{
-	assert(IsDeviceCreated());
-	STATEMANAGER.Present(pSrcRect, NULL, hWnd);
 }
 
 void CScreen::ProjectPosition(float x, float y, float z, float * pfX, float * pfY)

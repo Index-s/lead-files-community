@@ -1,6 +1,6 @@
 #pragma once
 
-// CPU shadow of the D3D9 shader constant registers (VS c0-c31, PS c0-c7).
+// CPU shadow of the D3D9 shader constant registers (VS c0-c95, PS c0-c7).
 // Set* mirrors SetVertexShaderConstantF semantics; Flush* snapshots the block
 // into ring memory and returns the GPU address for the root CBV binding.
 // Ring memory is per-frame, so OnFrameBegin re-dirties both blocks.
@@ -14,7 +14,7 @@ class CGraphicConstantShadowDX12
 	public:
 		enum
 		{
-			VS_REGISTER_COUNT = 32,
+			VS_REGISTER_COUNT = 96,
 			PS_REGISTER_COUNT = 8,
 		};
 

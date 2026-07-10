@@ -164,7 +164,7 @@ void CMapOutdoor::DrawWater(long patchnum)
 		return;
 	
 	STATEMANAGER.SetStreamSource(0, pkVB->GetD3DVertexBuffer(), sizeof(SWaterVertex));
-	LPDIRECT3DBASETEXTURE9 pkTexture = NULL;
+	const void* pkTexture = NULL;
 	STATEMANAGER.GetTexture(0, &pkTexture);
 	if (CGraphicBase::BeginWaterShader(NULL != pkTexture))
 	{

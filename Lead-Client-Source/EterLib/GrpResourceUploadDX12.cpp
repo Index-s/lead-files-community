@@ -130,8 +130,14 @@ ID3D12Resource* CGraphicResourceUploaderDX12::CreateStaticBuffer(ID3D12CommandQu
 	memcpy(pvMapped, pvData, static_cast<size_t>(uByteSize));
 	pkStaging->Unmap(0, NULL);
 
-	m_pkCommandAllocator->Reset();
-	m_pkCommandList->Reset(m_pkCommandAllocator, NULL);
+	if (FAILED(m_pkCommandAllocator->Reset()) ||
+		FAILED(m_pkCommandList->Reset(m_pkCommandAllocator, NULL)))
+	{
+		TraceError("CGraphicResourceUploaderDX12: command list reset failed.");
+		safe_release(pkStaging);
+		safe_release(pkBuffer);
+		return NULL;
+	}
 	m_pkCommandList->CopyBufferRegion(pkBuffer, 0, pkStaging, 0, uByteSize);
 
 	D3D12_RESOURCE_BARRIER kBarrier = {};
@@ -160,8 +166,28 @@ ID3D12Resource* CGraphicResourceUploaderDX12::CreateTexture2D(ID3D12CommandQueue
 															  const void* pvPixels,
 															  UINT uSrcRowPitch)
 {
-	if (!m_pkDevice || !pvPixels || !uWidth || !uHeight)
+	TTextureLevelData kLevel;
+	kLevel.pvPixels = pvPixels;
+	kLevel.uRowPitch = uSrcRowPitch;
+	return CreateTexture2D(pkQueue, uWidth, uHeight, eFormat, &kLevel, 1);
+}
+
+ID3D12Resource* CGraphicResourceUploaderDX12::CreateTexture2D(ID3D12CommandQueue* pkQueue,
+															  UINT uWidth,
+															  UINT uHeight,
+															  DXGI_FORMAT eFormat,
+															  const TTextureLevelData* akLevels,
+															  UINT uLevelCount)
+{
+	if (!m_pkDevice || !akLevels || !uLevelCount || !uWidth || !uHeight)
 		return NULL;
+
+	if (uLevelCount > TEXTURE_MAX_LEVELS)
+		uLevelCount = TEXTURE_MAX_LEVELS;
+
+	for (UINT uLevel = 0; uLevel != uLevelCount; ++uLevel)
+		if (!akLevels[uLevel].pvPixels)
+			return NULL;
 
 	D3D12_HEAP_PROPERTIES kDefaultHeap = {};
 	kDefaultHeap.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -171,7 +197,7 @@ ID3D12Resource* CGraphicResourceUploaderDX12::CreateTexture2D(ID3D12CommandQueue
 	kTextureDesc.Width = uWidth;
 	kTextureDesc.Height = uHeight;
 	kTextureDesc.DepthOrArraySize = 1;
-	kTextureDesc.MipLevels = 1;
+	kTextureDesc.MipLevels = static_cast<UINT16>(uLevelCount);
 	kTextureDesc.Format = eFormat;
 	kTextureDesc.SampleDesc.Count = 1;
 
@@ -180,17 +206,17 @@ ID3D12Resource* CGraphicResourceUploaderDX12::CreateTexture2D(ID3D12CommandQueue
 												   D3D12_RESOURCE_STATE_COPY_DEST, NULL,
 												   IID_PPV_ARGS(&pkTexture))))
 	{
-		TraceError("CGraphicResourceUploaderDX12: texture creation failed (%ux%u fmt %d).",
-				   uWidth, uHeight, static_cast<int>(eFormat));
+		TraceError("CGraphicResourceUploaderDX12: texture creation failed (%ux%u fmt %d mips %u).",
+				   uWidth, uHeight, static_cast<int>(eFormat), uLevelCount);
 		return NULL;
 	}
 
-	D3D12_PLACED_SUBRESOURCE_FOOTPRINT kFootprint = {};
-	UINT uRowCount = 0;
-	UINT64 uRowSizeInBytes = 0;
+	D3D12_PLACED_SUBRESOURCE_FOOTPRINT akFootprints[TEXTURE_MAX_LEVELS] = {};
+	UINT auRowCounts[TEXTURE_MAX_LEVELS] = {};
+	UINT64 auRowSizesInBytes[TEXTURE_MAX_LEVELS] = {};
 	UINT64 uTotalBytes = 0;
-	m_pkDevice->GetCopyableFootprints(&kTextureDesc, 0, 1, 0, &kFootprint,
-									  &uRowCount, &uRowSizeInBytes, &uTotalBytes);
+	m_pkDevice->GetCopyableFootprints(&kTextureDesc, 0, uLevelCount, 0, akFootprints,
+									  auRowCounts, auRowSizesInBytes, &uTotalBytes);
 
 	D3D12_HEAP_PROPERTIES kUploadHeap = {};
 	kUploadHeap.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -224,29 +250,43 @@ ID3D12Resource* CGraphicResourceUploaderDX12::CreateTexture2D(ID3D12CommandQueue
 	}
 
 	// Repack rows: the footprint pitch is 256-aligned, the source is tight.
-	const BYTE* pbySource = static_cast<const BYTE*>(pvPixels);
-	const size_t uCopyBytes = static_cast<size_t>(uRowSizeInBytes < uSrcRowPitch ? uRowSizeInBytes : uSrcRowPitch);
-	for (UINT uRow = 0; uRow != uRowCount; ++uRow)
-		memcpy(pbyMapped + kFootprint.Offset + uRow * static_cast<size_t>(kFootprint.Footprint.RowPitch),
-			   pbySource + uRow * static_cast<size_t>(uSrcRowPitch),
-			   uCopyBytes);
+	for (UINT uLevel = 0; uLevel != uLevelCount; ++uLevel)
+	{
+		const BYTE* pbySource = static_cast<const BYTE*>(akLevels[uLevel].pvPixels);
+		const UINT uSrcRowPitch = akLevels[uLevel].uRowPitch;
+		const size_t uCopyBytes = static_cast<size_t>(
+			auRowSizesInBytes[uLevel] < uSrcRowPitch ? auRowSizesInBytes[uLevel] : uSrcRowPitch);
+		for (UINT uRow = 0; uRow != auRowCounts[uLevel]; ++uRow)
+			memcpy(pbyMapped + akFootprints[uLevel].Offset + uRow * static_cast<size_t>(akFootprints[uLevel].Footprint.RowPitch),
+				   pbySource + uRow * static_cast<size_t>(uSrcRowPitch),
+				   uCopyBytes);
+	}
 
 	pkStaging->Unmap(0, NULL);
 
-	m_pkCommandAllocator->Reset();
-	m_pkCommandList->Reset(m_pkCommandAllocator, NULL);
+	if (FAILED(m_pkCommandAllocator->Reset()) ||
+		FAILED(m_pkCommandList->Reset(m_pkCommandAllocator, NULL)))
+	{
+		TraceError("CGraphicResourceUploaderDX12: command list reset failed.");
+		safe_release(pkStaging);
+		safe_release(pkTexture);
+		return NULL;
+	}
 
-	D3D12_TEXTURE_COPY_LOCATION kCopyDest = {};
-	kCopyDest.pResource = pkTexture;
-	kCopyDest.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
-	kCopyDest.SubresourceIndex = 0;
+	for (UINT uLevel = 0; uLevel != uLevelCount; ++uLevel)
+	{
+		D3D12_TEXTURE_COPY_LOCATION kCopyDest = {};
+		kCopyDest.pResource = pkTexture;
+		kCopyDest.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
+		kCopyDest.SubresourceIndex = uLevel;
 
-	D3D12_TEXTURE_COPY_LOCATION kCopySource = {};
-	kCopySource.pResource = pkStaging;
-	kCopySource.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
-	kCopySource.PlacedFootprint = kFootprint;
+		D3D12_TEXTURE_COPY_LOCATION kCopySource = {};
+		kCopySource.pResource = pkStaging;
+		kCopySource.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+		kCopySource.PlacedFootprint = akFootprints[uLevel];
 
-	m_pkCommandList->CopyTextureRegion(&kCopyDest, 0, 0, 0, &kCopySource, NULL);
+		m_pkCommandList->CopyTextureRegion(&kCopyDest, 0, 0, 0, &kCopySource, NULL);
+	}
 
 	D3D12_RESOURCE_BARRIER kBarrier = {};
 	kBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -292,7 +332,15 @@ bool CGraphicResourceUploaderDX12::__ExecuteAndWait(ID3D12CommandQueue* pkQueue)
 			TraceError("CGraphicResourceUploaderDX12: fence wait setup failed.");
 			return false;
 		}
-		WaitForSingleObject(m_hFenceEvent, INFINITE);
+		while (WAIT_TIMEOUT == WaitForSingleObject(m_hFenceEvent, 4000))
+		{
+			if (S_OK != m_pkDevice->GetDeviceRemovedReason())
+			{
+				TraceError("CGraphicResourceUploaderDX12: device removed while uploading (0x%08x).",
+						   static_cast<unsigned>(m_pkDevice->GetDeviceRemovedReason()));
+				return false;
+			}
+		}
 	}
 
 	return true;

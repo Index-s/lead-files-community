@@ -61,14 +61,8 @@ void CTerrainImpl::Initialize()
 void CTerrainImpl::Clear()
 {
 	for (DWORD i = 0; i < GetTextureSet()->GetTextureCount(); ++i)
-	{
-		if (m_lpAlphaTexture[i])
-		{
-			m_lpAlphaTexture[i]->Release();
-			m_lpAlphaTexture[i] = NULL;
-		}
-	}
-	
+		m_lpAlphaTexture[i] = NULL;
+
 	Initialize();
 }
 

@@ -49,6 +49,8 @@ class CGraphicDeviceDX12
 		UINT	GetHeight() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetCurrentRTVHandle() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetDSVHandle() const;
+		ID3D12Resource*				GetCurrentBuffer() const;
+		ID3D12Resource*				GetLastPresentedBuffer() const;
 
 	private:
 		bool	__CreateDevice();
@@ -56,6 +58,7 @@ class CGraphicDeviceDX12
 		bool	__CreateFrameResources();
 		bool	__CreateDepthBuffer(UINT uWidth, UINT uHeight);
 		void	__WaitForGPU();
+		bool	__WaitForFenceValue(UINT64 uFenceValue);
 		void	__MoveToNextFrame();
 
 		IDXGIFactory4*				m_pkFactory;
@@ -71,6 +74,7 @@ class CGraphicDeviceDX12
 		ID3D12Fence*				m_pkFence;
 		HANDLE						m_hFenceEvent;
 		UINT64						m_auFenceValues[FRAME_COUNT];
+		UINT64						m_uLastSignaledFenceValue;
 		UINT						m_uFrameIndex;
 		UINT						m_uRTVDescriptorSize;
 		bool						m_bCreated;

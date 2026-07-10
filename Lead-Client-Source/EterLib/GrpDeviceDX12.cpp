@@ -2,6 +2,8 @@
 #include "../eterBase/Stl.h"
 #include "GrpDeviceDX12.h"
 
+#include <d3d12sdklayers.h>
+
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 
@@ -16,6 +18,7 @@ CGraphicDeviceDX12::CGraphicDeviceDX12()
 	, m_pkCommandList(NULL)
 	, m_pkFence(NULL)
 	, m_hFenceEvent(NULL)
+	, m_uLastSignaledFenceValue(0)
 	, m_uFrameIndex(0)
 	, m_uRTVDescriptorSize(0)
 	, m_bCreated(false)
@@ -60,7 +63,7 @@ ID3D12CommandQueue* CGraphicDeviceDX12::GetCommandQueue() const
 
 UINT64 CGraphicDeviceDX12::GetLastSubmittedFenceValue() const
 {
-	return m_auFenceValues[m_uFrameIndex];
+	return m_uLastSignaledFenceValue;
 }
 
 UINT64 CGraphicDeviceDX12::GetCompletedFenceValue() const
@@ -88,6 +91,16 @@ D3D12_CPU_DESCRIPTOR_HANDLE CGraphicDeviceDX12::GetCurrentRTVHandle() const
 D3D12_CPU_DESCRIPTOR_HANDLE CGraphicDeviceDX12::GetDSVHandle() const
 {
 	return m_pkDSVHeap->GetCPUDescriptorHandleForHeapStart();
+}
+
+ID3D12Resource* CGraphicDeviceDX12::GetCurrentBuffer() const
+{
+	return m_bCreated ? m_apkRenderTargets[m_uFrameIndex] : NULL;
+}
+
+ID3D12Resource* CGraphicDeviceDX12::GetLastPresentedBuffer() const
+{
+	return m_bCreated ? m_apkRenderTargets[(m_uFrameIndex + FRAME_COUNT - 1) % FRAME_COUNT] : NULL;
 }
 
 bool CGraphicDeviceDX12::Create(HWND hWnd, UINT uWidth, UINT uHeight, bool bWindowed)
@@ -160,6 +173,15 @@ bool CGraphicDeviceDX12::Recreate()
 
 bool CGraphicDeviceDX12::__CreateDevice()
 {
+#ifdef _DEBUG
+	ID3D12Debug* pkDebug = NULL;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&pkDebug))))
+	{
+		pkDebug->EnableDebugLayer();
+		pkDebug->Release();
+	}
+#endif
+
 	if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&m_pkFactory))))
 	{
 		TraceError("CGraphicDeviceDX12: CreateDXGIFactory1 failed.");
@@ -398,6 +420,7 @@ bool CGraphicDeviceDX12::Resize(UINT uWidth, UINT uHeight)
 	if (FAILED(m_pkSwapChain->ResizeBuffers(FRAME_COUNT, uWidth, uHeight, DXGI_FORMAT_B8G8R8A8_UNORM, 0)))
 	{
 		TraceError("CGraphicDeviceDX12: ResizeBuffers failed.");
+		m_bDeviceRemoved = true;
 		return false;
 	}
 
@@ -409,12 +432,22 @@ bool CGraphicDeviceDX12::Resize(UINT uWidth, UINT uHeight)
 	for (UINT u = 0; u < FRAME_COUNT; ++u)
 	{
 		if (FAILED(m_pkSwapChain->GetBuffer(u, IID_PPV_ARGS(&m_apkRenderTargets[u]))))
+		{
+			TraceError("CGraphicDeviceDX12: backbuffer retrieval failed after resize.");
+			m_bDeviceRemoved = true;
 			return false;
+		}
 		m_pkDevice->CreateRenderTargetView(m_apkRenderTargets[u], NULL, kRTVHandle);
 		kRTVHandle.ptr += m_uRTVDescriptorSize;
 	}
 
-	return __CreateDepthBuffer(uWidth, uHeight);
+	if (!__CreateDepthBuffer(uWidth, uHeight))
+	{
+		m_bDeviceRemoved = true;
+		return false;
+	}
+
+	return true;
 }
 
 void CGraphicDeviceDX12::__WaitForGPU()
@@ -422,32 +455,49 @@ void CGraphicDeviceDX12::__WaitForGPU()
 	if (!m_pkCommandQueue || !m_pkFence)
 		return;
 
-	const UINT64 uFenceValue = m_auFenceValues[m_uFrameIndex] + 1;
-	m_pkCommandQueue->Signal(m_pkFence, uFenceValue);
+	const UINT64 uFenceValue = m_uLastSignaledFenceValue + 1;
+	if (FAILED(m_pkCommandQueue->Signal(m_pkFence, uFenceValue)))
+		return;
+	m_uLastSignaledFenceValue = uFenceValue;
 
-	if (m_pkFence->GetCompletedValue() < uFenceValue)
+	__WaitForFenceValue(uFenceValue);
+
+	for (UINT u = 0; u < FRAME_COUNT; ++u)
+		m_auFenceValues[u] = uFenceValue;
+}
+
+bool CGraphicDeviceDX12::__WaitForFenceValue(UINT64 uFenceValue)
+{
+	if (!m_pkFence || m_pkFence->GetCompletedValue() >= uFenceValue)
+		return true;
+
+	if (FAILED(m_pkFence->SetEventOnCompletion(uFenceValue, m_hFenceEvent)))
+		return false;
+
+	while (WAIT_TIMEOUT == WaitForSingleObject(m_hFenceEvent, 4000))
 	{
-		m_pkFence->SetEventOnCompletion(uFenceValue, m_hFenceEvent);
-		WaitForSingleObject(m_hFenceEvent, INFINITE);
+		if (m_pkDevice && S_OK != m_pkDevice->GetDeviceRemovedReason())
+		{
+			TraceError("CGraphicDeviceDX12: device removed while waiting for the GPU (0x%08x).",
+					   static_cast<unsigned>(m_pkDevice->GetDeviceRemovedReason()));
+			m_bDeviceRemoved = true;
+			return false;
+		}
 	}
 
-	m_auFenceValues[m_uFrameIndex] = uFenceValue;
+	return true;
 }
 
 void CGraphicDeviceDX12::__MoveToNextFrame()
 {
-	const UINT64 uCurrentFenceValue = m_auFenceValues[m_uFrameIndex] + 1;
-	m_pkCommandQueue->Signal(m_pkFence, uCurrentFenceValue);
+	const UINT64 uSignaledValue = m_uLastSignaledFenceValue + 1;
+	if (SUCCEEDED(m_pkCommandQueue->Signal(m_pkFence, uSignaledValue)))
+		m_uLastSignaledFenceValue = uSignaledValue;
+	m_auFenceValues[m_uFrameIndex] = m_uLastSignaledFenceValue;
 
 	m_uFrameIndex = m_pkSwapChain->GetCurrentBackBufferIndex();
 
-	if (m_pkFence->GetCompletedValue() < m_auFenceValues[m_uFrameIndex])
-	{
-		m_pkFence->SetEventOnCompletion(m_auFenceValues[m_uFrameIndex], m_hFenceEvent);
-		WaitForSingleObject(m_hFenceEvent, INFINITE);
-	}
-
-	m_auFenceValues[m_uFrameIndex] = uCurrentFenceValue;
+	__WaitForFenceValue(m_auFenceValues[m_uFrameIndex]);
 }
 
 void CGraphicDeviceDX12::Destroy()
@@ -471,6 +521,7 @@ void CGraphicDeviceDX12::Destroy()
 	safe_release(m_pkCommandQueue);
 	safe_release(m_pkDevice);
 	safe_release(m_pkFactory);
+	m_uLastSignaledFenceValue = 0;
 
 	if (m_hFenceEvent)
 	{

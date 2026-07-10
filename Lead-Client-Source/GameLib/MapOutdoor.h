@@ -432,8 +432,6 @@ class CMapOutdoor : public CMapBase
 		//////////////////////////////////////////////////////////////////////////
 		// Character Shadow
 		LPDIRECT3DTEXTURE9		m_lpCharacterShadowMapTexture;
-		LPDIRECT3DSURFACE9		m_lpCharacterShadowMapRenderTargetSurface;
-		LPDIRECT3DSURFACE9	m_lpCharacterShadowMapDepthSurface;
 		D3DVIEWPORT9			m_ShadowMapViewport;
 		WORD					m_wShadowMapSize;
 

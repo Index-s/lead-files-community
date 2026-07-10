@@ -1,8 +1,11 @@
 ﻿#include "StdAfx.h"
+#include <set>
 #include "../eterBase/Stl.h"
 #include "GrpBackendDX12.h"
 #include "GraphicShaderPool.h"
 #include "GrpDynamicDrawDX12.h"
+#include "GrpReadbackDX12.h"
+#include "StateManager.h"
 
 #include <d3dcompiler.h>
 
@@ -30,10 +33,17 @@ CGraphicBackendDX12::CGraphicBackendDX12()
 	, m_pkBoundRenderTarget(NULL)
 	, m_bInFrame(false)
 	, m_bCreated(false)
+	, m_fGammaFactor(1.0f)
+	, m_pkSceneCopy(NULL)
+	, m_uSceneCopyWidth(0)
+	, m_uSceneCopyHeight(0)
+	, m_bSceneCopyReadable(false)
+	, m_uFrameOrdinal(0)
 {
 	for (UINT u = 0; u < TEXTURE_STAGE_COUNT; ++u)
 		m_akTextureSRVs[u].ptr = 0;
 	m_kWhiteSRV.ptr = 0;
+	m_kSceneCopySRV.ptr = 0;
 }
 
 CGraphicBackendDX12::~CGraphicBackendDX12()
@@ -90,6 +100,10 @@ void CGraphicBackendDX12::Destroy()
 	if (m_kDevice.IsCreated())
 		m_kDevice.WaitForGPU();
 
+	for (UINT u = 0; u < m_kRetiredResources.size(); ++u)
+		m_kRetiredResources[u].pkResource->Release();
+	m_kRetiredResources.clear();
+
 	if (m_apkProgramBytecode)
 	{
 		for (UINT u = 0; u < m_uProgramCount; ++u)
@@ -115,9 +129,22 @@ void CGraphicBackendDX12::Destroy()
 	m_kRenderTargetMap.clear();
 	m_pkBoundRenderTarget = NULL;
 
+	for (std::unordered_map<const void*, TRawTextureTwin>::iterator it = m_kRawTextureTwinMap.begin();
+		 it != m_kRawTextureTwinMap.end(); ++it)
+		safe_release(it->second.pkTexture);
+	m_kRawTextureTwinMap.clear();
+
 	safe_release(m_pkWhiteTexture);
 	safe_release(m_pkCPUHeap);
 	m_kWhiteSRV.ptr = 0;
+
+	m_kGammaPass.Destroy();
+	safe_release(m_pkSceneCopy);
+	m_kSceneCopySRV.ptr = 0;
+	m_uSceneCopyWidth = 0;
+	m_uSceneCopyHeight = 0;
+	m_bSceneCopyReadable = false;
+	m_fGammaFactor = 1.0f;
 
 	m_kRTVDescriptors.Destroy();
 	m_kDSVDescriptors.Destroy();
@@ -164,6 +191,10 @@ bool CGraphicBackendDX12::CreateTextureSRV(ID3D12Resource* pkTexture, D3D12_CPU_
 
 void CGraphicBackendDX12::FreeTextureSRV(D3D12_CPU_DESCRIPTOR_HANDLE kHandle)
 {
+	for (UINT u = 0; u < TEXTURE_STAGE_COUNT; ++u)
+		if (m_akTextureSRVs[u].ptr == kHandle.ptr)
+			m_akTextureSRVs[u].ptr = 0;
+
 	m_kTextureDescriptors.Free(kHandle);
 }
 
@@ -178,7 +209,8 @@ bool CGraphicBackendDX12::__CompilePrograms()
 		m_apkProgramBytecodeAlphaTest[u] = NULL;
 	}
 
-	static const D3D_SHADER_MACRO c_akAlphaTestMacros[] = { { "ALPHA_TEST", "1" }, { NULL, NULL } };
+	static const D3D_SHADER_MACRO c_akBaseMacros[] = { { "SM5", "1" }, { NULL, NULL } };
+	static const D3D_SHADER_MACRO c_akAlphaTestMacros[] = { { "ALPHA_TEST", "1" }, { "SM5", "1" }, { NULL, NULL } };
 
 	for (UINT u = 0; u < m_uProgramCount; ++u)
 	{
@@ -193,7 +225,7 @@ bool CGraphicBackendDX12::__CompilePrograms()
 			ID3DBlob** ppkTarget = uVariant ? &m_apkProgramBytecodeAlphaTest[u] : &m_apkProgramBytecode[u];
 			ID3DBlob* pkErrors = NULL;
 			const HRESULT hrCompile = D3DCompile(pkInfo->c_szSource, pkInfo->uSourceLength,
-												 pkInfo->c_szName, uVariant ? c_akAlphaTestMacros : NULL, NULL, "main",
+												 pkInfo->c_szName, uVariant ? c_akAlphaTestMacros : c_akBaseMacros, NULL, "main",
 												 pkInfo->bVertexProgram ? "vs_5_0" : "ps_5_0",
 												 D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY, 0,
 												 ppkTarget, &pkErrors);
@@ -239,8 +271,10 @@ bool CGraphicBackendDX12::BeginFrame(DWORD dwClearColor)
 	if (!m_bCreated || !m_kDevice.BeginFrame())
 		return false;
 
+	++m_uFrameOrdinal;
 	m_kUploadRing.OnFrameCompleted(m_kDevice.GetCompletedFenceValue());
 	m_kSRVRing.OnFrameCompleted(m_kDevice.GetCompletedFenceValue());
+	__ReleaseRetiredResources();
 	m_kConstantShadow.OnFrameBegin();
 
 	ID3D12GraphicsCommandList* pkCommandList = m_kDevice.GetCommandList();
@@ -310,19 +344,29 @@ void CGraphicBackendDX12::ClearTargets(DWORD dwFlags, DWORD dwColor, float fDept
 											 static_cast<UINT8>(dwStencil), 0, NULL);
 }
 
+void CGraphicBackendDX12::UnregisterRenderTarget(const void* pkTextureD3D9)
+{
+	std::unordered_map<const void*, TRenderTargetDX12>::iterator it = m_kRenderTargetMap.find(pkTextureD3D9);
+	if (it == m_kRenderTargetMap.end())
+		return;
+
+	if (m_pkBoundRenderTarget == &it->second)
+		m_pkBoundRenderTarget = NULL;
+
+	m_kRTVDescriptors.Free(it->second.kRTV);
+	m_kDSVDescriptors.Free(it->second.kDSV);
+	m_kTextureDescriptors.Free(it->second.kSRV);
+	RetireResource(it->second.pkColor);
+	RetireResource(it->second.pkDepth);
+	m_kRenderTargetMap.erase(it);
+}
+
 bool CGraphicBackendDX12::RegisterRenderTarget(const void* pkTextureD3D9, UINT uWidth, UINT uHeight)
 {
 	if (!m_bCreated || !pkTextureD3D9)
 		return false;
 
-	std::unordered_map<const void*, TRenderTargetDX12>::iterator itOld = m_kRenderTargetMap.find(pkTextureD3D9);
-	if (itOld != m_kRenderTargetMap.end())
-	{
-		m_kDevice.WaitForGPU();
-		safe_release(itOld->second.pkColor);
-		safe_release(itOld->second.pkDepth);
-		m_kRenderTargetMap.erase(itOld);
-	}
+	UnregisterRenderTarget(pkTextureD3D9);
 
 	ID3D12Device* pkDevice = m_kDevice.GetDevice();
 	TRenderTargetDX12 kTarget = {};
@@ -404,6 +448,78 @@ D3D12_CPU_DESCRIPTOR_HANDLE CGraphicBackendDX12::GetRenderTargetSRV(const void* 
 	return kHandle;
 }
 
+bool CGraphicBackendDX12::RegisterRawTextureTwin(const void* pkTextureD3D9, UINT uWidth, UINT uHeight,
+												 DXGI_FORMAT eFormat,
+												 const TTextureLevelData* akLevels, UINT uLevelCount)
+{
+	if (!m_bCreated || !pkTextureD3D9 || !akLevels || !uLevelCount)
+		return false;
+
+	UnregisterRawTextureTwin(pkTextureD3D9);
+
+	TRawTextureTwin kTwin;
+	kTwin.pkTexture = m_kUploader.CreateTexture2D(m_kDevice.GetCommandQueue(), uWidth, uHeight,
+												  eFormat, akLevels, uLevelCount);
+	if (!kTwin.pkTexture)
+		return false;
+
+	if (!CreateTextureSRV(kTwin.pkTexture, &kTwin.kSRV))
+	{
+		safe_release(kTwin.pkTexture);
+		return false;
+	}
+
+	m_kRawTextureTwinMap[pkTextureD3D9] = kTwin;
+
+	if (CStateManager::InstancePtr())
+		STATEMANAGER.RegisterTextureSRVDX12(pkTextureD3D9, kTwin.kSRV);
+	return true;
+}
+
+void CGraphicBackendDX12::UnregisterRawTextureTwin(const void* pkTextureD3D9)
+{
+	std::unordered_map<const void*, TRawTextureTwin>::iterator it = m_kRawTextureTwinMap.find(pkTextureD3D9);
+	if (it == m_kRawTextureTwinMap.end())
+		return;
+
+	if (CStateManager::InstancePtr())
+		STATEMANAGER.UnregisterTextureSRVDX12(pkTextureD3D9);
+
+	FreeTextureSRV(it->second.kSRV);
+	RetireResource(it->second.pkTexture);
+	m_kRawTextureTwinMap.erase(it);
+}
+
+void CGraphicBackendDX12::RetireResource(ID3D12Resource* pkResource)
+{
+	if (!pkResource)
+		return;
+
+	if (!m_kDevice.IsCreated())
+	{
+		pkResource->Release();
+		return;
+	}
+
+	TRetiredResource kRetired;
+	kRetired.pkResource = pkResource;
+	kRetired.uFrameOrdinal = m_uFrameOrdinal;
+	m_kRetiredResources.push_back(kRetired);
+}
+
+void CGraphicBackendDX12::__ReleaseRetiredResources()
+{
+	UINT uKept = 0;
+	for (UINT u = 0; u < m_kRetiredResources.size(); ++u)
+	{
+		if (m_uFrameOrdinal >= m_kRetiredResources[u].uFrameOrdinal + CGraphicDeviceDX12::FRAME_COUNT + 1)
+			m_kRetiredResources[u].pkResource->Release();
+		else
+			m_kRetiredResources[uKept++] = m_kRetiredResources[u];
+	}
+	m_kRetiredResources.resize(uKept);
+}
+
 bool CGraphicBackendDX12::SetRenderTargetTexture(const void* pkTextureD3D9)
 {
 	if (!m_bCreated || !m_bInFrame)
@@ -470,6 +586,17 @@ void CGraphicBackendDX12::RestoreDefaultTarget()
 	m_kCurrentRTV = m_kDevice.GetCurrentRTVHandle();
 	m_kCurrentDSV = m_kDevice.GetDSVHandle();
 	pkCommandList->OMSetRenderTargets(1, &m_kCurrentRTV, FALSE, &m_kCurrentDSV);
+
+	D3D12_VIEWPORT kViewport = {};
+	kViewport.Width = static_cast<float>(m_kDevice.GetWidth());
+	kViewport.Height = static_cast<float>(m_kDevice.GetHeight());
+	kViewport.MaxDepth = 1.0f;
+	pkCommandList->RSSetViewports(1, &kViewport);
+
+	D3D12_RECT kScissor = {};
+	kScissor.right = static_cast<LONG>(m_kDevice.GetWidth());
+	kScissor.bottom = static_cast<LONG>(m_kDevice.GetHeight());
+	pkCommandList->RSSetScissorRects(1, &kScissor);
 }
 
 void CGraphicBackendDX12::SetViewport(const D3DVIEWPORT9& rkViewport)
@@ -492,14 +619,156 @@ bool CGraphicBackendDX12::EndFrame()
 	if (!m_bCreated)
 		return false;
 
+	__RecordGammaPass();
+
 	m_bInFrame = false;
 	m_kDevice.EndFrame();
 	const bool bPresented = m_kDevice.Present();
+
+	if (m_kDevice.IsDeviceRemoved())
+	{
+		static bool s_bReported = false;
+		if (!s_bReported)
+		{
+			s_bReported = true;
+			TraceError("CGraphicBackendDX12: graphics device removed; rendering stopped, restart the client.");
+		}
+	}
 
 	const UINT64 uSubmitted = m_kDevice.GetLastSubmittedFenceValue();
 	m_kUploadRing.OnFrameSubmitted(uSubmitted);
 	m_kSRVRing.OnFrameSubmitted(uSubmitted);
 	return bPresented;
+}
+
+void CGraphicBackendDX12::SetGammaFactor(float fFactor)
+{
+	m_fGammaFactor = fFactor;
+}
+
+bool CGraphicBackendDX12::CaptureBackBuffer(std::vector<BYTE>& rkPixels, UINT* puWidth, UINT* puHeight)
+{
+	if (!m_bCreated || !puWidth || !puHeight)
+		return false;
+
+	ID3D12Resource* pkSource = m_kDevice.GetLastPresentedBuffer();
+	if (!pkSource)
+		return false;
+
+	CGraphicReadbackDX12 kReadback;
+	if (!kReadback.Create(m_kDevice.GetDevice()))
+		return false;
+
+	const UINT uWidth = m_kDevice.GetWidth();
+	const UINT uHeight = m_kDevice.GetHeight();
+	rkPixels.resize(static_cast<size_t>(uWidth) * uHeight * 4);
+
+	const bool bRead = kReadback.ReadTexture2D(m_kDevice.GetCommandQueue(), pkSource,
+											   D3D12_RESOURCE_STATE_PRESENT,
+											   &rkPixels[0], uWidth * 4);
+	kReadback.Destroy();
+	if (!bRead)
+		return false;
+
+	*puWidth = uWidth;
+	*puHeight = uHeight;
+	return true;
+}
+
+void CGraphicBackendDX12::__RecordGammaPass()
+{
+	if (m_fGammaFactor > 0.999f && m_fGammaFactor < 1.001f)
+		return;
+
+	ID3D12Device* pkDevice = m_kDevice.GetDevice();
+	ID3D12GraphicsCommandList* pkCommandList = m_kDevice.GetCommandList();
+	const UINT uWidth = m_kDevice.GetWidth();
+	const UINT uHeight = m_kDevice.GetHeight();
+
+	if (m_pkSceneCopy && (m_uSceneCopyWidth != uWidth || m_uSceneCopyHeight != uHeight))
+	{
+		if (m_kSceneCopySRV.ptr)
+			FreeTextureSRV(m_kSceneCopySRV);
+		m_kSceneCopySRV.ptr = 0;
+		RetireResource(m_pkSceneCopy);
+		m_pkSceneCopy = NULL;
+		m_bSceneCopyReadable = false;
+	}
+
+	if (!m_pkSceneCopy)
+	{
+		D3D12_HEAP_PROPERTIES kHeap = {};
+		kHeap.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+		D3D12_RESOURCE_DESC kDesc = {};
+		kDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		kDesc.Width = uWidth;
+		kDesc.Height = uHeight;
+		kDesc.DepthOrArraySize = 1;
+		kDesc.MipLevels = 1;
+		kDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		kDesc.SampleDesc.Count = 1;
+
+		if (FAILED(pkDevice->CreateCommittedResource(&kHeap, D3D12_HEAP_FLAG_NONE, &kDesc,
+													 D3D12_RESOURCE_STATE_COPY_DEST, NULL,
+													 IID_PPV_ARGS(&m_pkSceneCopy))))
+			return;
+
+		m_uSceneCopyWidth = uWidth;
+		m_uSceneCopyHeight = uHeight;
+		m_bSceneCopyReadable = false;
+
+		if (!CreateTextureSRV(m_pkSceneCopy, &m_kSceneCopySRV))
+		{
+			safe_release(m_pkSceneCopy);
+			return;
+		}
+	}
+
+	if (!m_kGammaPass.IsCreated() && !m_kGammaPass.Create(pkDevice))
+		return;
+
+	ID3D12Resource* pkBackBuffer = m_kDevice.GetCurrentBuffer();
+	if (!pkBackBuffer)
+		return;
+
+	D3D12_RESOURCE_BARRIER akBarriers[2] = {};
+	akBarriers[0].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	akBarriers[0].Transition.pResource = pkBackBuffer;
+	akBarriers[0].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	akBarriers[0].Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	akBarriers[0].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+
+	UINT uBarrierCount = 1;
+	if (m_bSceneCopyReadable)
+	{
+		akBarriers[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		akBarriers[1].Transition.pResource = m_pkSceneCopy;
+		akBarriers[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		akBarriers[1].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		akBarriers[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+		uBarrierCount = 2;
+	}
+	pkCommandList->ResourceBarrier(uBarrierCount, akBarriers);
+
+	pkCommandList->CopyResource(m_pkSceneCopy, pkBackBuffer);
+
+	akBarriers[0].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
+	akBarriers[0].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	akBarriers[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	akBarriers[1].Transition.pResource = m_pkSceneCopy;
+	akBarriers[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	akBarriers[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+	akBarriers[1].Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	pkCommandList->ResourceBarrier(2, akBarriers);
+	m_bSceneCopyReadable = true;
+
+	CGraphicDescriptorRingDX12::TTable kTable;
+	if (!m_kSRVRing.Allocate(1, &kTable))
+		return;
+	pkDevice->CopyDescriptorsSimple(1, kTable.kCPUHandle, m_kSceneCopySRV, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	m_kGammaPass.Record(pkCommandList, kTable.kGPUHandle, m_fGammaFactor);
 }
 
 bool CGraphicBackendDX12::SetProgram(UINT uVertexProgramIndex, UINT uPixelProgramIndex)
@@ -616,7 +885,16 @@ bool CGraphicBackendDX12::__ApplyState(D3D_PRIMITIVE_TOPOLOGY eTopology)
 		m_kPipelineCache.GetPipelineState(m_kPipelineKey, kVSBytecode, kPSBytecode,
 										  m_akInputElements, m_uInputElementCount);
 	if (!pkPipelineState)
+	{
+		static std::set<UINT64> s_kReportedCombos;
+		const UINT64 uCombo = (static_cast<UINT64>(m_uVertexProgram) << 40)
+			| (static_cast<UINT64>(m_uPixelProgram) << 16) | m_uInputLayoutID;
+		if (s_kReportedCombos.size() < 64 && s_kReportedCombos.insert(uCombo).second)
+			TraceError("CGraphicBackendDX12: pipeline creation failed (vs=%u ps=%u layout=%u alphaTest=%d).",
+					   m_uVertexProgram, m_uPixelProgram, m_uInputLayoutID,
+					   m_kPipelineKey.m_bAlphaTestEnable ? 1 : 0);
 		return false;
+	}
 
 	pkCommandList->SetPipelineState(pkPipelineState);
 	pkCommandList->IASetPrimitiveTopology(eTopology);
@@ -682,4 +960,27 @@ bool CGraphicBackendDX12::DrawTransient(D3D_PRIMITIVE_TOPOLOGY eTopology,
 	}
 
 	return true;
+}
+
+UINT64 CGraphicBackendDX12::GetFrameOrdinal() const
+{
+	return m_uFrameOrdinal;
+}
+
+bool CGraphicBackendDX12::UploadVertices(const void* pvVertices, UINT uStrideBytes, UINT uVertexCount,
+										 D3D12_VERTEX_BUFFER_VIEW* pkViewOut)
+{
+	if (!m_bCreated || !m_bInFrame)
+		return false;
+
+	return CGraphicDynamicDrawDX12::WriteVertices(m_kUploadRing, pvVertices, uStrideBytes, uVertexCount, pkViewOut);
+}
+
+bool CGraphicBackendDX12::UploadIndices(const WORD* awIndices, UINT uIndexCount,
+										D3D12_INDEX_BUFFER_VIEW* pkViewOut)
+{
+	if (!m_bCreated || !m_bInFrame)
+		return false;
+
+	return CGraphicDynamicDrawDX12::WriteIndices(m_kUploadRing, awIndices, uIndexCount, pkViewOut);
 }

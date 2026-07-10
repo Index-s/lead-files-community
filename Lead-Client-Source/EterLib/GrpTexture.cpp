@@ -9,7 +9,7 @@
 void CGraphicTexture::DestroyDeviceObjects()
 {
 	DestroyDX12Twin();
-	safe_release(m_lpd3dTexture);
+	m_lpd3dTexture = NULL;
 }
 
 void CGraphicTexture::Destroy()
@@ -80,7 +80,7 @@ bool CGraphicTexture::CreateDX12Twin(UINT uWidth, UINT uHeight, D3DFORMAT eForma
 	const DXGI_FORMAT eFormatDX12 = CGraphicFormatDX12::ToTextureFormatDX12(eFormat, &bNeedsWidening);
 	if (DXGI_FORMAT_UNKNOWN == eFormatDX12)
 	{
-		TraceError("CGraphicTexture: no DX12 format for %u; texture stays DX9-only.",
+		TraceError("CGraphicTexture: no DX12 format for %u.",
 				   static_cast<unsigned>(eFormat));
 		return true;
 	}
@@ -121,13 +121,57 @@ bool CGraphicTexture::CreateDX12Twin(UINT uWidth, UINT uHeight, D3DFORMAT eForma
 		uUploadPitch = uWidth * 4;
 	}
 
+	TTextureLevelData kLevel;
+	kLevel.pvPixels = pvUpload;
+	kLevel.uRowPitch = uUploadPitch;
+	return __UploadTwinLevels(uWidth, uHeight, eFormatDX12, &kLevel, 1);
+}
+
+bool CGraphicTexture::CreateTwinFromLevels(UINT uWidth, UINT uHeight, D3DFORMAT eFormat,
+										   const TTextureLevelData* akLevels, UINT uLevelCount)
+{
+	if (!akLevels || !uLevelCount)
+		return true;
+
+	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (!pkBackend || !uWidth || !uHeight)
+	{
+		DestroyDX12Twin();
+		return true;
+	}
+
+	bool bNeedsWidening = false;
+	const DXGI_FORMAT eFormatDX12 = CGraphicFormatDX12::ToTextureFormatDX12(eFormat, &bNeedsWidening);
+	if (DXGI_FORMAT_UNKNOWN == eFormatDX12)
+	{
+		DestroyDX12Twin();
+		TraceError("CGraphicTexture: no DX12 format for %u.",
+				   static_cast<unsigned>(eFormat));
+		return true;
+	}
+
+	// 16bpp sources widen row-by-row; route those through the top-mip path.
+	if (bNeedsWidening)
+		return CreateDX12Twin(uWidth, uHeight, eFormat, akLevels[0].pvPixels, akLevels[0].uRowPitch);
+
+	DestroyDX12Twin();
+	return __UploadTwinLevels(uWidth, uHeight, eFormatDX12, akLevels, uLevelCount);
+}
+
+bool CGraphicTexture::__UploadTwinLevels(UINT uWidth, UINT uHeight, DXGI_FORMAT eFormatDX12,
+											 const TTextureLevelData* akLevels, UINT uLevelCount)
+{
+	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
+	if (!pkBackend)
+		return true;
+
 	m_pkTextureDX12 = pkBackend->GetUploader().CreateTexture2D(pkBackend->GetDevice().GetCommandQueue(),
 															   uWidth, uHeight, eFormatDX12,
-															   pvUpload, uUploadPitch);
+															   akLevels, uLevelCount);
 	if (!m_pkTextureDX12)
 	{
-		TraceError("CGraphicTexture: DX12 twin creation failed (%ux%u fmt %u).",
-				   uWidth, uHeight, static_cast<unsigned>(eFormat));
+		TraceError("CGraphicTexture: DX12 twin creation failed (%ux%u fmt %d mips %u).",
+				   uWidth, uHeight, static_cast<int>(eFormatDX12), uLevelCount);
 		return true;
 	}
 
@@ -150,16 +194,17 @@ void CGraphicTexture::DestroyDX12Twin()
 		STATEMANAGER.UnregisterTextureSRVDX12(m_lpd3dTexture);
 
 	CGraphicBackendDX12* pkBackend = CGraphicBackendDX12::GetInstance();
-	if (pkBackend && m_pkTextureDX12)
-	{
-		// In-flight frames may still sample the old twin (canvas refreshes).
-		pkBackend->GetDevice().WaitForGPU();
-	}
 	if (pkBackend && m_kSRVHandleDX12.ptr)
 		pkBackend->FreeTextureSRV(m_kSRVHandleDX12);
 
 	m_kSRVHandleDX12.ptr = 0;
-	safe_release(m_pkTextureDX12);
+	if (pkBackend)
+	{
+		pkBackend->RetireResource(m_pkTextureDX12);
+		m_pkTextureDX12 = NULL;
+	}
+	else
+		safe_release(m_pkTextureDX12);
 }
 
 int CGraphicTexture::GetWidth() const

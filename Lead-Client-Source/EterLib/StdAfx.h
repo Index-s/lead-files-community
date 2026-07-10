@@ -13,7 +13,7 @@
 #pragma warning(disable:4201 4512 4238 4239)
 #endif
 
-#include <dx9/d3d9.h>
+#include <d3d9.h>
 #include <d3dx9math_shim.h>
 
 #define DIRECTINPUT_VERSION 0x0800
@@ -31,7 +31,6 @@
 #include <malloc.h>
 
 #pragma comment(lib, "winmm.lib")
-#pragma comment(lib, "d3d9.lib")
 
 #include "../eterBase/StdAfx.h"
 #include "../eterBase/Debug.h"

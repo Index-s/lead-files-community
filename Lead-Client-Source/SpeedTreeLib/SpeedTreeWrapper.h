@@ -38,8 +38,8 @@
 #include "SpeedTreeMaterial.h"
 #include <speedtree/SpeedTreeRT.h>
 
-#include <dx9/d3d9.h>
-#include <dx9/d3d9types.h>
+#include <d3d9.h>
+#include <d3d9types.h>
 #include <d3dx9math_shim.h>
 #include <vector>
 
@@ -52,10 +52,6 @@
 
 #ifndef SAFE_DELETE_ARRAY
 #define SAFE_DELETE_ARRAY(p) { if (p) { delete[] (p);   (p) = NULL; } }
-#endif
-
-#ifndef SAFE_RELEASE
-#define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p) = NULL; } }
 #endif
 
 ///////////////////////////////////////////////////////////////////////  
@@ -167,20 +163,20 @@ private:
 	CSpeedTreeRT::SGeometry*		m_pGeometryCache;				// cache for pulling geometry from SpeedTree avoids lots of reallocation
 
 	// branch buffers
-	LPDIRECT3DVERTEXBUFFER9			m_pBranchVertexBuffer;			// branch vertex buffer
+	std::vector<BYTE>*				m_pBranchVertexBuffer;			// branch vertex buffer
 	unsigned int					m_unBranchVertexCount;			// number of vertices in branches
-	LPDIRECT3DINDEXBUFFER9			m_pBranchIndexBuffer;			// branch index buffer
+	std::vector<WORD>*				m_pBranchIndexBuffer;			// branch index buffer
 	unsigned short*					m_pBranchIndexCounts;			// number of indexes per branch LOD level
-	
+
 	// frond buffers
-	LPDIRECT3DVERTEXBUFFER9			m_pFrondVertexBuffer;			// frond vertex buffer
+	std::vector<BYTE>*				m_pFrondVertexBuffer;			// frond vertex buffer
 	unsigned int					m_unFrondVertexCount;			// number of vertices in frond
-	LPDIRECT3DINDEXBUFFER9			m_pFrondIndexBuffer;			// frond index buffer
+	std::vector<WORD>*				m_pFrondIndexBuffer;			// frond index buffer
 	unsigned short*					m_pFrondIndexCounts;			// number of indexes per frond LOD level
-	
+
 	// leaf buffers
 	unsigned short					m_usNumLeafLods;				// the number of leaf LODs
-	LPDIRECT3DVERTEXBUFFER9*		m_pLeafVertexBuffer;			// leaf vertex buffer
+	std::vector<BYTE>**				m_pLeafVertexBuffer;			// leaf vertex buffer
 	bool*							m_pLeavesUpdatedByCpu;			// stores which LOD's have been updated already per frame
 	
 	// tree properties
