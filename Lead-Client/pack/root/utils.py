@@ -21,7 +21,7 @@ class Sandbox(object):
 				
 		for allowed_module_name in self.allowed_modules:
 			try:
-				exec 'import {0}'.format(allowed_module_name)
+				exec('import {0}'.format(allowed_module_name))
 			except:
 				# Just now, pass the exception.
 				# (filename could not use this module)
@@ -49,8 +49,8 @@ class Sandbox(object):
 			f = open(filename, 'rb')
 			data = f.read()
 			code = compile(data, filename, 'exec')
-			exec code in dic
-		except Exception, e:
+			exec(code, dic)
+		except Exception as e:
 			sys.stderr.write(e)
 		finally:
 			# Restore original settings.

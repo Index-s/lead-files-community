@@ -56,7 +56,7 @@ class Analyzer:
 		argCount=callBackFunc.GetArgumentCount()-1
 
 		if len(tokens)<argCount:
-			raise RuntimeError, "Analyzer.Run(line=%s) - cmd=%s, curArgCount[%d]<needArgCount[%d]" % (line, cmd, len(tokens), argCount)
+			raise RuntimeError("Analyzer.Run(line=%s) - cmd=%s, curArgCount[%d]<needArgCount[%d]" % (line, cmd, len(tokens), argCount))
 			return 0
 
 		tokens=tokens[:argCount]

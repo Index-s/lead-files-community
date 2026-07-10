@@ -147,7 +147,7 @@ def LoadLocaleFile(srcFileName, localeDict):
 				else:
 					localeDict[tokens[0]] = tokens[1]
 			else:
-				raise RuntimeError, "Unknown TokenSize"
+				raise RuntimeError("Unknown TokenSize")
 
 			lineIndex += 1
 		except:
@@ -224,10 +224,10 @@ def GetAuxiliaryWordType(text):
 		if (singleWord >= '0' and singleWord <= '9') or\
 			(singleWord >= 'a' and singleWord <= 'z') or\
 			(singleWord >= 'A' and singleWord <= 'Z'):
-			if not dictSingleWord.has_key(singleWord):
+			if singleWord not in dictSingleWord:
 				return 1
 
-		elif dictDoubleWord.has_key(text[-2:]):
+		elif text[-2:] in dictDoubleWord:
 			return 1
 
 	return 0

@@ -1,3 +1,4 @@
+from __future__ import print_function
 ##
 ## Interface
 ##
@@ -354,7 +355,7 @@ class Interface(object):
 			self.dlgWhisperWithoutTarget.Destroy()
 			del self.dlgWhisperWithoutTarget
 
-		if uiQuest.QuestDialog.__dict__.has_key("QuestCurtain"):
+		if "QuestCurtain" in uiQuest.QuestDialog.__dict__:
 			uiQuest.QuestDialog.QuestCurtain.Close()
 
 		if self.wndQuestWindow:
@@ -467,11 +468,11 @@ class Interface(object):
 			btn.SetEvent(0)
 		for btn in self.whisperButtonList:
 			btn.SetEvent(0)
-		for dlg in self.whisperDialogDict.itervalues():
+		for dlg in self.whisperDialogDict.values():
 			dlg.Destroy()
-		for brd in self.guildScoreBoardDict.itervalues():
+		for brd in self.guildScoreBoardDict.values():
 			brd.Destroy()
-		for dlg in self.equipmentDialogDict.itervalues():
+		for dlg in self.equipmentDialogDict.values():
 			dlg.Destroy()
 
 		# ITEM_MALL
@@ -676,7 +677,7 @@ class Interface(object):
 
 	def HideAllQuestWindow(self):
 		tempList = []
-		for i,v in self.wndQuestWindow.iteritems():
+		for i,v in self.wndQuestWindow.items():
 			tempList.append(v)
 
 		for i in tempList:
@@ -782,7 +783,7 @@ class Interface(object):
 
 		key = uiGuild.GetGVGKey(guildSelf, guildOpp)
 
-		if not self.guildScoreBoardDict.has_key(key):
+		if not key in self.guildScoreBoardDict:
 			return
 
 		self.guildScoreBoardDict[key].Destroy()
@@ -792,7 +793,7 @@ class Interface(object):
 	def UpdateMemberCount(self, gulidID1, memberCount1, guildID2, memberCount2):
 		key = uiGuild.GetGVGKey(gulidID1, guildID2)
 
-		if not self.guildScoreBoardDict.has_key(key):
+		if not key in self.guildScoreBoardDict:
 			return
 
 		self.guildScoreBoardDict[key].UpdateMemberCount(gulidID1, memberCount1, guildID2, memberCount2)
@@ -800,7 +801,7 @@ class Interface(object):
 
 	def OnRecvGuildWarPoint(self, gainGuildID, opponentGuildID, point):
 		key = uiGuild.GetGVGKey(gainGuildID, opponentGuildID)
-		if not self.guildScoreBoardDict.has_key(key):
+		if not key in self.guildScoreBoardDict:
 			return
 
 		guildBoard = self.guildScoreBoardDict[key]
@@ -1149,7 +1150,7 @@ class Interface(object):
 	def SucceedCubeWork(self, itemVnum, count):
 		self.wndCube.Clear()
 		
-		print "ť�� ���� ����! [%d:%d]" % (itemVnum, count)
+		print("ť�� ���� ����! [%d:%d]" % (itemVnum, count))
 
 		if 0:
 			self.wndCubeResult.SetPosition(*self.wndCube.GetGlobalPosition())
@@ -1257,7 +1258,7 @@ class Interface(object):
 
 	def DisappearPrivateShop(self, vid):
 
-		if not self.privateShopAdvertisementBoardDict.has_key(vid):
+		if not vid in self.privateShopAdvertisementBoardDict:
 			return
 
 		del self.privateShopAdvertisementBoardDict[vid]
@@ -1440,7 +1441,7 @@ class Interface(object):
 		if 0 != btn:
 			self.__DestroyWhisperButton(btn)
 
-		elif self.whisperDialogDict.has_key(name):
+		elif name in self.whisperDialogDict:
 			oldDialog = self.whisperDialogDict[name]
 			oldDialog.Destroy()
 			del self.whisperDialogDict[name]
@@ -1451,7 +1452,7 @@ class Interface(object):
 		self.__CheckGameMaster(name)
 
 	def OpenWhisperDialog(self, name):
-		if not self.whisperDialogDict.has_key(name):
+		if not name in self.whisperDialogDict:
 			dlg = self.__MakeWhisperDialog(name)
 			dlg.OpenWithTarget(name)
 			dlg.chatLine.SetFocus()
@@ -1463,7 +1464,7 @@ class Interface(object):
 				self.__DestroyWhisperButton(btn)
 
 	def RecvWhisper(self, name):
-		if not self.whisperDialogDict.has_key(name):
+		if not name in self.whisperDialogDict:
 			btn = self.__FindWhisperButton(name)
 			if 0 == btn:
 				btn = self.__MakeWhisperButton(name)
@@ -1585,19 +1586,19 @@ class Interface(object):
 			btn.Show()
 
 	def __CheckGameMaster(self, name):
-		if not self.listGMName.has_key(name):
+		if not name in self.listGMName:
 			return
-		if self.whisperDialogDict.has_key(name):
+		if name in self.whisperDialogDict:
 			dlg = self.whisperDialogDict[name]
 			dlg.SetGameMasterLook()
 
 	def RegisterGameMasterName(self, name):
-		if self.listGMName.has_key(name):
+		if name in self.listGMName:
 			return
 		self.listGMName[name] = "GM"
 
 	def IsGameMasterName(self, name):
-		if self.listGMName.has_key(name):
+		if name in self.listGMName:
 			return True
 		else:
 			return False

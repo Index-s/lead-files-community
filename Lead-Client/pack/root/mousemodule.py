@@ -239,7 +239,7 @@ class CMouseController(object):
 			self.AttachedIconHalfHeight = grpImage.GetHeight(self.AttachedIconHandle) / 2
 			wndMgr.AttachIcon(self.AttachedType, self.AttachedItemIndex, self.AttachedSlotNumber, width, height)
 
-		except Exception, e:
+		except Exception as e:
 			dbg.TraceError("mouseModule.py: AttachObject : " + str(e))
 			self.AttachedIconHandle = 0
 
@@ -389,7 +389,7 @@ class CMouseController(object):
 
 	def RunCallBack(self, type, *arg):
 
-		if not self.callbackDict.has_key(type):
+		if type not in self.callbackDict:
 			self.DeattachObject()
 			return
 
