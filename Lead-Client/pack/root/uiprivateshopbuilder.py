@@ -293,7 +293,7 @@ class PrivateShopBuilder(ui.ScriptWindow):
 		sourceSlotPos = self.priceInputBoard.sourceSlotPos
 		targetSlotPos = self.priceInputBoard.targetSlotPos
 
-		for privatePos, (itemWindowType, itemSlotIndex) in self.itemStock.items():
+		for privatePos, (itemWindowType, itemSlotIndex) in list(self.itemStock.items()):
 			if itemWindowType == attachedInvenType and itemSlotIndex == sourceSlotPos:
 				shop.DelPrivateShopItemStock(itemWindowType, itemSlotIndex)
 				del self.itemStock[privatePos]
