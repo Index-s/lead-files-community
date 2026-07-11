@@ -3166,7 +3166,6 @@ class PythonScriptLoader(object):
 
 	def LoadScriptFile(self, window, FileName):
 		import exception
-		import exceptions
 		import os
 		import errno
 		self.Clear()
@@ -3241,7 +3240,7 @@ class PythonScriptLoader(object):
 		Index = 0
 
 		ChildrenList = dicChildren["children"]
-		parent.Children = range(len(ChildrenList))
+		parent.Children = list(range(len(ChildrenList)))
 		for ElementValue in ChildrenList:
 			try:
 				Name = ElementValue["name"]				
