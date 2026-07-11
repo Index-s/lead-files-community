@@ -2832,7 +2832,7 @@ class ListBox(Window):
 			xMouse, yMouse = wndMgr.GetMousePosition()
 
 			if yMouse - y < height - 1:
-				self.overLine = (yMouse - y) / self.stepSize
+				self.overLine = (yMouse - y) // self.stepSize
 
 				if self.overLine < 0:
 					self.overLine = -1
@@ -2902,8 +2902,8 @@ class ListBox2(ListBox):
 			gx, gy = self.GetGlobalPosition()
 			lx, ly = px - gx, py - gy
 
-			col = lx / self.barWidth
-			row = ly / self.stepSize
+			col = lx // self.barWidth
+			row = ly // self.stepSize
 			idx = col * self.rowCount + row
 			if col >= 0 and col < self.colCount:
 				if row >= 0 and row < self.rowCount:
