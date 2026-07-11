@@ -79,10 +79,10 @@ class __mem_func__:
 			return self.func(self.obj, *arg)
 
 	def __init__(self, mfunc):
-		if mfunc.im_func.func_code.co_argcount>1:
-			self.call=__mem_func__.__arg_call__(mfunc.im_class, mfunc.im_self, mfunc.im_func)
+		if mfunc.__func__.__code__.co_argcount>1:
+			self.call=__mem_func__.__arg_call__(mfunc.__self__.__class__, mfunc.__self__, mfunc.__func__)
 		else:
-			self.call=__mem_func__.__noarg_call__(mfunc.im_class, mfunc.im_self, mfunc.im_func)
+			self.call=__mem_func__.__noarg_call__(mfunc.__self__.__class__, mfunc.__self__, mfunc.__func__)
 
 	def __call__(self, *arg):
 		return self.call(*arg)
