@@ -147,7 +147,7 @@ class ToolTip(ui.ThinBoard):
 	def AlignHorizonalCenter(self):
 		for child in self.childrenList:
 			(x, y)=child.GetLocalPosition()
-			child.SetPosition(self.toolTipWidth/2, y)
+			child.SetPosition(self.toolTipWidth//2, y)
 
 		self.ResizeToolTip()
 
@@ -289,16 +289,16 @@ class ToolTip(ui.ThinBoard):
 			else:
 				y = mouseY - height - 30
 
-			x = mouseX - width/2				
+			x = mouseX - width//2				
 
 		else:
 
-			x = self.xPos - width/2
+			x = self.xPos - width//2
 			y = self.yPos - height
 
 		x = max(x, 0)
 		y = max(y, 0)
-		x = min(x + width/2, wndMgr.GetScreenWidth() - width/2) - width/2
+		x = min(x + width//2, wndMgr.GetScreenWidth() - width//2) - width//2
 		y = min(y + self.GetHeight(), wndMgr.GetScreenHeight()) - self.GetHeight()
 
 		parentWindow = self.GetParentProxy()
@@ -1129,9 +1129,9 @@ class ItemToolTip(ToolTip):
 						self.AppendSpace(5)
 
 						if localeMapName!="":						
-							self.AppendTextLine(localeInfo.TOOLTIP_MEMORIZED_POSITION % (localeMapName, int(xPos-xBase)/100, int(yPos-yBase)/100), self.NORMAL_COLOR)
+							self.AppendTextLine(localeInfo.TOOLTIP_MEMORIZED_POSITION % (localeMapName, int(xPos-xBase)//100, int(yPos-yBase)//100), self.NORMAL_COLOR)
 						else:
-							self.AppendTextLine(localeInfo.TOOLTIP_MEMORIZED_POSITION_ERROR % (int(xPos)/100, int(yPos)/100), self.NORMAL_COLOR)
+							self.AppendTextLine(localeInfo.TOOLTIP_MEMORIZED_POSITION_ERROR % (int(xPos)//100, int(yPos)//100), self.NORMAL_COLOR)
 							dbg.TraceError("NOT_EXIST_IN_MINIMAP_ZONE_NAME_DICT: %s" % mapName)
 
 			#####
@@ -1211,8 +1211,8 @@ class ItemToolTip(ToolTip):
 		self.ShowToolTip()
 
 	def __DragonSoulInfoString (self, dwVnum):
-		step = (dwVnum / 100) % 10
-		refine = (dwVnum / 10) % 10
+		step = (dwVnum // 100) % 10
+		refine = (dwVnum // 10) % 10
 		if 0 == step:
 			return localeInfo.DRAGON_SOUL_STEP_LEVEL1 + " " + localeInfo.DRAGON_SOUL_STRENGTH(refine)
 		elif 1 == step:
@@ -1270,7 +1270,7 @@ class ItemToolTip(ToolTip):
 		elif self.__IsCostumeHair(itemVnum):
 			itemImage.LoadImage("icon/hair/%d.sub" % (itemVnum - 100000))
 
-		itemImage.SetPosition(itemImage.GetWidth()/2, self.toolTipHeight)
+		itemImage.SetPosition(itemImage.GetWidth()//2, self.toolTipHeight)
 		self.toolTipHeight += itemImage.GetHeight()
 		#self.toolTipWidth += itemImage.GetWidth()/2
 		self.childrenList.append(itemImage)
@@ -1600,10 +1600,10 @@ class ItemToolTip(ToolTip):
 		end=min(metinSlot[1], ACCESSORY_SOCKET_MAX_SIZE)
 
 		affectType1, affectValue1 = item.GetAffect(0)
-		affectList1=[0, max(1, affectValue1*10/100), max(2, affectValue1*20/100), max(3, affectValue1*40/100)]
+		affectList1=[0, max(1, affectValue1*10//100), max(2, affectValue1*20//100), max(3, affectValue1*40//100)]
 
 		affectType2, affectValue2 = item.GetAffect(1)
-		affectList2=[0, max(1, affectValue2*10/100), max(2, affectValue2*20/100), max(3, affectValue2*40/100)]
+		affectList2=[0, max(1, affectValue2*10//100), max(2, affectValue2*20//100), max(3, affectValue2*40//100)]
 
 		mtrlPos=0
 		mtrlList=[mtrlVnum]*cur+[player.METIN_SOCKET_TYPE_SILVER]*(end-cur)

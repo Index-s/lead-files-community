@@ -617,7 +617,7 @@ class ChangeGradeNameDialog(ui.ScriptWindow):
 		self.gradeNameSlot.SetText("")
 		self.gradeNameSlot.SetFocus()
 		xMouse, yMouse = wndMgr.GetMousePosition()
-		self.SetPosition(xMouse - self.GetWidth()/2, yMouse + 50)
+		self.SetPosition(xMouse - self.GetWidth()//2, yMouse + 50)
 		self.SetTop()
 		self.Show()
 	def Close(self):

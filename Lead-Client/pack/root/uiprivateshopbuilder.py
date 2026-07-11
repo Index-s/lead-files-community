@@ -102,14 +102,14 @@ class PrivateShopAdvertisementBoard(ui.ThinBoard):
 		if systemSetting.IsShowSalesText():
 			self.Show()
 			x, y = chr.GetProjectPosition(self.vid, 220)
-			self.SetPosition(x - self.GetWidth()/2, y - self.GetHeight()/2)
+			self.SetPosition(x - self.GetWidth()//2, y - self.GetHeight()//2)
 		
 		else:
 			for key in g_privateShopAdvertisementBoardDict.keys():
 				if  player.GetMainCharacterIndex() == key:  #Even when shop balloons are hidden, the player's own shop balloon stays visible. by Kim Junho
 					g_privateShopAdvertisementBoardDict[key].Show() 	
 					x, y = chr.GetProjectPosition(player.GetMainCharacterIndex(), 220)
-					g_privateShopAdvertisementBoardDict[key].SetPosition(x - self.GetWidth()/2, y - self.GetHeight()/2)
+					g_privateShopAdvertisementBoardDict[key].SetPosition(x - self.GetWidth()//2, y - self.GetHeight()//2)
 				else:
 					g_privateShopAdvertisementBoardDict[key].Hide()
 

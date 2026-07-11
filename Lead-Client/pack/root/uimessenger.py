@@ -449,12 +449,12 @@ class MessengerWindow(ui.ScriptWindow):
 		if self.isLoaded==0:
 			return
 
-		if self.showingPageSize/20 >= len(self.showingItemList):
+		if self.showingPageSize//20 >= len(self.showingItemList):
 			self.scrollBar.Hide()
 			self.startLine = 0
 		else:
 			if self.showingItemList:
-				self.scrollBar.SetMiddleBarSize(float(self.showingPageSize/20) / float(len(self.showingItemList)))
+				self.scrollBar.SetMiddleBarSize(float(self.showingPageSize//20) / float(len(self.showingItemList)))
 			self.scrollBar.Show()
 
 		#####
@@ -554,7 +554,7 @@ class MessengerWindow(ui.ScriptWindow):
 		self.OnCloseQuestionDialog()
 
 	def OnScroll(self):
-		scrollLineCount = len(self.showingItemList) - (self.showingPageSize/20)
+		scrollLineCount = len(self.showingItemList) - (self.showingPageSize//20)
 		startLine = int(scrollLineCount * self.scrollBar.GetPos())
 
 		if startLine != self.startLine:

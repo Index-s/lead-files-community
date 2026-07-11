@@ -31,7 +31,7 @@ BORDER_SPACE_TOP = 30
 
 ITEM_TAB_NAME_BOX_HEIGHT = 20
 ITEM_TAB_SPACE = 2
-ITEM_TAB_WIDTH = (BOARD_WIDTH - BORDER_SPACE * 2) / switchbot.SLOT_COUNT + 1 - ITEM_TAB_SPACE
+ITEM_TAB_WIDTH = (BOARD_WIDTH - BORDER_SPACE * 2) // switchbot.SLOT_COUNT + 1 - ITEM_TAB_SPACE
 	
 TOP_PANEL_HEIGHT = (BORDER_SPACE * 2) + (3 * 32) + ITEM_TAB_NAME_BOX_HEIGHT
 TOP_PANEL_WIDTH = BOARD_WIDTH - (BORDER_SPACE * 2)
@@ -602,7 +602,7 @@ class SwitchbotWindow(ui.BoardWithTitleBar):
 		self.startButton.SetDisableVisual("d:/ymir work/ui/switchbot/btn_big_03.sub")
 		self.startButton.SetWindowVerticalAlignCenter()
 		self.startButton.SetWindowHorizontalAlignCenter()
-		self.startButton.SetPosition(-self.startButton.GetWidth() / 2, 0)
+		self.startButton.SetPosition(-self.startButton.GetWidth() // 2, 0)
 		self.startButton.SetText(localeInfo.SWITCHBOT_START)
 		self.startButton.Show()	
 		
@@ -614,7 +614,7 @@ class SwitchbotWindow(ui.BoardWithTitleBar):
 		self.stopButton.SetDisableVisual("d:/ymir work/ui/switchbot/btn_big_03.sub")
 		self.stopButton.SetWindowVerticalAlignCenter()
 		self.stopButton.SetWindowHorizontalAlignCenter()
-		self.stopButton.SetPosition(self.stopButton.GetWidth() / 2 + 20, 0)
+		self.stopButton.SetPosition(self.stopButton.GetWidth() // 2 + 20, 0)
 		self.stopButton.SetText(localeInfo.SWITCHBOT_STOP)
 		self.stopButton.Show()		
 		
@@ -791,14 +791,14 @@ class SwitchbotWindow(ui.BoardWithTitleBar):
 		elif mouseX - width/2 < 0:
 			xPos = 0
 		else:
-			xPos = mouseX - width/2
+			xPos = mouseX - width//2
 			
 		if mouseY + height/2 > wndMgr.GetScreenHeight():
 			yPos = wndMgr.GetScreenHeight() - height
 		elif mouseY - height/2 < 0:
 			yPos = 0
 		else:
-			yPos = mouseY - height/2
+			yPos = mouseY - height//2
 
 		wnd.SetPosition(xPos, yPos)	
 				
@@ -1047,7 +1047,7 @@ class SearchListWindow(ui.BoardWithTitleBar):
 		self.listBox.SetScrollBar(self.scrollBar)
 		self.listBox.Show()
 		
-		buttonWidth = width / 2 - 20
+		buttonWidth = width // 2 - 20
 		
 		self.acceptButton = ui.Button()
 		self.acceptButton.SetParent(self)
@@ -1057,7 +1057,7 @@ class SearchListWindow(ui.BoardWithTitleBar):
 		self.acceptButton.SetDisableVisual("d:/ymir work/ui/public/large_button_03.sub")
 		self.acceptButton.SetWindowVerticalAlignBottom()
 		self.acceptButton.SetWindowHorizontalAlignCenter()
-		self.acceptButton.SetPosition(-buttonWidth / 2 - 5, 29)
+		self.acceptButton.SetPosition(-buttonWidth // 2 - 5, 29)
 		self.acceptButton.SetText(localeInfo.UI_ACCEPT)
 		self.acceptButton.SetEvent(ui.__mem_func__(self.__OnAccept))
 		self.acceptButton.Show()
@@ -1070,7 +1070,7 @@ class SearchListWindow(ui.BoardWithTitleBar):
 		self.cancelButton.SetDisableVisual("d:/ymir work/ui/public/large_button_03.sub")
 		self.cancelButton.SetWindowVerticalAlignBottom()
 		self.cancelButton.SetWindowHorizontalAlignCenter()
-		self.cancelButton.SetPosition(buttonWidth / 2 - 5, 29)
+		self.cancelButton.SetPosition(buttonWidth // 2 - 5, 29)
 		self.cancelButton.SetText(localeInfo.UI_CANCEL)
 		self.cancelButton.SetEvent(ui.__mem_func__(self.__OnCancel))
 		self.cancelButton.Show()
@@ -1082,7 +1082,7 @@ class SearchListWindow(ui.BoardWithTitleBar):
 		self.__RefreshListBox()
 		
 	def __GetViewItemCount(self):
-		return self.container.GetHeight() / self.SearchListItem.LIST_ITEM_HEIGHT
+		return self.container.GetHeight() // self.SearchListItem.LIST_ITEM_HEIGHT
 		
 	def __AdjustScrollbar(self):
 		if len(self.listBox.GetItems()) > self.__GetViewItemCount():
@@ -1435,7 +1435,7 @@ class ConfigurationWindow(ui.BoardWithTitleBar):
 		self.SetPosition(x - self.GetWidth(), y)
 		
 	def __GetViewItemCount(self):
-		return self.container.GetHeight() / (self.ConfigurationLine.LIST_ITEM_HEIGHT + 1)
+		return self.container.GetHeight() // (self.ConfigurationLine.LIST_ITEM_HEIGHT + 1)
 		
 	def __AdjustScrollbar(self):
 		if len(self.dict) > self.__GetViewItemCount():
