@@ -125,15 +125,14 @@ def _process_result(code, fqname):
 module_do = lambda x:None
 
 def __pack_import(name,globals=None,locals=None,fromlist=(),level=0):
-	if level > 0:
+	if level > 0 or '.' in name:
 		return old_import(name,globals,locals,fromlist,level)
-
-	if name in sys.modules:
-		return sys.modules[name]
 
 	filename = name + '.py'
 
 	if pack.Exist(filename):
+		if name in sys.modules:
+			return sys.modules[name]
 		dbg.Trace('importing from pack %s\\n' % name)
 
 		newmodule = _process_result(compile(pack_file(filename,'rb').read(),filename,'exec'),name)
