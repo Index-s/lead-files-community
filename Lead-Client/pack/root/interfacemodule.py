@@ -1182,8 +1182,8 @@ class Interface(object):
 		if self.wndSwitchbot:
 			hideWindows += self.wndSwitchbot,
 
-		hideWindows = filter(lambda x:x.IsShow(), hideWindows)
-		map(lambda x:x.Hide(), hideWindows)
+		hideWindows = list(filter(lambda x:x.IsShow(), hideWindows))
+		list(map(lambda x:x.Hide(), hideWindows))
 		import sys
 
 		self.HideAllQuestButton()
@@ -1196,7 +1196,7 @@ class Interface(object):
 
 	def __ShowWindows(self, wnds):
 		import sys
-		map(lambda x:x.Show(), wnds)
+		list(map(lambda x:x.Show(), wnds))
 		global IsQBHide
 		if not IsQBHide:
 			self.ShowAllQuestButton()

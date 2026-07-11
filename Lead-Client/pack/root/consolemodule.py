@@ -790,8 +790,7 @@ class ConsoleWindow(ui.Window):
 
 				Console.Print("")
 			elif sCmd == '?':
-				list = self.functionDict.keys()
-				list.sort()
+				list = sorted(self.functionDict.keys())
 				Console.ShowNameList(list)
 			pass
 
