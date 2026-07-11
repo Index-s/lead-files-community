@@ -49,6 +49,11 @@ import time
 if not hasattr(time, 'clock'):
 	time.clock = time.perf_counter
 
+import builtins
+if not hasattr(builtins, 'reload'):
+	import importlib
+	builtins.reload = importlib.reload
+
 class pack_file_iterator(object):
 	def __init__(self, packfile):
 		self.pack_file = packfile
