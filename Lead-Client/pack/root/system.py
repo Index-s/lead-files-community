@@ -45,6 +45,10 @@ import marshal
 import importlib.util
 import pack
 
+import time
+if not hasattr(time, 'clock'):
+	time.clock = time.perf_counter
+
 class pack_file_iterator(object):
 	def __init__(self, packfile):
 		self.pack_file = packfile
