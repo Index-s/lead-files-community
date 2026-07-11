@@ -180,7 +180,7 @@ class MessengerGroupItem(MessengerItem):
 		return member
 
 	def RemoveMember(self, item):
-		for i in xrange(len(self.memberList)):
+		for i in range(len(self.memberList)):
 			if item == self.memberList[i]:
 				del self.memberList[i]
 				return
@@ -251,7 +251,7 @@ class MessengerGuildItem(MessengerMemberItem):
 		net.SendGuildUseSkillPacket(155, self.key)
 
 	def CanRemove(self):
-		for i in xrange(guild.ENEMY_GUILD_SLOT_MAX_COUNT):
+		for i in range(guild.ENEMY_GUILD_SLOT_MAX_COUNT):
 			if guild.GetEnemyGuildName(i) != "":
 				return False
 

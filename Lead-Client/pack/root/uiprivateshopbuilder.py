@@ -54,7 +54,7 @@ def UpdateADBoard():
 		g_privateShopAdvertisementBoardDict[key].Show()
 		
 def DeleteADBoard(vid):
-	if not g_privateShopAdvertisementBoardDict.has_key(vid):
+	if not vid in g_privateShopAdvertisementBoardDict:
 		return
 			
 	del g_privateShopAdvertisementBoardDict[vid]
@@ -202,9 +202,9 @@ class PrivateShopBuilder(ui.ScriptWindow):
 		setitemVNum=self.itemSlot.SetItemSlot
 		delItem=self.itemSlot.ClearSlot
 
-		for i in xrange(shop.SHOP_SLOT_COUNT):
+		for i in range(shop.SHOP_SLOT_COUNT):
 
-			if not self.itemStock.has_key(i):
+			if not i in self.itemStock:
 				delItem(i)
 				continue
 
@@ -339,7 +339,7 @@ class PrivateShopBuilder(ui.ScriptWindow):
 	def OnOverInItem(self, slotIndex):
 
 		if self.tooltipItem:
-			if self.itemStock.has_key(slotIndex):
+			if slotIndex in self.itemStock:
 				self.tooltipItem.SetPrivateShopBuilderItem(*self.itemStock[slotIndex] + (slotIndex,))
 
 	def OnOverOutItem(self):
