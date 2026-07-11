@@ -115,7 +115,7 @@ class Interface(object):
 		wndChat = uiChat.ChatWindow()
 		
 		wndChat.SetSize(wndChat.CHAT_WINDOW_WIDTH, 0)
-		wndChat.SetPosition(wndMgr.GetScreenWidth()/2 - wndChat.CHAT_WINDOW_WIDTH/2, wndMgr.GetScreenHeight() - wndChat.EDIT_LINE_HEIGHT - 37)
+		wndChat.SetPosition(wndMgr.GetScreenWidth()//2 - wndChat.CHAT_WINDOW_WIDTH//2, wndMgr.GetScreenHeight() - wndChat.EDIT_LINE_HEIGHT - 37)
 		wndChat.SetHeight(200)
 		wndChat.Refresh()
 		wndChat.Show()
@@ -1372,8 +1372,8 @@ class Interface(object):
 		if localeInfo.IsARABIC():
 			xPos = xPos + 15
 
-		yPos = 170 * screenHeight / 600
-		yCount = (screenHeight - 330) / 63
+		yPos = 170 * screenHeight // 600
+		yCount = (screenHeight - 330) // 63
 
 		count = 0
 		for btn in self.questButtonList:
@@ -1525,8 +1525,8 @@ class Interface(object):
 		screenHeight = wndMgr.GetScreenHeight()
 
 		xPos = screenWidth - 70
-		yPos = 170 * screenHeight / 600
-		yCount = (screenHeight - 330) / 63
+		yPos = 170 * screenHeight // 600
+		yCount = (screenHeight - 330) // 63
 		#yCount = (screenHeight - 285) / 63
 
 		count = 0

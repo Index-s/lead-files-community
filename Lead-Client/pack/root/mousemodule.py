@@ -233,10 +233,10 @@ class CMouseController(object):
 				self.DeattachObject()
 				return
 
-			self.AttachedIconHalfWidth = grpImage.GetWidth(self.AttachedIconHandle) / 2
-			self.AttachedIconHalfHeight = grpImage.GetHeight(self.AttachedIconHandle) / 2
-			self.AttachedIconHalfWidth = grpImage.GetWidth(self.AttachedIconHandle) / 2
-			self.AttachedIconHalfHeight = grpImage.GetHeight(self.AttachedIconHandle) / 2
+			self.AttachedIconHalfWidth = grpImage.GetWidth(self.AttachedIconHandle) // 2
+			self.AttachedIconHalfHeight = grpImage.GetHeight(self.AttachedIconHandle) // 2
+			self.AttachedIconHalfWidth = grpImage.GetWidth(self.AttachedIconHandle) // 2
+			self.AttachedIconHalfHeight = grpImage.GetHeight(self.AttachedIconHandle) // 2
 			wndMgr.AttachIcon(self.AttachedType, self.AttachedItemIndex, self.AttachedSlotNumber, width, height)
 
 		except Exception as e:
@@ -267,8 +267,8 @@ class CMouseController(object):
 		self.AttachedItemIndex = player.ITEM_MONEY
 		self.AttachedCount = count
 		self.AttachedIconHandle = grpImage.Generate("icon/item/money.tga")
-		self.AttachedIconHalfWidth = grpImage.GetWidth(self.AttachedIconHandle) / 2
-		self.AttachedIconHalfHeight = grpImage.GetHeight(self.AttachedIconHandle) / 2
+		self.AttachedIconHalfWidth = grpImage.GetWidth(self.AttachedIconHandle) // 2
+		self.AttachedIconHalfHeight = grpImage.GetHeight(self.AttachedIconHandle) // 2
 		wndMgr.AttachIcon(self.AttachedType, self.AttachedItemIndex, self.AttachedSlotNumber, 1, 1)
 
 		if count > 1:

@@ -1462,7 +1462,7 @@ class GameWindow(ui.ScriptWindow):
 
 		#(dwRenderedThing, dwRenderedCRC) = background.GetRenderedGraphicThingInstanceNum()
 
-		self.PrintCoord.SetText("Coordinate: %.2f %.2f %.2f ATM: %d" % (x, y, z, app.GetAvailableTextureMemory()/(1024*1024)))
+		self.PrintCoord.SetText("Coordinate: %.2f %.2f %.2f ATM: %d" % (x, y, z, app.GetAvailableTextureMemory()//(1024*1024)))
 		xMouse, yMouse = wndMgr.GetMousePosition()
 		self.PrintMousePos.SetText("MousePosition: %d %d" % (xMouse, yMouse))			
 
@@ -1597,7 +1597,7 @@ class GameWindow(ui.ScriptWindow):
 			elif isMetin:
 				if "vnum_list" in curItem:
 					vList = curItem["vnum_list"]
-					if (vList[0] / 100) == (itemVnum / 100):
+					if (vList[0] // 100) == (itemVnum // 100):
 						if not (itemVnum in vList):
 							vList.append(itemVnum)
 							vList.sort()
@@ -1695,7 +1695,7 @@ class GameWindow(ui.ScriptWindow):
 			resultCount = len(self.cubeInformation[npcVNUM])
 			requestCount = 7
 			modCount = resultCount % requestCount
-			splitCount = resultCount / requestCount
+			splitCount = resultCount // requestCount
 			for i in range(splitCount):
 				#print("/cube r_info %d %d" % (i * requestCount, requestCount))
 				net.SendChatPacket("/cube r_info %d %d" % (i * requestCount, requestCount))
