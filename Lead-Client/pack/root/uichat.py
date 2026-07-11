@@ -29,7 +29,7 @@ def InsertChatInputSetWindow(wnd):
 	chatInputSetList.append(wnd)
 def RefreshChatMode():
 	global chatInputSetList
-	map(lambda wnd:wnd.OnRefreshChatMode(), chatInputSetList)
+	list(map(lambda wnd:wnd.OnRefreshChatMode(), chatInputSetList))
 def DestroyChatInputSetWindow():
 	global chatInputSetList
 	chatInputSetList = []

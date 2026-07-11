@@ -498,7 +498,7 @@ class CubeWindow(ui.ScriptWindow):
 			if player.SLOT_TYPE_INVENTORY != attachedSlotType:
 				return
 
-			for slotPos, invenPos in self.cubeItemInfo.items():
+			for slotPos, invenPos in list(self.cubeItemInfo.items()):
 				if invenPos == attachedSlotPos:
 					del self.cubeItemInfo[slotPos]
 			
