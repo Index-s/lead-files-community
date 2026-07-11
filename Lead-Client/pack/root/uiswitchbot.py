@@ -11,7 +11,7 @@ import player
 import mouseModule
 import localeInfo
 import wndMgr
-import cPickle as pickle
+import pickle
 import switchbot
 
 COLOR_INACTIVE = grp.GenerateColor(1.0, 0.0, 0.0, 0.2)
