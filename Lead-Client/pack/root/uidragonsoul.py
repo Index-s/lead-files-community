@@ -398,9 +398,9 @@ class DragonSoulWindow(ui.ScriptWindow):
 			itemPrice = item.GetISellItemPrice()
 
 			if item.Is1GoldItem():
-				itemPrice = itemCount / itemPrice / 5
+				itemPrice = itemCount // itemPrice // 5
 			else:
-				itemPrice = itemPrice * itemCount / 5
+				itemPrice = itemPrice * itemCount // 5
 
 			item.GetItemName(itemIndex)
 			itemName = item.GetItemName()
@@ -1123,10 +1123,10 @@ class DragonSoulRefineWindow(ui.ScriptWindow):
 	def __GetDragonSoulTypeInfo(self, vnum):
 		if not self.__IsDragonSoul(vnum):
 			return DragonSoulRefineWindow.INVALID_DRAGON_SOUL_INFO 
-		ds_type = vnum / 10000
-		grade = vnum % 10000 /1000
-		step = vnum % 1000 / 100
-		strength = vnum % 100 / 10
+		ds_type = vnum // 10000
+		grade = vnum % 10000 //1000
+		step = vnum % 1000 // 100
+		strength = vnum % 100 // 10
 		
 		return (ds_type, grade, step, strength)
 	

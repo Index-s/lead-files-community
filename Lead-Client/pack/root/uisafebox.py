@@ -350,7 +350,7 @@ class SafeboxWindow(ui.ScriptWindow):
 
 	def SetTableSize(self, size):
 
-		pageCount = max(1, size / safebox.SAFEBOX_SLOT_Y_COUNT)
+		pageCount = max(1, size // safebox.SAFEBOX_SLOT_Y_COUNT)
 		pageCount = min(3, pageCount)
 		size = safebox.SAFEBOX_SLOT_Y_COUNT
 
@@ -571,7 +571,7 @@ class MallWindow(ui.ScriptWindow):
 
 	def SetTableSize(self, size):
 
-		pageCount = max(1, size / safebox.SAFEBOX_SLOT_Y_COUNT)
+		pageCount = max(1, size // safebox.SAFEBOX_SLOT_Y_COUNT)
 		pageCount = min(3, pageCount)
 		size = safebox.SAFEBOX_SLOT_Y_COUNT
 

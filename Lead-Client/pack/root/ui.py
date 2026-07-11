@@ -253,7 +253,7 @@ class Window(object):
 		wndMgr.SetWindowPosition(self.hWnd, x, y)
 
 	def SetCenterPosition(self, x = 0, y = 0):
-		self.SetPosition((wndMgr.GetScreenWidth() - self.GetWidth()) / 2 + x, (wndMgr.GetScreenHeight() - self.GetHeight()) / 2 + y)
+		self.SetPosition((wndMgr.GetScreenWidth() - self.GetWidth()) // 2 + x, (wndMgr.GetScreenHeight() - self.GetHeight()) // 2 + y)
 
 	def SavePosition(self):
 		self.baseX = self.GetLeft()
@@ -1307,7 +1307,7 @@ class Button(Window):
 		if not self.ButtonText:
 			textLine = TextLine()
 			textLine.SetParent(self)
-			textLine.SetPosition(self.GetWidth()/2, self.GetHeight()/2)
+			textLine.SetPosition(self.GetWidth()//2, self.GetHeight()//2)
 			textLine.SetVerticalAlignCenter()
 			textLine.SetHorizontalAlignCenter()
 			textLine.Show()
@@ -1323,7 +1323,7 @@ class Button(Window):
 			toolTip.SetHorizontalAlignCenter()
 			toolTip.SetOutline()
 			toolTip.Hide()
-			toolTip.SetPosition(x + self.GetWidth()/2, y)
+			toolTip.SetPosition(x + self.GetWidth()//2, y)
 			self.ToolTipText=toolTip
 
 		self.ToolTipText.SetText(text)
@@ -2915,7 +2915,7 @@ class ListBox2(ListBox):
 	def _CalcRenderPos(self, pos, idx):
 		x, y = pos
 		row = idx % self.rowCount
-		col = idx / self.rowCount
+		col = idx // self.rowCount
 		return (x + col * self.barWidth, y + row * self.stepSize)
 
 	def _RenderBar(self, basePos, idx):
@@ -2935,12 +2935,12 @@ class ListBox2(ListBox):
 
 	def _RefreshForm(self):
 		if len(self.itemList) % self.rowCount:
-			self.colCount = len(self.itemList) / self.rowCount + 1
+			self.colCount = len(self.itemList) // self.rowCount + 1
 		else:
-			self.colCount = len(self.itemList) / self.rowCount
+			self.colCount = len(self.itemList) // self.rowCount
 
 		if self.colCount:
-			self.barWidth = self.width / self.colCount
+			self.barWidth = self.width // self.colCount
 		else:
 			self.barWidth = self.width
 

@@ -712,7 +712,7 @@ class CharacterWindow(ui.ScriptWindow):
 						clockText = localeInfo.QUEST_TIMEOVER
 
 					else:
-						questLastMinute = lastTime / 60
+						questLastMinute = lastTime // 60
 						questLastSecond = lastTime % 60
 
 						clockText = lastName + " : "
@@ -1222,7 +1222,7 @@ class CharacterWindow(ui.ScriptWindow):
 		return realSkillSlot % skill.SKILL_GRADE_STEP_COUNT
 
 	def __GetSkillGradeFromSlot(self, skillSlot):
-		return int(skillSlot / skill.SKILL_GRADE_STEP_COUNT)
+		return int(skillSlot // skill.SKILL_GRADE_STEP_COUNT)
 
 	def SelectSkillGroup(self, index):
 		self.__SelectSkillGroup(index)

@@ -271,7 +271,7 @@ class CubeWindow(ui.ScriptWindow):
 						for slotPos in range(self.cubeSlot.GetSlotCount()):
 							if not slotPos in self.cubeItemInfo:
 								upperColumnItemSizeY = -1
-								currentSlotLine = int(slotPos / self.CUBE_SLOT_COUNTX)
+								currentSlotLine = int(slotPos // self.CUBE_SLOT_COUNTX)
 								cubeColumn = int(slotPos % self.CUBE_SLOT_COUNTX)
 
 
@@ -425,7 +425,7 @@ class CubeWindow(ui.ScriptWindow):
 
 			adjustLocalY = 0
 			if sizeY < 3:
-				adjustLocalY = int(32 / sizeY)
+				adjustLocalY = int(32 // sizeY)
 
 			currentSlot.SetPosition(localX, 0 + adjustLocalY)
 
@@ -455,7 +455,7 @@ class CubeWindow(ui.ScriptWindow):
 
 						adjustLocalY = 0
 						if sizeY < 3:
-							adjustLocalY = int(32 / sizeY)
+							adjustLocalY = int(32 // sizeY)
 
 						currentSlot.SetPosition(localX, 0 + adjustLocalY)
 
