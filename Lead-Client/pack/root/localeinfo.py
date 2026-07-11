@@ -31,7 +31,7 @@ ERROR_MARK_CHECK_NEED_RECONNECT = "CheckMark: Reconnect to game"
 VIRTUAL_KEY_ALPHABET_LOWERS  = r"[1234567890]/qwertyuiop\=asdfghjkl;`'zxcvbnm.,"
 VIRTUAL_KEY_ALPHABET_UPPERS  = r'{1234567890}?QWERTYUIOP|+ASDFGHJKL:~"ZXCVBNM<>'
 VIRTUAL_KEY_SYMBOLS    = '!@#$%^&*()_+|{}:"<>?~'
-VIRTUAL_KEY_NUMBERS    = "1234567890-=\[];',./`"
+VIRTUAL_KEY_NUMBERS    = "1234567890-=\\[];',./`"
 
 __IS_ENGLISH	= "ENGLISH" == app.GetLocaleServiceName()	
 __IS_HONGKONG	= "HONGKONG" == app.GetLocaleServiceName()
