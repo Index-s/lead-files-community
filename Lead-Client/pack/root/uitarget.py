@@ -1,3 +1,4 @@
+from __future__ import print_function
 import app
 import ui
 import player
@@ -301,7 +302,7 @@ class TargetBoard(ui.ThinBoard):
 					itemListBox.SetSize(self.GetWidth() - 15 * 2 - ui.ScrollBar.SCROLLBAR_WIDTH, (32 + 5) * self.MAX_ITEM_COUNT)
 					height = 0
 					for curItem in MONSTER_INFO_DATA[race]["items"]:
-						if curItem.has_key("vnum_list"):
+						if "vnum_list" in curItem:
 							height += self.AppendItem(itemListBox, curItem["vnum_list"], curItem["count"])
 						else:
 							height += self.AppendItem(itemListBox, curItem["vnum"], curItem["count"])
@@ -559,7 +560,7 @@ class TargetBoard(ui.ThinBoard):
 	def __del__(self):
 		ui.ThinBoard.__del__(self)
 
-		print "===================================================== DESTROYED TARGET BOARD"
+		print("===================================================== DESTROYED TARGET BOARD")
 
 	def __Initialize(self):
 		self.nameString = ""
@@ -703,7 +704,7 @@ class TargetBoard(ui.ThinBoard):
 		nameFront = ""
 		if -1 != level:
 			nameFront += "Lv." + str(level) + " "
-		if self.GRADE_NAME.has_key(grade):
+		if grade in self.GRADE_NAME:
 			nameFront += "(" + self.GRADE_NAME[grade] + ") "
 
 		self.SetTargetName(nameFront + name)
@@ -762,7 +763,7 @@ class TargetBoard(ui.ThinBoard):
 
 	def __ShowButton(self, name):
 
-		if not self.buttonDict.has_key(name):
+		if name not in self.buttonDict:
 			return
 
 		self.buttonDict[name].Show()
@@ -770,7 +771,7 @@ class TargetBoard(ui.ThinBoard):
 
 	def __HideButton(self, name):
 
-		if not self.buttonDict.has_key(name):
+		if name not in self.buttonDict:
 			return
 
 		button = self.buttonDict[name]

@@ -412,7 +412,7 @@ class MoneyInputDialog(ui.ScriptWindow):
 		money = 0
 		if text and text.isdigit():
 			try:
-				money = long(text)
+				money = int(text)
 			except ValueError:
 				money = 199999999
 

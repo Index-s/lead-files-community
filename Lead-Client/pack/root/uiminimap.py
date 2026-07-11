@@ -284,7 +284,7 @@ class MiniMap(ui.ScriptWindow):
 		self.mapName=mapName
 		self.AtlasWindow.SetMapName(mapName)
 
-		if self.CANNOT_SEE_INFO_MAP_DICT.has_key(mapName):
+		if mapName in self.CANNOT_SEE_INFO_MAP_DICT:
 			self.canSeeInfo = False
 			self.HideMiniMap()
 			self.tooltipMiniMapOpen.SetText(localeInfo.MINIMAP_CANNOT_SEE)
