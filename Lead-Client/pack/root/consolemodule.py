@@ -766,10 +766,10 @@ class ConsoleWindow(ui.Window):
 				try:
 					k = lstsArg[1]
 					v = self.functionDict[k]
-					argcount = v.im_func.func_code.co_argcount - 1 # -1 for self
-					if v.im_func.func_code.co_flags & 4:
+					argcount = v.__func__.__code__.co_argcount - 1 # -1 for self
+					if v.__func__.__code__.co_flags & 4:
 						argcount+=1
-					argnames = v.im_func.func_code.co_varnames[1:argcount+1]
+					argnames = v.__func__.__code__.co_varnames[1:argcount+1]
 					if argcount:
 						Console.Print("%s(%s) : %s" % (k,argcount, v.__doc__))
 						Console.Print("   arg : %s" % argnames)
@@ -777,8 +777,8 @@ class ConsoleWindow(ui.Window):
 						Console.Print("%s : %s" % (k,v.__doc__))
 				except:
 					for k,v in self.functionDict.items():
-						argcount = v.im_func.func_code.co_argcount - 1 # -1 for self
-						if v.im_func.func_code.co_flags & 4:
+						argcount = v.__func__.__code__.co_argcount - 1 # -1 for self
+						if v.__func__.__code__.co_flags & 4:
 							argcount+=1
 						if argcount:
 							Console.Print("%s(%s) : %s" % (k,argcount, v.__doc__))
