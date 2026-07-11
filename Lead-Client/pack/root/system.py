@@ -7,11 +7,15 @@ sys.path.append("lib")
 class TraceFile:
 	def write(self, msg):
 		dbg.Trace(msg)
+	def flush(self):
+		pass
 
 class TraceErrorFile:
 	def write(self, msg):
 		dbg.TraceError(msg)
 		dbg.RegisterExceptionString(msg)
+	def flush(self):
+		pass
 
 class LogBoxFile:
 	def __init__(self):
@@ -80,7 +84,7 @@ class pack_file(object):
 			return tmp
 
 	def readline(self):
-		sep = _chr(10) if isinstance(self.data, str) else b'\n'
+		sep = _chr(10) if isinstance(self.data, str) else bytes((10,))
 		return self.read(self.data.find(sep)+1)
 
 	def readlines(self):
