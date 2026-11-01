@@ -1,548 +1,473 @@
-# Tree Cutting (Lumberjacking) — Design and Implementation Plan
+# Tree Cutting (Lumberjacking) — Design and Implementation Plan (v2)
 
 Status: **plan only, nothing implemented yet.**
-Scope: client (x64, DX9 + DX12 backends) and server (FreeBSD amd64), plus data files.
-Companion asset: `docs/tree-cutting/assets/Han_Treechopper.GR2` (the player chop
-animation delivered with the request, extracted from `Han's_Cutting_Tree_Animation_GR2.rar`).
+Scope: client (DX9 + DX12 backends, 32- and 64-bit portable) and server, plus data.
+Companion asset: `docs/tree-cutting/assets/Han_Treechopper.GR2` (player chop animation,
+extracted from `Han's_Cutting_Tree_Animation_GR2.rar`).
+
+v2 changes versus v1 (decisions taken with the owner):
+
+| Topic | v1 | v2 |
+|---|---|---|
+| Configuration storage | text files under `share/locale/<lang>/` | **three DB tables** (`tree_proto`, `tree_drop`, `tree_spawn`) + one SQL install file with defaults |
+| Axe item | new top-level item type `ITEM_AXE` | **`ITEM_PICK` with subtype 1** — no enum changes anywhere, no proto-dump changes |
+| Axe model / icon | new asset | **reuse Giant Axe** (`item/weapon/03080.gr2`, `icon/item/03080.tga`) |
+| Tree models | new asset required | **reuse existing actors** (Christmas fir 20384, fossil tree) as shipped defaults; any `.gr2` NPC can be mapped later |
+| Tree fall / hit feedback | needs `dead`/`damage` motions in the model | **procedural** fall and shake in client code — works with any model |
+| Tree HP | `mob_proto.MAX_HP` | `tree_proto.hp`, applied at spawn — tune without touching protos |
+| Felling | `CHARACTER::Dead()` with guards | **no `Dead()`**: FELL packet + delayed destroy → regen respawn; fewer hooks |
+| Atlas | hidden | **shown with its own marker type and color** |
+| Placement | edit `tree.txt` coordinates | **`/tree_add` in game** writes the DB row at the GM's position and spawns it |
+| Drop owner | TOP (ALL optional) | **TOP recommended and default**; `ALL` kept as a per-kind option for event trees |
+| Toggle | — | **`#define ENABLE_TREE_SYSTEM`** on both sides; every hook wrapped; all logic in new files |
 
 ---
 
 ## 1. Goal
 
-Add cuttable trees to the game:
-
-- Trees are placed **per map at explicit positions** through a data file, respawn after a
-  configurable time, and have **health points**.
-- A player can cut a tree only while an **axe is equipped in the weapon slot** and they are
-  **standing next to the tree**. Each swing plays the delivered chop animation on the player.
-- Each swing removes HP; when HP reaches 0 the tree falls and **drops are rolled from a
-  configurable table** (item, amount or amount range, chance). Optional small drops per swing.
-- Everything is **server-authoritative** (HP, distance, axe check, timing, drops).
-- Works on the DX9 and DX12 client backends, and the code is written pointer-size clean so it
-  compiles unchanged on a 32-bit target should one be re-added (see §9).
-
-Non-goals for v1 (listed as follow-ups in §12): a lumberjack skill with levels, stump models,
-tree growth stages, wood crafting recipes.
+- Trees are placed **per map at explicit positions**, respawn after a configurable time, have
+  **health points**, and are visible on the atlas with their own marker.
+- A player can cut a tree only while an **axe is equipped** and they are **next to the tree**.
+  Each swing plays the delivered chop animation on the player.
+- Each swing removes HP; at 0 the tree falls (procedural animation) and **drops are rolled
+  from a configurable table** (item, amount or amount range, chance). Optional per-swing drops.
+- **Server-authoritative** (HP, distance, axe, timing, drops).
+- **Portable**: all logic in new files, minimal `#ifdef ENABLE_TREE_SYSTEM` hooks, no renumbering
+  of existing enums or item types, no new item type, C++11 subset, pointer-size clean, DX9/DX12
+  neutral. Install = compile with the define, import one SQL file, add 13 proto rows, copy a
+  handful of client files.
 
 ---
 
-## 2. What the codebase already gives us (findings that shaped the design)
+## 2. What the codebase gives us (verified)
 
 | Finding | Where | Consequence |
 |---|---|---|
-| Mining is the exact analogue: ore veins are `TYPE NPC`, `AI_FLAG NOMOVE` mobs (vnums 20047–20059, 30301–30305) with `MAX_HP 120`; clicking one triggers `pc.mining()` from `mining.quest`; the server runs a timed event and sends `HEADER_GC_DIG_MOTION` (vid, target_vid, count) and the client pushes `NAME_DIG` *count* times. | `Lead-Server-Source/game/src/mining.cpp`, `char.cpp` (`CHARACTER::mining*`), `Lead-Client-Source/UserInterface/PythonNetworkStreamPhaseGame.cpp` (`RecvDigMotionPacket`) | Copy the structure, but make the server tick per swing instead of fire-and-forget, because trees have HP that must be updated per hit. |
-| Veins self-destroy after 7–15 min (`kill_ore_load_event`) and come back through the regen system; destroying a character decrements its regen count and the regen event respawns it. | `char.cpp` SetProto / Destroy, `regen.cpp` | Tree respawn is free: fell = destroy character, regen `time` column = respawn delay. |
-| Per-map spawn files already exist (`regen.txt`, `npc.txt`, `boss.txt`, `stone.txt`) in `share/locale/<lang>/map/<map>/` and are all loaded with `regen_load()`. | `sectree_manager.cpp` ~L761–771 | Add a `tree.txt` per map in the same format: zero new parsing code. |
-| Drop tables are group text files with per-item `vnum count pct` lines. | `share/locale/<lang>/mob_drop_item.txt`, `item_manager_read_tables.cpp` | Reuse the group-file parser for `tree_drop.txt`. |
-| `TPacketGCTarget` carries `bHPPercent`; `SetTarget` computes it for any non-PC with `MaxHP > 0`, and `uiTarget.py` shows the gauge. | `char.cpp` L4930+, `root/uitarget.py` `SetHP` | Tree HP bar works with the existing target packet; we only need to re-broadcast on each hit. |
-| Pickaxe handling on the client is hard-coded by vnum range (`IsHoldingPickAxe` 29101–29110) and blocks `CanAttack`/`CanUseSkill`; motion mode stays `MODE_GENERAL`. | `InstanceBase.cpp` L952, L1100, L1120, L2881 | Axe gets the same treatment, but keyed on the item *type* (data-driven), not a vnum range. |
-| `ITEM_PICK` is a top-level item type (24); equip rules for it live in `item.cpp` (`IsEquipable`, `SetPart`) and `char_item.cpp` (use = equip/unequip). Server db `ProtoReader.cpp`, the client `ItemData.h` and `Lead-Tools/DumpProto` all hold the string → enum table. | `Lead-Shared-Source/common/item_length.h` | New `ITEM_AXE` type must be added in all four places plus the proto dump regenerated for every client locale. |
-| Motion ids live in `CRaceMotionData::EMotionName` and are exposed to Python as `chr.MOTION_*`; PC motions are registered per folder in `root/playersettingmodule.py` (`SetGeneralMotions`, `dig.msa`). | `GameLib/RaceMotionData.h`, `PythonCharacterModule.cpp` | Add `NAME_TREE_CUT` and register `tree_cut.msa` per PC folder. |
-| The delivered animation is one Granny file (13.6 KB, Oodle compressed, standard 32-bit LE Granny magic, same format as the 8 900 `.gr2` files already in the client pack). The screenshot shows it on the **male warrior** skeleton. `dig.gr2/msa` exist only for the four `pc/` models, not the `pc2/` gender variants. | `Lead-Client/pack/PC/ymir work/pc/*/general/dig.*` | A GR2 animation is bound to one skeleton. It must be verified on all 8 player models and retargeted where the bone set differs (asset task, §10). |
-| DX12 is a mirror backend selected by `renderer dx12` in the client config; meshes go through `CGraphicVertexBuffer`/`CGraphicIndexBuffer` (which own DX12 twins) and textures build DX12 twins in their loaders. Nothing in `EterGrnLib`/`GameLib` is backend specific. | `EterLib/GrpDevice.h`, `GrpBackendDX12.h`, `PythonSystem.cpp` L460 | No backend-specific work. The new animation, tree model and effects ride the existing path; DX12 is a *test matrix* item, not a code item. |
-| The client solution contains only `Debug|x64` / `Release|x64`; the server is amd64 only (`README.md`). | `Lead-Client-Source.sln`, all `.vcxproj` | There is no 32-bit build to target today. The plan commits to 32/64-bit *portable* code (§9) so a Win32 configuration would compile without changes. |
-| Free ids verified: mob vnums **20400–20499** unused, item vnums **29200–29299** unused, item vnums **50740–50799** unused, packet ids **CG 120**, **GC 139** unused, item type **35** is the next free slot after `ITEM_BELT` (34). | `mob_proto.txt`, `item_proto.txt`, `packet.h`, `item_length.h` | Reservations in §3. |
+| Mining is the template: ore veins are `TYPE NPC` / `NOMOVE` mobs; click → quest → `CHARACTER::mining()`; timed event; `HEADER_GC_DIG_MOTION` (vid, target, count) → client pushes `NAME_DIG` *count* times. | `game/src/mining.cpp`, `char.cpp`, client `PythonNetworkStreamPhaseGame.cpp` | Same shape, but the server ticks **per swing** and sends HP each time. |
+| Destroying a character decrements its regen count; the regen event respawns it after `time`. Veins use exactly this (`kill_ore_load_event`). | `char.cpp` Destroy, `regen.cpp` | Fell = delayed destroy; respawn is free. |
+| Game cores run SQL directly (`DBManager::DirectQuery`) and world objects already live in the `player` DB with `map_index, x, y` (`object`, `object_proto`). | `char_change_empire.cpp`, `player.sql` | DB-backed tree tables follow an existing pattern. |
+| The target packet carries `bHPPercent`; `SetTarget` fills it for any non-PC with `MaxHP > 0`; `uitarget.py` draws the gauge. | `char.cpp` ~L4930, `root/uitarget.py` | Tree HP bar = re-broadcast target packet per hit. |
+| Pickaxe client logic: `IsHoldingPickAxe()` (vnum 29101–29110) blocks attack/skills and keeps `MODE_GENERAL`; server equips `ITEM_PICK` like a weapon; `ITEM_PICK` rows have **subtype 0** and subtype is otherwise unused. | `InstanceBase.cpp` L952/1100/1120/2881, `item.cpp`, `char_item.cpp`, `item_proto.txt` L3382 | **Axe = `ITEM_PICK` subtype 1.** All equip code is reused; only mining's `Pick_Check` needs a subtype 0 guard. |
+| Giant Axe 3080–3089 exists (two-handed weapon) with model `item/weapon/03080.gr2` and icon `03080.tga`. | `item_list.txt` L772, `item_proto.txt` L794 | Lumber axe reuses model + icon. |
+| Actor tree models present: `npc2/christmas_tree/christmas_tree.gr2` (+ `wait.msa`, mob 20384 folder `christmas_tree`), `npc/mineral/fossil_tree.gr2` (vein 20049; its `motlist` maps every motion to `wait`). `pack/Tree/*.spt` are SpeedTree terrain props, not actors. | `npclist.txt` L1386, `mineral/motlist.txt` | Ship defaults on these; procedural fall removes the need for `dead` motions. |
+| Instance rotation API: `SetRotation(yaw, pitch, roll)`, `SetRotationQuaternion`, `SetAlphaValue/BlendAlphaValue`. | `EterLib/GrpObjectInstance.h` L41–44, `InstanceBase.cpp` L800 | Procedural fall and shake are implementable in `CInstanceBase::Update`. |
+| Atlas markers are dispatched by a type byte in `RegisterAtlasMark` (`TYPE_NPC`, `TYPE_WARP`), fed by `HEADER_GC_NPC_POSITION`, which the server fills from `InsertNPCPosition`. | `PythonMiniMap.cpp` L703–728, `regen.cpp` ~L688 | Add `TYPE_TREE` with its own marker/color; server inserts trees with a dedicated type byte. |
+| Feature toggles: server `common/service.h` (`__PET_SYSTEM__`), client `UserInterface/Locale_inc.h` (`ENABLE_*`), exported to Python in `PythonApplicationModule.cpp`. | — | `ENABLE_TREE_SYSTEM` goes in both and is exported as `app.ENABLE_TREE_SYSTEM`. |
+| The chop GR2 is a standard 32-bit LE Granny file (same format as the 8 900 shipped), Oodle-compressed, one skeleton (male warrior per screenshot). `dig.*` exist only for the four `pc/` models. | `pack/PC/**/general/dig.*` | Register the chop motion per folder where the file exists; fall back to `dig.msa` elsewhere until retargets exist. |
+| DX12 is a mirror backend under `renderer dx12`; meshes/textures/effects build DX12 twins below `GameLib`. | `EterLib/GrpDevice.h`, `GrpBackendDX12.h`, `PythonSystem.cpp` L460 | No backend code; DX9 + DX12 test matrix only. |
+| Free ids verified: mob vnums 20400–20499, item vnums 29200–29299 and 50740–50799, packet ids CG 120 / GC 139. | `mob_proto.txt`, `item_proto.txt`, `packet.h` | Reservations below. |
 
 ---
 
-## 3. Reservations and naming
+## 3. Reservations and naming (all in one shared header)
+
+`Lead-Shared-Source/common/tree_system.h` — included by server and client, everything under
+`#ifdef ENABLE_TREE_SYSTEM`, so a port changes numbers in one place:
+
+```c
+#define TREE_SYSTEM_PICK_SUBTYPE_AXE     1        // ITEM_PICK subtype that marks an axe
+#define TREE_SYSTEM_MOB_VNUM_BEGIN       20400    // tree kinds (client model mapping)
+#define TREE_SYSTEM_MOB_VNUM_END         20499
+#define TREE_SYSTEM_ATLAS_TYPE           0x7E     // type byte in HEADER_GC_NPC_POSITION
+#define TREE_SYSTEM_MAX_DISTANCE         300      // server-side swing distance (game units)
+#define TREE_SYSTEM_MIN_SHARE_PCT        20       // contributor threshold for DROP_MODE ALL
+#define HEADER_CG_TREE_CUT               120
+#define HEADER_GC_TREE_CUT               139
+```
 
 | Thing | Value |
 |---|---|
-| Tree mob vnums | 20400–20449 (trees), 20450–20499 reserved for stumps (v2) |
-| Axe item vnums | 29201–29210 (`Axe+0` … `Axe+9`, refine chain like picks 29101–29110) |
-| Wood / drop item vnums (examples) | 50740 Oak Log, 50741 Pine Log, 50742 Resin, 50743 Bark, 50744 Rare Heartwood |
-| Item type | `ITEM_AXE = 35` (shared), `ITEM_TYPE_AXE` (client) |
-| Packets | `HEADER_CG_TREE_CUT = 120`, `HEADER_GC_TREE_CUT = 139` |
-| Motion | `CRaceMotionData::NAME_TREE_CUT`, Python `chr.MOTION_TREE_CUT` |
-| Server module | `Lead-Server-Source/game/src/tree_cut.h/.cpp`, namespace `tree_cut` |
-| Data files | `share/locale/<lang>/tree_proto.txt`, `share/locale/<lang>/tree_drop.txt`, `share/locale/<lang>/map/<map>/tree.txt` |
-| Client assets | `pack/PC/ymir work/pc{,2}/<race>/general/tree_cut.{gr2,msa}`, `pack/NPC/ymir work/npc/tree_<kind>/…`, `pack/icon/item/2920x.tga` |
+| Default tree kinds (mob vnums) | 20400 "Fir" → folder `christmas_tree`; 20401 "Dead Tree" → `mineral/fossil_tree`; 20402–20499 free for custom models |
+| Axe items | 29201–29210 (`Lumber Axe+0 … +9`), `ITEM_PICK`, subtype 1, model `item/weapon/03080.gr2`, icon `icon/item/03080.tga` |
+| Default wood items | 50740 Log, 50741 Resin, 50742 Bark, 50743 Heartwood (type `ITEM_MATERIAL`, stackable) |
+| Motion | `CRaceMotionData::NAME_TREE_CUT` (appended last), Python `chr.MOTION_TREE_CUT` |
+| Server module | `game/src/tree_system.h/.cpp`, namespace `tree_system` |
+| Client module | `UserInterface/TreeSystem.h/.cpp` (packet recv, procedural fall/shake, helpers) |
+| DB tables | `player.tree_proto`, `player.tree_drop`, `player.tree_spawn` |
+| SQL | `Lead-Database-Scripts/migrations/<date>_tree_system.sql` (also usable standalone on any serverfile) |
 
 ---
 
-## 4. Data and configuration design
+## 4. Data model (database)
 
-### 4.1 Tree prototypes (gameplay parameters) — `tree_proto.txt`
+### 4.1 Why DB rather than files (recommendation: DB)
 
-Tab separated, one row per tree vnum. Loaded at boot and by `/reload tree`.
+| | Text files | DB tables |
+|---|---|---|
+| Editing | shell + text editor on the server, one copy per locale directory | Navicat/phpMyAdmin/web panel, one copy for all channels and locales |
+| Live placement | hand-edit coordinates, reload | `/tree_add` writes the row and spawns immediately |
+| Portability | depends on each serverfile's locale path layout | one SQL file, works on every serverfile with a `player` DB |
+| Reload | `/reload` re-reads files | `/reload tree` re-queries |
+| Consistency across channels | files must be synced | automatic |
 
-```
-VNUM	NAME	HARDNESS_PCT	AXE_GRADE_MIN	LEVEL_MIN	SWING_MS	HIT_GROUP	FELL_GROUP	FELL_DELAY_MS	HP_RESET_S	DROP_MODE	OWNER_S
-20400	oak	100	0	1	1500	OakChips	OakLogs	4000	600	TOP	15
-20401	pine	80	0	1	1500	-	PineLogs	4000	600	TOP	15
-20402	ironwood	250	5	40	1800	-	IronwoodLogs	5000	300	ALL	15
-```
+The only argument for files is "Ymir did it that way". Everything the owner asked for
+(low configuration effort, works on every serverfile) points to the DB.
 
-| Column | Meaning |
-|---|---|
-| `HARDNESS_PCT` | Swing damage multiplier: `damage = roll(axe) * 100 / HARDNESS_PCT` (100 = normal, 250 = takes 2.5× longer). |
-| `AXE_GRADE_MIN` | Minimum axe refine level (+0 … +9) required to damage this tree. |
-| `LEVEL_MIN` | Minimum player level. |
-| `SWING_MS` | Server time between swings. Should match the `.msa` `MotionDuration` of the chop animation (see §10) so the loop looks continuous. |
-| `HIT_GROUP` | Drop group rolled **on every swing** (chips, bark) or `-`. |
-| `FELL_GROUP` | Drop group rolled **when the tree falls**. |
-| `FELL_DELAY_MS` | How long the fallen tree stays before the character is destroyed (length of the tree's `dead` motion). |
-| `HP_RESET_S` | If nobody hits the tree for this many seconds, HP goes back to max (prevents "pre-cut" trees sitting at 1 HP). 0 = never. |
-| `DROP_MODE` | `TOP` = the player who dealt the most damage owns the fell drops; `ALL` = every contributor with ≥ 20 % of the damage gets an independent roll. |
-| `OWNER_S` | Ground-item ownership time for the dropper (as mining uses 15 s). |
+### 4.2 `tree_proto` — tree kinds
 
-**Tree HP** is *not* in this file: it is `MAX_HP` in `mob_proto` (so `GetMaxHP()`, the target
-HP bar and `/reload` all keep working without special cases). Respawn time is in the per-map
-spawn file (§4.3) because that is where the regen system reads it.
-
-### 4.2 Drop tables — `tree_drop.txt`
-
-Same group syntax as `mob_drop_item.txt`, so the existing group loader
-(`CGroupTextParseTreeLoader`) is reused:
-
-```
-Group	OakLogs
-{
-	Type	fell			-- fell | hit
-	Tree	20400
-	1	50740	2~4	100.0		-- Oak Log: always 2 to 4
-	2	50742	1	25.0		-- Resin: 25 %
-	3	50744	1	0.5		-- Rare Heartwood: 0.5 %
-}
-
-Group	OakChips
-{
-	Type	hit
-	Tree	20400
-	1	50743	1	10.0		-- Bark: 10 % per swing
-}
+```sql
+CREATE TABLE IF NOT EXISTS `tree_proto` (
+  `vnum`            INT UNSIGNED NOT NULL,                 -- mob vnum (model/name come from mob_proto)
+  `name`            VARCHAR(32)  NOT NULL DEFAULT '',      -- admin label only
+  `hp`              INT UNSIGNED NOT NULL DEFAULT 300,     -- applied at spawn (SetMaxHP/SetHP)
+  `hardness_pct`    SMALLINT UNSIGNED NOT NULL DEFAULT 100,-- swing damage * 100 / hardness
+  `axe_grade_min`   TINYINT UNSIGNED NOT NULL DEFAULT 0,   -- minimum axe refine level (+0..+9)
+  `level_min`       TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `swing_ms`        SMALLINT UNSIGNED NOT NULL DEFAULT 1500,
+  `fall_ms`         SMALLINT UNSIGNED NOT NULL DEFAULT 2500,-- procedural fall duration
+  `linger_ms`       SMALLINT UNSIGNED NOT NULL DEFAULT 3000,-- fallen tree stays before destroy
+  `hp_reset_sec`    SMALLINT UNSIGNED NOT NULL DEFAULT 600, -- untouched -> HP back to max; 0 = never
+  `drop_mode`       ENUM('TOP','ALL') NOT NULL DEFAULT 'TOP',
+  `owner_sec`       TINYINT UNSIGNED NOT NULL DEFAULT 15,  -- ground item ownership
+  `exp`             INT UNSIGNED NOT NULL DEFAULT 0,       -- optional exp on fell (0 = none)
+  PRIMARY KEY (`vnum`)
+);
 ```
 
-Rules:
+### 4.3 `tree_drop` — drop lines
 
-- `count` is `n` or `n~m` (uniform random, inclusive).
-- `pct` is a float with up to 4 decimals; stored as an integer ×10 000 and rolled against
-  `number(1, 1 000 000)` exactly like the `drop` type of `mob_drop_item.txt`.
-- Each line is rolled **independently** (several lines can all drop). A `MaxLines` optional key
-  (`MaxLines 2`) limits how many lines may succeed per roll, for "pick one of" tables.
-- A group may list several `Tree` vnums; a tree vnum may appear in one `fell` and one `hit`
-  group.
-- Items are created with `ITEM_MANAGER::CreateItem`, placed on the ground around the tree
-  (`AddToGround` + `StartDestroyEvent` + `SetOwnership`) exactly as `mining::OreDrop` does, and
-  logged through `LogManager::ItemLog` / `SendMoneyLog`.
-
-### 4.3 Spawn positions per map — `map/<map>/tree.txt`
-
-The regen format already used by `npc.txt` / `stone.txt`, loaded by the same `regen_load()`:
-
-```
-//type	cx	cy	sx	sy	z	dir	time	percent	count	vnum
-m	612	540	0	0	0	3	5m	100	1	20400
-m	618	552	0	0	0	1	5m	100	1	20400
-m	700	490	4	4	0	0	10m	100	3	20401
+```sql
+CREATE TABLE IF NOT EXISTS `tree_drop` (
+  `id`        INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `tree_vnum` INT UNSIGNED NOT NULL,
+  `when`      ENUM('FELL','HIT') NOT NULL DEFAULT 'FELL',
+  `item_vnum` INT UNSIGNED NOT NULL,
+  `count_min` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+  `count_max` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+  `pct`       DECIMAL(7,4) NOT NULL DEFAULT 100.0000,       -- 0.0001 .. 100
+  `grade_min` TINYINT UNSIGNED NOT NULL DEFAULT 0,          -- line only active from this axe grade
+  PRIMARY KEY (`id`), KEY (`tree_vnum`)
+);
 ```
 
-- `cx cy` are map-local coordinates in the usual regen units; `sx sy` jitter (0 = exact);
-  `dir` rotation 1–8 (lets the same model face different ways); `time` respawn delay after
-  felling; `count` how many trees live in that spot at once.
-- `percent 100`, `count 1`, `sx sy 0` gives the "exact position" case the request asks for.
-- Loading is added in `SECTREE_MANAGER::Build` right after `stone.txt`.
-- `regen_load` registers `TYPE NPC` mobs on the atlas (`InsertNPCPosition`). Trees must be
-  skipped there (`tree_cut::IsTree(vnum)` check in the NPC branch), otherwise every tree becomes a
-  named marker on the minimap.
+Every line is rolled independently against `number(1, 1 000 000)` with `pct × 10 000`
+(same precision as the `drop` type of `mob_drop_item.txt`). `count` is uniform in
+`[count_min, count_max]`. `HIT` lines roll on every swing for the swinging player; `FELL`
+lines roll once when the tree falls. Items are created, placed on the ground around the tree
+with ownership (`AddToGround` + `StartDestroyEvent` + `SetOwnership`, as `mining::OreDrop`),
+and logged (`ItemLog`, `SendMoneyLog`).
 
-### 4.4 Mob prototype rows (server `share/conf/mob_proto.txt`, client `mob_proto` per locale)
+### 4.4 `tree_spawn` — positions per map
 
-Modelled on the ore vein rows (`20047`):
-
+```sql
+CREATE TABLE IF NOT EXISTS `tree_spawn` (
+  `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `map_index`   INT NOT NULL,
+  `x`           INT NOT NULL,            -- absolute world coordinates (like `object`)
+  `y`           INT NOT NULL,
+  `dir`         TINYINT UNSIGNED NOT NULL DEFAULT 0,   -- 0..7 (regen dir), 8 = random
+  `tree_vnum`   INT UNSIGNED NOT NULL,
+  `respawn_sec` INT UNSIGNED NOT NULL DEFAULT 300,
+  `enabled`     TINYINT(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`), KEY (`map_index`)
+);
 ```
-20400	Oak	KING	NPC	MELEE	1		NOMOVE	0		STUN,SLOW,CURSE,TERROR	0	tree_oak	0	0 0 0 0	0	0	MAX_HP=300	REGEN_CYCLE=0	REGEN_PERCENT=0	gold 0 0	EXP 0	…
-```
 
-Key fields: `TYPE NPC`, `RANK KING` (prevents the "monster" level/colour logic), `AI_FLAG NOMOVE`,
-`FOLDER tree_oak` (client model folder), `MAX_HP` = tree health, `REGEN_PERCENT 0`
-(no natural HP regen), `EXP 0`, `GOLD 0 0`, `DROP_ITEM 0`, `ON_CLICK 0`.
-Add names to `mob_names*.txt` for every language.
+Loading builds one `REGEN` record per row (`type REGEN_TYPE_MOB`, `count 1`,
+`time = respawn_sec`, zero jitter) through a small new entry point in `regen.cpp`
+(`regen_insert_tree(REGEN&)`, under the define) so respawn, counting and `/reload` behave
+exactly like file regens. Spawned trees get `SetMaxHP/SetHP` from `tree_proto.hp` and are
+registered on the atlas with `TREE_SYSTEM_ATLAS_TYPE`.
 
-### 4.5 Axe item rows (`share/conf/item_proto.txt`, client `item_proto` per locale)
+### 4.5 Defaults shipped in the SQL file
 
-Modelled on the pickaxe rows (`29101`), type `ITEM_AXE`, `WEAR_WEAPON`, size 2, `LIMIT LEVEL n`:
+- 2 kinds: 20400 Fir (hp 300, swing 1500, fall 2500, TOP) and 20401 Dead Tree
+  (hp 600, hardness 150, axe grade ≥ 3, level ≥ 30).
+- Drops: Fir → Log 2–4 @100 %, Resin 1 @25 %, Heartwood 1 @1 %; Bark 1 @10 % per HIT.
+  Dead Tree → Log 4–6 @100 %, Heartwood 1 @5 %.
+- No spawns (placed in game with `/tree_add`). Optional sample rows for `metin2_map_a1`
+  commented out.
+- All statements `CREATE TABLE IF NOT EXISTS` / `INSERT IGNORE`, so the file is idempotent.
 
-| Value slot | Meaning (mirrors the pick where sensible) |
-|---|---|
-| `value0` | min damage per swing |
-| `value1` | max damage per swing |
-| `value2` | practice points needed for the next grade (socket0 holds current points, as picks do) |
-| `value3` | upgrade success % at the lumberjack NPC |
-| `value4` | vnum given on failed upgrade |
-| `refined_vnum` | next grade vnum (29201 → 29202 …) |
+### 4.6 Proto rows (the only non-SQL data step)
 
-The existing pick refine flow (`mining::RealRefinePick`, `mining.quest` dialogue at NPC 20015)
-is generalised or duplicated for axes in phase 2 (`tree_cut::RealRefineAxe`, `pc.refine_axe`).
+Shipped as copy-paste snippets for **both** formats (txt rows for this repo, SQL `INSERT`s for
+serverfiles that keep protos in the DB), in `docs/tree-cutting/data/`:
 
-### 4.6 Locale strings
-
-New `LC_TEXT` keys (added to every `locale_string*.txt`, English fallback is automatic):
-"You need an axe to cut trees.", "You are too far from the tree.", "You cannot cut trees while
-mounted.", "Your axe is not strong enough for this tree.", "You need level %d to cut this tree.",
-"The tree fell!", "Cutting is finished.", "Your lumberjack points have increased! (%lld/%d)".
-Client side: `localeInfo` keys for the client-only hints (§6.5).
-
-### 4.7 Database
-
-No schema change. All configuration is file based (consistent with regen and drop tables, and
-reloadable without a DB round trip). Drops and axe upgrades are logged into the existing `log`
-database tables through `LogManager`. A DB-backed spawn table was considered and rejected: it
-would need new db-core packets and would diverge from how every other spawn is configured.
+- `mob_proto`: 20400, 20401 — cloned from vein 20047 (`KING NPC MELEE NOMOVE`, `ON_CLICK 0`,
+  exp/gold 0), `FOLDER` = `christmas_tree` / `fossil_tree`. `MAX_HP` is irrelevant (overridden).
+- `item_proto`: 29201–29210 — cloned from picks 29101–29110 with **subtype 1**, `refined_vnum`
+  chain, `value0/1` = min/max swing damage (8/12 … 30/40), `value2` practice points,
+  `value3` upgrade %, `value4` fail vnum. Model/icon via `item_list.txt`: `03080.gr2` / `03080.tga`.
+- `item_proto`: 50740–50743 — `ITEM_MATERIAL`, stack 200.
+- Names in `mob_names*.txt` / `item_names*.txt` (or DB `locale_name`).
+- Client: `npclist.txt` lines `20400 christmas_tree` and `20401 fossil_tree mineral`, then
+  regenerate the client `mob_proto`/`item_proto` dumps (unchanged tooling; no enum changes).
 
 ---
 
 ## 5. Server design
 
-### 5.1 New module `tree_cut.h` / `tree_cut.cpp`
+### 5.1 Module `tree_system.h/.cpp` (new files)
 
 ```
-namespace tree_cut
+namespace tree_system
 {
-	bool  LoadProto(const char* file);          // tree_proto.txt
-	bool  LoadDrops(const char* file);          // tree_drop.txt
-	bool  Reload();                             // both; used by /reload tree
-	bool  IsTree(DWORD vnum);
-	const TTreeProto* GetProto(DWORD vnum);
-
-	bool  Start(LPCHARACTER cutter, LPCHARACTER tree);   // validation + first swing event
-	void  Cancel(LPCHARACTER cutter, bool notify);      // used from all cancel hooks
-	bool  IsCutting(LPCHARACTER cutter);
-
-	// axe helpers (parallel to mining::*Pick*)
-	bool  IsAxe(const CItem& item);
-	int   RealRefineAxe(LPCHARACTER ch, LPITEM axe);
-	void  PracticeAxe(LPCHARACTER ch, CItem& axe);
+	bool  Initialize();                 // boot: load 3 tables; false aborts boot with a clear error
+	bool  Reload();                     // /reload tree: swap tables atomically, re-apply hp to idle trees
+	bool  IsTree(DWORD mobVnum);
+	bool  IsAxe(const CItem* item);     // ITEM_PICK && subtype == TREE_SYSTEM_PICK_SUBTYPE_AXE
+	void  SpawnAll(long mapIndex);      // called from SECTREE_MANAGER::Build after stone.txt
+	void  OnTreeSpawned(LPCHARACTER tree);   // apply hp, atlas registration
+	bool  Start(LPCHARACTER cutter, LPCHARACTER tree);
+	void  Cancel(LPCHARACTER cutter, bool notify);
+	void  OnTreeDestroyed(LPCHARACTER tree); // free per-tree state, cancel its cutters
+	int   RefineAxe(LPCHARACTER ch, LPITEM axe);     // mirrors mining::RealRefinePick
+	void  PracticeAxe(LPCHARACTER ch, CItem& axe);   // mirrors mining::PracticePick
+	// GM
+	bool  GMAdd(LPCHARACTER gm, DWORD treeVnum, int dir, int respawnSec);  // INSERT + spawn
+	bool  GMRemove(LPCHARACTER gm, LPCHARACTER tree);                      // DELETE + destroy
+	void  GMInfo(LPCHARACTER gm, LPCHARACTER tree);
 }
 ```
 
-Internal state:
-
-- **Per cutter** (`CHARACTER`): `LPEVENT m_pkTreeCutEvent`, `DWORD m_dwTreeCutTargetVID`.
-  Event info holds `pid` + `target vid` only (never pointers), like `mining_event_info`.
-- **Per tree** (map keyed by tree VID inside the module, cleaned on destroy):
-  `std::map<DWORD /*pid*/, int /*damage*/> contributors`, `DWORD lastHitTime`,
-  `LPEVENT hpResetEvent`.
+State: per cutter `LPEVENT m_pkTreeCutEvent` + `DWORD m_dwTreeCutTargetVID` on `CHARACTER`
+(two members, under the define); per tree a map keyed by VID inside the module
+(contributors `pid → damage`, `lastHit`, `hpResetEvent`, `felled` flag, `removeEvent`).
+Event payloads carry `pid`/`vid` only.
 
 ### 5.2 Flow
 
 ```
-client                          server
-  |-- CG_ON_CLICK(tree vid) ------>|  CHARACTER::OnClick
-  |                                |   quest Click() first (lets quests intercept)
-  |                                |   if tree_cut::IsTree(race) -> tree_cut::Start(cutter, tree)
-  |<-- GC_TREE_CUT START ----------|  (PacketAround: everyone nearby sees the stance)
-  |                                |  event in SWING_MS
-  |<-- GC_TREE_CUT HIT (hp%) ------|  swing: re-validate, damage, tree->SetHP, drops(hit),
-  |<-- GC_TARGET (hp%) ------------|  BroadcastTargetPacket, PracticeAxe, reschedule
-  |        ... repeat ...          |
-  |<-- GC_TREE_CUT FELL -----------|  hp <= 0: fell drops, tree->Dead() (plays dead motion),
-  |<-- GC_DEAD (tree) -------------|  dead_event destroys after FELL_DELAY_MS, regen respawns
-  |                                |
-  |-- CG_TREE_CUT STOP ----------->|  optional explicit cancel (ESC / click elsewhere)
-  |<-- GC_TREE_CUT STOP -----------|
+client                               server
+  |-- CG_ON_CLICK(tree vid) ---------->| CHARACTER::OnClick: quest Click() first, then
+  |                                    |   if tree_system::IsTree(race) -> Start(cutter, tree)
+  |<-- GC_TREE_CUT START --------------| PacketAround; swing event in swing_ms
+  |<-- GC_TREE_CUT HIT(hp%) -----------| validate, damage, SetHP, BroadcastTargetPacket,
+  |<-- GC_TARGET(hp%) -----------------| HIT drops, PracticeAxe, reschedule
+  |         ... repeat ...             |
+  |<-- GC_TREE_CUT FELL(dir) ----------| hp<=0: felled=true, FELL drops, exp, cancel all cutters,
+  |                                    |   remove event in fall_ms + linger_ms -> M2_DESTROY_CHARACTER
+  |<-- GC_CHARACTER_DEL ---------------| regen count--, regen_event respawns after respawn_sec
+  |-- CG_TREE_CUT STOP --------------->| explicit cancel (ESC / move key)
 ```
 
-### 5.3 Validation (at start **and** before every swing)
+### 5.3 Validation (start and before every swing)
 
-1. `tree` still exists, same map index, `IsTree`, `!IsDead`, HP > 0.
-2. Cutter: `!IsDead`, `!IsStun`, `!IsRiding/GetMountVnum`, no shop/exchange/safebox/cube open
-   (same guard list as `OnClick`), `GetLevel() >= LEVEL_MIN`.
-3. `GetWear(WEAR_WEAPON)` exists and `GetType() == ITEM_AXE`; `GetRefineLevel() >= AXE_GRADE_MIN`.
-4. Distance: `DISTANCE_APPROX(dx, dy) <= TREE_CUT_MAX_DISTANCE` (300 units; the client walks to
-   150 before it sends the click, so there is slack for lag). Checked every swing so walking
-   away stops cutting even if `OnMove` misses.
-5. Not already cutting another tree (a second click on the same tree = cancel, as mining does).
+1. Tree exists, same map, `IsTree`, not felled, HP > 0.
+2. Cutter not dead/stunned/mounted (`GetMountVnum`, `IsRiding`), no shop/exchange/safebox/cube
+   open, `GetLevel() >= level_min`.
+3. `GetWear(WEAR_WEAPON)` is an axe (`IsAxe`), `GetRefineLevel() >= axe_grade_min`.
+4. `DISTANCE_APPROX <= TREE_SYSTEM_MAX_DISTANCE` (client walks to 150 before clicking).
+5. Not cutting another tree; a second click on the same tree cancels (mining behaviour).
 
-Failure sends one `LC_TEXT` reason and `GC_TREE_CUT STOP`.
+Failures send one `LC_TEXT` message + `GC_TREE_CUT STOP`.
 
-### 5.4 Damage, HP, felling
+### 5.4 Damage, HP, felling, drops
 
-- `damage = number(axe.value0, axe.value1) * 100 / HARDNESS_PCT`, minimum 1.
-- `tree->PointChange(POINT_HP, -damage)` is **not** used (it carries battle side effects);
-  use `tree->SetHP(max(0, hp - damage))` then `tree->BroadcastTargetPacket()`.
-- Contribution map updated; `lastHitTime` set; HP reset event re-armed for `HP_RESET_S`.
-- Fell: `Dead(cutter)` is reused so the client receives `HEADER_GC_DEAD` and plays the tree's
-  `dead` motion and so `dead_event` + regen handle removal/respawn. Guards are added at the top of
-  `CHARACTER::Dead` (and in `Reward`/`CreateDropItem` call sites) with `tree_cut::IsTree(GetRaceNum())`
-  so a tree gives **no exp, no mob drop, no quest `kill` trigger, no PK/arena bookkeeping**. The
-  dead-event delay for trees is `FELL_DELAY_MS`.
-- Fell drops go to `TOP` contributor or `ALL` ≥ 20 % per `DROP_MODE`; `hit` drops go to the
-  swinging player. Every created item is logged.
+- `damage = number(axe.value0, axe.value1) * 100 / hardness_pct`, min 1.
+- `tree->SetHP(hp - damage)` (not `PointChange`, which carries battle side effects), then
+  `BroadcastTargetPacket()`; contributor map and `lastHit` updated; HP-reset event re-armed.
+- Felling does **not** call `Dead()`; the tree stays a live but `felled` character for
+  `fall_ms + linger_ms` (clicks rejected), then is destroyed. This avoids every exp/quest/PK
+  side effect and needs no hooks in `Dead()`.
+- `drop_mode TOP`: contributor with most damage owns FELL drops (ties → feller). `ALL`: each
+  contributor with ≥ `TREE_SYSTEM_MIN_SHARE_PCT` gets an independent roll.
+  **Recommendation: TOP.** It matches how mob loot ownership already works (most damage), it
+  cannot be multiplied by parking alts around a tree, and drop rates stay exactly what the
+  table says. `ALL` stays available per kind for event trees where sharing is the point.
+- Optional `exp` on fell goes to the owner(s).
 
-### 5.5 Cancel hooks (mirror of `mining_cancel()` call sites, plus a few more)
+### 5.5 Cancel hooks (each one line, under the define)
 
-| Trigger | Where |
+| Trigger | Hook |
 |---|---|
-| Player moves | `CHARACTER::OnMove` (where `mining_cancel()` is called today) |
-| Player dies / is stunned / warps / logs out | `CHARACTER::Dead`, `Stun`, `WarpSet`, `Destroy` (`event_cancel(&m_pkTreeCutEvent)`) |
-| Axe unequipped or swapped | `CHARACTER::UnequipItem` / `EquipItem` for `ITEM_AXE` |
-| Mounts a horse | `CHARACTER::MountHorse` / `StartRiding` |
-| Tree destroyed or felled by someone else | swing re-validation (VID lookup fails / HP 0) |
-| Explicit stop | `HEADER_CG_TREE_CUT` subtype `STOP` |
-| Second click on the same tree | `tree_cut::Start` when already cutting |
+| Player moves | `CHARACTER::OnMove` (next to `mining_cancel()`) |
+| Dies / stunned / warps / logs out | `Dead`, `Stun`, `WarpSet`, `Destroy` → `tree_system::Cancel` / `event_cancel` |
+| Axe unequipped or swapped | `CHARACTER::UnequipItem` / `EquipItem` when `IsAxe(item)` |
+| Mounts | `MountHorse` / `StartRiding` |
+| Tree felled, destroyed or out of range | swing re-validation |
+| Explicit stop | `HEADER_CG_TREE_CUT` |
 
-### 5.6 Other server touch points
+### 5.6 Hook list in existing server files (the whole porting surface)
 
-- `CHARACTER::SetProto`: nothing (trees do **not** get the vein self-destroy timer).
-- `regen.cpp`: skip `InsertNPCPosition` for trees (§4.3).
-- `sectree_manager.cpp`: load `tree.txt`.
-- `main.cpp` boot: `tree_cut::LoadProto/LoadDrops` next to the drop-table loads; fail boot
-  loudly on parse errors (same policy as `mob_drop_item.txt`).
-- `cmd_gm.cpp`: `/reload tree`, `/tree_info` (target tree: HP, contributors), `/tree_fell`,
-  `/tree_spawn <vnum> [dir]` (spawns at the GM's position for level design; prints the `tree.txt`
-  line to copy), `/axe_max` (fills practice points, like `CHEAT_MAX_PICK`).
-- `questlua_pc.cpp`: `pc.cut_tree()` (start on the current quest NPC), `pc.refine_axe(cell)`;
-  `questlua_global.cpp`: `is_tree(vnum)`.
-- `packet_info.cpp`: register `HEADER_CG_TREE_CUT` (size, name, `true` = allowed in game phase).
-- `input_main.cpp`: dispatch `HEADER_CG_TREE_CUT` → `tree_cut::Cancel(ch, true)`.
-- `item.cpp` / `char_item.cpp`: `ITEM_AXE` in `IsEquipable`, `SetPart(PART_WEAPON)` on equip,
-  use-item = equip/unequip, and blocked while riding (same lines as `ITEM_PICK`).
-- `db/src/ProtoReader.cpp`: `"ITEM_AXE"` appended to the type string table (index 35).
+| File | Anchor to search | Insert |
+|---|---|---|
+| `common/service.h` | end | `#define ENABLE_TREE_SYSTEM` |
+| `common/tree_system.h` | new | constants + packed packet structs |
+| `char.h` | `// MINING` block | 2 members, `tree_cut_*` declarations |
+| `char.cpp` | ctor/`Destroy` next to `m_pkMiningEvent`; `OnClick` after `quest::CQuestManager::instance().Click(...)`; `OnMove` next to `mining_cancel()` | init/cancel, start hook, cancel |
+| `char_item.cpp` | `UnequipItem`/`EquipItem` | cancel when `IsAxe` |
+| `char_battle.cpp` | `Dead(` top, `Stun` | cancel |
+| `mining.cpp` | `Pick_Check`, `CHARACTER::mining` pick check | `&& item.GetSubType() == 0` |
+| `regen.cpp` | after `regen_load` | `regen_insert_tree(REGEN&)`; in `InsertNPCPosition` branch use `TREE_SYSTEM_ATLAS_TYPE` for trees |
+| `sectree_manager.cpp` | after `stone.txt` regen_load | `tree_system::SpawnAll(index)` |
+| `char_manager.cpp` | `DestroyCharacter` | `tree_system::OnTreeDestroyed` |
+| `main.cpp` | after drop tables load | `tree_system::Initialize()` |
+| `packet_info.cpp` | `HEADER_CG_FISHING` line | register `HEADER_CG_TREE_CUT` |
+| `input_main.cpp` | `case HEADER_CG_FISHING` | dispatch to `tree_system::Cancel` |
+| `cmd.cpp` / `cmd_gm.cpp` | GM command table | `/tree_add`, `/tree_del`, `/tree_info`, `/tree_fell`, `/reload tree`, `/axe_max` |
+| `questlua_pc.cpp` (optional) | `pc_mining` | `pc.cut_tree()`, `pc.refine_axe(cell)` |
+| `Makefile` / `.vcxproj` | sources | `tree_system.cpp` |
+
+Everything else is inside `tree_system.cpp`.
 
 ---
 
 ## 6. Client design
 
-### 6.1 Shared headers (`Lead-Shared-Source`)
-
-`packet.h` (inside the existing `#pragma pack(1)` region, fixed-width fields only):
+### 6.1 Shared packets (`common/tree_system.h`, inside the pack(1) region)
 
 ```c
 enum { TREE_CUT_START = 0, TREE_CUT_HIT = 1, TREE_CUT_STOP = 2, TREE_CUT_FELL = 3 };
-
-typedef struct packet_gc_tree_cut {  BYTE header; DWORD vid; DWORD target_vid; BYTE subheader; BYTE hp_pct; } TPacketGCTreeCut;
-typedef struct packet_cg_tree_cut {  BYTE header; BYTE subheader; DWORD target_vid; } TPacketCGTreeCut;
+typedef struct { BYTE header; DWORD vid; DWORD target_vid; BYTE subheader; BYTE hp_pct; BYTE fall_dir; } TPacketGCTreeCut;  // 12 bytes
+typedef struct { BYTE header; BYTE subheader; DWORD target_vid; } TPacketCGTreeCut;                                        // 6 bytes
 ```
 
-`common/item_length.h`: `ITEM_AXE` after `ITEM_BELT`. `length.h`: nothing.
+`static_assert` on both sizes; both header maps register them (`packet_info.cpp`,
+`CNetworkPacketHeaderMap`). `fall_dir` is the yaw (0–255 → 0–360°) away from the feller.
 
-### 6.2 Motion
+### 6.2 New file `TreeSystem.h/.cpp`
 
-- `GameLib/RaceMotionData.h`: `NAME_TREE_CUT` appended **after `NAME_JOY`, before
-  `NAME_MAX_NUM`** so no existing index shifts.
-- `UserInterface/PythonCharacterModule.cpp`: `MOTION_TREE_CUT` constant.
-- `root/playersettingmodule.py` `SetGeneralMotions`: `RegisterCacheMotionData(mode, chr.MOTION_TREE_CUT, "tree_cut.msa")`
-  right after the `dig.msa` line. Because `SetGeneralMotions` is called for every PC folder,
-  the `.msa/.gr2` pair must exist in all 8 `general/` folders (`pc/` and `pc2/` × 4 races).
+- `RecvTreeCutPacket()` dispatch.
+- `CTreeFallController`: per tree instance a small state machine driven from
+  `CInstanceBase::Update()`:
+  - **shake** (on HIT): roll oscillation ±3° decaying over 350 ms, plus a reusable leaf/dust
+    effect (`effect/etc/dig/dig.mse` as default; path configurable in Python).
+  - **fall** (on FELL): pitch 0 → 85° toward `fall_dir` with ease-in (`t²`) over `fall_ms`,
+    small bounce (−4°) at the end, impact effect + sound, then hold; alpha fade to 0 over the
+    last 500 ms before the server deletes the instance. Implemented with
+    `m_GraphicThingInstance.SetRotation(yaw, pitch, roll)`; pivot is the model origin, which
+    for all shipped tree models is at the trunk base.
+  - Works with **any** `.gr2`; if a model does have a `dead` motion a flag can prefer it.
+- Helpers: `IsTreeVnum(vnum)` (range from the shared header), `IsAxeItem(itemVnum)` (type
+  `ITEM_TYPE_PICK` and subtype 1 through `CItemManager`).
 
-### 6.3 Instance logic (`UserInterface/InstanceBase*.cpp`)
+### 6.3 Hooks in existing client files
 
-- `IsTree()`: vnum in 20400–20499 (single constant pair, exposed to Python as
-  `chr.TREE_VNUM_START/END`). Kept as a range like `IsResource()`; the client mob proto has no
-  flag column to carry it.
-- `IsHoldingAxe()`: look up `m_awPart[PART_WEAPON]` in `CItemManager` and test
-  `GetType() == ITEM_TYPE_AXE` (data-driven, unlike the pickaxe range).
-- Same guards as the pickaxe: `CanUseSkill()`, `CanAttack()` return false while holding an axe;
-  `__GetMotionModeByWeapon` → `MODE_GENERAL` (or `MODE_HORSE` when mounted); the axe model is
-  attached to the weapon bone through the normal `PART_WEAPON` path, so it is in hand during the
-  chop animation as in the screenshot.
-- `IsTree()` is added wherever `IsResource()` gates behaviour: clickable distance (150 instead of
-  the resource 100, `InstanceBaseBattle.cpp` ~L304), target-effect suppression
-  (`InstanceBaseEffect.cpp` ~L302), `IsAttackableInstance`/`IsEnemy` false, cursor = "talk/use".
-- `CPythonPlayer::__SendClickActorPacket`: before sending the click, if target `IsTree()`:
-  not holding axe → `game.OnCannotTreeCut("NEED_AXE")` (client hint only), mounted →
-  `OnCannotTreeCut("MOUNTED")`. The server validates again regardless.
+| File | Anchor | Insert |
+|---|---|---|
+| `Locale_inc.h` | end | `#define ENABLE_TREE_SYSTEM` |
+| `PythonApplicationModule.cpp` | `ENABLE_COSTUME_SYSTEM` export | `app.ENABLE_TREE_SYSTEM` |
+| `GameLib/RaceMotionData.h` | before `NAME_MAX_NUM` | `NAME_TREE_CUT` |
+| `PythonCharacterModule.cpp` | `MOTION_DIG` | `MOTION_TREE_CUT`, `TREE_VNUM_BEGIN/END` |
+| `PythonNetworkStream.h/.cpp`, `…PhaseGame.cpp` | `HEADER_GC_DIG_MOTION` lines | size map, `case`, `RecvTreeCutPacket`, `SendTreeCutStopPacket` |
+| `PacketDebugRegGen.h` | dig motion entries | both packets |
+| `InstanceBase.h/.cpp` | `IsHoldingPickAxe` and its 3 uses (`CanUseSkill`, `CanAttack`, motion mode) | `IsHoldingAxe()` + `IsTree()`; call `TreeSystem` update from `Update()` |
+| `InstanceBaseBattle.cpp` ~L304, `InstanceBaseEffect.cpp` ~L302 | `IsResource()` | `|| IsTree()` (distance 150, no target effect) |
+| `PythonPlayer.cpp` `__SendClickActorPacket` | pickaxe-on-horse check | tree + no axe / mounted → `OnCannotTreeCut(reason)` |
+| `PythonMiniMap.h/.cpp` | `TYPE_WARP` enum + `RegisterAtlasMark` switch + render/`GetAtlasInfo` | `TYPE_TREE`: own vector, own marker image (`ui/minimap/tree_mark.sub`, or the NPC mark tinted via `SetDiffuseColor`), own text color (green) |
+| `root/playersettingmodule.py` `SetGeneralMotions` | `dig.msa` line | register `tree_cut.msa` if the file exists in that folder else `dig.msa` for `MOTION_TREE_CUT` |
+| `root/game.py` | `OnCannotMining` | `OnCannotTreeCut`, ESC → `net.SendTreeCutStop()` |
+| `root/localeInfo.py`, `locale/<lang>/locale_game.txt` | — | 3 strings |
+| `root/npclist.txt` | — | 2 lines |
+| `root/uitooltip.py` (optional) | pick tooltip | label "Lumber axe" for subtype 1 |
 
-### 6.4 Network (`PythonNetworkStream*.cpp`, `PacketDebugRegGen.h`)
+All C++ hooks wrapped in `#ifdef ENABLE_TREE_SYSTEM`; Python hooks guarded by
+`if app.ENABLE_TREE_SYSTEM:`.
 
-- Register `HEADER_GC_TREE_CUT` with `sizeof(TPacketGCTreeCut)` static size; add
-  `RecvTreeCutPacket()`:
-  - `START`: cutter `NEW_LookAtDestInstance(tree)`, `NEW_Stop()`.
-  - `HIT`: cutter `PushOnceMotion(NAME_TREE_CUT)`; tree `PushOnceMotion(NAME_DAMAGE)` if the
-    model has one (shake); if the cutter is the main player, `uiTarget.SetHP(hp_pct)` is already
-    driven by the `GC_TARGET` packet, nothing extra.
-  - `STOP`: nothing to undo (one-shot motions return to wait on their own); clear any client
-    "cutting" flag used for the UI hint.
-  - `FELL`: play the wood-fall sound/effect at the tree; the actual fall animation comes from
-    the normal `GC_DEAD` handling of the tree instance.
-- `SendTreeCutStopPacket()` called from `game.py` on ESC / move keys so the stop is immediate
-  rather than waiting for the server's next swing re-validation.
-- Add both packets to `PacketDebugRegGen.h` so the packet debugger prints them.
+### 6.4 Assets to copy into the client pack
 
-### 6.5 Python (`Lead-Client/pack/root`, `uiscript`)
-
-- `game.py`: `OnCannotTreeCut(reason)` → chat info; `SendTreeCutStop` on ESC.
-- `localeInfo.py` + `locale/<lang>/locale_game.txt`: `GAME_CANNOT_TREE_CUT_NEED_AXE`,
-  `..._MOUNTED`, `..._TOO_FAR`.
-- `uitarget.py`: no change needed for the HP bar; optionally hide the attack/whisper buttons for
-  trees (treat like a resource).
-- `npclist.txt`: one line per tree vnum → model folder (`20400	tree_oak	`).
-- `uiinventory`/tooltips: `ITEM_TYPE_AXE` gets the same tooltip block as `ITEM_TYPE_PICK`
-  (damage, practice points `socket0/value2`, grade).
-
-### 6.6 Client data regeneration
-
-After editing `item_proto.txt` / `mob_proto.txt` and the per-language name files, regenerate the
-binary `item_proto` / `mob_proto` for **every** locale pack (`pack/locale_*/locale/*/`) with
-`Lead-Tools/DumpProto` (its `ItemCSVReader.cpp` string table also receives `"ITEM_AXE"`).
-Add item icons `pack/icon/item/29201.tga … 29210.tga` and `5074x.tga`.
+| Asset | Source | Notes |
+|---|---|---|
+| `pc/<race>/general/tree_cut.gr2` + `tree_cut.msa` | `Han_Treechopper.GR2` | start with the warrior folder (confirmed rig); test the other 7; where it does not fit, the Python fallback uses `dig.msa` until a retarget exists |
+| `ui/minimap/tree_mark.sub/.tga` | new 8×8 marker or tinted copy of the NPC mark | only new image |
+| Tree models | already in pack (`christmas_tree`, `mineral/fossil_tree`) | none |
+| Axe model + icon | already in pack (`03080`) | none |
+| Sounds | reuse `sound/…` wood/metin hit; optional new | optional |
 
 ---
 
 ## 7. Rendering backends (DX9 / DX12)
 
-Nothing in the feature touches the graphics layer:
-
-- The chop animation is a Granny track group applied to the existing skinned PC meshes; the
-  deformed vertices are uploaded through the shared deform vertex buffers in
-  `EterGrnLib/LODController.cpp`, which are `CGraphicVertexBuffer`s and therefore already have
-  DX12 twins.
-- The tree model is a normal NPC `.gr2` + `.msm`; its textures take the standard loader path
-  that builds DX12 texture twins when the backend is live.
-- Hit/fall effects are `.mse` files rendered by the effect pool, also backend-agnostic.
-
-What the plan *does* require is that the acceptance tests (§11) run twice, with `renderer dx9`
-and `renderer dx12` in the client config, and compare: animation plays, axe stays attached,
-tree damage shake and fall render, HP gauge updates, no validation-layer errors in the DX12 log.
+No backend-specific code. The chop animation drives the existing skinned PC meshes through the
+shared deform vertex buffers (`EterGrnLib/LODController.cpp`), which are `CGraphicVertexBuffer`s
+with DX12 twins; tree models and effects use the standard loaders. The procedural fall only
+changes the instance transform. Acceptance tests run twice (`renderer dx9`, `renderer dx12`).
 
 ---
 
-## 8. Shared packet/struct discipline
+## 8. Portability rules (every serverfile, 32- and 64-bit)
 
-- All new packets are declared inside the existing `#pragma pack(1)` section of `packet.h`
-  using `BYTE`/`WORD`/`DWORD`/`int32_t` only; sizes are asserted at compile time
-  (`static_assert(sizeof(TPacketGCTreeCut) == 11)`).
-- Both sides register the packet size in their header maps (`packet_info.cpp` on the server,
-  `CNetworkPacketHeaderMap` on the client), as every existing packet does.
-
----
-
-## 9. 32-bit / 64-bit portability rules for this feature
-
-The repo currently builds **x64 only** (client) and **amd64 only** (server). The feature is
-written so that re-adding a Win32 configuration needs no changes here:
-
-1. Event payloads store `pid`/`vid`, never object pointers (same as `mining_event_info`).
-2. No `long` in data that crosses the wire or is stored; `long` is 32-bit on Win64 and 64-bit on
-   FreeBSD amd64. Use `int32_t`/`int64_t`.
-3. Practice points on the axe use the item socket (`TimeT64` as picks do); printing uses `%lld`.
-4. No pointer ↔ `DWORD` casts; container sizes use `size_t` locally and are narrowed explicitly
-   when sent.
-5. Python bindings use `Py_BuildValue("(ii)")` with `int`s; no `Py_ssize_t`/pointer leakage.
-6. Packed structs are declared once in the shared header and included by both builds.
+1. **No new enums or renumbering**: axe = existing `ITEM_PICK` + subtype; tree = existing NPC
+   mob type; only `NAME_TREE_CUT` is appended at the *end* of the motion enum.
+2. **All constants in one shared header**; packet ids and vnum ranges are the only things a
+   port may need to change.
+3. **C++11 subset** (no `std::optional`, structured bindings, `if constexpr`), compiles with
+   clang/gcc on FreeBSD and VS2013+ on Windows.
+4. Packed structs with `BYTE/WORD/DWORD/int32_t` only; `static_assert` sizes; no `long`,
+   `size_t`, pointers or `time_t` on the wire or in DB rows (`TimeT64` for socket values).
+5. Event payloads store `pid`/`vid`, never pointers (mirrors `mining_event_info`).
+6. No dependency on this repo's x64 changes (`ItemCellType` etc.): use the types each
+   serverfile defines.
+7. SQL uses only MySQL/MariaDB 5.x-compatible syntax; the game core reads with `DirectQuery`
+   on the `player` connection; nothing in the `db` core changes.
+8. Python 2.7 compatible, guarded by `app.ENABLE_TREE_SYSTEM`.
 
 ---
 
-## 10. Asset tasks (needed before the client phase can be verified)
+## 9. Configuration effort after installation (what an admin actually does)
 
-1. **Chop animation** (`Han_Treechopper.GR2`):
-   - Open in Granny Viewer / 3ds Max; record the track group (skeleton) name and the exact
-     duration; write `tree_cut.msa` with that `MotionDuration` and an event at the impact frame
-     (`MotionEventType 1` effect "wood chips" + `MotionEventType 10`-style sound), modelled on
-     `dig.msa`.
-   - Set `SWING_MS` in `tree_proto.txt` to the same duration (±100 ms) so the server loop and
-     the motion loop stay in step.
-   - Test on all 8 player models. The file was made on the male warrior rig (screenshot); the
-     other 7 must be checked for bone-name mismatches (motion silently not playing) or
-     proportions. Retarget/export per skeleton where needed.
-2. **Tree model(s)**: a `.gr2` with `wait`, `damage` (shake) and `dead` (fall) motions, a `.msm`
-   with a collision sphere sized to the trunk, textures, `motlist.txt`. For development the
-   repo's `npc/christmas_tree` or `npc/mineral/fossil_tree` can be used as a stand-in (static,
-   no fall). Note that `fossil_tree` is already vein vnum 20049; do not reuse that vnum.
-3. **Axe model + icons**: a weapon `.gr2` for the 8 player rigs (or reuse an existing two-hand
-   axe-like weapon model for the first pass) and `icon/item/2920x.tga`.
-4. **Effects/sounds**: `effect/etc/tree/woodchips.mse`, `sound/tree_hit.wav`, `tree_fall.wav`.
+1. Compile server and client with `ENABLE_TREE_SYSTEM` defined.
+2. Import `tree_system.sql` (tables + defaults).
+3. Add the 2 mob rows, 10 axe rows, 4 wood rows and their names (snippets provided for txt
+   and SQL protos), regenerate the client proto dumps, add 2 `npclist.txt` lines.
+4. Copy `tree_cut.gr2/.msa` into the PC `general` folders and the atlas marker image; repack.
+5. In game as GM: stand where a tree should be, `/tree_add 20400` (optional `dir`,
+   `respawn_sec`). Repeat. `/tree_del` on a targeted tree removes it. `/reload tree` after DB
+   edits. Done.
+
+Give players an axe (`/item 29201`) or sell it at a shop; upgrade dialogue at NPC 20015 is
+provided as `lumberjack.quest` (optional, mirrors `mining.quest`).
 
 ---
 
-## 11. Implementation phases, files and verification
+## 10. Implementation phases and verification
 
-Each phase ends with a build of both targets and the listed check before the next starts.
+### Phase 1 — Shared + toggles
+`common/service.h`, `common/tree_system.h`, `Locale_inc.h`, Python export. Check: both
+builds compile with the define on and off (off = byte-identical behaviour).
 
-### Phase 0 — Asset preparation (parallel with phases 1–3)
-§10. Check: animation plays on every PC model in the character viewer; tree model has a fall.
+### Phase 2 — Server
+New `tree_system.cpp/h`; hooks per §5.6; SQL file with defaults; proto snippets.
+Check without client: boot loads tables, `/tree_add` creates a DB row and a visible NPC on the
+test core, `/tree_fell` triggers FELL drops + removal + respawn after `respawn_sec`,
+`/reload tree` rejects a broken row and keeps the old tables, mining still refuses an axe.
 
-### Phase 1 — Shared definitions
-Files: `Lead-Shared-Source/packet.h`, `Lead-Shared-Source/common/item_length.h`,
-`Lead-Client-Source/GameLib/ItemData.h`, `GameLib/RaceMotionData.h`,
-`Lead-Server-Source/db/src/ProtoReader.cpp`, `Lead-Tools/DumpProto/dump_proto/ItemCSVReader.cpp`.
-Check: both solutions compile; `static_assert`s pass; DumpProto converts an `ITEM_AXE` row.
+### Phase 3 — Client
+New `TreeSystem.cpp/h`; hooks per §6.3; Python; assets. Check: §11 matrix on DX9 and DX12.
 
-### Phase 2 — Server core
-Files: new `game/src/tree_cut.{h,cpp}`; `char.h/.cpp` (members, `OnClick` hook, cancel hooks,
-`Dead` guards, `UnequipItem`); `char_item.cpp`, `item.cpp` (`ITEM_AXE`); `regen.cpp`
-(atlas skip); `sectree_manager.cpp` (`tree.txt`); `main.cpp` (loaders); `packet_info.cpp`,
-`input_main.cpp` (CG packet); `cmd_gm.cpp`, `cmd.cpp` (commands); `questlua_pc.cpp`,
-`questlua_global.cpp`; `Makefile`/`.vcxproj` entries for the new files.
-Check (no client needed): boot with the data files from phase 3, `/tree_spawn`, `/tree_info`,
-simulate swings with `/tree_fell`; log shows drops, regen respawns after `time`; parse errors
-in `tree_drop.txt` abort boot with file/line.
+### Phase 4 — Tune and document
+Drop-rate check (fell 1 000 trees via a GM loop, compare counts with `pct`), tune `hp`,
+`hardness_pct`, axe damage, `swing_ms` to the measured `.msa` duration. Write
+`docs/tree-cutting/ADMIN.md` and the proto snippets in `docs/tree-cutting/data/`.
 
-### Phase 3 — Server data
-Files: `share/conf/mob_proto.txt` + `mob_names*.txt`, `share/conf/item_proto.txt` +
-`item_names*.txt`, `share/locale/<lang>/tree_proto.txt`, `tree_drop.txt`,
-`share/locale/<lang>/map/metin2_map_a1/tree.txt` (first map), `locale_string*.txt`,
-`quest/lumberjack.quest` (axe upgrade dialogue at NPC 20015, mirroring `mining.quest`).
-Check: `db` core loads the new protos; `/reload tree` works; the packaging script
-(`Lead-Tools/freebsd-pkg/build.sh`) stages the new files (they live under `share/`, so no
-change expected — verify).
+### Phase 5 (optional, asset work)
+Retarget the chop animation to the other 7 rigs; a proper broadleaf/pine `.gr2` actor model;
+stump actor (vnum 20450+) spawned at fell position; axe-specific model.
 
-### Phase 4 — Client
-Files: `UserInterface/PythonNetworkStream.{h,cpp}`, `PythonNetworkStreamPhaseGame.cpp`,
-`PacketDebugRegGen.h`, `InstanceBase.{h,cpp}`, `InstanceBaseBattle.cpp`, `InstanceBaseEffect.cpp`,
-`PythonPlayer.cpp`, `PythonCharacterModule.cpp`, `PythonItemModule.cpp`,
-`root/playersettingmodule.py`, `root/game.py`, `root/localeInfo.py`, `root/npclist.txt`,
-`root/uitooltip.py`, `uiscript` if a hint is shown, locale packs (`locale_game.txt`,
-regenerated `item_proto`/`mob_proto`), `pack/PC/**/general/tree_cut.*`, `pack/NPC/tree_*`,
-`pack/icon/item/*`.
-Check: see §11 test matrix; repack with `PackMakerLite`.
+---
 
-### Phase 5 — Test and tune
-§11 matrix on DX9 and DX12; drop-rate verification script (fell 1 000 trees with `/tree_fell`
-in a loop on a test core and compare counts with `tree_drop.txt` percentages); tune
-`HARDNESS_PCT`, axe damage, `SWING_MS`.
-
-### Phase 6 — Documentation
-`docs/tree-cutting/ADMIN.md`: how to add a tree kind, how to place trees on a map, how to edit
-drops, GM commands. Update `README.md` repository-layout table if a `docs/` folder is new.
-
-### Test matrix (phase 5)
+## 11. Test matrix
 
 | # | Scenario | Expected |
 |---|---|---|
-| 1 | Click tree with no weapon / with a sword | client hint; server refuses with message; no motion |
-| 2 | Click tree with axe, in range | START, HIT every `SWING_MS`, HP gauge decreases, chop animation each swing |
-| 3 | Walk away mid-cut | STOP within one swing, "Cutting is finished." |
-| 4 | Unequip axe / mount mid-cut | STOP immediately |
-| 5 | Two players on one tree, `TOP` mode | shared HP; top contributor gets fell drops with ownership; other sees items but cannot pick for `OWNER_S` |
-| 6 | `ALL` mode, 3 contributors (50/30/20 %) | three independent rolls |
-| 7 | Axe grade below `AXE_GRADE_MIN` / level below `LEVEL_MIN` | refused with message |
-| 8 | Tree falls | FELL packet, fall motion, items on ground, character removed after `FELL_DELAY_MS`, respawn after regen `time` at the same spot and direction |
-| 9 | Leave a tree at 1 HP for `HP_RESET_S` | HP back to max |
-| 10 | Logout / warp / death mid-cut | no dangling event (checked with `/tree_info` and server log) |
-| 11 | `/reload tree` with a broken line | reload refused, old tables kept, error names file and line |
-| 12 | Same scenarios 2, 5, 8 with `renderer dx12` | identical visuals, no DX12 errors |
-| 13 | Per-swing `hit` drops at 10 % over 200 swings | ≈20 ± statistical margin |
-| 14 | Spam clicking the tree | one cutting session; second click cancels; no faster than `SWING_MS` |
-| 15 | Packet fuzz: CG_TREE_CUT with foreign vid / while not cutting | ignored, no crash |
+| 1 | Click tree with no weapon / sword / pickaxe | client hint; server refuses; no motion |
+| 2 | Click tree with axe in range | START, HIT every `swing_ms`, HP gauge drops, chop motion + shake each swing |
+| 3 | Walk away / unequip axe / mount mid-cut | STOP within one swing |
+| 4 | Two players, `TOP` | shared HP; top contributor owns FELL drops for `owner_sec` |
+| 5 | Three players (50/30/20 %), `ALL` | three independent rolls |
+| 6 | Axe grade / level too low | refused with message |
+| 7 | Tree falls | FELL packet, procedural fall toward `fall_dir`, impact effect, items on ground, instance removed after `fall_ms + linger_ms`, respawn at same spot after `respawn_sec` |
+| 8 | Tree at 1 HP untouched for `hp_reset_sec` | HP back to max |
+| 9 | Logout / warp / death mid-cut | no dangling event (`/tree_info`, server log) |
+| 10 | `/reload tree` with a bad row | reload refused, old data kept, error names table and id |
+| 11 | Atlas on a map with trees | green tree markers with names, distinct from NPC/warp |
+| 12 | Mining a vein while holding the lumber axe | refused ("need a pickaxe") |
+| 13 | Scenarios 2, 7, 11 with `renderer dx12` | identical visuals, no DX12 errors |
+| 14 | 200 swings with a 10 % HIT line | ≈ 20 ± statistical margin |
+| 15 | Spam clicks / forged `CG_TREE_CUT` with foreign vid | one session; second click cancels; forged packet ignored |
+| 16 | Build with `ENABLE_TREE_SYSTEM` undefined | compiles, no behaviour change |
 
 ---
 
-## 12. Open decisions (defaults chosen, change before phase 2 if wanted)
-
-| Decision | Default in this plan | Alternative |
-|---|---|---|
-| Who gets the drops when several people cut | `TOP` contributor per tree kind | `ALL` ≥ 20 % |
-| Axe damage source | axe item `value0..1` scaled by tree `HARDNESS_PCT` | fixed per-tree damage, axe only gates grade |
-| Axe progression | practice points + NPC upgrade, cloned from the pickaxe | none, or a real `SKILL_LUMBERJACK` with levels (v2) |
-| Tree HP location | `mob_proto.MAX_HP` | column in `tree_proto.txt` |
-| Hit drops | optional `hit` group per tree | fell-only |
-| Can trees be cut while mounted | no (as mining) | yes with a mounted animation (none delivered) |
-| Trees on the atlas | hidden | shown as NPC markers |
-| v2 ideas | stump mob (20450+) spawned at fell position, tree growth stages, wood crafting, lumber quests | — |
-
----
-
-## 13. Risks and mitigations
+## 12. Risks and mitigations
 
 | Risk | Mitigation |
 |---|---|
-| The single GR2 only fits the male warrior rig; other models play nothing or deform | Phase 0 check on all 8 models before client work; budget retargeting; fall back to `dig.gr2` per model temporarily so the loop is testable |
-| The `.msa` duration and `SWING_MS` drift | server is authoritative; client plays one-shot per HIT, so drift only causes a visual gap, never desync |
-| `CHARACTER::Dead` side effects for an NPC-type kill (exp, quest kill, drop) | explicit `IsTree` guards + test 8; alternative is a custom "fall" packet without `Dead`, kept as plan B |
-| `regen_load` lists trees on the atlas | skip in the NPC branch (§4.3), test by opening the atlas |
-| Packet id or item-type collision with other forks' systems merged later | ids chosen from verified free ranges and centralised in one place each |
-| Client proto dumps forgotten for one locale | phase 4 check list includes every `locale_*` pack; DumpProto run scripted |
-| Exploit: fake client sends clicks from afar / without axe | all checks repeated server-side every swing; distance limit 300 units; logs on refusal in test-server mode |
+| Chop GR2 fits only the male warrior rig | per-folder registration with `dig.msa` fallback; retarget in phase 5 |
+| Shipped tree models look like a Christmas fir / fossil | `tree_proto.vnum → mob FOLDER` is the only thing to change when a better `.gr2` is sourced; the procedural fall needs no motions from it |
+| Model origin not at trunk base on a custom model | fall pivot offset column (`pivot_z`) can be added to `tree_proto` later; defaults 0 |
+| Packet id / vnum collisions on another serverfile | all in `common/tree_system.h` |
+| Admin forgets client proto dumps | §9 checklist; symptom is a nameless tree, not a crash |
+| Exploits (distance, no axe, timing) | every check repeated server-side each swing; HP and drops server-only |
