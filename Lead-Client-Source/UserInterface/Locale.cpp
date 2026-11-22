@@ -270,7 +270,7 @@ void LocaleService_RememberQuestButton(const std::string& c_rstScript)
 	}
 
 	const size_t c_uStart = c_uName + c_stName.length();
-	s_kQuestButtonNameMap[atoi(c_rstScript.c_str() + c_stHead.length())] = c_rstScript.substr(c_uStart, uEnd - c_uStart);
+	s_kQuestButtonNameMap[static_cast<int>(atoi(c_rstScript.c_str() + c_stHead.length()))] = c_rstScript.substr(c_uStart, uEnd - c_uStart);
 }
 
 std::string LocaleService_GetQuestButtonName(int iIndex)
