@@ -289,6 +289,7 @@ CGraphicFontTexture::TCharacterInfomation* CGraphicFontTexture::UpdateCharacterI
 	rNewCharInfo.right = float(m_x+size.cx) * rhwidth;
 	rNewCharInfo.bottom = float(m_y+size.cy) * rhheight;
 	rNewCharInfo.advance = (float) lAdvance;
+	rNewCharInfo.inkOffset = (float) c_iInkOffset;
 
 	m_x += size.cx;
 
