@@ -161,6 +161,8 @@ class LoginWindow(ui.ScriptWindow):
 		self.selectedServerID = 0
 		self.selectedChannelID = 0
 		self.focusState = -1
+		self.serverLabel = None
+		self.channelLabel = None
 		self.loginButton = None
 		self.unit = 1.0
 		self.rotateIndex = -1
@@ -175,22 +177,7 @@ class LoginWindow(ui.ScriptWindow):
 	def Open(self):
 		ServerStateChecker.Create(self)
 
-		self.loginFailureMsgDict = {
-			"ALREADY"	: localeInfo.LOGIN_FAILURE_ALREAY,
-			"NOID"		: localeInfo.LOGIN_FAILURE_NOT_EXIST_ID,
-			"WRONGPWD"	: localeInfo.LOGIN_FAILURE_WRONG_PASSWORD,
-			"FULL"		: localeInfo.LOGIN_FAILURE_TOO_MANY_USER,
-			"SHUTDOWN"	: localeInfo.LOGIN_FAILURE_SHUTDOWN,
-			"REPAIR"	: localeInfo.LOGIN_FAILURE_REPAIR_ID,
-			"BLOCK"		: localeInfo.LOGIN_FAILURE_BLOCK_ID,
-			"BESAMEKEY"	: localeInfo.LOGIN_FAILURE_BE_SAME_KEY,
-			"NOTAVAIL"	: localeInfo.LOGIN_FAILURE_NOT_AVAIL,
-			"NOBILL"	: localeInfo.LOGIN_FAILURE_NOBILL,
-			"BLKLOGIN"	: localeInfo.LOGIN_FAILURE_BLOCK_LOGIN,
-			"WEBBLK"	: localeInfo.LOGIN_FAILURE_WEB_BLOCK,
-			"BADSCLID"	: localeInfo.LOGIN_FAILURE_WRONG_SOCIALID,
-			"AGELIMIT"	: localeInfo.LOGIN_FAILURE_SHUTDOWN_TIME,
-		}
+		self.__RefreshLanguageTexts()
 
 		self.loginFailureFuncDict = {
 			"WRONGPWD"	: self.__DisconnectAndInputPassword,
@@ -213,7 +200,6 @@ class LoginWindow(ui.ScriptWindow):
 		ime.AddExceptKey(93)
 
 		self.Show()
-		self.idEditLine.SetText(getattr(self.stream, "loginAccountText", ""))
 		self.idEditLine.SetFocus()
 		app.ShowCursor()
 
@@ -247,6 +233,8 @@ class LoginWindow(ui.ScriptWindow):
 		self.lockField = None
 		self.loginButton = None
 		self.languageName = None
+		self.serverLabel = None
+		self.channelLabel = None
 		self.serverMark = None
 		self.channelRing = None
 		self.flagList = []
@@ -417,11 +405,38 @@ class LoginWindow(ui.ScriptWindow):
 		if progress < 1.0:
 			return
 
-		code, name = self.languageList[self.rotateIndex]
+		index = self.rotateIndex
 		self.rotateIndex = -1
-		self.stream.loginAccountText = self.idEditLine.GetText()
-		if localeInfo.SetLanguage(code):
-			self.stream.SetLoginPhase()
+		if localeInfo.SetLanguage(self.languageList[index][0]):
+			self.currentLanguageIndex = index
+			self.__RefreshLanguageTexts()
+
+		self.__PlaceFlags(0.0, 0.0)
+		for flagIndex, flag in enumerate(self.flagList):
+			flag.SetAlpha(1.0 if flagIndex == self.currentLanguageIndex else PORTAL_FLAG_DIM)
+
+	def __RefreshLanguageTexts(self):
+		self.loginFailureMsgDict = {
+			"ALREADY"	: localeInfo.LOGIN_FAILURE_ALREAY,
+			"NOID"		: localeInfo.LOGIN_FAILURE_NOT_EXIST_ID,
+			"WRONGPWD"	: localeInfo.LOGIN_FAILURE_WRONG_PASSWORD,
+			"FULL"		: localeInfo.LOGIN_FAILURE_TOO_MANY_USER,
+			"SHUTDOWN"	: localeInfo.LOGIN_FAILURE_SHUTDOWN,
+			"REPAIR"	: localeInfo.LOGIN_FAILURE_REPAIR_ID,
+			"BLOCK"		: localeInfo.LOGIN_FAILURE_BLOCK_ID,
+			"BESAMEKEY"	: localeInfo.LOGIN_FAILURE_BE_SAME_KEY,
+			"NOTAVAIL"	: localeInfo.LOGIN_FAILURE_NOT_AVAIL,
+			"NOBILL"	: localeInfo.LOGIN_FAILURE_NOBILL,
+			"BLKLOGIN"	: localeInfo.LOGIN_FAILURE_BLOCK_LOGIN,
+			"WEBBLK"	: localeInfo.LOGIN_FAILURE_WEB_BLOCK,
+			"BADSCLID"	: localeInfo.LOGIN_FAILURE_WRONG_SOCIALID,
+			"AGELIMIT"	: localeInfo.LOGIN_FAILURE_SHUTDOWN_TIME,
+		}
+
+		if self.serverLabel:
+			self.serverLabel.SetText(uiScriptLocale.LOGIN_SELECT_TITLE)
+		if self.channelLabel:
+			self.channelLabel.SetText(localeInfo.CHANNEL_SELECT_CHANNEL)
 
 	def __GetServerDict(self):
 		return serverInfo.REGION_DICT.get(0, {})
@@ -442,7 +457,7 @@ class LoginWindow(ui.ScriptWindow):
 		self.__MakeImage("shade.tga", dx - 70, dy - 70)
 
 		if len(serverIDList) > 1:
-			self.__MakeText(self, self.__X(dx), self.__Y(dy), uiScriptLocale.LOGIN_SELECT_TITLE, 0xffc3ccd6, 11)
+			self.serverLabel = self.__MakeText(self, self.__X(dx), self.__Y(dy), uiScriptLocale.LOGIN_SELECT_TITLE, 0xffc3ccd6, 11)
 			dy += 24
 			self.serverMark = self.__MakeImage("mark.tga", dx - 20, dy - 6)
 			for serverID in serverIDList:
@@ -461,7 +476,7 @@ class LoginWindow(ui.ScriptWindow):
 		else:
 			self.serverMark = None
 
-		self.__MakeText(self, self.__X(dx), self.__Y(dy), localeInfo.CHANNEL_SELECT_CHANNEL, 0xffc3ccd6, 11)
+		self.channelLabel = self.__MakeText(self, self.__X(dx), self.__Y(dy), localeInfo.CHANNEL_SELECT_CHANNEL, 0xffc3ccd6, 11)
 		self.channelDY = dy + 26
 		self.channelRing = self.__MakeImage("dot_ring.tga", dx, self.channelDY)
 		self.channelRing.Hide()
