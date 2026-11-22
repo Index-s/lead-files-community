@@ -163,8 +163,9 @@ class LoginWindow(ui.ScriptWindow):
 		self.serverName = None
 		self.serverIDList = []
 		self.slotList = []
-		self.slotRemove = None
-		self.slotRemoveIndex = -1
+		self.statusLineList = []
+		self.statusButton = None
+		self.statusEvent = None
 		self.accountDict = {}
 		self.loginButton = None
 		self.unit = 1.0
@@ -238,8 +239,12 @@ class LoginWindow(ui.ScriptWindow):
 		self.loginButton = None
 		self.languageName = None
 		self.serverName = None
-		self.slotRemove = None
-		self.slotRemoveIndex = -1
+		if self.statusButton:
+			self.statusButton.overInEvent = None
+			self.statusButton.overOutEvent = None
+		self.statusButton = None
+		self.statusLineList = []
+		self.statusEvent = None
 		self.slotList = []
 		self.channelRing = None
 		self.flagList = []
@@ -343,6 +348,7 @@ class LoginWindow(ui.ScriptWindow):
 		self.__BuildLanguageRing()
 		self.__BuildServerBlock()
 		self.__BuildAccountSlots()
+		self.__BuildStatus()
 
 	def __OnOverInLoginButton(self, index):
 		self.loginButton.SetImage("arrow_1.tga")
@@ -559,16 +565,12 @@ class LoginWindow(ui.ScriptWindow):
 			image.overInEvent = ui.__mem_func__(self.__OnOverInSlot)
 			image.overOutEvent = ui.__mem_func__(self.__OnOverOutSlot)
 			image.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__OnClickSlot), slot)
+			image.SetMouseRightButtonDownEvent(ui.__mem_func__(self.__ClearAccountSlot), slot)
 			image.textLine = self.__MakeText(image, int(13 * self.unit), int(13 * self.unit) - 1, "F%d" % (slot + 1), 0xff9aa4b0, 8)
 			image.textLine.SetHorizontalAlignCenter()
 			image.textLine.SetVerticalAlignCenter()
 			image.posDX = dx
 			self.slotList.append(image)
-
-		self.slotRemove = self.__MakeImage("slot_remove.tga", 0, 0, True)
-		self.slotRemove.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__OnClickSlotRemove))
-		self.slotRemove.Hide()
-		self.slotRemoveIndex = -1
 
 		self.__RefreshAccountSlots()
 
@@ -577,27 +579,6 @@ class LoginWindow(ui.ScriptWindow):
 			self.__UseAccountSlot(slot)
 		else:
 			self.__StoreAccountSlot(slot)
-
-	def __OnClickSlotRemove(self):
-		slot = self.slotRemoveIndex
-		self.__HideSlotRemove()
-		if slot >= 0:
-			self.__ClearAccountSlot(slot)
-
-	def __HideSlotRemove(self):
-		self.slotRemoveIndex = -1
-		if self.slotRemove:
-			self.slotRemove.Hide()
-
-	def __UpdateSlotRemove(self):
-		if self.slotRemoveIndex < 0:
-			return
-
-		if self.slotList[self.slotRemoveIndex].IsIn() or self.slotRemove.IsIn():
-			return
-
-		self.__HideSlotRemove()
-		self.languageName.SetText("")
 
 	def __RefreshAccountSlots(self):
 		for slot, image in enumerate(self.slotList):
@@ -611,18 +592,12 @@ class LoginWindow(ui.ScriptWindow):
 	def __OnOverInSlot(self, slot):
 		if self.accountDict.has_key(slot):
 			self.languageName.SetText(self.accountDict[slot][0])
-			self.slotRemoveIndex = slot
-			self.slotRemove.SetPosition(self.__X(self.slotList[slot].posDX + 17), self.__Y(87 - 5))
-			self.slotRemove.Show()
-			self.slotRemove.SetTop()
 		else:
-			self.__HideSlotRemove()
 			self.slotList[slot].textLine.SetText("+")
 
 	def __OnOverOutSlot(self, slot):
 		self.slotList[slot].textLine.SetText("F%d" % (slot + 1))
-		if self.slotRemoveIndex < 0:
-			self.languageName.SetText("")
+		self.languageName.SetText("")
 
 	def __ScrambleKey(self):
 		return [ord(c) for c in "Lead:portal:slot"]
@@ -689,7 +664,9 @@ class LoginWindow(ui.ScriptWindow):
 	def OnKeyDown(self, key):
 		slotKeyList = (app.DIK_F1, app.DIK_F2, app.DIK_F3, app.DIK_F4, app.DIK_F5, app.DIK_F6, app.DIK_F7, app.DIK_F8, app.DIK_F9)
 		if key in slotKeyList and self.idEditLine:
-			self.__UseAccountSlot(slotKeyList.index(key))
+			self.__OnClickSlot(slotKeyList.index(key))
+		elif app.DIK_RETURN == key and self.statusEvent:
+			self.__OnClickStatusButton()
 		return True
 
 	def __RequestServerStateList(self):
@@ -778,12 +755,9 @@ class LoginWindow(ui.ScriptWindow):
 			self.idEditLine.SetFocus()
 
 	def SetPasswordEditLineFocus(self):
-		if self.idEditLine != None:
-			self.idEditLine.SetText("")
-			self.idEditLine.SetFocus()
-
 		if self.pwdEditLine != None:
 			self.pwdEditLine.SetText("")
+			self.pwdEditLine.SetFocus()
 
 	def OnEndCountDown(self):
 		self.isNowCountDown = False
@@ -845,12 +819,16 @@ class LoginWindow(ui.ScriptWindow):
 			self.connectingDialog.SAFE_SetExitEvent(self.OnPressExitKey)
 			self.isNowCountDown = True
 		else:
-			self.stream.popupWindow.Close()
-			self.stream.popupWindow.Open(localeInfo.LOGIN_CONNETING, self.SetPasswordEditLineFocus, localeInfo.UI_CANCEL)
+			self.__ShowStatus(localeInfo.LOGIN_CONNETING, localeInfo.UI_CANCEL, self.__CancelConnect)
 
 		uiTarget.MONSTER_INFO_DATA.clear()
 		self.stream.SetLoginInfo(id, pwd)
 		self.stream.Connect()
+
+	def __CancelConnect(self):
+		net.Disconnect()
+		self.pwdEditLine.SetText("")
+		self.pwdEditLine.SetFocus()
 
 	def __LoadLoginInfo(self, loginInfoFileName):
 		loginInfo = {}
@@ -879,16 +857,98 @@ class LoginWindow(ui.ScriptWindow):
 			if self.stream.isAutoLogin:
 				self.Connect(id, pwd)
 
+	def __BuildStatus(self):
+		self.statusLineList = []
+		for index in xrange(3):
+			textLine = self.__MakeText(self, self.__X(0), self.__Y(-28 + index * 20), "", 0xffffffff, 12)
+			textLine.SetHorizontalAlignCenter()
+			textLine.Hide()
+			self.statusLineList.append(textLine)
+
+		self.statusButton = self.__MakeImage("button_0.tga", -55, 48, True)
+		self.statusButton.overInEvent = ui.__mem_func__(self.__OnOverInStatusButton)
+		self.statusButton.overOutEvent = ui.__mem_func__(self.__OnOverOutStatusButton)
+		self.statusButton.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__OnClickStatusButton))
+		self.statusButton.textLine = self.__MakeText(self.statusButton, int(55 * self.unit), int(15 * self.unit) - 1, "", 0xffffffff, 11)
+		self.statusButton.textLine.SetHorizontalAlignCenter()
+		self.statusButton.textLine.SetVerticalAlignCenter()
+		self.statusButton.Hide()
+
+	def __OnOverInStatusButton(self, index):
+		self.statusButton.SetImage("button_1.tga")
+
+	def __OnOverOutStatusButton(self, index):
+		self.statusButton.SetImage("button_0.tga")
+
+	def __GetFormList(self):
+		return [self.userField, self.lockField, self.idEditLine, self.pwdEditLine, self.loginButton] + self.slotList
+
+	def __WrapStatus(self, msg):
+		lineList = []
+		line = ""
+		for word in msg.replace("\\n", " ").replace("[ENTER]", " ").split():
+			if line and len((line + " " + word).decode("utf-8", "ignore")) > 36:
+				lineList.append(line)
+				line = word
+			else:
+				line = (line + " " + word).strip()
+		if line:
+			lineList.append(line)
+		return lineList[:3]
+
+	def __ShowStatus(self, msg, buttonText = None, event = None):
+		if not self.idEditLine:
+			return
+
+		for item in self.__GetFormList():
+			item.Hide()
+		self.idEditLine.KillFocus()
+		self.pwdEditLine.KillFocus()
+		self.languageName.SetText("")
+
+		lineList = self.__WrapStatus(msg)
+		offset = (3 - len(lineList)) * 10
+		for index, textLine in enumerate(self.statusLineList):
+			if index < len(lineList):
+				textLine.SetPosition(self.__X(0), self.__Y(-28 + offset + index * 20))
+				textLine.SetText(lineList[index])
+				textLine.Show()
+			else:
+				textLine.Hide()
+
+		self.statusEvent = event
+		if buttonText:
+			self.statusButton.SetImage("button_0.tga")
+			self.statusButton.textLine.SetText(buttonText)
+			self.statusButton.Show()
+			self.statusEvent = event or self.EmptyFunc
+		else:
+			self.statusButton.Hide()
+
+	def __HideStatus(self):
+		if not self.idEditLine:
+			return
+
+		self.statusEvent = None
+		for textLine in self.statusLineList:
+			textLine.Hide()
+		self.statusButton.Hide()
+		for item in self.__GetFormList():
+			item.Show()
+
+	def __OnClickStatusButton(self):
+		event = self.statusEvent
+		self.__HideStatus()
+		if event:
+			event()
+		if self.idEditLine and not self.statusEvent and not self.idEditLine.IsFocus() and not self.pwdEditLine.IsFocus():
+			self.idEditLine.SetFocus()
+
 	def PopupDisplayMessage(self, msg):
-		self.stream.popupWindow.Close()
-		self.stream.popupWindow.Open(msg)
+		self.__ShowStatus(msg)
 
 	def PopupNotifyMessage(self, msg, func = 0):
-		if not func:
-			func = self.EmptyFunc
-
-		self.stream.popupWindow.Close()
-		self.stream.popupWindow.Open(msg, func, localeInfo.UI_OK)
+		self.__ShowStatus(msg, localeInfo.UI_OK, func or self.EmptyFunc)
 
 	def OnPressExitKey(self):
 		self.stream.popupWindow.Close()
@@ -903,8 +963,6 @@ class LoginWindow(ui.ScriptWindow):
 
 		if not self.idEditLine:
 			return
-
-		self.__UpdateSlotRemove()
 
 		if self.rotateIndex >= 0:
 			self.__UpdateRotation()
