@@ -1633,6 +1633,7 @@ class Interface(object):
 		self.Close()
 		self.__init__()
 		self.MakeInterface()
+		miniMap.LoadAtlas()
 		self.ShowDefaultWindows()
 
 		questButtonList.reverse()
@@ -1650,6 +1651,7 @@ class Interface(object):
 		self.RefreshSkill()
 		self.RefreshQuest()
 		self.RefreshMessenger()
+		self.CheckGameButton()
 
 		for windowName, position in openDict.items():
 			window = getattr(self, windowName, None)
