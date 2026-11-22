@@ -2,19 +2,19 @@ ScriptType		SkillDataScript
 
 Type			PASSIVE
 Attribute		"TIME_INCREASE_SKILL"
-949Name			"ì¦ì§€ìˆ "
-949Description	"ìˆ ë²•ì˜ ì§€ì† ì‹œê°„ì„ ì¦ê°€ ì‹œí‚¨ë‹¤"
+949Name			"ÁõÁö¼ú"
+949Description	"¼ú¹ıÀÇ Áö¼Ó ½Ã°£À» Áõ°¡ ½ÃÅ²´Ù"
 MaxLevel		"40"
 
 IconFileName	"skill/shaman/jeungji.sub"
 List 949AffectData
 {
-	"ì§€ì† ì‹œê°„ : +%.0f%%" "SkillPoint * 20" ""
+	"Áö¼Ó ½Ã°£ : +%.0f%%" "SkillPoint * 20" ""
 }
 
-936Name			"é¢†æ‚Ÿ"
-936Description		"å»¶é•¿æ³•æœ¯çš„æŒç»­æ—¶é—´"
+936Name			"ÁìÎò"
+936Description		"ÑÓ³¤·¨ÊõµÄ³ÖĞøÊ±¼ä"
 List 936AffectData
 {
-	"ë„£å´ç‚ì‡Œ : +%.0f%%" "SkillPoint * 20" ""
+	"³ÖĞøÊ±¼ä : +%.0f%%" "SkillPoint * 20" ""
 }

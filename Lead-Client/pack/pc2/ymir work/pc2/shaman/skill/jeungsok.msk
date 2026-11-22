@@ -3,8 +3,8 @@ ScriptType			SkillDataScript
 Type				SUPPORT
 Attribute			"NEED_TARGET" "ONLY_FOR_ALLIANCE" "CAN_USE_FOR_ME"
 
-949Name				"ì¦ì†ìˆ "
-949Description		"ë•ê³ ì í•˜ëŠ” ìì—ê²Œ ë”ìš± ë¹ ë¥¸ ê³µê²© ëŠ¥ë ¥ì„ ë¶€ì—¬í•œë‹¤"
+949Name				"Áõ¼Ó¼ú"
+949Description		"µ½°íÀÚ ÇÏ´Â ÀÚ¿¡°Ô ´õ¿í ºü¸¥ °ø°İ ´É·ÂÀ» ºÎ¿©ÇÑ´Ù"
 
 IconFileName		"skill/shaman/jeungsok.sub"
 MotionIndex			38
@@ -12,8 +12,8 @@ MotionIndexForMe	18
 
 List 949AffectData
 {
-	"ê³µê²© ì†ë„ : +%.0f" "5 + (SkillPoint / 2)" ""
-	"ì§€ì† ì‹œê°„ : %.0fì´ˆ" "3 * 60 * (5 + JeungJi) / 5" ""
+	"°ø°İ ¼Óµµ : +%.0f" "5 + (SkillPoint / 2)" ""
+	"Áö¼Ó ½Ã°£ : %.0fÃÊ" "3 * 60 * (5 + JeungJi) / 5" ""
 }
 
 List RequireStatData
@@ -25,10 +25,10 @@ MaxLevel			"30"
 LevelUpPoint		"2"
 NeedSPFormula		"160"
 
-936Name				"ç¥é€Ÿ"
-936Description		"èµ‹äºˆåŒä¼´æ›´å¿«çš„æ”»å‡»èƒ½åŠ›"
+936Name				"ÉñËÙ"
+936Description		"¸³ÓèÍ¬°é¸ü¿ìµÄ¹¥»÷ÄÜÁ¦"
 List 936AffectData
 {
-	"ë¬‘ìƒŒé†µë˜‘ : + %.0f" "5 + (SkillPoint / 2)" ""
-	"ë„£å´ç‚ì‡Œ : %.0fì·¨" "3 * 60 * (5 + JeungJi) / 5" ""
+	"¹¥»÷ËÙ¶È : + %.0f" "5 + (SkillPoint / 2)" ""
+	"³ÖĞøÊ±¼ä : %.0fÃë" "3 * 60 * (5 + JeungJi) / 5" ""
 }

@@ -3,16 +3,16 @@ ScriptType			SkillDataScript
 Type				HIGH
 Attribute			"STANDING_SKILL" "TOGGLE"
 
-949Name				"ì¸ë§ˆí•©ì‹ "
-949Description		"ì£¼ìœ„ì˜ ê¸°ìš´ì„ í¡ìˆ˜í•˜ì—¬ ì ì‹œë™ì•ˆ ì²´ë ¥ì„ ê°•í™”í•œë‹¤"
-949Requirement		"ì¦ì²´ì‹ ë²•" 2
+949Name				"ÀÎ¸¶ÇÕ½Å"
+949Description		"ÁÖÀ§ÀÇ ±â¿îÀ» Èí¼öÇÏ¿© Àá½Ãµ¿¾È Ã¼·ÂÀ» °­È­ÇÑ´Ù"
+949Requirement		"ÁõÃ¼½Å¹ı" 2
 
 IconFileName		"skill/shaman/inma.sub"
 MotionIndex			20
 
 List 949AffectData
 {
-	"ìµœëŒ€ ì²´ë ¥ : +%.0f%%" "(SkillPoint / 10) * 100" ""
+	"ÃÖ´ë Ã¼·Â : +%.0f%%" "(SkillPoint / 10) * 100" ""
 }
 
 List RequireStatData
@@ -25,10 +25,10 @@ LevelUpPoint			"5"
 NeedSPFormula			"500"
 ContinuationSPFormula	"30"
 
-936Name			"å¤©äººåˆä¸€"
-936Description		"å¸æ”¶å¤©åœ°çš„åŠ›é‡ï¼Œæš‚æ—¶å¢å¼ºæœ€å¤§ä½“åŠ›"
-936Requirement		"ç¥æµ´" 4
+936Name			"ÌìÈËºÏÒ»"
+936Description		"ÎüÊÕÌìµØµÄÁ¦Á¿£¬ÔİÊ±ÔöÇ¿×î´óÌåÁ¦"
+936Requirement		"ÉñÔ¡" 4
 List 936AffectData
 {
-	"é›¢ëŒ•ç«Ÿì œ : +%.0f%%" "(SkillPoint / 10) * 100" ""
+	"×î´óÌåÁ¦ : +%.0f%%" "(SkillPoint / 10) * 100" ""
 }

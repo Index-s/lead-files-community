@@ -1,11 +1,11 @@
 ScriptType		SkillDataScript
 
 Type			PASSIVE
-949Name			"ë… ë‹¤ë£¨ê¸°"
-949Description	"ë…ì„ ë‹¤ë£¨ëŠ” ëŠ¥ë ¥ì„ ê°•í™” í•œë‹¤"
+949Name			"µ¶ ´Ù·ç±â"
+949Description	"µ¶À» ´Ù·ç´Â ´É·ÂÀ» °­È­ ÇÑ´Ù"
 MaxLevel		"30"
 
 IconFileName	"skill/assassin/handle_poison.sub"
 
-936Name			"æ¯’æ€§æŒæ¡"
-936Description		"åŠ å¼ºè¯†æ¯’çš„èƒ½åŠ›"
+936Name			"¶¾ĞÔÕÆÎÕ"
+936Description		"¼ÓÇ¿Ê¶¶¾µÄÄÜÁ¦"

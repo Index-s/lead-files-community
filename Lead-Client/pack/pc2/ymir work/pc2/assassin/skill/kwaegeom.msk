@@ -4,11 +4,11 @@ Type			HIGH
 Attribute		"WEAPON_LIMITATION" "STANDING_SKILL" "TOGGLE"
 NeedWeapon		"BOW"
 
-949Name			"ë¹„ë§ˆì‹œ"
-949Description	"ì¼ì‹œì ìœ¼ë¡œ í™œì†ë„ê°€ ì¦ê°€í•œë‹¤"
+949Name			"ºñ¸¶½Ã"
+949Description	"ÀÏ½ÃÀûÀ¸·Î È°¼Óµµ°¡ Áõ°¡ÇÑ´Ù"
 List 949AffectData
 {
-	"í™œ ì†ë„ : +%.0f" "3 + SkillPoint" ""
+	"È° ¼Óµµ : +%.0f" "3 + SkillPoint" ""
 }
 
 IconFileName	"skill/assassin/bimasi.sub"
@@ -23,13 +23,13 @@ MaxLevel				"15"
 NeedSPFormula			"150"
 ContinuationSPFormula	"10"
 
-936Name			"é€Ÿå‰‘"
-936Description		"ç¬é—´æé«˜æ”»å‡»é€Ÿåº¦ï¼Œå‘èµ·æ”»å‡» "
+936Name			"ËÙ½£"
+936Description		"Ë²¼äÌá¸ß¹¥»÷ËÙ¶È£¬·¢Æğ¹¥»÷ "
 List 936AffectData
 {
-	"ë¬‘ìƒŒé†µë˜‘ : +%.0f" "3 + SkillPoint" ""
+	"¹¥»÷ËÙ¶È : +%.0f" "3 + SkillPoint" ""
 }
 List 936MasterAffectData
 {
-	"ë¨æ£è—¤ì†ë¬‘ìƒŒé†µë˜‘ : +2"
+	"¶îÍâÔö¼Ó¹¥»÷ËÙ¶È : +2"
 }

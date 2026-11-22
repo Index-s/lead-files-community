@@ -3,9 +3,9 @@ ScriptType			SkillDataScript
 Type				HIGH
 Attribute			"NEED_TARGET" "ONLY_FOR_ALLIANCE" "CAN_USE_FOR_ME"
 
-949Name				"ì‹ ì°©ì‹ ê³µ"
-949Description		"ë•ê³ ì í•˜ëŠ” ìë¥¼ ì ì—ê²Œ ì˜ ë³´ì´ì§€ ì•Šê²Œë” ë§Œë“ ë‹¤"
-949Requirement		"ìš©ì‹ íˆ¬í˜¸" 5
+949Name				"½ÅÂø½Å°ø"
+949Description		"µ½°íÀÚ ÇÏ´Â ÀÚ¸¦ Àû¿¡°Ô Àß º¸ÀÌÁö ¾Ê°Ô²û ¸¸µç´Ù"
+949Requirement		"¿ë½ÅÅõÈ£" 5
 
 IconFileName		"skill/shaman/sinchak.sub"
 MotionIndex         37
@@ -13,18 +13,18 @@ MotionIndexForMe    36
 
 List 949AffectData
 {
-	"íšŒí”¼ìœ¨ : +%.0f%%" "SkillPoint" ""
-	"ì§€ì† ì‹œê°„ : %.0fì´ˆ" "5 * 60 * (5 + JeungJi) / 5" ""
+	"È¸ÇÇÀ² : +%.0f%%" "SkillPoint" ""
+	"Áö¼Ó ½Ã°£ : %.0fÃÊ" "5 * 60 * (5 + JeungJi) / 5" ""
 }
 
 NeedSPFormula		"500"
 MaxLevel			"15"
 
-936Name				"æœ¦èƒ§æœ¯"
-936Description		"ä½¿ä»–äººåœ¨å…‰çš„å›´ç»•ä¸‹ï¼Œå½¢æˆä¸€ç‰‡è€€çœ¼çš„å…‰èŠ’ï¼Œå¢å¼ºé—ªé¿èƒ½åŠ›"
-936Requirement		"é¾™ç¥ç›¾" 5
+936Name				"ëüëÊÊõ"
+936Description		"Ê¹ËûÈËÔÚ¹âµÄÎ§ÈÆÏÂ£¬ĞÎ³ÉÒ»Æ¬Ò«ÑÛµÄ¹âÃ¢£¬ÔöÇ¿ÉÁ±ÜÄÜÁ¦"
+936Requirement		"ÁúÉñ¶Ü" 5
 List 936AffectData
 {
-	"ì€¼ê¸ : +%.0f%%" "SkillPoint" ""
-	"ë„£å´ç‚ì‡Œ : %.0f ì·¨" "5 * 60 * (5 + JeungJi) / 5" ""
+	"»Ø±Ü : +%.0f%%" "SkillPoint" ""
+	"³ÖĞøÊ±¼ä : %.0f Ãë" "5 * 60 * (5 + JeungJi) / 5" ""
 }

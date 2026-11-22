@@ -12,27 +12,27 @@ IconFileName		"skill/shaman/noejeon.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"ë‡Œì „ë ¹"
-949Description	"ë²¼ë½ì„ ì ì—ê²Œ ë˜ì§„ë‹¤"
+949Name			"³úÀü·É"
+949Description	"º­¶ôÀ» Àû¿¡°Ô ´øÁø´Ù"
 List 949ConditionData
 {
-	"ì¥ê±°ë¦¬ ê³µê²©"
-	"ëŒ€ìƒ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
-	"ì „ê¸° ì†ì„±"
+	"Àå°Å¸® °ø°İ"
+	"´ë»ó ÁÖº¯ ¹üÀ§ °ø°İ"
+	"Àü±â ¼Ó¼º"
 }
 List 949AffectData
 {
-	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "60 + 4*lv + (7*iq+8*minmtk+iq*5)*ar*k" "60 + 4*lv + (7*iq+8*maxmtk+iq*15)*ar*k"
+	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "60 + 4*lv + (7*iq+8*minmtk+iq*5)*ar*k" "60 + 4*lv + (7*iq+8*maxmtk+iq*15)*ar*k"
 }
 
-936Name			"é›·ç¥"
-936Description	"æ¶µéé˜‘ åˆ©ä¿Šéœ¸ å¸¦æŸ³ä¿ƒ"
+936Name			"À×Éñ"
+936Description	"º­¶ôÀ» Àû¿¡°Ô ´øÁø´Ù"
 List 936ConditionData
 {
-	"ì¥ê±°ë¦¬ ê³µê²©"
-	"ì „ê¸° ì†ì„±"
+	"Àå°Å¸® °ø°İ"
+	"Àü±â ¼Ó¼º"
 }
 List 936AffectData
 {
-	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "60+4*LV+(6*INT+8*MinMWEP+1)*SkillPoint*HR/100" "60+4*LV+(6*INT+8*MaxMWEP+1)*SkillPoint*HR/100"
+	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "60+4*LV+(6*INT+8*MinMWEP+1)*SkillPoint*HR/100" "60+4*LV+(6*INT+8*MaxMWEP+1)*SkillPoint*HR/100"
 }

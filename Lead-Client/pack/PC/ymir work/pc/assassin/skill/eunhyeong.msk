@@ -12,25 +12,25 @@ IconFileName		"skill/assassin/eunhyeong.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"ì€í˜•ë²•"
-949Description	"ìì‹ ì˜ ëª¨ìŠµì„ ê°ì¶˜ë‹¤"
+949Name			"ÀºÇü¹ı"
+949Description	"ÀÚ½ÅÀÇ ¸ğ½ÀÀ» °¨Ãá´Ù"
 List 949ConditionData
 {
-	"ê³µê²©ì‹œ í•´ì œ"
+	"°ø°İ½Ã ÇØÁ¦"
 }
 List 949AffectData
 {
-	"ì•”ì‚´ ê¸°ìˆ  ì¶”ê°€ íƒ€ê²©ì¹˜ : +%.0f%%" "50 * SkillPoint" ""
+	"¾Ï»ì ±â¼ú Ãß°¡ Å¸°İÄ¡ : +%.0f%%" "50 * SkillPoint" ""
 }
 
-936Name			"éšèº«"
-936Description	"éšè—è‡ªå·±çš„èº«å½±ï¼Œä½¿å¾—æ•Œäººæ— æ³•å¯»è§…ä½ çš„è¸ªè¿¹"
+936Name			"ÒşÉí"
+936Description	"Òş²Ø×Ô¼ºµÄÉíÓ°£¬Ê¹µÃµĞÈËÎŞ·¨Ñ°ÃÙÄãµÄ×Ù¼£"
 List 936ConditionData
 {
-	"ê³µê²©ì‹œ í•´ì œ"
+	"°ø°İ½Ã ÇØÁ¦"
 }
 List 936AffectData
 {
-	"ì§€ì†ì‹œê°„ : %.0fì´ˆ" "15 + (30 * SkillPoint)" ""
-	"ì•”ì‚´ ê¸°ìˆ  ì¶”ê°€ íƒ€ê²©ì¹˜ : +%.0f%%" "50 * SkillPoint" ""
+	"Áö¼Ó½Ã°£ : %.0fÃÊ" "15 + (30 * SkillPoint)" ""
+	"¾Ï»ì ±â¼ú Ãß°¡ Å¸°İÄ¡ : +%.0f%%" "50 * SkillPoint" ""
 }

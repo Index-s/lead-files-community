@@ -11,28 +11,28 @@ IconFileName	"skill/sura/swaeryeong.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"ì‡„ë ¹ì§€"
-949Description	"ì†ê°€ë½ ëì—ì„œ ê°•ë ¥í•œ í­ë°œì„ ì¼ìœ¼í‚¨ë‹¤"
+949Name			"¼â·ÉÁö"
+949Description	"¼Õ°¡¶ô ³¡¿¡¼­ °­·ÂÇÑ Æø¹ßÀ» ÀÏÀ¸Å²´Ù"
 List 949ConditionData
 {
-	"ì „ë°© ë²”ìœ„ ê³µê²©"
-	"ìƒëŒ€ ë°©ì–´ ë¬´ì‹œ íš¨ê³¼"
-	"ì§€ëŠ¥ ë³´ë„ˆìŠ¤"
+	"Àü¹æ ¹üÀ§ °ø°İ"
+	"»ó´ë ¹æ¾î ¹«½Ã È¿°ú"
+	"Áö´É º¸³Ê½º"
 }
 List 949AffectData
 {
-	"ê³µê²©ë ¥ %.0f-%.0f" "minatk + 2*lv + iq*2 + (2*minatk + str*4 + iq*14) * k" "maxatk + 2*lv + iq*2 + (2*maxatk + str*4 + iq*14) * k"
-	"ìƒëŒ€ ë°©ì–´ ë¬´ì‹œ í™•ë¥  %.0f%%" "1 + 9*SkillPoint" ""
+	"°ø°İ·Â %.0f-%.0f" "minatk + 2*lv + iq*2 + (2*minatk + str*4 + iq*14) * k" "maxatk + 2*lv + iq*2 + (2*maxatk + str*4 + iq*14) * k"
+	"»ó´ë ¹æ¾î ¹«½Ã È®·ü %.0f%%" "1 + 9*SkillPoint" ""
 }
 
-936Name			"ç¢é­‚æŒ‡"
-936Description	"é­”æŒ‡å¼•èµ·å¼ºçƒˆçš„çˆ†ç‚¸ï¼Œæ”»å‡»æ•Œäºº"
+936Name			"Ëé»êÖ¸"
+936Description	"Ä§Ö¸ÒıÆğÇ¿ÁÒµÄ±¬Õ¨£¬¹¥»÷µĞÈË"
 List 936ConditionData
 {
-	"ì „ë°© ì£¼ë³€ ë²”ìœ„ ê³µê²©"
+	"Àü¹æ ÁÖº¯ ¹üÀ§ °ø°İ"
 }
 List 936AffectData
 {
-	"ê³µê²©ë ¥ %.0f-%.0f" "MinATK + (0.6*MinATK + 700) * SkillPoint" "MaxATK + (0.6*MaxATK + 700) * SkillPoint"
-	"ìƒëŒ€ ë°©ì–´ ë¬´ì‹œ í™•ë¥  %.0f%%" "1 + 4*SkillPoint" ""
+	"°ø°İ·Â %.0f-%.0f" "MinATK + (0.6*MinATK + 700) * SkillPoint" "MaxATK + (0.6*MaxATK + 700) * SkillPoint"
+	"»ó´ë ¹æ¾î ¹«½Ã È®·ü %.0f%%" "1 + 4*SkillPoint" ""
 }

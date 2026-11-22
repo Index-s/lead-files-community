@@ -3,8 +3,8 @@ ScriptType		SkillDataScript
 Type			SUPPORT
 Attribute		"STANDING_SKILL"
 
-949Name			"ì„¬ê´‘íƒ„"
-949Description	"ê°•ë ¥í•œ ë¹›ì„ ë°œí•˜ëŠ” êµ¬ìŠ¬ì„ í„°ëœ¨ë ¤ ì ì˜ ì‹œì•¼ë¥¼ ê°•íƒˆí•œë‹¤"
+949Name			"¼¶±¤Åº"
+949Description	"°­·ÂÇÑ ºûÀ» ¹ßÇÏ´Â ±¸½½À» ÅÍ¶ß·Á ÀûÀÇ ½Ã¾ß¸¦ °­Å»ÇÑ´Ù"
 
 IconFileName	"skill/assassin/seomgwang.sub"
 MotionIndex		11
@@ -19,5 +19,5 @@ LevelUpPoint		"10"
 CoolTimeFormula		"200"
 NeedSPFormula		"200"
 
-936Name			"ç›²ç›®"
-936Description	"å‘å‡ºå¼ºçƒˆçš„å…‰èŠ’ï¼Œä½¿æ•Œäººæš‚æ—¶å¤±å»è§†è§‰"
+936Name			"Ã¤Ä¿"
+936Description	"·¢³öÇ¿ÁÒµÄ¹âÃ¢£¬Ê¹µĞÈËÔİÊ±Ê§È¥ÊÓ¾õ"

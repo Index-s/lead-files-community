@@ -12,18 +12,18 @@ IconFileName		"skill/shaman/jeunghon.sub"
 Type			LOW
 MaxLevel		"30"
 
-949Name			"ì¦í˜¼ì§€ë²•"
-949Description		"ë•ê³ ì í•˜ëŠ” ìì˜ ì§‘ì¤‘ë ¥ì„ ê°•í™”ì‹œí‚¨ë‹¤"
+949Name			"ÁõÈ¥Áö¹ı"
+949Description		"µ½°íÀÚ ÇÏ´Â ÀÚÀÇ ÁıÁß·ÂÀ» °­È­½ÃÅ²´Ù"
 
 List 949AffectData
 {
-	"ìµœëŒ€ ì •ì‹ ë ¥ : +%.0f%%" "SkillPoint * 7" ""
+	"ÃÖ´ë Á¤½Å·Â : +%.0f%%" "SkillPoint * 7" ""
 }
 
-936Name			"é›†ä¸­"
-936Description		"å¢åŠ åŒä¼´çš„é›†ä¸­åŠ›"
+936Name			"¼¯ÖĞ"
+936Description		"Ôö¼ÓÍ¬°éµÄ¼¯ÖĞÁ¦"
 List 936AffectData
 {
-	"é›¢ë©•ì‘¹ì œä»¤ : +%.0f%%" "SkillPoint * 7" ""
-	"ë„£å´ç‚ì‡Œ: %.0fì´ˆ" "5 * 60 * (5 + JeungJi) / 5" ""
+	"×î¸ß¾«Á¦Öµ : +%.0f%%" "SkillPoint * 7" ""
+	"³ÖĞøÊ±¼ä: %.0fÃÊ" "5 * 60 * (5 + JeungJi) / 5" ""
 }

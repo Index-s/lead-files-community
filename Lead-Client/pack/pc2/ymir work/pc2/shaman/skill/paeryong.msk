@@ -12,27 +12,27 @@ IconFileName		"skill/shaman/paeryong.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"íŒ¨ë£¡í­"
-949Description	"ìš©ì‹ ì˜ í˜•ìƒìœ¼ë¡œ ì£¼ë³€ì˜ ì ì„ ê³µê²©í•œë‹¤"
+949Name			"ÆĞ·æÆø"
+949Description	"¿ë½ÅÀÇ Çü»óÀ¸·Î ÁÖº¯ÀÇ ÀûÀ» °ø°İÇÑ´Ù"
 List 949ConditionData
 {
-	"ì œìë¦¬ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
-	"ì§€ì† í™”ì—¼ íš¨ê³¼"
+	"Á¦ÀÚ¸® ÁÖº¯ ¹üÀ§ °ø°İ"
+	"Áö¼Ó È­¿° È¿°ú"
 }
 List 949AffectData
 {
-	"ë§ˆë²• ê³µê²©ë ¥ %.0f-%.0f" "70 + 3*lv + (22*iq+13*minmtk+100)*ar*k" "70 + 3*lv + (22*iq+13*maxmtk+100)*ar*k"
-	"ì§€ì† í™”ì—¼ í™•ë¥  %.0f%%" "iq*0.2*k" ""
-	"ì§€ì† í™”ì—¼ ê³µê²©ë ¥  %.0f" "lv+5*iq *k" ""
+	"¸¶¹ı °ø°İ·Â %.0f-%.0f" "70 + 3*lv + (22*iq+13*minmtk+100)*ar*k" "70 + 3*lv + (22*iq+13*maxmtk+100)*ar*k"
+	"Áö¼Ó È­¿° È®·ü %.0f%%" "iq*0.2*k" ""
+	"Áö¼Ó È­¿° °ø°İ·Â  %.0f" "lv+5*iq *k" ""
 }
 
-936Name			"è©é”‹æ°”"
-936Description	"ä¾©è„šç‹¼ å±ˆæƒ‘æ è‚º æ—å‡½ç‹¼ åˆ©é˜‘ å‚æ‹œèŒ„ä¿ƒ"
+936Name			"ÆĞ·æÆø"
+936Description	"¿ë½ÅÀÇ Çü»óÀ¸·Î ÁÖº¯ÀÇ ÀûÀ» °ø°İÇÑ´Ù"
 List 936ConditionData
 {
-	"ì œìë¦¬ ì£¼ë³€ ê³µê²©"
+	"Á¦ÀÚ¸® ÁÖº¯ °ø°İ"
 }
 List 936AffectData
 {
-	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "50+4*LV+(7*INT+9*MinMWEP+500)*SkillPoint*HR/100" "50+4*LV+(7*INT+9*MaxMWEP+500)*SkillPoint*HR/100"
+	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "50+4*LV+(7*INT+9*MinMWEP+500)*SkillPoint*HR/100" "50+4*LV+(7*INT+9*MaxMWEP+500)*SkillPoint*HR/100"
 }

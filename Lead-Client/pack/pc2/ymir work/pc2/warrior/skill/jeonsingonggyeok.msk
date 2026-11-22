@@ -11,13 +11,13 @@ LevelUpPoint	"2"
 NeedSPFormula			"200"
 ContinuationSPFormula	"5"
 
-949Name			"ì „ì‹ ê³µê²©"
-949Description	"ë°©ì–´ë¥¼ ë¬´ì‹œí•˜ê³  ì „ë ¥ì„ ë‹¤í•´ ì ì„ ê³µê²©í•œë‹¤"
+949Name			"Àü½Å°ø°İ"
+949Description	"¹æ¾î¸¦ ¹«½ÃÇÏ°í Àü·ÂÀ» ´ÙÇØ ÀûÀ» °ø°İÇÑ´Ù"
 List 949AffectData
 {
-	"ê³µê²©ë ¥ : +%.0f" "1 + SkillPoint / 2" ""
-	"ë°©ì–´ë ¥ : -%.0f" "SkillPoint / 2" ""
-	"ì´ë™ ì†ë„ : -%.0f" "SkillPoint * 3" ""
+	"°ø°İ·Â : +%.0f" "1 + SkillPoint / 2" ""
+	"¹æ¾î·Â : -%.0f" "SkillPoint / 2" ""
+	"ÀÌµ¿ ¼Óµµ : -%.0f" "SkillPoint * 3" ""
 }
 
 List RequireStatData
@@ -25,11 +25,11 @@ List RequireStatData
 	"Level" "31"
 }
 
-936Name			"å››é¢æ¥šæ­Œ"
-936Description	"å¿½ç•¥é˜²å¾¡ï¼Œå°½å…¨åŠ›æ”»å‡»æ•Œäºº"
+936Name			"ËÄÃæ³ş¸è"
+936Description	"ºöÂÔ·ÀÓù£¬¾¡È«Á¦¹¥»÷µĞÈË"
 List 936AffectData
 {
-	"ë¬‘ìƒŒì œ : +%.0f" "1 + SkillPoint / 2" ""
-	"ë å¾’ì œ : -%.0f" "SkillPoint / 2" ""
-	"ï¤³ë•¡é†µë˜‘ : -%.0f" "SkillPoint * 3" ""
+	"¹¥»÷Á¦ : +%.0f" "1 + SkillPoint / 2" ""
+	"·ÀÓùÁ¦ : -%.0f" "SkillPoint / 2" ""
+	"ÒÆ¶¯ËÙ¶È : -%.0f" "SkillPoint * 3" ""
 }

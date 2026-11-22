@@ -3,25 +3,25 @@ ScriptType		SkillDataScript
 Type			SUPPORT
 Attribute		"USE_HP" "STANDING_SKILL"
 
-949Name			"ê±´ê³¤ì¹˜í™˜"
-949Description	"ì •ì‹ ì„ ì§‘ì¤‘í•˜ì—¬ ì •ì‹ ë ¥ì„ íšŒë³µí•œë‹¤"
+949Name			"°Ç°ïÄ¡È¯"
+949Description	"Á¤½ÅÀ» ÁıÁßÇÏ¿© Á¤½Å·ÂÀ» È¸º¹ÇÑ´Ù"
 
 IconFileName	"skill/sura/geongon.sub"
 MotionIndex		0
 
 List 949AffectData
 {
-	"ì •ì‹ ë ¥ íšŒë³µëŸ‰ : %.0f"	"(5 + MaxSP / 50) * ((10 + SkillPoint) / 10)"	""
-	"ìƒëª…ë ¥ 20%% ì†Œëª¨" "" ""
+	"Á¤½Å·Â È¸º¹·® : %.0f"	"(5 + MaxSP / 50) * ((10 + SkillPoint) / 10)"	""
+	"»ı¸í·Â 20%% ¼Ò¸ğ" "" ""
 }
 
 MaxLevel		"20"
 NeedSPFormula	"MaxHP / 5"
 
-936Name			"æŸé­‚"
-936Description	"é›†ä¸­ç²¾ç¥æ¢å¤ç²¾åŠ›"
+936Name			"Êø»ê"
+936Description	"¼¯ÖĞ¾«Éñ»Ö¸´¾«Á¦"
 List 936AffectData
 {
-	"ì‘¹ì œë¿Ÿë¦¿ì¢†: %.0f"	"(5 + MaxSP / 50) * ((10 + SkillPoint) / 10)"	""
-	"æ¶ˆè€— 20%%ç”Ÿå‘½å€¼" "" ""
+	"¾«Á¦»Ö¸´Á¿: %.0f"	"(5 + MaxSP / 50) * ((10 + SkillPoint) / 10)"	""
+	"ÏûºÄ 20%%ÉúÃüÖµ" "" ""
 }

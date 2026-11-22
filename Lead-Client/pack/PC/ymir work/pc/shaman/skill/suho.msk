@@ -2,16 +2,16 @@ ScriptType			SkillDataScript
 
 Type				MIDDLE
 Attribute			"TOGGLE" "STANDING_SKILL"
-949Name				"ìˆ˜í˜¸ì „ë ¹"
-949Description		"ë¹›ì˜ ì •ë ¹ì„ ë¶ˆëŸ¬ ìì‹ ì˜ ëª¸ì„ ë³´í˜¸í•œë‹¤"
-949Requirement		"í˜¸ì‹ " 8
+949Name				"¼öÈ£Àü·É"
+949Description		"ºûÀÇ Á¤·ÉÀ» ºÒ·¯ ÀÚ½ÅÀÇ ¸öÀ» º¸È£ÇÑ´Ù"
+949Requirement		"È£½Å" 8
 
 IconFileName		"skill/shaman/suho.sub"
 MotionIndex			15
 
 List 949AffectData
 {
-	"ê·¼ì ‘ ê³µê²© ì €í•­ë ¥ : +%.0f" "SkillPoint" ""
+	"±ÙÁ¢ °ø°İ ÀúÇ×·Â : +%.0f" "SkillPoint" ""
 }
 
 List RequireStatData
@@ -23,10 +23,10 @@ NeedSPFormula			"50"
 ContinuationSPFormula	"8"
 LevelUpPoint			"4"
 
-936Name				"ç¥ä½‘"
-936Description		"å¬å”¤æˆ˜çµæ¥ä¿æŠ¤è‡ªå·±"
-936Requirement		"ç»“ç•Œ" 8
+936Name				"ÉñÓÓ"
+936Description		"ÕÙ»½Õ½ÁéÀ´±£»¤×Ô¼º"
+936Requirement		"½á½ç" 8
 List 936AffectData
 {
-	"è¿‘èº«é˜²å¾¡ : +%.0f" "SkillPoint" ""
+	"½üÉí·ÀÓù : +%.0f" "SkillPoint" ""
 }

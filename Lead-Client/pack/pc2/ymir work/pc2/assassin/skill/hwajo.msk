@@ -12,27 +12,27 @@ IconFileName		"skill/assassin/hwajo.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"í™”ì¡°íŒŒ"
-949Description	"í™”ì‚´ì— ë¶ˆê½ƒì˜ í˜ì„ ê¹ƒë“¤ì—¬ ìœë‹¤"
+949Name			"È­Á¶ÆÄ"
+949Description	"È­»ì¿¡ ºÒ²ÉÀÇ ÈûÀ» ±êµé¿© ½ğ´Ù"
 List 949ConditionData
 {
-	"ì¥ê±°ë¦¬ ê³µê²©"
-	"ëŒ€ìƒ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
-	"í™”ì—¼ ê³µê²©"
+	"Àå°Å¸® °ø°İ"
+	"´ë»ó ÁÖº¯ ¹üÀ§ °ø°İ"
+	"È­¿° °ø°İ"
 }
 List 949AffectData
 {
-	"ê³µê²©ë ¥ %.0f-%.0f" "1.5*minatk + (2.6*minatk + 100 )*k" "1.5*maxatk + (2.6*maxatk + 300 )*k"
+	"°ø°İ·Â %.0f-%.0f" "1.5*minatk + (2.6*minatk + 100 )*k" "1.5*maxatk + (2.6*maxatk + 300 )*k"
 }
 
-936Name			"è´¯æ—¥ç®­"
-936Description	"å°†å°„æ—¥ä¹‹åŠ›ï¼Œè´¯ç©¿ç®­èº«ã€‚å¯¹æ•Œäººé€ æˆä¼¤å®³"
+936Name			"¹áÈÕ¼ı"
+936Description	"½«ÉäÈÕÖ®Á¦£¬¹á´©¼ıÉí¡£¶ÔµĞÈËÔì³ÉÉËº¦"
 List 936ConditionData
 {
-	"ì¥ê±°ë¦¬ ê³µê²©"
-	"ëŒ€ìƒ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
+	"Àå°Å¸® °ø°İ"
+	"´ë»ó ÁÖº¯ ¹üÀ§ °ø°İ"
 }
 List 936AffectData
 {
-	"ê³µê²©ë ¥ %.0f-%.0f" "MinATK + (1.5*MinATK + 300)*SkillPoint" "MaxATK + (1.5*MaxATK + 500)*SkillPoint"
+	"°ø°İ·Â %.0f-%.0f" "MinATK + (1.5*MinATK + 300)*SkillPoint" "MaxATK + (1.5*MaxATK + 500)*SkillPoint"
 }

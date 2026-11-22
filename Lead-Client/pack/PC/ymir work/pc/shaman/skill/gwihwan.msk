@@ -3,8 +3,8 @@ ScriptType			SkillDataScript
 Type				LOW
 Attribute			"STANDING_SKILL"
 
-949Name				"ê·€í™˜"
-949Description			"ê·€í™˜ì˜ ì§„ì„ í†µí•´ ë§ˆì„ë¡œ ëŒì•„ê°„ë‹¤"
+949Name				"±ÍÈ¯"
+949Description			"±ÍÈ¯ÀÇ ÁøÀ» ÅëÇØ ¸¶À»·Î µ¹¾Æ°£´Ù"
 
 IconFileName		"skill/shaman/gwihwan.sub"
 MotionIndex			7
@@ -13,5 +13,5 @@ NeedSPFormula		"50"
 MaxLevel			3
 LevelUpPoint		3
 
-936Name				"ä¼ é€"
-936Description			"é€šè¿‡ä¼ é€é˜µï¼Œå›åˆ°æ‘è½"
+936Name				"´«ËÍ"
+936Description			"Í¨¹ı´«ËÍÕó£¬»Øµ½´åÂä"

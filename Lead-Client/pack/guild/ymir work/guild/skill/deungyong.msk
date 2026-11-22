@@ -2,13 +2,13 @@ ScriptType		SkillDataScript
 
 Type			PASSIVE
 
-Name			"ìž¥ìˆ˜ ë“±ìš©"
-Description		"ìž¥ìˆ˜ë¥¼ ì¶”ê°€ë¡œ ì§€ì • í•  ìˆ˜ ìžˆë‹¤"
+Name			"Àå¼ö µî¿ë"
+Description		"Àå¼ö¸¦ Ãß°¡·Î ÁöÁ¤ ÇÒ ¼ö ÀÖ´Ù"
 IconFileName		"skill/guild/deungyong.sub"
 
 List AffectData
 {
-	"ìž¥ìˆ˜ %.0f ëª… ì¶”ê°€ ì§€ì • ê°€ëŠ¥"	"SkillLevel / 3"	""
+	"Àå¼ö %.0f ¸í Ãß°¡ ÁöÁ¤ °¡´É"	"SkillLevel / 3"	""
 }
 
 MaxLevel			6

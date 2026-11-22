@@ -11,37 +11,37 @@ MaxLevel			"40"
 CoolTimeFormula		"30"
 NeedSPFormula		"300"
 
-949Name			"ê²€í’"
-949Description		"ì „ë°©ì˜ ì ì„ ê³µê²©í•œë‹¤"
+949Name			"°ËÇ³"
+949Description		"Àü¹æÀÇ ÀûÀ» °ø°İÇÑ´Ù"
 
 List 949ConditionData
 {
-	"ì¥ê±°ë¦¬ ê³µê²©"
-	"ëŒ€ìƒ ì£¼ë³€ ê³µê²©"
-	"ê¸°ì ˆ íš¨ê³¼"
-	"ëŒ€ìƒ ë‚ ë¦¬ê¸°"
+	"Àå°Å¸® °ø°İ"
+	"´ë»ó ÁÖº¯ °ø°İ"
+	"±âÀı È¿°ú"
+	"´ë»ó ³¯¸®±â"
 }
 
 List 949AffectData
 {
-	"ê³µê²©ë ¥ %.0f-%.0f" "2*minatk + (minatk + dex*3 + str*5 + con)*k" "2*maxatk + (maxatk + dex*3 + str*5 + con)*k"
-	"ê¸°ì ˆ í™•ë¥  %.0f" "(100+k*1000/6)/10" ""
+	"°ø°İ·Â %.0f-%.0f" "2*minatk + (minatk + dex*3 + str*5 + con)*k" "2*maxatk + (maxatk + dex*3 + str*5 + con)*k"
+	"±âÀı È®·ü %.0f" "(100+k*1000/6)/10" ""
 }
 
-936Name			"å…«æµ…"
-936Description		"å‚ˆè§„ç‹¼ åˆ©é˜‘ å‚æ‹œèŒ„ä¿ƒ"
+936Name			"°ËÇ³"
+936Description		"Àü¹æÀÇ ÀûÀ» °ø°İÇÑ´Ù"
 
 List 936ConditionData
 {
-	"ì¥ê±°ë¦¬ ëŒ€ìƒ ì£¼ë³€ ê³µê²©"
-	"ì¼ì • í™•ë¥ ë¡œ ê¸°ì ˆ íš¨ê³¼"
-	"ëŒ€ìƒ ë‚ ë¦¬ê¸°"
+	"Àå°Å¸® ´ë»ó ÁÖº¯ °ø°İ"
+	"ÀÏÁ¤ È®·ü·Î ±âÀı È¿°ú"
+	"´ë»ó ³¯¸®±â"
 }
 
 List 936AffectData
 {
-	"ê³µê²©ë ¥ %.0f-%.0f" "2*minatk + (minatk + dex*3 + str*5 + con)*k" "2*maxatk + (maxatk + dex*3 + str*5 + con)*k"
-	"ê¸°ì ˆ í™•ë¥  %.0f" "(100+k*1000/6)/10" ""
+	"°ø°İ·Â %.0f-%.0f" "2*minatk + (minatk + dex*3 + str*5 + con)*k" "2*maxatk + (maxatk + dex*3 + str*5 + con)*k"
+	"±âÀı È®·ü %.0f" "(100+k*1000/6)/10" ""
 }
 
 

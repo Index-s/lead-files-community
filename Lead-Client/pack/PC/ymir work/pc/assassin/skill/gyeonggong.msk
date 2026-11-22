@@ -10,17 +10,17 @@ IconFileName		"skill/assassin/gyeonggong.sub"
 Type			ACTIVE
 MaxLevel 		"30"
 
-949Name			"ê²½ê³µìˆ "
-949Description	"ëª¸ì„ ê°€ë³ê²Œ í•˜ì—¬ ì´ë™ ì†ë„ë¥¼ ë†’ì¸ë‹¤"
+949Name			"°æ°ø¼ú"
+949Description	"¸öÀ» °¡º±°Ô ÇÏ¿© ÀÌµ¿ ¼Óµµ¸¦ ³ôÀÎ´Ù"
 List 949AffectData
 {
-	"ì´ë™ì†ë„ : +%.0f" "60*SkillPoint" ""
+	"ÀÌµ¿¼Óµµ : +%.0f" "60*SkillPoint" ""
 }
 
-936Name			"è½»åŠŸ"
-936Description	"èº«è½»å¦‚ç‡•ï¼Œæå‡ç§»åŠ¨é€Ÿåº¦"
+936Name			"Çá¹¦"
+936Description	"ÉíÇáÈçÑà£¬ÌáÉıÒÆ¶¯ËÙ¶È"
 List 936AffectData
 {
-	"ï¤³ë•¡é†µë˜‘ : +%.0f" "5 + 15*SkillPoint" ""
-	"ì§€ì†ì‹œê°„ : %.0fì´ˆ" "15 + (SkillPoint * 30)" ""
+	"ÒÆ¶¯ËÙ¶È : +%.0f" "5 + 15*SkillPoint" ""
+	"Áö¼Ó½Ã°£ : %.0fÃÊ" "15 + (SkillPoint * 30)" ""
 }

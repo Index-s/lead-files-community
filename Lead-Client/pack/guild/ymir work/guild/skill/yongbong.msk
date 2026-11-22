@@ -2,13 +2,13 @@ ScriptType		SkillDataScript
 
 Type			PASSIVE
 
-Name			"ìš©ë´‰"
-Description		"ìµœëŒ€ ìš©ì‹ ë ¥ì„ í–¥ìƒ ì‹œí‚¨ë‹¤"
+Name			"¿ëºÀ"
+Description		"ÃÖ´ë ¿ë½Å·ÂÀ» Çâ»ó ½ÃÅ²´Ù"
 IconFileName		"skill/guild/yongbong.sub"
 
 List AffectData
 {
-	"ìµœëŒ€ ìš©ì‹ ë ¥ %.0f"	"1000 + (SkillLevel * 300)"	""
+	"ÃÖ´ë ¿ë½Å·Â %.0f"	"1000 + (SkillLevel * 300)"	""
 }
 
 MaxLevel			5

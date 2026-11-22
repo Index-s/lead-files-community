@@ -8,15 +8,15 @@ LevelUpPoint		"2"
 NeedSPFormula		"100"
 
 
-949Name			"ì „ì‹ ë°©ì–´"
-949Description		"ì¹¼ì„ ê±°ë‘ê³  ë°©ì–´ì—ë§Œ ì „ë…í•œë‹¤"
+949Name			"Àü½Å¹æ¾î"
+949Description		"Ä®À» °ÅµÎ°í ¹æ¾î¿¡¸¸ Àü³äÇÑ´Ù"
 List 949ConditionData
 {
-	"ê³µê²©ì‹œ í•´ì œ"
+	"°ø°İ½Ã ÇØÁ¦"
 }
 List 949AffectData
 {
-	"ë°©ì–´ë ¥ : %.0f"	"1 + ( SkillPoint / 2 )" ""
+	"¹æ¾î·Â : %.0f"	"1 + ( SkillPoint / 2 )" ""
 }
 
 List RequireStatData
@@ -24,14 +24,14 @@ List RequireStatData
 	"Level" "21"
 }
 
-936Name			"é“å¸ƒè¡«"
-936Description		"æ”¶åˆ€ä¸“æ³¨äºé˜²å¾¡ï¼Œæ— æ³•è¿›æ”»"
+936Name			"Ìú²¼ÉÀ"
+936Description		"ÊÕµ¶×¨×¢ÓÚ·ÀÓù£¬ÎŞ·¨½ø¹¥"
 List 936ConditionData
 {
-	"ë¬‘ìƒŒç‚ì„¸ì½˜ì‰¥êµ³å´‘ì©"
+	"¹¥»÷Ê±¼¼ÄÜ½«±»Íß½â"
 }
 List 936AffectData
 {
-	"ë å¾’ì œ : %.0f"	"1 + ( SkillPoint / 2 )" ""
+	"·ÀÓùÁ¦ : %.0f"	"1 + ( SkillPoint / 2 )" ""
 }
 

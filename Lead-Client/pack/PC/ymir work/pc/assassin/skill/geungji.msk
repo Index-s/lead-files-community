@@ -1,19 +1,19 @@
 ScriptType		SkillDataScript
 
 Type			PASSIVE
-949Name			"ê¸ì§€"
-949Description	"ì •ì‹ ë ¥ íšŒë³µ ì†ë„ ì¦ê°€"
+949Name			"±àÁö"
+949Description	"Á¤½Å·Â È¸º¹ ¼Óµµ Áõ°¡"
 MaxLevel		"40"
 
 IconFileName	"skill/warrior/tuji.sub"
 List 949AffectData
 {
-	"ì •ì‹ ë ¥ íšŒë³µëŸ‰ +%.0f%%" "SkillPoint * 5" ""
+	"Á¤½Å·Â È¸º¹·® +%.0f%%" "SkillPoint * 5" ""
 }
 
-936Name			"æ²‰æ€"
-936Description		"å¢åŠ ç²¾åŠ›æ¢å¤é€Ÿåº¦"
+936Name			"³ÁË¼"
+936Description		"Ôö¼Ó¾«Á¦»Ö¸´ËÙ¶È"
 List 936AffectData
 {
-	"ì‘¹ì œë¿Ÿë¦¿ì¢† +%.0f%%" "SkillPoint * 5" ""
+	"¾«Á¦»Ö¸´Á¿ +%.0f%%" "SkillPoint * 5" ""
 }

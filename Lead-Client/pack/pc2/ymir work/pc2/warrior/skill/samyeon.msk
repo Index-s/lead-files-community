@@ -13,24 +13,24 @@ IconFileName		"skill/warrior/samyeon.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"ì‚¼ì—°ì°¸"
-949Description	"ì ì„ ë¹ ë¥´ê²Œ ì„¸ë²ˆ ë² ì–´ë‚¸ë‹¤"
+949Name			"»ï¿¬Âü"
+949Description	"ÀûÀ» ºü¸£°Ô ¼¼¹ø º£¾î³½´Ù"
 List 949ConditionData
 {
-	"ì „ë°© ë²”ìœ„ ê³µê²© 3íšŒ"
+	"Àü¹æ ¹üÀ§ °ø°İ 3È¸"
 }
 List 949AffectData
 {
-	"ì´ ê³µê²©ë ¥ %.0f-%.0f" "(1.1*MinATK + (0.1*MinATK + 1.5*STR)*SkillPoint) * 3" "(1.1*MaxATK + (0.1*MaxATK + 1.5*STR)*SkillPoint) * 3"
+	"ÃÑ °ø°İ·Â %.0f-%.0f" "(1.1*MinATK + (0.1*MinATK + 1.5*STR)*SkillPoint) * 3" "(1.1*MaxATK + (0.1*MaxATK + 1.5*STR)*SkillPoint) * 3"
 }
 
-936Name			"ä¼™æ¥·æ›¼"
-936Description	"åˆ©é˜‘ ç‹ç¦éœ¸ æŠ€é”… æµ·ç»¢è¾°ä¿ƒ"
+936Name			"»ï¿¬Âü"
+936Description	"ÀûÀ» ºü¸£°Ô ¼¼¹ø º£¾î³½´Ù"
 List 936ConditionData
 {
-	"ì „ë°© ë²”ìœ„ ê³µê²© 3íšŒ"
+	"Àü¹æ ¹üÀ§ °ø°İ 3È¸"
 }
 List 936AffectData
 {
-	"ì´ ê³µê²©ë ¥ %.0f-%.0f" "(20 + 1.1*MinATK + (0.1*MinATK + 100)*SkillPoint) * 3" "(20 + 1.1*MaxATK + (0.1*MaxATK + 100)*SkillPoint) * 3"
+	"ÃÑ °ø°İ·Â %.0f-%.0f" "(20 + 1.1*MinATK + (0.1*MinATK + 100)*SkillPoint) * 3" "(20 + 1.1*MaxATK + (0.1*MaxATK + 100)*SkillPoint) * 3"
 }

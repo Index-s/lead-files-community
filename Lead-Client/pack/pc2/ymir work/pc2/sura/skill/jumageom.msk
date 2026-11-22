@@ -2,21 +2,21 @@ ScriptType		SkillDataScript
 
 Type			MIDDLE
 Attribute		"STANDING_SKILL" "TOGGLE"
-949Name			"ì£¼ë§ˆê²€"
-949Description	"ê²€ì— ì–´ë‘ ì„ ì¡´ì¬ì‹œí‚¨ë‹¤"
+949Name			"ÁÖ¸¶°Ë"
+949Description	"°Ë¿¡ ¾îµÒÀ» Á¸Àç½ÃÅ²´Ù"
 
 IconFileName	"skill/sura/jumageom.sub"
 MotionIndex		12
 
 List 949ConditionData
 {
-	"ê³µê²© í• ë•Œë§ˆë‹¤ ì •ì‹ ë ¥ 10 ì†Œëª¨"
-	"ì£¼ë§ˆê°‘ê³¼ ë™ì‹œ ì‹œì „ ë¶ˆê°€ëŠ¥"
+	"°ø°İ ÇÒ¶§¸¶´Ù Á¤½Å·Â 10 ¼Ò¸ğ"
+	"ÁÖ¸¶°©°ú µ¿½Ã ½ÃÀü ºÒ°¡´É"
 }
 
 List 949AffectData
 {
-	"ê³µê²©ë ¥ : +%.1f" "(Level / 4 + 2) * SkillPoint / 20" ""
+	"°ø°İ·Â : +%.1f" "(Level / 4 + 2) * SkillPoint / 20" ""
 }
 
 List RequireStatData
@@ -29,16 +29,16 @@ LevelUpPoint			"2"
 NeedSPFormula			"50"
 ContinuationSPFormula	"2"
 
-936Name			"é¬¼æ€¨"
-936Description		"å‰‘ä¸Šèµ‹äºˆé»‘æš—åŠ›é‡"
+936Name			"¹íÔ¹"
+936Description		"½£ÉÏ¸³ÓèºÚ°µÁ¦Á¿"
 
 List 936ConditionData
 {
-	"ì²¼ëŠ´ë¬‘ìƒŒç‚ï¤†ë´¬ì‘¹ì œ10"
-	"ê¼‡ì½˜å®…ä¾ƒç«Ÿè°¿ç‚è³ˆç—°"
+	"Ã¿´Î¹¥»÷Ê±ÏûºÄ¾«Á¦10"
+	"²»ÄÜÓëÊÉÌåÍ¬Ê±Ê¹ÓÃ"
 }
 
 List 936AffectData
 {
-	"ë¬‘ìƒŒì œ: +%.1f" "(Level / 4 + 2) * SkillPoint / 20" ""
+	"¹¥»÷Á¦: +%.1f" "(Level / 4 + 2) * SkillPoint / 20" ""
 }

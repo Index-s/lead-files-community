@@ -12,26 +12,26 @@ IconFileName		"skill/assassin/amseup.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"ì•”ìŠµ"
-949Description	"ì ì—ê²Œ ëª°ë˜ ë‹¤ê°€ê°€ ì¹˜ëª…íƒ€ë¥¼ ì…íŒë‹¤"
+949Name			"¾Ï½À"
+949Description	"Àû¿¡°Ô ¸ô·¡ ´Ù°¡°¡ Ä¡¸íÅ¸¸¦ ÀÔÈù´Ù"
 List 949ConditionData
 {
-	"í›„ë°© ê¸°ìŠµì‹œ ê³µê²©ë ¥ ìƒìŠ¹"
-	"ì€í˜•ë²• ë³´ë„ˆìŠ¤"
+	"ÈÄ¹æ ±â½À½Ã °ø°İ·Â »ó½Â"
+	"ÀºÇü¹ı º¸³Ê½º"
 }
 List 949AffectData
 {
-	"ê³µê²©ë ¥ : %.0f-%.0f" "minatk + (1.2 * minatk + 500 + dex*12)*k" "maxatk + (1.2 * maxatk + 700 + dex*12)*k"
+	"°ø°İ·Â : %.0f-%.0f" "minatk + (1.2 * minatk + 500 + dex*12)*k" "maxatk + (1.2 * maxatk + 700 + dex*12)*k"
 }
 
-936Name			"æš—è¢­"
-936Description	"å·å·é è¿‘æ•Œäººç»™äºˆè‡´å‘½ä¼¤å®³"
+936Name			"°µÏ®"
+936Description	"ÍµÍµ¿¿½üµĞÈË¸øÓèÖÂÃüÉËº¦"
 List 936ConditionData
 {
-	"ì¹˜ëª…íƒ€ í™•ë¥ "
-	"ì€í˜•ë²• ì‚¬ìš©ì‹œ íƒ€ê²©ì¹˜ ì¦ê°€"
+	"Ä¡¸íÅ¸ È®·ü"
+	"ÀºÇü¹ı »ç¿ë½Ã Å¸°İÄ¡ Áõ°¡"
 }
 List 936AffectData
 {
-	"íƒ€ê²©ì¹˜ : %.0f-%.0f" "MinATK + (2*MinATK + 100) * SkillPoint" "MaxATK + (2*MaxATK + 900) * SkillPoint"
+	"Å¸°İÄ¡ : %.0f-%.0f" "MinATK + (2*MinATK + 100) * SkillPoint" "MaxATK + (2*MaxATK + 900) * SkillPoint"
 }

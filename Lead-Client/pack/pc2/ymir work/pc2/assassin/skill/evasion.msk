@@ -1,19 +1,19 @@
 ScriptType		SkillDataScript
 
 Type			PASSIVE
-949Name			"íšŒí”¼"
-949Description	"ì ì˜ ê³µê²©ì— ë§ì§€ ì•ŠëŠ”ë‹¤"
+949Name			"È¸ÇÇ"
+949Description	"ÀûÀÇ °ø°İ¿¡ ¸ÂÁö ¾Ê´Â´Ù"
 List 949AffectData
 {
-	"íšŒí”¼ í™•ë¥  : %.0f%%" "SkillPoint" ""
+	"È¸ÇÇ È®·ü : %.0f%%" "SkillPoint" ""
 }
 
 MaxLevel		"25"
 IconFileName	"skill/assassin/evasion.sub"
 
-936Name			"é—ªé¿"
-936Description	"å·§å¦™åœ°èº²é—ªæ•Œäººçš„æ”»å‡»"
+936Name			"ÉÁ±Ü"
+936Description	"ÇÉÃîµØ¶ãÉÁµĞÈËµÄ¹¥»÷"
 List 949AffectData
 {
-	"é—ªé¿æ¦‚ç‡ : %.0f%%" "SkillPoint" ""
+	"ÉÁ±Ü¸ÅÂÊ : %.0f%%" "SkillPoint" ""
 }

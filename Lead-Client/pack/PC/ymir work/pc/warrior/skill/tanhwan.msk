@@ -12,30 +12,30 @@ IconFileName		"skill/warrior/tanhwan.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"íƒ„í™˜ê²©"
-949Description		"ì´ì•Œì²˜ëŸ¼ ë‹¬ë ¤ê°€ ì ì„ ë„˜ì–´ëœ¨ë¦°ë‹¤"
+949Name			"ÅºÈ¯°İ"
+949Description		"ÃÑ¾ËÃ³·³ ´Ş·Á°¡ ÀûÀ» ³Ñ¾î¶ß¸°´Ù"
 
 List 949ConditionData
 {
-	"ëŒê²© ë²”ìœ„ ê³µê²©"
+	"µ¹°İ ¹üÀ§ °ø°İ"
 }
 
 List 949AffectData
 {
-	"ê³µê²©ë ¥ %.0f-%.0f" "2*MinATK + (MinATK + 3*DEX + 7*STR + CON)*SkillPoint" "2*MaxATK + (MaxATK + 3*DEX + 7*STR + CON)*SkillPoint"
+	"°ø°İ·Â %.0f-%.0f" "2*MinATK + (MinATK + 3*DEX + 7*STR + CON)*SkillPoint" "2*MaxATK + (MaxATK + 3*DEX + 7*STR + CON)*SkillPoint"
 }
 
-936Name			"è¡€é—"
-936Description		"å¯ä»¥æŠŠç”Ÿå‘½è½¬æ¢ä¸ºç²¾åŠ›"
+936Name			"ÑªÒÅ"
+936Description		"¿ÉÒÔ°ÑÉúÃü×ª»»Îª¾«Á¦"
 
 List 936ConditionData
 {
-	"ëŒê²© ë²”ìœ„ ê³µê²©"
+	"µ¹°İ ¹üÀ§ °ø°İ"
 }
 
 
 List 936AffectData
 {
-	"æ¶ˆè€—çš„ç”Ÿå‘½å€¼ 20%%" "" ""
-	"ç˜»ë»£ë¨ì‘¹ì œ %.0%%" "5 + SkillPoint" ""
+	"ÏûºÄµÄÉúÃüÖµ 20%%" "" ""
+	"×ª»»µÄ¾«Á¦ %.0%%" "5 + SkillPoint" ""
 }

@@ -2,8 +2,8 @@ ScriptType		SkillDataScript
 
 Type			GUILD
 
-Name			"ê¸¸ë“œ ì´ë™"
-Description		"ê¸¸ë“œì›ì˜ ê³ìœ¼ë¡œ ì´ë™í•œë‹¤"
+Name			"±æµå ÀÌµ¿"
+Description		"±æµå¿øÀÇ °çÀ¸·Î ÀÌµ¿ÇÑ´Ù"
 IconFileName		"skill/guild/guildidong.sub"
 
 NeedSPFormula		"120 - (SkillLevel * 20)"

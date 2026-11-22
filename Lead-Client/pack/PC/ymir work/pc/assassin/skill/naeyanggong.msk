@@ -1,19 +1,19 @@
 ScriptType		SkillDataScript
 
 Type			PASSIVE
-949Name			"ë‚´ì–‘ê³µ"
-949Description	"ìµœëŒ€ ìƒëª…ë ¥ ì¦ê°€"
+949Name			"³»¾ç°ø"
+949Description	"ÃÖ´ë »ı¸í·Â Áõ°¡"
 MaxLevel		"40"
 
 IconFileName	"skill/warrior/gibaek.sub"
 List 949AffectData
 {
-	"ìµœëŒ€ ìƒëª…ë ¥ +%.0f"	"SkillPoint * 30"	""
+	"ÃÖ´ë »ı¸í·Â +%.0f"	"SkillPoint * 30"	""
 }
 
-936Name			"æ°”é­„"
-936Description		"å¢åŠ æœ€å¤§ç”Ÿå‘½å€¼"
+936Name			"ÆøÆÇ"
+936Description		"Ôö¼Ó×î´óÉúÃüÖµ"
 List 936AffectData
 {
-	"æœ€å¤§ç”Ÿå‘½å€¼+%.0f"	"SkillPoint * 30"	""
+	"×î´óÉúÃüÖµ+%.0f"	"SkillPoint * 30"	""
 }

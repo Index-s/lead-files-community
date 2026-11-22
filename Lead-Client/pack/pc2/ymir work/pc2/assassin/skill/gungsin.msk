@@ -13,26 +13,26 @@ IconFileName		"skill/assassin/gungsin.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"ê¶ì‹ íƒ„ì˜"
-949Description	"ë¹ ë¥´ê²Œ ì ì—ê²Œ ì ‘ê·¼í•˜ì—¬ ì¹˜ëª…íƒ€ë¥¼ ì…íŒë‹¤"
+949Name			"±Ã½ÅÅº¿µ"
+949Description	"ºü¸£°Ô Àû¿¡°Ô Á¢±ÙÇÏ¿© Ä¡¸íÅ¸¸¦ ÀÔÈù´Ù"
 List 949ConditionData
 {
-	"ìˆœê°„ ì´ë™ ê³µê²©"
-	"ì€í˜•ë²• ë³´ë„ˆìŠ¤"
+	"¼ø°£ ÀÌµ¿ °ø°İ"
+	"ÀºÇü¹ı º¸³Ê½º"
 }
 List 949AffectData
 {
-	"ê³µê²©ë ¥ %.0f-%.0f" "(minatk + (1.6* minatk + 200 + dex*7 + str*7)*k)" "(maxatk + (1.6* maxatk + 300 + dex*7 + str*7)*k)"
+	"°ø°İ·Â %.0f-%.0f" "(minatk + (1.6* minatk + 200 + dex*7 + str*7)*k)" "(maxatk + (1.6* maxatk + 300 + dex*7 + str*7)*k)"
 }
 
-936Name			"é­…å½±"
-936Description	"è¿…é€Ÿé è¿‘æ•Œäººç»™äºˆè‡´å‘½æ‰“å‡»"
+936Name			"÷ÈÓ°"
+936Description	"Ñ¸ËÙ¿¿½üµĞÈË¸øÓèÖÂÃü´ò»÷"
 List 936ConditionData
 {
-	"ìˆœê°„ ì´ë™ ê³µê²©"
-	"ì€í˜•ë²• ì‚¬ìš©ì¤‘ íƒ€ê²©ì¹˜ ì¦ê°€"
+	"¼ø°£ ÀÌµ¿ °ø°İ"
+	"ÀºÇü¹ı »ç¿ëÁß Å¸°İÄ¡ Áõ°¡"
 }
 List 936AffectData
 {
-	"íƒ€ê²©ì¹˜ %.0f-%.0f" "MinATK + (2.5*MinATK + 600)*SkillPoint" "MaxATK + (2.5*MaxATK + 600)*SkillPoint"
+	"Å¸°İÄ¡ %.0f-%.0f" "MinATK + (2.5*MinATK + 600)*SkillPoint" "MaxATK + (2.5*MaxATK + 600)*SkillPoint"
 }

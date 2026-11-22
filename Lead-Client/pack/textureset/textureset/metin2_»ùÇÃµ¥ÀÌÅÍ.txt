@@ -2,7 +2,7 @@ TextureSet
 
 TextureCount 8
 Start Texture001
-    "D:\YMIR WORK\terrainmaps\靸橅攲雿办澊韯癨gstone_01.dds"
+    "D:\YMIR WORK\terrainmaps\基敲单捞磐\gstone_01.dds"
     5.000000
     5.000000
     0.000000
@@ -12,7 +12,7 @@ Start Texture001
     0
 End Texture001
 Start Texture002
-    "D:\YMIR WORK\terrainmaps\靸橅攲雿办澊韯癨ground_10.dds"
+    "D:\YMIR WORK\terrainmaps\基敲单捞磐\ground_10.dds"
     6.000000
     6.000000
     0.000000
@@ -22,7 +22,7 @@ Start Texture002
     0
 End Texture002
 Start Texture003
-    "D:\YMIR WORK\terrainmaps\靸橅攲雿办澊韯癨ground_08.dds"
+    "D:\YMIR WORK\terrainmaps\基敲单捞磐\ground_08.dds"
     5.000000
     5.000000
     0.000000
@@ -32,7 +32,7 @@ Start Texture003
     0
 End Texture003
 Start Texture004
-    "D:\YMIR WORK\terrainmaps\靸橅攲雿办澊韯癨ground_04.dds"
+    "D:\YMIR WORK\terrainmaps\基敲单捞磐\ground_04.dds"
     6.000000
     6.000000
     0.000000
@@ -42,7 +42,7 @@ Start Texture004
     0
 End Texture004
 Start Texture005
-    "D:\YMIR WORK\terrainmaps\靸橅攲雿办澊韯癨cliff_05.dds"
+    "D:\YMIR WORK\terrainmaps\基敲单捞磐\cliff_05.dds"
     9.000000
     9.000000
     0.000000
@@ -52,7 +52,7 @@ Start Texture005
     0
 End Texture005
 Start Texture006
-    "D:\YMIR WORK\terrainmaps\靸橅攲雿办澊韯癨beach05.dds"
+    "D:\YMIR WORK\terrainmaps\基敲单捞磐\beach05.dds"
     8.000000
     8.000000
     0.000000
@@ -62,7 +62,7 @@ Start Texture006
     0
 End Texture006
 Start Texture007
-    "D:\YMIR WORK\terrainmaps\靸橅攲雿办澊韯癨cliff_ice_02.dds"
+    "D:\YMIR WORK\terrainmaps\基敲单捞磐\cliff_ice_02.dds"
     9.000000
     9.000000
     0.000000
@@ -72,7 +72,7 @@ Start Texture007
     0
 End Texture007
 Start Texture008
-    "D:\YMIR WORK\terrainmaps\靸橅攲雿办澊韯癨beach04.dds"
+    "D:\YMIR WORK\terrainmaps\基敲单捞磐\beach04.dds"
     5.000000
     5.000000
     0.000000

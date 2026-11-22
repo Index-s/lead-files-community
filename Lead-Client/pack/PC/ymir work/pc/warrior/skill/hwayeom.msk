@@ -11,16 +11,16 @@ LevelUpPoint			"5"
 NeedSPFormula			"100"
 ContinuationSPFormula 	"8" 
 
-949Name			"í™”ì—¼ì°¸"
-949Description		"ë¬´ê¸°ì— ë¶ˆì˜ ì†ì„±ì„ ë¶€ì—¬í•œë‹¤"
+949Name			"È­¿°Âü"
+949Description		"¹«±â¿¡ ºÒÀÇ ¼Ó¼ºÀ» ºÎ¿©ÇÑ´Ù"
 List 949AffectData
 {
-	"íŒŒê´´ë ¥ : +%.0f%%" "SkillPoint" ""
+	"ÆÄ±«·Â : +%.0f%%" "SkillPoint" ""
 }
 
-936Name			"ç«åˆƒ"
-936Description		"å¯ä»¥ç»™æ­¦å™¨èµ‹äºˆç«çš„å±æ€§"
+936Name			"»ğÈĞ"
+936Description		"¿ÉÒÔ¸øÎäÆ÷¸³Óè»ğµÄÊôĞÔ"
 List 936AffectData
 {
-	"íŒë»ì œ : +%.0f%%" "SkillPoint" ""
+	"ÆÆ»µÁ¦ : +%.0f%%" "SkillPoint" ""
 }

@@ -3,8 +3,8 @@ ScriptType			SkillDataScript
 Type				HIGH
 Attribute			"ONLY_FOR_ALLIANCE" "NEED_TARGET" "NEED_CORPSE"
 
-949Name				"ë¶€í™œ"
-949Description		"ì£½ì€ìì—ê²Œ ë‹¤ì‹œ ì¼ì–´ë‚  í˜ì„ ë¶€ì—¬í•œë‹¤"
+949Name				"ºÎÈ°"
+949Description		"Á×ÀºÀÚ¿¡°Ô ´Ù½Ã ÀÏ¾î³¯ ÈûÀ» ºÎ¿©ÇÑ´Ù"
 
 IconFileName		"skill/shaman/buhwal.sub"
 MotionIndex			19
@@ -18,5 +18,5 @@ MaxLevel			"20"
 LevelUpPoint		"20"
 NeedSPFormula		"-1"
 
-936Name				"å¤æ´»"
-936Description		"èµ‹äºˆæ­»å»çš„åŒä¼´é‡æ–°å¤æ´»çš„åŠ›é‡"
+936Name				"¸´»î"
+936Description		"¸³ÓèËÀÈ¥µÄÍ¬°éÖØĞÂ¸´»îµÄÁ¦Á¿"

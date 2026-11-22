@@ -2,13 +2,13 @@ ScriptType		SkillDataScript
 
 Type			GUILD
 
-Name			"ê°€ì†í™”"
-Description		"5ë¶„ê°„ ê³µê²©ì†ë„ ë° ì´ë™ì†ë„ê°€ ë¹¨ë¼ì§‘ë‹ˆë‹¤"
+Name			"°¡¼ÓÈ­"
+Description		"5ºĞ°£ °ø°İ¼Óµµ ¹× ÀÌµ¿¼Óµµ°¡ »¡¶óÁı´Ï´Ù"
 IconFileName		"skill/guild/gasok.sub"
 
 List AffectData
 {
-	"ìˆ˜ë ¨ë„ +%.0f"	"SkillLevel * 3"	""
+	"¼ö·Ãµµ +%.0f"	"SkillLevel * 3"	""
 }
 
 NeedSPFormula		"80 - (SkillLevel * 12)"

@@ -4,8 +4,8 @@ Type				LOW
 Attribute			"NEED_TARGET" "ONLY_FOR_ALLIANCE" "CAN_USE_FOR_ME"
 Range				800
 
-Name				"ì›ì‹ ë³´ìˆ "
-Description			"ë•ê³ ì í•˜ëŠ” ìì—ê²Œ ë”ìš± ë©€ë¦¬ ë³¼ ìˆ˜ ìˆëŠ” ëŠ¥ë ¥ì„ ë¶€ì—¬ í•œë‹¤"
+Name				"¿ø½Åº¸¼ú"
+Description			"µ½°íÀÚ ÇÏ´Â ÀÚ¿¡°Ô ´õ¿í ¸Ö¸® º¼ ¼ö ÀÖ´Â ´É·ÂÀ» ºÎ¿© ÇÑ´Ù"
 
 IconFileName		"skill/shaman/wonsin.sub"
 MotionIndex         27
@@ -13,8 +13,8 @@ MotionIndexForMe    26
 
 List 949AffectData
 {
-	"ì‚¬ì • ê±°ë¦¬ : +%.0fm" "SkillPoint" ""
-	"ì§€ì† ì‹œê°„ : %.0fì´ˆ" "5 * 60 * (5 + JeungJi) / 5" ""
+	"»çÁ¤ °Å¸® : +%.0fm" "SkillPoint" ""
+	"Áö¼Ó ½Ã°£ : %.0fÃÊ" "5 * 60 * (5 + JeungJi) / 5" ""
 }
 
 List RequireStatData
@@ -25,10 +25,10 @@ List RequireStatData
 MaxLevel			"5"
 NeedSPFormula		"80"
 
-936Name				"ç¥ç›®"
-936Description		"å¢åŠ åŒä¼´çš„æœ‰åˆ©æŠ€èƒ½ä½¿ç”¨é•¿åº¦"
+936Name				"ÉñÄ¿"
+936Description		"Ôö¼ÓÍ¬°éµÄÓĞÀû¼¼ÄÜÊ¹ÓÃ³¤¶È"
 List 936AffectData
 {
-	"è³ˆç—°ë‚€ë˜‘ : +%.0fm" "SkillPoint" ""
-	"ë„£å´ç‚ì‡Œ : %.0fì·¨" "5 * 60 * (5 + JeungJi) / 5" ""
+	"Ê¹ÓÃ³¤¶È : +%.0fm" "SkillPoint" ""
+	"³ÖĞøÊ±¼ä : %.0fÃë" "5 * 60 * (5 + JeungJi) / 5" ""
 }

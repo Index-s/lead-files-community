@@ -12,29 +12,29 @@ IconFileName		"skill/shaman/pokroe.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"í­ë¢°ê²©"
-949Description	"ì†ì—ì„œ ë²¼ë½ì„ ë¿œì–´ë‚¸ë‹¤"
+949Name			"Æø·Ú°İ"
+949Description	"¼Õ¿¡¼­ º­¶ôÀ» »Õ¾î³½´Ù"
 List 949ConditionData
 {
-	"ì¥ê±°ë¦¬ ê³µê²©"
-	"ì „ê¸° ì†ì„±"
-	"ì£¼ë³€ ëŒ€ìƒ ì—°ì´ì–´ ê³µê²©"
+	"Àå°Å¸® °ø°İ"
+	"Àü±â ¼Ó¼º"
+	"ÁÖº¯ ´ë»ó ¿¬ÀÌ¾î °ø°İ"
 }
 
 List 949AffectData
 {
-	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "(50 + 5*lv + (6*iq+6*minmtk+1)*ar*k)" "(50 + 5*lv + (6*iq+6*maxmtk+800)*ar*k)"
+	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "(50 + 5*lv + (6*iq+6*minmtk+1)*ar*k)" "(50 + 5*lv + (6*iq+6*maxmtk+800)*ar*k)"
 }
 
-936Name			"æ°”æ±¾æ›¼"
-936Description	"é¢Šä¿Šè¾‘ æ¶µéé˜‘ å¾½ç»¢è¾°ä¿ƒ"
+936Name			"Æø·ÚÂü"
+936Description	"¼Õ¿¡¼­ º­¶ôÀ» »Õ¾î³½´Ù"
 List 936ConditionData
 {
-	"ì¥ê±°ë¦¬ ê³µê²©"
-	"ì „ê¸° ì†ì„±"
-	"ì£¼ë³€ ëŒ€ìƒ ì—°ì´ì–´ ê³µê²©"
+	"Àå°Å¸® °ø°İ"
+	"Àü±â ¼Ó¼º"
+	"ÁÖº¯ ´ë»ó ¿¬ÀÌ¾î °ø°İ"
 }
 List 936AffectData
 {
-	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "50+5*LV+(6*INT+6*MinMWEP+1)*SkillPoint*HR/100" "50+5*LV+(6*INT+6*MaxMWEP+1)*SkillPoint*HR/100"
+	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "50+5*LV+(6*INT+6*MinMWEP+1)*SkillPoint*HR/100" "50+5*LV+(6*INT+6*MaxMWEP+1)*SkillPoint*HR/100"
 }

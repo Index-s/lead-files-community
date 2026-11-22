@@ -2,13 +2,13 @@ ScriptType		SkillDataScript
 
 Type			GUILD
 
-Name			"ì„±íœ˜ê°‘"
-Description		"ì¼ì‹œì ìœ¼ë¡œ ì ì˜ ê³µê²©ìœ¼ë¡œë¶€í„° ì²´ë ¥ì„ íšŒë³µí•œë‹¤"
+Name			"¼ºÈÖ°©"
+Description		"ÀÏ½ÃÀûÀ¸·Î ÀûÀÇ °ø°İÀ¸·ÎºÎÅÍ Ã¼·ÂÀ» È¸º¹ÇÑ´Ù"
 IconFileName		"skill/guild/seonghwi.sub"
 
 List AffectData
 {
-	"5ë¶„ê°„ %.0f ì˜ ë°ë¯¸ì§€ë¥¼ í¡ìˆ˜"	"SkillLevel * 3"	""
+	"5ºĞ°£ %.0f ÀÇ µ¥¹ÌÁö¸¦ Èí¼ö"	"SkillLevel * 3"	""
 }
 
 NeedSPFormula		"50"

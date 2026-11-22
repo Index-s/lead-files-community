@@ -2,13 +2,13 @@ ScriptType		SkillDataScript
 
 Type			GUILD
 
-Name			"ìš©ì‹ ì˜ ê°€í˜¸"
-Description		"ìì‹ ì˜ ìµœëŒ€ ì²´ë ¥ì„ ì¼ì‹œì ìœ¼ë¡œ ë†’ì¸ë‹¤"
+Name			"¿ë½ÅÀÇ °¡È£"
+Description		"ÀÚ½ÅÀÇ ÃÖ´ë Ã¼·ÂÀ» ÀÏ½ÃÀûÀ¸·Î ³ôÀÎ´Ù"
 IconFileName		"skill/guild/pi.sub"
 
 List AffectData
 {
-	"10ë¶„ê°„ ìµœëŒ€ ì²´ë ¥ +%.0f"	"SkillLevel * 100"	""
+	"10ºĞ°£ ÃÖ´ë Ã¼·Â +%.0f"	"SkillLevel * 100"	""
 }
 
 NeedSPFormula		"120 - (SkillLevel * 20)"

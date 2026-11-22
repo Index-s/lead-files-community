@@ -9,12 +9,12 @@ MaxLevel		"20"
 LevelUpPoint	"5"
 CoolTimeFormula	"10"
 
-949Name			"ê¸°íˆ¬ì¹˜í™˜"
-949Description	"ìƒëª…ë ¥ì„ ì •ì‹ ë ¥ìœ¼ë¡œ ë°”ê¾¼ë‹¤"
+949Name			"±âÅõÄ¡È¯"
+949Description	"»ı¸í·ÂÀ» Á¤½Å·ÂÀ¸·Î ¹Ù²Û´Ù"
 List 949AffectData
 {
-	"ì†Œëª¨ ìƒëª…ë ¥ 20%%" "" ""
-	"ë³€í™˜ ì •ì‹ ë ¥ %.0%%" "5 + SkillPoint" ""
+	"¼Ò¸ğ »ı¸í·Â 20%%" "" ""
+	"º¯È¯ Á¤½Å·Â %.0%%" "5 + SkillPoint" ""
 }
 
 List RequireStatData
@@ -22,10 +22,10 @@ List RequireStatData
 	"Level" "11"
 }
 
-936Name			"è¡€é—"
-936Description		"å¯ä»¥æŠŠç”Ÿå‘½è½¬æ¢ä¸ºç²¾åŠ›"
+936Name			"ÑªÒÅ"
+936Description		"¿ÉÒÔ°ÑÉúÃü×ª»»Îª¾«Á¦"
 List 936AffectData
 {
-	"æ¶ˆè€—çš„ç”Ÿå‘½å€¼ 20%%" "" ""
-	"ç˜»ë»£ë¨ì‘¹ì œ %.0%%" "5 + SkillPoint" ""
+	"ÏûºÄµÄÉúÃüÖµ 20%%" "" ""
+	"×ª»»µÄ¾«Á¦ %.0%%" "5 + SkillPoint" ""
 }

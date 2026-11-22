@@ -10,12 +10,12 @@ MaxLevel				"10"
 NeedSPFormula			"50"
 ContinuationSPFormula	"5"
 
-949Name				"ì§‘ì¤‘ë°©ì–´"
-949Description		"ë©€ë¦¬ì„œ ë‚ ì•„ì˜¤ëŠ” ê³µê²©ì„ ì°¨ë‹¨í•œë‹¤"
+949Name				"ÁıÁß¹æ¾î"
+949Description		"¸Ö¸®¼­ ³¯¾Æ¿À´Â °ø°İÀ» Â÷´ÜÇÑ´Ù"
 
 List 949AffectData
 {
-	"Range ê³µê²©ì— ëŒ€í•´ %.0f%% í”¼í•´ ê°ì†Œ" "SkillPoint * 5" ""
+	"Range °ø°İ¿¡ ´ëÇØ %.0f%% ÇÇÇØ °¨¼Ò" "SkillPoint * 5" ""
 }
 
 List RequireStatData
@@ -23,9 +23,9 @@ List RequireStatData
 	"Level" "11"
 }
 
-936Name			"é›†ä¸­é˜²å¾¡"
-936Description		"å¢åŠ å¯¹è¿œç¨‹æ”»å‡»çš„é˜²å¾¡"
+936Name			"¼¯ÖĞ·ÀÓù"
+936Description		"Ôö¼Ó¶ÔÔ¶³Ì¹¥»÷µÄ·ÀÓù"
 List 936AffectData
 {
-	"å¯¹è¿œç¨‹çš„æ”»å‡»ï¼Œå‡å°‘ %.0f%% å—ä¼¤" "SkillPoint * 5" ""
+	"¶ÔÔ¶³ÌµÄ¹¥»÷£¬¼õÉÙ %.0f%% ÊÜÉË" "SkillPoint * 5" ""
 }

@@ -3,22 +3,22 @@ ScriptType			SkillDataScript
 Type				HIGH
 Attribute			"STANDING_SKILL"
 
-949Name				"ì†Œí™˜ë¶€"
-949Description			"ëˆ„êµ°ê°€ë¥¼ ìì‹ ì˜ ì•ìœ¼ë¡œ ì†Œí™˜í•œë‹¤"
+949Name				"¼ÒÈ¯ºÎ"
+949Description			"´©±º°¡¸¦ ÀÚ½ÅÀÇ ¾ÕÀ¸·Î ¼ÒÈ¯ÇÑ´Ù"
 
 IconFileName		"skill/shaman/sohwan.sub"
 MotionIndex			22
 
 List 949AffectData
 {
-	"ì„±ê³µ í™•ë¥  : %.1f%%" "20 * SkillPoint - 1" ""
+	"¼º°ø È®·ü : %.1f%%" "20 * SkillPoint - 1" ""
 }
 
 NeedSPFormula		"200"
 
-936Name				"å‘¼å”¤"
-936Description			"èƒ½æŠŠæŸä¸ªäººå¬å”¤åˆ°è‡ªå·±é¢å‰"
+936Name				"ºô»½"
+936Description			"ÄÜ°ÑÄ³¸öÈËÕÙ»½µ½×Ô¼ºÃæÇ°"
 List 936AffectData
 {
-	"ëƒ¥ë¬˜ë§¤ìª½ : %.1f%%" "20 * SkillPoint - 1" ""
+	"³É¹¦¸ÅÂÊ : %.1f%%" "20 * SkillPoint - 1" ""
 }

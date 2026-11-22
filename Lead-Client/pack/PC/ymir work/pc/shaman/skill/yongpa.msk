@@ -12,27 +12,27 @@ IconFileName		"skill/shaman/yongpa.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"ìš©íŒŒì‚°"
-949Description	"ìš©ì‹ ì˜ í˜•ìƒì„ ì˜ì•„ ì „ë°©ì˜ ì ì„ ê³µê²©í•œë‹¤"
+949Name			"¿ëÆÄ»ê"
+949Description	"¿ë½ÅÀÇ Çü»óÀ» ½î¾Æ Àü¹æÀÇ ÀûÀ» °ø°İÇÑ´Ù"
 List 949ConditionData
 {
-	"ì§ì„  ë²”ìœ„ ê³µê²©"
-	"ì§€ì† í™”ì—¼ íš¨ê³¼"
+	"Á÷¼± ¹üÀ§ °ø°İ"
+	"Áö¼Ó È­¿° È¿°ú"
 }
 List 949AffectData
 {
-	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "60 + 5*lv + (18*iq + 6*minmtk + 120)*ar*k" "60 + 5*lv + (18*iq + 6*maxmtk + 120)*ar*k"
-	"ì§€ì† í™”ì—¼ í™•ë¥   %.0f%%" "iq*0.2*k" ""
-	"ì§€ì† í™”ì—¼ ê³µê²©ë ¥  %.0f" "lv+5*iq *k" ""
+	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "60 + 5*lv + (18*iq + 6*minmtk + 120)*ar*k" "60 + 5*lv + (18*iq + 6*maxmtk + 120)*ar*k"
+	"Áö¼Ó È­¿° È®·ü  %.0f%%" "iq*0.2*k" ""
+	"Áö¼Ó È­¿° °ø°İ·Â  %.0f" "lv+5*iq *k" ""
 }
 
-936Name			"ä¾©é¢‡é­‚"
-936Description	"ä¾©è„šç‹¼ å±ˆæƒ‘é˜‘ ç­‹é…’ å‚ˆè§„ç‹¼ åˆ©é˜‘ å‚æ‹œèŒ„ä¿ƒ"
+936Name			"¿ëÆÄ»ê"
+936Description	"¿ë½ÅÀÇ Çü»óÀ» ½î¾Æ Àü¹æÀÇ ÀûÀ» °ø°İÇÑ´Ù"
 List 936ConditionData
 {
-	"ì§ì„  ë²”ìœ„ ê³µê²©"
+	"Á÷¼± ¹üÀ§ °ø°İ"
 }
 List 936AffectData
 {
-	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "60+5*LV+(6*INT+6*MinMWEP+500)*SkillPoint*HR/100" "60+5*LV+(6*INT+6*MaxMWEP+500)*SkillPoint*HR/100"
+	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "60+5*LV+(6*INT+6*MinMWEP+500)*SkillPoint*HR/100" "60+5*LV+(6*INT+6*MaxMWEP+500)*SkillPoint*HR/100"
 }
