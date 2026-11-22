@@ -253,7 +253,8 @@ CGraphicFontTexture::TCharacterInfomation* CGraphicFontTexture::UpdateCharacterI
 		}
 	}
 
-	TextOutW(hDC, m_x, m_y, &keyValue, 1);
+	const int c_iInkOffset = stABC.abcfA < 0.0f ? static_cast<int>(ceilf(-stABC.abcfA)) : 0;
+	TextOutW(hDC, m_x + c_iInkOffset, m_y, &keyValue, 1);
 		
 	int nChrX;
 	int nChrY;
