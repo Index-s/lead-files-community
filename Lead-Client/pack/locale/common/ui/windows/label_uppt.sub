@@ -1,7 +1,7 @@
 title subImage
 version 2.0
-image "windows.dds"
-left 405
-top 89
-right 480
-bottom 103
+image "labels.tga"
+left 0
+top 0
+right 75
+bottom 14

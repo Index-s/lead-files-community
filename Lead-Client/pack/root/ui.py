@@ -3757,6 +3757,11 @@ class PythonScriptLoader(object):
 		else:
 			window.SetFontColor(0.8549, 0.8549, 0.8549)
 
+		if value.has_key("limit_width"):
+			window.SetLimitWidth(value["limit_width"])
+		if value.get("multi_line"):
+			window.SetMultiLine()
+
 		if value.has_key("outline"):
 			if value["outline"]:
 				window.SetOutline()

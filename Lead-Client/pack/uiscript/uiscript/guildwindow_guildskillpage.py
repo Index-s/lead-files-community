@@ -43,6 +43,7 @@ window = {
 					"image":LOCALE_PATH+"label_uppt.sub", 
 					"children" :
 					(
+						{ "name":"Available_1_Text", "type":"text", "x":50, "y":0, "text":uiScriptLocale.CHARACTER_LABEL_AVAILABLE, "r":1.0, "g":0.6, "b":0.2, "a":1.0, "text_horizontal_align":"right" },
 						{
 							"name":"Skill_Plus_Value",
 							"type":"text",
