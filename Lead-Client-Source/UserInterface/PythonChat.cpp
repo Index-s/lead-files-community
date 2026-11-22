@@ -9,7 +9,6 @@ int CPythonChat::TChatSet::ms_iChatModeSize = CHAT_TYPE_MAX_NUM;
 
 const float c_fStartDisappearingTime = 5.0f;
 const int c_iMaxLineCount = 5;
-const int c_iChatLineWidth = 580;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -437,39 +436,6 @@ void CPythonChat::ArrangeShowingChat(DWORD dwID)
 	}
 }
 
-static int GetChatTextWidth(CGraphicText * pkFont, const std::string & c_rstText)
-{
-	CGraphicTextInstance kInstance;
-	kInstance.SetTextPointer(pkFont);
-	kInstance.SetValue(c_rstText.c_str());
-	kInstance.Update();
-
-	int iWidth = 0;
-	int iHeight = 0;
-	kInstance.GetTextSize(&iWidth, &iHeight);
-	return iWidth;
-}
-
-static size_t FindChatLineBreak(CGraphicText * pkFont, const std::string & c_rstText)
-{
-	if (c_rstText.find('|') != std::string::npos)
-		return std::string::npos;
-
-	if (GetChatTextWidth(pkFont, c_rstText) <= c_iChatLineWidth)
-		return std::string::npos;
-
-	size_t uBreak = std::string::npos;
-	for (size_t uPos = c_rstText.find(' ', 1); uPos != std::string::npos && uPos + 1 < c_rstText.length(); uPos = c_rstText.find(' ', uPos + 1))
-	{
-		if (GetChatTextWidth(pkFont, c_rstText.substr(0, uPos)) > c_iChatLineWidth)
-			break;
-
-		uBreak = uPos;
-	}
-
-	return uBreak;
-}
-
 void CPythonChat::AppendChat(int iType, const char * c_szChat)
 {
 	// DEFAULT_FONT
@@ -482,15 +448,6 @@ void CPythonChat::AppendChat(int iType, const char * c_szChat)
 		return;
 	}
 	// END_OF_DEFAULT_FONT
-
-	const std::string stChat(c_szChat);
-	const size_t uBreak = FindChatLineBreak(pkDefaultFont, stChat);
-	if (uBreak != std::string::npos)
-	{
-		AppendChat(iType, stChat.substr(0, uBreak).c_str());
-		AppendChat(iType, stChat.substr(uBreak + 1).c_str());
-		return;
-	}
 
 	IAbstractApplication& rApp=IAbstractApplication::GetSingleton();
 	SChatLine * pChatLine = SChatLine::New();
