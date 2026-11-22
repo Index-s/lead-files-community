@@ -163,6 +163,8 @@ class LoginWindow(ui.ScriptWindow):
 		self.serverName = None
 		self.serverIDList = []
 		self.slotList = []
+		self.slotRemove = None
+		self.slotRemoveIndex = -1
 		self.accountDict = {}
 		self.loginButton = None
 		self.unit = 1.0
@@ -236,6 +238,8 @@ class LoginWindow(ui.ScriptWindow):
 		self.loginButton = None
 		self.languageName = None
 		self.serverName = None
+		self.slotRemove = None
+		self.slotRemoveIndex = -1
 		self.slotList = []
 		self.channelRing = None
 		self.flagList = []
@@ -519,7 +523,7 @@ class LoginWindow(ui.ScriptWindow):
 			item.Show()
 
 			item.dot = self.__MakeImage("dot_none.tga", posDX + 8, -84)
-			item.textLine = self.__MakeText(item, int(24 * self.unit), int(5 * self.unit), channelDict[channelID].get("name", str(channelID)), 0xffc3ccd6, 10)
+			item.textLine = self.__MakeText(item, int(24 * self.unit), int(4 * self.unit), channelDict[channelID].get("name", str(channelID)), 0xffc3ccd6, 11)
 			item.posDX = posDX
 			self.channelItemDict[channelID] = item
 
@@ -554,13 +558,46 @@ class LoginWindow(ui.ScriptWindow):
 			image.index = slot
 			image.overInEvent = ui.__mem_func__(self.__OnOverInSlot)
 			image.overOutEvent = ui.__mem_func__(self.__OnOverOutSlot)
-			image.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__UseAccountSlot), slot)
-			image.SetMouseRightButtonDownEvent(ui.__mem_func__(self.__ClearAccountSlot), slot)
-			image.textLine = self.__MakeText(image, int(13 * self.unit), int(7 * self.unit), "F%d" % (slot + 1), 0xff9aa4b0, 8)
+			image.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__OnClickSlot), slot)
+			image.textLine = self.__MakeText(image, int(13 * self.unit), int(13 * self.unit) - 1, "F%d" % (slot + 1), 0xff9aa4b0, 8)
 			image.textLine.SetHorizontalAlignCenter()
+			image.textLine.SetVerticalAlignCenter()
+			image.posDX = dx
 			self.slotList.append(image)
 
+		self.slotRemove = self.__MakeImage("slot_remove.tga", 0, 0, True)
+		self.slotRemove.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__OnClickSlotRemove))
+		self.slotRemove.Hide()
+		self.slotRemoveIndex = -1
+
 		self.__RefreshAccountSlots()
+
+	def __OnClickSlot(self, slot):
+		if self.accountDict.has_key(slot):
+			self.__UseAccountSlot(slot)
+		else:
+			self.__StoreAccountSlot(slot)
+
+	def __OnClickSlotRemove(self):
+		slot = self.slotRemoveIndex
+		self.__HideSlotRemove()
+		if slot >= 0:
+			self.__ClearAccountSlot(slot)
+
+	def __HideSlotRemove(self):
+		self.slotRemoveIndex = -1
+		if self.slotRemove:
+			self.slotRemove.Hide()
+
+	def __UpdateSlotRemove(self):
+		if self.slotRemoveIndex < 0:
+			return
+
+		if self.slotList[self.slotRemoveIndex].IsIn() or self.slotRemove.IsIn():
+			return
+
+		self.__HideSlotRemove()
+		self.languageName.SetText("")
 
 	def __RefreshAccountSlots(self):
 		for slot, image in enumerate(self.slotList):
@@ -574,9 +611,18 @@ class LoginWindow(ui.ScriptWindow):
 	def __OnOverInSlot(self, slot):
 		if self.accountDict.has_key(slot):
 			self.languageName.SetText(self.accountDict[slot][0])
+			self.slotRemoveIndex = slot
+			self.slotRemove.SetPosition(self.__X(self.slotList[slot].posDX + 17), self.__Y(87 - 5))
+			self.slotRemove.Show()
+			self.slotRemove.SetTop()
+		else:
+			self.__HideSlotRemove()
+			self.slotList[slot].textLine.SetText("+")
 
 	def __OnOverOutSlot(self, slot):
-		self.languageName.SetText("")
+		self.slotList[slot].textLine.SetText("F%d" % (slot + 1))
+		if self.slotRemoveIndex < 0:
+			self.languageName.SetText("")
 
 	def __ScrambleKey(self):
 		return [ord(c) for c in "Lead:portal:slot"]
@@ -612,7 +658,12 @@ class LoginWindow(ui.ScriptWindow):
 	def __StoreAccountSlot(self, slot):
 		id = self.idEditLine.GetText()
 		pwd = self.pwdEditLine.GetText()
-		if len(id) == 0 or len(pwd) == 0:
+		if len(id) == 0:
+			self.PopupNotifyMessage(localeInfo.LOGIN_INPUT_ID, self.SetIDEditLineFocus)
+			return
+
+		if len(pwd) == 0:
+			self.PopupNotifyMessage(localeInfo.LOGIN_INPUT_PASSWORD, self.pwdEditLine.SetFocus)
 			return
 
 		self.accountDict[slot] = (id, pwd)
@@ -638,11 +689,7 @@ class LoginWindow(ui.ScriptWindow):
 	def OnKeyDown(self, key):
 		slotKeyList = (app.DIK_F1, app.DIK_F2, app.DIK_F3, app.DIK_F4, app.DIK_F5, app.DIK_F6, app.DIK_F7, app.DIK_F8, app.DIK_F9)
 		if key in slotKeyList and self.idEditLine:
-			slot = slotKeyList.index(key)
-			if app.IsPressed(app.DIK_LCONTROL) or app.IsPressed(app.DIK_RCONTROL):
-				self.__StoreAccountSlot(slot)
-			else:
-				self.__UseAccountSlot(slot)
+			self.__UseAccountSlot(slotKeyList.index(key))
 		return True
 
 	def __RequestServerStateList(self):
@@ -856,6 +903,8 @@ class LoginWindow(ui.ScriptWindow):
 
 		if not self.idEditLine:
 			return
+
+		self.__UpdateSlotRemove()
 
 		if self.rotateIndex >= 0:
 			self.__UpdateRotation()
