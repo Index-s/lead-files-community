@@ -99,13 +99,13 @@ void SendBlockChatInfo(LPCHARACTER ch, int sec)
 	char buf[128+1];
 
 	if (hour > 0 && min > 0)
-		snprintf(buf, sizeof(buf), "[LS;1028;%d;%d;%d]", hour, min, sec);
+		snprintf(buf, sizeof(buf), "[LS;1028;%ld;%ld;%ld]", hour, min, sec);
 	else if (hour > 0 && min == 0)
-		snprintf(buf, sizeof(buf), "[LS;1029;%d;%d]", hour, sec);
+		snprintf(buf, sizeof(buf), "[LS;1029;%ld;%ld]", hour, sec);
 	else if (hour == 0 && min > 0)
-		snprintf(buf, sizeof(buf), "[LS;1030;%d;%d]", min, sec);
+		snprintf(buf, sizeof(buf), "[LS;1030;%ld;%ld]", min, sec);
 	else
-		snprintf(buf, sizeof(buf), "[LS;1042;%d]", sec);
+		snprintf(buf, sizeof(buf), "[LS;1042;%ld]", sec);
 
 	ch->ChatPacket(CHAT_TYPE_INFO, buf);
 }
