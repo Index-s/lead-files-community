@@ -116,16 +116,21 @@ PORTAL_ROTATE_TIME = 0.55
 def PortalFont(size):
 	return "%s:%d" % (localeInfo.UI_DEF_FONT.split(":")[0], size)
 
-class PortalFlag(ui.ImageBox):
+class PortalImage(ui.ExpandedImageBox):
 
 	def __init__(self):
-		ui.ImageBox.__init__(self)
+		ui.ExpandedImageBox.__init__(self)
 		self.overInEvent = None
 		self.overOutEvent = None
+		self.imageScale = 1.0
 		self.index = 0
 
 	def __del__(self):
-		ui.ImageBox.__del__(self)
+		ui.ExpandedImageBox.__del__(self)
+
+	def SetImage(self, fileName):
+		self.LoadImage(PORTAL_PATH + fileName)
+		self.SetScale(self.imageScale, self.imageScale)
 
 	def OnMouseOverIn(self):
 		if self.overInEvent:
@@ -156,6 +161,8 @@ class LoginWindow(ui.ScriptWindow):
 		self.selectedServerID = 0
 		self.selectedChannelID = 0
 		self.focusState = -1
+		self.loginButton = None
+		self.unit = 1.0
 		self.rotateIndex = -1
 		self.rotateTarget = 0.0
 		self.rotateStart = 0.0
@@ -230,6 +237,9 @@ class LoginWindow(ui.ScriptWindow):
 		for flag in self.flagList:
 			flag.overInEvent = None
 			flag.overOutEvent = None
+		if self.loginButton:
+			self.loginButton.overInEvent = None
+			self.loginButton.overOutEvent = None
 
 		self.idEditLine = None
 		self.pwdEditLine = None
@@ -253,23 +263,29 @@ class LoginWindow(ui.ScriptWindow):
 		ime.ClearExceptKey()
 		app.HideCursor()
 
-	def __MakeImage(self, fileName, x, y, pick = False):
-		image = ui.ImageBox()
+	def __X(self, dx):
+		return self.centerX + int(round(dx * self.unit))
+
+	def __Y(self, dy):
+		return self.centerY + int(round(dy * self.unit))
+
+	def __MakeImage(self, fileName, dx, dy, pick = False):
+		image = PortalImage()
 		image.SetParent(self)
-		image.LoadImage(PORTAL_PATH + fileName)
-		image.SetPosition(x, y)
+		image.imageScale = self.unit / 2.0
+		image.SetImage(fileName)
+		image.SetPosition(self.__X(dx), self.__Y(dy))
 		if not pick:
 			image.AddFlag("not_pick")
 		image.Show()
 		self.objectList.append(image)
 		return image
 
-	def __MakeText(self, parent, x, y, text, color, fontName = None):
+	def __MakeText(self, parent, x, y, text, color, fontSize = 12):
 		textLine = ui.TextLine()
 		textLine.SetParent(parent)
 		textLine.SetPosition(x, y)
-		if fontName:
-			textLine.SetFontName(fontName)
+		textLine.SetFontName(PortalFont(int(round(fontSize * self.unit))))
 		textLine.SetPackedFontColor(color)
 		textLine.SetText(text)
 		textLine.AddFlag("not_pick")
@@ -277,12 +293,12 @@ class LoginWindow(ui.ScriptWindow):
 		self.objectList.append(textLine)
 		return textLine
 
-	def __MakeEditLine(self, x, y, width, secret):
+	def __MakeEditLine(self, dx, dy, width, secret):
 		editLine = ui.EditLine()
 		editLine.SetParent(self)
-		editLine.SetPosition(x, y)
-		editLine.SetSize(width, 18)
-		editLine.SetFontName(PortalFont(16))
+		editLine.SetPosition(self.__X(dx), self.__Y(dy))
+		editLine.SetSize(int(width * self.unit), int(22 * self.unit))
+		editLine.SetFontName(PortalFont(int(round(15 * self.unit))))
 		editLine.SetMax(16)
 		editLine.SetIMEFlag(0)
 		if secret:
@@ -294,10 +310,9 @@ class LoginWindow(ui.ScriptWindow):
 	def __BuildWindow(self):
 		screenWidth = wndMgr.GetScreenWidth()
 		screenHeight = wndMgr.GetScreenHeight()
+		self.unit = max(0.8, min(float(screenHeight) / 720.0, float(screenWidth) / 1180.0))
 		self.centerX = screenWidth / 2
-		self.centerY = screenHeight / 2 + 12
-		cx = self.centerX
-		cy = self.centerY
+		self.centerY = screenHeight / 2 + int(12 * self.unit)
 
 		background = ui.ExpandedImageBox()
 		background.SetParent(self)
@@ -308,22 +323,18 @@ class LoginWindow(ui.ScriptWindow):
 		background.Show()
 		self.objectList.append(background)
 
-		self.__MakeImage("ring.tga", cx - 280, cy - 280)
+		self.__MakeImage("ring.tga", -280, -280)
 
-		self.userField = self.__MakeImage("field_user_1.tga", cx - 143, cy - 28 - 28)
-		self.lockField = self.__MakeImage("field_lock_0.tga", cx - 143, cy + 26 - 28)
+		self.userField = self.__MakeImage("field_user_1.tga", -143, -28 - 28)
+		self.lockField = self.__MakeImage("field_lock_0.tga", -143, 26 - 28)
 
-		self.idEditLine = self.__MakeEditLine(cx - 89, cy - 28 - 9, 200, False)
-		self.pwdEditLine = self.__MakeEditLine(cx - 89, cy + 26 - 9, 168, True)
+		self.idEditLine = self.__MakeEditLine(-89, -28 - 10, 200, False)
+		self.pwdEditLine = self.__MakeEditLine(-89, 26 - 10, 168, True)
 
-		self.loginButton = ui.Button()
-		self.loginButton.SetParent(self)
-		self.loginButton.SetUpVisual(PORTAL_PATH + "arrow_0.tga")
-		self.loginButton.SetOverVisual(PORTAL_PATH + "arrow_1.tga")
-		self.loginButton.SetDownVisual(PORTAL_PATH + "arrow_2.tga")
-		self.loginButton.SetPosition(cx + 135 - 20 - 18, cy + 26 - 18)
-		self.loginButton.SetEvent(ui.__mem_func__(self.__OnClickLoginButton))
-		self.loginButton.Show()
+		self.loginButton = self.__MakeImage("arrow_0.tga", 135 - 20 - 18, 26 - 18, True)
+		self.loginButton.overInEvent = ui.__mem_func__(self.__OnOverInLoginButton)
+		self.loginButton.overOutEvent = ui.__mem_func__(self.__OnOverOutLoginButton)
+		self.loginButton.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__OnClickLoginButton))
 
 		self.idEditLine.SetReturnEvent(ui.__mem_func__(self.pwdEditLine.SetFocus))
 		self.idEditLine.SetTabEvent(ui.__mem_func__(self.pwdEditLine.SetFocus))
@@ -333,39 +344,35 @@ class LoginWindow(ui.ScriptWindow):
 		self.__BuildLanguageRing()
 		self.__BuildServerBlock()
 
-	def __BuildLanguageRing(self):
-		cx = self.centerX
-		cy = self.centerY
+	def __OnOverInLoginButton(self, index):
+		self.loginButton.SetImage("arrow_1.tga")
 
+	def __OnOverOutLoginButton(self, index):
+		self.loginButton.SetImage("arrow_0.tga")
+
+	def __BuildLanguageRing(self):
 		self.languageList = localeInfo.GetLanguageList()
 		currentIndex = 0
 		for index, (code, name) in enumerate(self.languageList):
 			if code == app.GetLocaleName():
 				currentIndex = index
 
-		count = max(1, len(self.languageList))
-		self.__MakeImage("flag_ring.tga", cx - 24, cy - PORTAL_ORBIT_RADIUS - 24)
+		self.currentLanguageIndex = currentIndex
+		self.__MakeImage("flag_ring.tga", -24, -PORTAL_ORBIT_RADIUS - 24)
 
 		for index, (code, name) in enumerate(self.languageList):
-			angle = -math.pi / 2.0 + (index - currentIndex) * 2.0 * math.pi / count
-			x = cx + int(round(PORTAL_ORBIT_RADIUS * math.cos(angle)))
-			y = cy + int(round(PORTAL_ORBIT_RADIUS * math.sin(angle)))
-
-			flag = PortalFlag()
-			flag.SetParent(self)
-			flag.LoadImage(PORTAL_PATH + "flag_%s.tga" % code)
-			flag.SetPosition(x - 16, y - 16)
+			flag = self.__MakeImage("flag_%s.tga" % code, 0, 0, True)
 			flag.index = index
 			flag.overInEvent = ui.__mem_func__(self.__OnOverInLanguage)
 			flag.overOutEvent = ui.__mem_func__(self.__OnOverOutLanguage)
 			flag.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__OnSelectLanguage), index)
 			if index != currentIndex:
 				flag.SetAlpha(PORTAL_FLAG_DIM)
-			flag.Show()
 			self.flagList.append(flag)
 
-		self.currentLanguageIndex = currentIndex
-		self.languageName = self.__MakeText(self, cx, cy + 112, "", 0xffc3ccd6, PortalFont(15))
+		self.__PlaceFlags(0.0, 0.0)
+
+		self.languageName = self.__MakeText(self, self.__X(0), self.__Y(108), "", 0xffc3ccd6, 14)
 		self.languageName.SetHorizontalAlignCenter()
 
 	def __OnOverInLanguage(self, index):
@@ -396,12 +403,10 @@ class LoginWindow(ui.ScriptWindow):
 		count = max(1, len(self.languageList))
 		for index, flag in enumerate(self.flagList):
 			angle = -math.pi / 2.0 + (index - self.currentLanguageIndex) * 2.0 * math.pi / count + offset
-			x = self.centerX + int(round(PORTAL_ORBIT_RADIUS * math.cos(angle)))
-			y = self.centerY + int(round(PORTAL_ORBIT_RADIUS * math.sin(angle)))
-			flag.SetPosition(x - 16, y - 16)
+			flag.SetPosition(self.__X(PORTAL_ORBIT_RADIUS * math.cos(angle) - 16), self.__Y(PORTAL_ORBIT_RADIUS * math.sin(angle) - 16))
 			if index == self.rotateIndex:
 				flag.SetAlpha(PORTAL_FLAG_DIM + (1.0 - PORTAL_FLAG_DIM) * progress)
-			elif index == self.currentLanguageIndex:
+			elif index == self.currentLanguageIndex and self.rotateIndex >= 0:
 				flag.SetAlpha(1.0 - (1.0 - PORTAL_FLAG_DIM) * progress)
 
 	def __UpdateRotation(self):
@@ -422,12 +427,9 @@ class LoginWindow(ui.ScriptWindow):
 		return serverInfo.REGION_DICT.get(0, {})
 
 	def __BuildServerBlock(self):
-		cx = self.centerX
-		cy = self.centerY
-
-		x = min(cx + PORTAL_ORBIT_RADIUS + 70, wndMgr.GetScreenWidth() - 160)
-		y = cy - 70
-		self.blockX = x
+		dx = min(PORTAL_ORBIT_RADIUS + 70, wndMgr.GetScreenWidth() / 2.0 / self.unit - 200)
+		dy = -70
+		self.blockDX = dx
 
 		serverDict = self.__GetServerDict()
 		serverIDList = serverDict.keys()
@@ -437,31 +439,31 @@ class LoginWindow(ui.ScriptWindow):
 		if not serverDict.has_key(loadServerID):
 			loadServerID = serverIDList[0] if serverIDList else 0
 
-		self.__MakeImage("shade.tga", x - 70, y - 70)
+		self.__MakeImage("shade.tga", dx - 70, dy - 70)
 
 		if len(serverIDList) > 1:
-			self.__MakeText(self, x, y, uiScriptLocale.LOGIN_SELECT_TITLE, 0xffc3ccd6, PortalFont(13))
-			y += 26
-			self.serverMark = self.__MakeImage("mark.tga", x - 20, y - 5)
+			self.__MakeText(self, self.__X(dx), self.__Y(dy), uiScriptLocale.LOGIN_SELECT_TITLE, 0xffc3ccd6, 11)
+			dy += 24
+			self.serverMark = self.__MakeImage("mark.tga", dx - 20, dy - 6)
 			for serverID in serverIDList:
 				item = ui.Window()
 				item.SetParent(self)
-				item.SetPosition(x, y)
-				item.SetSize(170, 28)
+				item.SetPosition(self.__X(dx), self.__Y(dy))
+				item.SetSize(int(170 * self.unit), int(28 * self.unit))
 				item.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__SelectServer), serverID)
 				item.Show()
-				item.textLine = self.__MakeText(item, 0, 2, serverDict[serverID].get("name", ""), 0xffc3ccd6, PortalFont(19))
-				item.posY = y
+				item.textLine = self.__MakeText(item, 0, int(2 * self.unit), serverDict[serverID].get("name", ""), 0xffc3ccd6, 16)
+				item.posDY = dy
 				self.objectList.append(item)
 				self.serverItemDict[serverID] = item
-				y += 32
-			y += 18
+				dy += 30
+			dy += 16
 		else:
 			self.serverMark = None
 
-		self.__MakeText(self, x, y, localeInfo.CHANNEL_SELECT_CHANNEL, 0xffc3ccd6, PortalFont(13))
-		self.channelY = y + 28
-		self.channelRing = self.__MakeImage("dot_ring.tga", x, self.channelY)
+		self.__MakeText(self, self.__X(dx), self.__Y(dy), localeInfo.CHANNEL_SELECT_CHANNEL, 0xffc3ccd6, 11)
+		self.channelDY = dy + 26
+		self.channelRing = self.__MakeImage("dot_ring.tga", dx, self.channelDY)
 		self.channelRing.Hide()
 
 		self.selectedChannelID = loadChannelID
@@ -476,13 +478,14 @@ class LoginWindow(ui.ScriptWindow):
 
 		for eachServerID, item in self.serverItemDict.items():
 			if eachServerID == serverID:
-				item.textLine.SetPackedFontColor(0xfff5f2eb)
+				item.textLine.SetPackedFontColor(0xffffffff)
 				if self.serverMark:
-					self.serverMark.SetPosition(self.blockX - 20, item.posY - 5)
+					self.serverMark.SetPosition(self.__X(self.blockDX - 20), self.__Y(item.posDY - 6))
 			else:
 				item.textLine.SetPackedFontColor(0xffc3ccd6)
 
 		for item in self.channelItemDict.values():
+			item.dot.Hide()
 			item.Hide()
 		self.channelItemDict = {}
 
@@ -491,30 +494,19 @@ class LoginWindow(ui.ScriptWindow):
 		channelIDList.sort()
 
 		for index, channelID in enumerate(channelIDList):
+			posDX = self.blockDX - 8 + index * 46
+
 			item = ui.Window()
 			item.SetParent(self)
-			item.SetPosition(self.blockX - 8 + index * 46, self.channelY - 8)
-			item.SetSize(40, 62)
+			item.SetPosition(self.__X(posDX), self.__Y(self.channelDY - 8))
+			item.SetSize(int(40 * self.unit), int(62 * self.unit))
 			item.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__SelectChannel), channelID)
 			item.Show()
 
-			item.dot = ui.ImageBox()
-			item.dot.SetParent(item)
-			item.dot.SetPosition(8, 8)
-			item.dot.AddFlag("not_pick")
-			item.dot.LoadImage(PORTAL_PATH + "dot_none.tga")
-			item.dot.Show()
-
-			item.textLine = ui.TextLine()
-			item.textLine.SetParent(item)
-			item.textLine.SetPosition(18, 36)
-			item.textLine.SetFontName(PortalFont(15))
+			item.dot = self.__MakeImage("dot_none.tga", posDX + 8, self.channelDY)
+			item.textLine = self.__MakeText(item, int(18 * self.unit), int(36 * self.unit), str(channelID), 0xffc3ccd6, 13)
 			item.textLine.SetHorizontalAlignCenter()
-			item.textLine.SetText(str(channelID))
-			item.textLine.AddFlag("not_pick")
-			item.textLine.Show()
-
-			item.posX = self.blockX - 8 + index * 46
+			item.posDX = posDX
 			self.channelItemDict[channelID] = item
 
 		if not channelDict.has_key(self.selectedChannelID):
@@ -531,8 +523,8 @@ class LoginWindow(ui.ScriptWindow):
 
 		for eachChannelID, item in self.channelItemDict.items():
 			if eachChannelID == channelID:
-				item.textLine.SetPackedFontColor(0xfff5f2eb)
-				self.channelRing.SetPosition(item.posX, self.channelY - 8)
+				item.textLine.SetPackedFontColor(0xffffffff)
+				self.channelRing.SetPosition(self.__X(item.posDX), self.__Y(self.channelDY - 8))
 				self.channelRing.Show()
 			else:
 				item.textLine.SetPackedFontColor(0xffc3ccd6)
@@ -564,7 +556,7 @@ class LoginWindow(ui.ScriptWindow):
 
 		item = self.channelItemDict.get(channelID)
 		if item:
-			item.dot.LoadImage(PORTAL_PATH + {1 : "dot_norm.tga", 2 : "dot_busy.tga", 3 : "dot_full.tga"}.get(state, "dot_none.tga"))
+			item.dot.SetImage({1 : "dot_norm.tga", 2 : "dot_busy.tga", 3 : "dot_full.tga"}.get(state, "dot_none.tga"))
 
 	def __SaveChannelInfo(self):
 		try:
@@ -757,8 +749,8 @@ class LoginWindow(ui.ScriptWindow):
 		focusState = 1 if self.pwdEditLine.IsFocus() else 0
 		if focusState != self.focusState:
 			self.focusState = focusState
-			self.userField.LoadImage(PORTAL_PATH + ("field_user_0.tga" if focusState else "field_user_1.tga"))
-			self.lockField.LoadImage(PORTAL_PATH + ("field_lock_1.tga" if focusState else "field_lock_0.tga"))
+			self.userField.SetImage("field_user_0.tga" if focusState else "field_user_1.tga")
+			self.lockField.SetImage("field_lock_1.tga" if focusState else "field_lock_0.tga")
 
 	def EmptyFunc(self):
 		pass
