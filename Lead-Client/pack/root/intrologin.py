@@ -112,6 +112,9 @@ PORTAL_PATH = "locale/common/ui/login/portal/"
 PORTAL_ORBIT_RADIUS = 234
 PORTAL_UNIT_LIST = (2.0, 1.5, 1.25, 1.0)
 PORTAL_ROTATE_TIME = 0.55
+PORTAL_MESSAGE_INFO = 0
+PORTAL_MESSAGE_OK = 1
+PORTAL_MESSAGE_ERROR = 2
 
 def PortalFont(size):
 	return "%s:%d" % (localeInfo.UI_DEF_FONT.split(":")[0], size)
@@ -164,6 +167,9 @@ class LoginWindow(ui.ScriptWindow):
 		self.serverIDList = []
 		self.slotList = []
 		self.messageLineList = []
+		self.messageShown = False
+		self.messageEndTime = 0.0
+		self.ringImage = None
 		self.errorField = ""
 		self.errorSnapshot = ("", "")
 		self.accountDict = {}
@@ -322,7 +328,7 @@ class LoginWindow(ui.ScriptWindow):
 		background.Show()
 		self.objectList.append(background)
 
-		self.__MakeImage("ring.tga", -280, -280)
+		self.ringImage = self.__MakeImage("ring.tga", -280, -280)
 
 		self.userField = self.__MakeImage("field_user_1.tga", -143, -22 - 28)
 		self.lockField = self.__MakeImage("field_lock_0.tga", -143, 32 - 28)
@@ -585,6 +591,9 @@ class LoginWindow(ui.ScriptWindow):
 				image.textLine.SetPackedFontColor(0xff9aa4b0)
 
 	def __OnOverInSlot(self, slot):
+		if self.messageShown:
+			return
+
 		if self.accountDict.has_key(slot):
 			self.languageName.SetText(self.accountDict[slot][0])
 		else:
@@ -766,7 +775,7 @@ class LoginWindow(ui.ScriptWindow):
 	def OnHandShake(self):
 		if not IsLoginDelay():
 			snd.PlaySound("sound/ui/loginok.wav")
-			self.PopupDisplayMessage(localeInfo.LOGIN_CONNECT_SUCCESS)
+			self.__ShowMessage(localeInfo.LOGIN_CONNECT_SUCCESS, PORTAL_MESSAGE_OK)
 
 	def OnLoginStart(self):
 		if not IsLoginDelay():
@@ -810,7 +819,7 @@ class LoginWindow(ui.ScriptWindow):
 			self.connectingDialog.SAFE_SetExitEvent(self.OnPressExitKey)
 			self.isNowCountDown = True
 		else:
-			self.__ShowMessage(localeInfo.LOGIN_CONNETING, False)
+			self.__ShowMessage(localeInfo.LOGIN_CONNETING, PORTAL_MESSAGE_INFO)
 
 		uiTarget.MONSTER_INFO_DATA.clear()
 		self.stream.SetLoginInfo(id, pwd)
@@ -846,15 +855,16 @@ class LoginWindow(ui.ScriptWindow):
 	def __BuildStatus(self):
 		self.messageLineList = []
 		for index in xrange(2):
-			textLine = self.__MakeText(self, self.__X(0), self.__Y(58 + index * 14), "", 0xffc3ccd6, 10)
+			textLine = self.__MakeText(self, self.__X(0), self.__Y(92), "", 0xffffffff, 14)
 			textLine.SetHorizontalAlignCenter()
+			textLine.Hide()
 			self.messageLineList.append(textLine)
 
 	def __WrapMessage(self, msg):
 		lineList = []
 		line = ""
 		for word in msg.replace("[ENTER]", " ").split():
-			if line and len([c for c in line + " " + word if (ord(c) & 0xC0) != 0x80]) > 44:
+			if line and len([c for c in line + " " + word if (ord(c) & 0xC0) != 0x80]) > 30:
 				lineList.append(line)
 				line = word
 			else:
@@ -863,14 +873,45 @@ class LoginWindow(ui.ScriptWindow):
 			lineList.append(line)
 		return lineList[:2]
 
-	def __ShowMessage(self, msg, isError):
+	def __ShowMessage(self, msg, kind = PORTAL_MESSAGE_INFO):
 		if not self.messageLineList:
 			return
 
 		lineList = self.__WrapMessage(msg)
+		if not lineList:
+			self.__HideMessage()
+			return
+
+		for slot in self.slotList:
+			slot.Hide()
+		self.languageName.SetText("")
+
+		color = {PORTAL_MESSAGE_ERROR : 0xffff8f85, PORTAL_MESSAGE_OK : 0xff8ae89a}.get(kind, 0xffd6ecff)
+		top = 104 - len(lineList) * 10
 		for index, textLine in enumerate(self.messageLineList):
-			textLine.SetPackedFontColor(0xffff8f85 if isError else 0xffc3ccd6)
-			textLine.SetText(lineList[index] if index < len(lineList) else "")
+			if index < len(lineList):
+				textLine.SetPosition(self.__X(0), self.__Y(top + index * 21))
+				textLine.SetPackedFontColor(color)
+				textLine.SetText(lineList[index])
+				textLine.Show()
+			else:
+				textLine.Hide()
+
+		self.ringImage.SetImage({PORTAL_MESSAGE_ERROR : "ring_error.tga", PORTAL_MESSAGE_OK : "ring_ok.tga"}.get(kind, "ring.tga"))
+		self.messageShown = True
+		self.messageEndTime = app.GetTime() + 5.0 if kind == PORTAL_MESSAGE_ERROR else 0.0
+
+	def __HideMessage(self):
+		if not self.messageShown or not self.messageLineList:
+			return
+
+		self.messageShown = False
+		self.messageEndTime = 0.0
+		for textLine in self.messageLineList:
+			textLine.Hide()
+		for slot in self.slotList:
+			slot.Show()
+		self.ringImage.SetImage("ring.tga")
 
 	def __SetErrorField(self, field):
 		self.errorField = field
@@ -880,13 +921,13 @@ class LoginWindow(ui.ScriptWindow):
 	def __ClearError(self):
 		self.errorField = ""
 		self.focusState = -1
-		self.__ShowMessage("", False)
+		self.__HideMessage()
 
 	def PopupDisplayMessage(self, msg):
-		self.__ShowMessage(msg, False)
+		self.__ShowMessage(msg, PORTAL_MESSAGE_INFO)
 
 	def PopupNotifyMessage(self, msg, func = 0):
-		self.__ShowMessage(msg, True)
+		self.__ShowMessage(msg, PORTAL_MESSAGE_ERROR)
 		if func:
 			func()
 
@@ -911,6 +952,9 @@ class LoginWindow(ui.ScriptWindow):
 
 		if self.errorField and self.errorSnapshot != (self.idEditLine.GetText(), self.pwdEditLine.GetText()):
 			self.__ClearError()
+
+		if self.messageEndTime and app.GetTime() > self.messageEndTime:
+			self.__HideMessage()
 
 		focusState = 1 if self.pwdEditLine.IsFocus() else 0
 		if focusState != self.focusState:
