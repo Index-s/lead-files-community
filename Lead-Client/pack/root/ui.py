@@ -2988,12 +2988,45 @@ class ComboBox(Window):
 		self.listBox.SetEvent(__mem_func__(self.OnSelectItem))
 		self.listBox.Hide()
 
+		self.viewItemCount = 0
+		self.scrollBar = None
+
 	def __del__(self):
 		Window.__del__(self)
 
 	def Destroy(self):
 		self.textLine = None
 		self.listBox = None
+		self.scrollBar = None
+
+	def SetViewItemCount(self, count):
+		self.viewItemCount = count
+		self.__ArrangeScrollBar()
+
+	def __ArrangeScrollBar(self):
+		count = self.listBox.GetItemCount()
+		if not self.viewItemCount or count <= self.viewItemCount:
+			if self.scrollBar:
+				self.scrollBar.Hide()
+			return
+
+		height = self.viewItemCount * self.listBox.stepSize
+		self.listBox.SetSize(self.width, height)
+
+		if not self.scrollBar:
+			self.scrollBar = ScrollBar()
+			self.scrollBar.SetParent(self.listBox)
+			self.scrollBar.SetScrollEvent(__mem_func__(self.__OnScroll))
+
+		self.scrollBar.SetPosition(self.width - ScrollBar.SCROLLBAR_WIDTH, 0)
+		self.scrollBar.SetScrollBarSize(height)
+		self.scrollBar.SetMiddleBarSize(float(self.viewItemCount) / count)
+		self.scrollBar.Show()
+		self.__OnScroll()
+
+	def __OnScroll(self):
+		count = self.listBox.GetItemCount()
+		self.listBox.SetBasePos(int(self.scrollBar.GetPos() * (count - self.viewItemCount) + 0.5))
 
 	def SetPosition(self, x, y):
 		Window.SetPosition(self, x, y)
@@ -3011,6 +3044,7 @@ class ComboBox(Window):
 	def __ArrangeListBox(self):
 		self.listBox.SetPosition(0, self.height + 5)
 		self.listBox.SetWidth(self.width)
+		self.__ArrangeScrollBar()
 
 	def Enable(self):
 		self.enable = True
@@ -3030,6 +3064,7 @@ class ComboBox(Window):
 	def InsertItem(self, index, name):
 		self.listBox.InsertItem(index, name)
 		self.listBox.ArrangeItem()
+		self.__ArrangeScrollBar()
 
 	def SetCurrentItem(self, text):
 		self.textLine.SetText(text)
