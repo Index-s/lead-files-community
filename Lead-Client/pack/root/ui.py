@@ -2967,6 +2967,24 @@ class ComboBox(Window):
 
 			ListBox.OnRender(self)
 
+			itemCount = len(self.itemList)
+			if self.showLineCount and itemCount > self.showLineCount:
+				barHeight = max(8, heightRender * self.showLineCount / itemCount)
+				barOffset = (heightRender - barHeight) * self.basePos / (itemCount - self.showLineCount)
+				barX = xRender + 2 if localeInfo.IsRTL() else xRender + widthRender - 4
+				grp.SetColor(BRIGHT_COLOR)
+				grp.RenderBar(barX, yRender + barOffset, 2, barHeight)
+
+		def OnMouseWheel(self, length):
+			itemCount = len(self.itemList)
+			viewCount = self.GetViewItemCount()
+			if itemCount <= viewCount:
+				return False
+
+			step = -1 if length > 0 else 1
+			self.SetBasePos(max(0, min(itemCount - viewCount, self.basePos + step)))
+			return True
+
 	def __init__(self):
 		Window.__init__(self)
 		self.x = 0
@@ -2989,7 +3007,6 @@ class ComboBox(Window):
 		self.listBox.Hide()
 
 		self.viewItemCount = 0
-		self.scrollBar = None
 
 	def __del__(self):
 		Window.__del__(self)
@@ -2997,7 +3014,6 @@ class ComboBox(Window):
 	def Destroy(self):
 		self.textLine = None
 		self.listBox = None
-		self.scrollBar = None
 
 	def SetViewItemCount(self, count):
 		self.viewItemCount = count
@@ -3006,27 +3022,10 @@ class ComboBox(Window):
 	def __ArrangeScrollBar(self):
 		count = self.listBox.GetItemCount()
 		if not self.viewItemCount or count <= self.viewItemCount:
-			if self.scrollBar:
-				self.scrollBar.Hide()
 			return
 
-		height = self.viewItemCount * self.listBox.stepSize
-		self.listBox.SetSize(self.width, height)
-
-		if not self.scrollBar:
-			self.scrollBar = ScrollBar()
-			self.scrollBar.SetParent(self.listBox)
-			self.scrollBar.SetScrollEvent(__mem_func__(self.__OnScroll))
-
-		self.scrollBar.SetPosition(self.width - ScrollBar.SCROLLBAR_WIDTH, 0)
-		self.scrollBar.SetScrollBarSize(height)
-		self.scrollBar.SetMiddleBarSize(float(self.viewItemCount) / count)
-		self.scrollBar.Show()
-		self.__OnScroll()
-
-	def __OnScroll(self):
-		count = self.listBox.GetItemCount()
-		self.listBox.SetBasePos(int(self.scrollBar.GetPos() * (count - self.viewItemCount) + 0.5))
+		self.listBox.SetSize(self.width, self.viewItemCount * self.listBox.stepSize)
+		self.listBox.SetBasePos(max(0, min(count - self.viewItemCount, self.listBox.basePos)))
 
 	def SetPosition(self, x, y):
 		Window.SetPosition(self, x, y)
