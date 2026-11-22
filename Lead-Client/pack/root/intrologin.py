@@ -161,8 +161,10 @@ class LoginWindow(ui.ScriptWindow):
 		self.selectedServerID = 0
 		self.selectedChannelID = 0
 		self.focusState = -1
-		self.serverLabel = None
-		self.channelLabel = None
+		self.serverName = None
+		self.serverIDList = []
+		self.slotList = []
+		self.accountDict = {}
 		self.loginButton = None
 		self.unit = 1.0
 		self.rotateIndex = -1
@@ -220,7 +222,7 @@ class LoginWindow(ui.ScriptWindow):
 			self.pwdEditLine.SetReturnEvent(0)
 			self.pwdEditLine.SetTabEvent(0)
 
-		for flag in self.flagList:
+		for flag in self.flagList + self.slotList:
 			flag.overInEvent = None
 			flag.overOutEvent = None
 		if self.loginButton:
@@ -233,9 +235,8 @@ class LoginWindow(ui.ScriptWindow):
 		self.lockField = None
 		self.loginButton = None
 		self.languageName = None
-		self.serverLabel = None
-		self.channelLabel = None
-		self.serverMark = None
+		self.serverName = None
+		self.slotList = []
 		self.channelRing = None
 		self.flagList = []
 		self.serverItemDict = {}
@@ -313,13 +314,13 @@ class LoginWindow(ui.ScriptWindow):
 
 		self.__MakeImage("ring.tga", -280, -280)
 
-		self.userField = self.__MakeImage("field_user_1.tga", -143, -28 - 28)
-		self.lockField = self.__MakeImage("field_lock_0.tga", -143, 26 - 28)
+		self.userField = self.__MakeImage("field_user_1.tga", -143, -22 - 28)
+		self.lockField = self.__MakeImage("field_lock_0.tga", -143, 32 - 28)
 
-		self.idEditLine = self.__MakeEditLine(-89, -28 - 10, 200, False)
-		self.pwdEditLine = self.__MakeEditLine(-89, 26 - 10, 168, True)
+		self.idEditLine = self.__MakeEditLine(-89, -22 - 10, 200, False)
+		self.pwdEditLine = self.__MakeEditLine(-89, 32 - 10, 168, True)
 
-		self.loginButton = self.__MakeImage("arrow_0.tga", 135 - 20 - 18, 26 - 18, True)
+		self.loginButton = self.__MakeImage("arrow_0.tga", 135 - 20 - 18, 32 - 18, True)
 		self.loginButton.overInEvent = ui.__mem_func__(self.__OnOverInLoginButton)
 		self.loginButton.overOutEvent = ui.__mem_func__(self.__OnOverOutLoginButton)
 		self.loginButton.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__OnClickLoginButton))
@@ -331,6 +332,7 @@ class LoginWindow(ui.ScriptWindow):
 
 		self.__BuildLanguageRing()
 		self.__BuildServerBlock()
+		self.__BuildAccountSlots()
 
 	def __OnOverInLoginButton(self, index):
 		self.loginButton.SetImage("arrow_1.tga")
@@ -360,7 +362,7 @@ class LoginWindow(ui.ScriptWindow):
 
 		self.__PlaceFlags(0.0, 0.0)
 
-		self.languageName = self.__MakeText(self, self.__X(0), self.__Y(108), "", 0xffc3ccd6, 14)
+		self.languageName = self.__MakeText(self, self.__X(0), self.__Y(126), "", 0xffc3ccd6, 13)
 		self.languageName.SetHorizontalAlignCenter()
 
 	def __OnOverInLanguage(self, index):
@@ -433,56 +435,52 @@ class LoginWindow(ui.ScriptWindow):
 			"AGELIMIT"	: localeInfo.LOGIN_FAILURE_SHUTDOWN_TIME,
 		}
 
-		if self.serverLabel:
-			self.serverLabel.SetText(uiScriptLocale.LOGIN_SELECT_TITLE)
-		if self.channelLabel:
-			self.channelLabel.SetText(localeInfo.CHANNEL_SELECT_CHANNEL)
 
 	def __GetServerDict(self):
 		return serverInfo.REGION_DICT.get(0, {})
 
 	def __BuildServerBlock(self):
-		dx = min(PORTAL_ORBIT_RADIUS + 70, wndMgr.GetScreenWidth() / 2.0 / self.unit - 200)
-		dy = -70
-		self.blockDX = dx
-
 		serverDict = self.__GetServerDict()
-		serverIDList = serverDict.keys()
-		serverIDList.sort()
+		self.serverIDList = serverDict.keys()
+		self.serverIDList.sort()
 
 		loadServerID, loadChannelID = self.__LoadChannelInfo()
 		if not serverDict.has_key(loadServerID):
-			loadServerID = serverIDList[0] if serverIDList else 0
+			loadServerID = self.serverIDList[0] if self.serverIDList else 0
 
-		self.__MakeImage("shade.tga", dx - 70, dy - 70)
+		self.serverName = self.__MakeText(self, self.__X(0), self.__Y(-118), "", 0xffffffff, 16)
+		self.serverName.SetHorizontalAlignCenter()
 
-		if len(serverIDList) > 1:
-			self.serverLabel = self.__MakeText(self, self.__X(dx), self.__Y(dy), uiScriptLocale.LOGIN_SELECT_TITLE, 0xffc3ccd6, 11)
-			dy += 24
-			self.serverMark = self.__MakeImage("mark.tga", dx - 20, dy - 6)
-			for serverID in serverIDList:
+		if len(self.serverIDList) > 1:
+			for step, dx in ((-1, -84), (1, 60)):
 				item = ui.Window()
 				item.SetParent(self)
-				item.SetPosition(self.__X(dx), self.__Y(dy))
-				item.SetSize(int(170 * self.unit), int(28 * self.unit))
-				item.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__SelectServer), serverID)
+				item.SetPosition(self.__X(dx), self.__Y(-122))
+				item.SetSize(int(24 * self.unit), int(26 * self.unit))
+				item.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__StepServer), step)
 				item.Show()
-				item.textLine = self.__MakeText(item, 0, int(2 * self.unit), serverDict[serverID].get("name", ""), 0xffc3ccd6, 16)
-				item.posDY = dy
+				item.textLine = self.__MakeText(item, int(12 * self.unit), int(2 * self.unit), "<" if step < 0 else ">", 0xffc3ccd6, 16)
+				item.textLine.SetHorizontalAlignCenter()
 				self.objectList.append(item)
-				self.serverItemDict[serverID] = item
-				dy += 30
-			dy += 16
 		else:
-			self.serverMark = None
+			self.serverName.Hide()
 
-		self.channelLabel = self.__MakeText(self, self.__X(dx), self.__Y(dy), localeInfo.CHANNEL_SELECT_CHANNEL, 0xffc3ccd6, 11)
-		self.channelDY = dy + 26
-		self.channelRing = self.__MakeImage("dot_ring.tga", dx, self.channelDY)
+		self.channelRing = self.__MakeImage("dot_ring.tga", 0, 0)
 		self.channelRing.Hide()
 
 		self.selectedChannelID = loadChannelID
 		self.__SelectServer(loadServerID)
+
+	def __StepServer(self, step):
+		if not self.serverIDList:
+			return
+
+		try:
+			index = self.serverIDList.index(self.selectedServerID)
+		except ValueError:
+			index = 0
+
+		self.__SelectServer(self.serverIDList[(index + step) % len(self.serverIDList)])
 
 	def __SelectServer(self, serverID):
 		serverDict = self.__GetServerDict()
@@ -490,14 +488,7 @@ class LoginWindow(ui.ScriptWindow):
 			return
 
 		self.selectedServerID = serverID
-
-		for eachServerID, item in self.serverItemDict.items():
-			if eachServerID == serverID:
-				item.textLine.SetPackedFontColor(0xffffffff)
-				if self.serverMark:
-					self.serverMark.SetPosition(self.__X(self.blockDX - 20), self.__Y(item.posDY - 6))
-			else:
-				item.textLine.SetPackedFontColor(0xffc3ccd6)
+		self.serverName.SetText(serverDict[serverID].get("name", ""))
 
 		for item in self.channelItemDict.values():
 			item.dot.Hide()
@@ -508,19 +499,21 @@ class LoginWindow(ui.ScriptWindow):
 		channelIDList = channelDict.keys()
 		channelIDList.sort()
 
+		itemWidth = 56
+		startDX = -len(channelIDList) * itemWidth / 2.0
+
 		for index, channelID in enumerate(channelIDList):
-			posDX = self.blockDX - 8 + index * 46
+			posDX = startDX + index * itemWidth
 
 			item = ui.Window()
 			item.SetParent(self)
-			item.SetPosition(self.__X(posDX), self.__Y(self.channelDY - 8))
-			item.SetSize(int(40 * self.unit), int(62 * self.unit))
+			item.SetPosition(self.__X(posDX), self.__Y(-90))
+			item.SetSize(int(itemWidth * self.unit), int(24 * self.unit))
 			item.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__SelectChannel), channelID)
 			item.Show()
 
-			item.dot = self.__MakeImage("dot_none.tga", posDX + 8, self.channelDY)
-			item.textLine = self.__MakeText(item, int(18 * self.unit), int(36 * self.unit), str(channelID), 0xffc3ccd6, 13)
-			item.textLine.SetHorizontalAlignCenter()
+			item.dot = self.__MakeImage("dot_none.tga", posDX + 1, -88)
+			item.textLine = self.__MakeText(item, int(23 * self.unit), int(4 * self.unit), channelDict[channelID].get("name", str(channelID)), 0xffc3ccd6, 12)
 			item.posDX = posDX
 			self.channelItemDict[channelID] = item
 
@@ -539,10 +532,112 @@ class LoginWindow(ui.ScriptWindow):
 		for eachChannelID, item in self.channelItemDict.items():
 			if eachChannelID == channelID:
 				item.textLine.SetPackedFontColor(0xffffffff)
-				self.channelRing.SetPosition(self.__X(item.posDX), self.__Y(self.channelDY - 8))
+				self.channelRing.SetPosition(self.__X(item.posDX - 7), self.__Y(-96))
 				self.channelRing.Show()
 			else:
-				item.textLine.SetPackedFontColor(0xffc3ccd6)
+				item.textLine.SetPackedFontColor(0xff9aa4b0)
+
+	def __BuildAccountSlots(self):
+		self.accountDict = self.__LoadAccounts()
+		self.slotList = []
+
+		for slot in xrange(9):
+			dx = (slot - 4) * 30 - 13
+
+			image = self.__MakeImage("slot_0.tga", dx, 87, True)
+			image.index = slot
+			image.overInEvent = ui.__mem_func__(self.__OnOverInSlot)
+			image.overOutEvent = ui.__mem_func__(self.__OnOverOutSlot)
+			image.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__UseAccountSlot), slot)
+			image.SetMouseRightButtonDownEvent(ui.__mem_func__(self.__ClearAccountSlot), slot)
+			image.textLine = self.__MakeText(image, int(13 * self.unit), int(6 * self.unit), "F%d" % (slot + 1), 0xff9aa4b0, 9)
+			image.textLine.SetHorizontalAlignCenter()
+			self.slotList.append(image)
+
+		self.__RefreshAccountSlots()
+
+	def __RefreshAccountSlots(self):
+		for slot, image in enumerate(self.slotList):
+			if self.accountDict.has_key(slot):
+				image.SetImage("slot_1.tga")
+				image.textLine.SetPackedFontColor(0xffffffff)
+			else:
+				image.SetImage("slot_0.tga")
+				image.textLine.SetPackedFontColor(0xff9aa4b0)
+
+	def __OnOverInSlot(self, slot):
+		if self.accountDict.has_key(slot):
+			self.languageName.SetText(self.accountDict[slot][0])
+
+	def __OnOverOutSlot(self, slot):
+		self.languageName.SetText("")
+
+	def __ScrambleKey(self):
+		return [ord(c) for c in "Lead:portal:slot"]
+
+	def __Scramble(self, text):
+		key = self.__ScrambleKey()
+		return "".join(["%02x" % (ord(c) ^ key[i % len(key)]) for i, c in enumerate(text)])
+
+	def __Unscramble(self, text):
+		key = self.__ScrambleKey()
+		return "".join([chr(int(text[i * 2:i * 2 + 2], 16) ^ key[i % len(key)]) for i in xrange(len(text) / 2)])
+
+	def __LoadAccounts(self):
+		accountDict = {}
+		try:
+			for line in open("accounts.inf").readlines():
+				tokens = line.strip().split("\t")
+				if len(tokens) == 3:
+					accountDict[int(tokens[0])] = (tokens[1], self.__Unscramble(tokens[2]))
+		except:
+			pass
+		return accountDict
+
+	def __SaveAccounts(self):
+		try:
+			file = open("accounts.inf", "w")
+			for slot, (id, pwd) in self.accountDict.items():
+				file.write("%d\t%s\t%s\n" % (slot, id, self.__Scramble(pwd)))
+			file.close()
+		except:
+			pass
+
+	def __StoreAccountSlot(self, slot):
+		id = self.idEditLine.GetText()
+		pwd = self.pwdEditLine.GetText()
+		if len(id) == 0 or len(pwd) == 0:
+			return
+
+		self.accountDict[slot] = (id, pwd)
+		self.__SaveAccounts()
+		self.__RefreshAccountSlots()
+
+	def __ClearAccountSlot(self, slot):
+		if self.accountDict.has_key(slot):
+			del self.accountDict[slot]
+			self.__SaveAccounts()
+			self.__RefreshAccountSlots()
+			self.languageName.SetText("")
+
+	def __UseAccountSlot(self, slot):
+		if not self.accountDict.has_key(slot):
+			return
+
+		id, pwd = self.accountDict[slot]
+		self.idEditLine.SetText(id)
+		self.pwdEditLine.SetText(pwd)
+		self.__OnClickLoginButton()
+
+	def OnKeyDown(self, key):
+		slotKeyList = (app.DIK_F1, app.DIK_F2, app.DIK_F3, app.DIK_F4, app.DIK_F5, app.DIK_F6, app.DIK_F7, app.DIK_F8, app.DIK_F9)
+		if key in slotKeyList and self.idEditLine:
+			slot = slotKeyList.index(key)
+			if app.IsPressed(app.DIK_LCONTROL) or app.IsPressed(app.DIK_RCONTROL):
+				self.__StoreAccountSlot(slot)
+			else:
+				self.__UseAccountSlot(slot)
+		return True
 
 	def __RequestServerStateList(self):
 		try:
