@@ -163,9 +163,9 @@ class LoginWindow(ui.ScriptWindow):
 		self.serverName = None
 		self.serverIDList = []
 		self.slotList = []
-		self.statusLineList = []
-		self.statusButton = None
-		self.statusEvent = None
+		self.messageLineList = []
+		self.errorField = ""
+		self.errorSnapshot = ("", "")
 		self.accountDict = {}
 		self.loginButton = None
 		self.unit = 1.0
@@ -239,12 +239,7 @@ class LoginWindow(ui.ScriptWindow):
 		self.loginButton = None
 		self.languageName = None
 		self.serverName = None
-		if self.statusButton:
-			self.statusButton.overInEvent = None
-			self.statusButton.overOutEvent = None
-		self.statusButton = None
-		self.statusLineList = []
-		self.statusEvent = None
+		self.messageLineList = []
 		self.slotList = []
 		self.channelRing = None
 		self.flagList = []
@@ -377,7 +372,7 @@ class LoginWindow(ui.ScriptWindow):
 
 		self.__PlaceFlags(0.0, 0.0)
 
-		self.languageName = self.__MakeText(self, self.__X(0), self.__Y(124), "", 0xffc3ccd6, 11)
+		self.languageName = self.__MakeText(self, self.__X(0), self.__Y(128), "", 0xffc3ccd6, 11)
 		self.languageName.SetHorizontalAlignCenter()
 
 	def __OnOverInLanguage(self, index):
@@ -560,7 +555,7 @@ class LoginWindow(ui.ScriptWindow):
 		for slot in xrange(9):
 			dx = (slot - 4) * 30 - 13
 
-			image = self.__MakeImage("slot_0.tga", dx, 87, True)
+			image = self.__MakeImage("slot_0.tga", dx, 92, True)
 			image.index = slot
 			image.overInEvent = ui.__mem_func__(self.__OnOverInSlot)
 			image.overOutEvent = ui.__mem_func__(self.__OnOverOutSlot)
@@ -633,12 +628,7 @@ class LoginWindow(ui.ScriptWindow):
 	def __StoreAccountSlot(self, slot):
 		id = self.idEditLine.GetText()
 		pwd = self.pwdEditLine.GetText()
-		if len(id) == 0:
-			self.PopupNotifyMessage(localeInfo.LOGIN_INPUT_ID, self.SetIDEditLineFocus)
-			return
-
-		if len(pwd) == 0:
-			self.PopupNotifyMessage(localeInfo.LOGIN_INPUT_PASSWORD, self.pwdEditLine.SetFocus)
+		if len(id) == 0 or len(pwd) == 0:
 			return
 
 		self.accountDict[slot] = (id, pwd)
@@ -665,8 +655,6 @@ class LoginWindow(ui.ScriptWindow):
 		slotKeyList = (app.DIK_F1, app.DIK_F2, app.DIK_F3, app.DIK_F4, app.DIK_F5, app.DIK_F6, app.DIK_F7, app.DIK_F8, app.DIK_F9)
 		if key in slotKeyList and self.idEditLine:
 			self.__OnClickSlot(slotKeyList.index(key))
-		elif app.DIK_RETURN == key and self.statusEvent:
-			self.__OnClickStatusButton()
 		return True
 
 	def __RequestServerStateList(self):
@@ -797,6 +785,9 @@ class LoginWindow(ui.ScriptWindow):
 		loginFailureFunc = self.loginFailureFuncDict.get(error, self.SetPasswordEditLineFocus)
 		self.PopupNotifyMessage(loginFailureMsg, loginFailureFunc)
 
+		if self.idEditLine:
+			self.__SetErrorField({"WRONGPWD" : "pwd", "NOID" : "id"}.get(error, "pwd"))
+
 		snd.PlaySound("sound/ui/loginfail.wav")
 
 	def __DisconnectAndInputPassword(self):
@@ -819,16 +810,11 @@ class LoginWindow(ui.ScriptWindow):
 			self.connectingDialog.SAFE_SetExitEvent(self.OnPressExitKey)
 			self.isNowCountDown = True
 		else:
-			self.__ShowStatus(localeInfo.LOGIN_CONNETING, localeInfo.UI_CANCEL, self.__CancelConnect)
+			self.__ShowMessage(localeInfo.LOGIN_CONNETING, False)
 
 		uiTarget.MONSTER_INFO_DATA.clear()
 		self.stream.SetLoginInfo(id, pwd)
 		self.stream.Connect()
-
-	def __CancelConnect(self):
-		net.Disconnect()
-		self.pwdEditLine.SetText("")
-		self.pwdEditLine.SetFocus()
 
 	def __LoadLoginInfo(self, loginInfoFileName):
 		loginInfo = {}
@@ -858,97 +844,51 @@ class LoginWindow(ui.ScriptWindow):
 				self.Connect(id, pwd)
 
 	def __BuildStatus(self):
-		self.statusLineList = []
-		for index in xrange(3):
-			textLine = self.__MakeText(self, self.__X(0), self.__Y(-28 + index * 20), "", 0xffffffff, 12)
+		self.messageLineList = []
+		for index in xrange(2):
+			textLine = self.__MakeText(self, self.__X(0), self.__Y(58 + index * 14), "", 0xffc3ccd6, 10)
 			textLine.SetHorizontalAlignCenter()
-			textLine.Hide()
-			self.statusLineList.append(textLine)
+			self.messageLineList.append(textLine)
 
-		self.statusButton = self.__MakeImage("button_0.tga", -55, 48, True)
-		self.statusButton.overInEvent = ui.__mem_func__(self.__OnOverInStatusButton)
-		self.statusButton.overOutEvent = ui.__mem_func__(self.__OnOverOutStatusButton)
-		self.statusButton.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.__OnClickStatusButton))
-		self.statusButton.textLine = self.__MakeText(self.statusButton, int(55 * self.unit), int(15 * self.unit) - 1, "", 0xffffffff, 11)
-		self.statusButton.textLine.SetHorizontalAlignCenter()
-		self.statusButton.textLine.SetVerticalAlignCenter()
-		self.statusButton.Hide()
-
-	def __OnOverInStatusButton(self, index):
-		self.statusButton.SetImage("button_1.tga")
-
-	def __OnOverOutStatusButton(self, index):
-		self.statusButton.SetImage("button_0.tga")
-
-	def __GetFormList(self):
-		return [self.userField, self.lockField, self.idEditLine, self.pwdEditLine, self.loginButton] + self.slotList
-
-	def __WrapStatus(self, msg):
+	def __WrapMessage(self, msg):
 		lineList = []
 		line = ""
-		for word in msg.replace("\\n", " ").replace("[ENTER]", " ").split():
-			if line and len([c for c in line + " " + word if (ord(c) & 0xC0) != 0x80]) > 36:
+		for word in msg.replace("[ENTER]", " ").split():
+			if line and len([c for c in line + " " + word if (ord(c) & 0xC0) != 0x80]) > 44:
 				lineList.append(line)
 				line = word
 			else:
 				line = (line + " " + word).strip()
 		if line:
 			lineList.append(line)
-		return lineList[:3]
+		return lineList[:2]
 
-	def __ShowStatus(self, msg, buttonText = None, event = None):
-		if not self.idEditLine:
+	def __ShowMessage(self, msg, isError):
+		if not self.messageLineList:
 			return
 
-		for item in self.__GetFormList():
-			item.Hide()
-		self.idEditLine.KillFocus()
-		self.pwdEditLine.KillFocus()
-		self.languageName.SetText("")
+		lineList = self.__WrapMessage(msg)
+		for index, textLine in enumerate(self.messageLineList):
+			textLine.SetPackedFontColor(0xffff8f85 if isError else 0xffc3ccd6)
+			textLine.SetText(lineList[index] if index < len(lineList) else "")
 
-		lineList = self.__WrapStatus(msg)
-		offset = (3 - len(lineList)) * 10
-		for index, textLine in enumerate(self.statusLineList):
-			if index < len(lineList):
-				textLine.SetPosition(self.__X(0), self.__Y(-28 + offset + index * 20))
-				textLine.SetText(lineList[index])
-				textLine.Show()
-			else:
-				textLine.Hide()
+	def __SetErrorField(self, field):
+		self.errorField = field
+		self.errorSnapshot = (self.idEditLine.GetText(), self.pwdEditLine.GetText())
+		self.focusState = -1
 
-		self.statusEvent = event
-		if buttonText:
-			self.statusButton.SetImage("button_0.tga")
-			self.statusButton.textLine.SetText(buttonText)
-			self.statusButton.Show()
-			self.statusEvent = event or self.EmptyFunc
-		else:
-			self.statusButton.Hide()
-
-	def __HideStatus(self):
-		if not self.idEditLine:
-			return
-
-		self.statusEvent = None
-		for textLine in self.statusLineList:
-			textLine.Hide()
-		self.statusButton.Hide()
-		for item in self.__GetFormList():
-			item.Show()
-
-	def __OnClickStatusButton(self):
-		event = self.statusEvent
-		self.__HideStatus()
-		if event:
-			event()
-		if self.idEditLine and not self.statusEvent and not self.idEditLine.IsFocus() and not self.pwdEditLine.IsFocus():
-			self.idEditLine.SetFocus()
+	def __ClearError(self):
+		self.errorField = ""
+		self.focusState = -1
+		self.__ShowMessage("", False)
 
 	def PopupDisplayMessage(self, msg):
-		self.__ShowStatus(msg)
+		self.__ShowMessage(msg, False)
 
 	def PopupNotifyMessage(self, msg, func = 0):
-		self.__ShowStatus(msg, localeInfo.UI_OK, func or self.EmptyFunc)
+		self.__ShowMessage(msg, True)
+		if func:
+			func()
 
 	def OnPressExitKey(self):
 		self.stream.popupWindow.Close()
@@ -969,11 +909,14 @@ class LoginWindow(ui.ScriptWindow):
 			if not self.idEditLine:
 				return
 
+		if self.errorField and self.errorSnapshot != (self.idEditLine.GetText(), self.pwdEditLine.GetText()):
+			self.__ClearError()
+
 		focusState = 1 if self.pwdEditLine.IsFocus() else 0
 		if focusState != self.focusState:
 			self.focusState = focusState
-			self.userField.SetImage("field_user_0.tga" if focusState else "field_user_1.tga")
-			self.lockField.SetImage("field_lock_1.tga" if focusState else "field_lock_0.tga")
+			self.userField.SetImage("field_user_2.tga" if self.errorField == "id" else ("field_user_0.tga" if focusState else "field_user_1.tga"))
+			self.lockField.SetImage("field_lock_2.tga" if self.errorField == "pwd" else ("field_lock_1.tga" if focusState else "field_lock_0.tga"))
 
 	def EmptyFunc(self):
 		pass
@@ -982,12 +925,16 @@ class LoginWindow(ui.ScriptWindow):
 		id = self.idEditLine.GetText()
 		pwd = self.pwdEditLine.GetText()
 
+		self.__ClearError()
+
 		if len(id) == 0:
-			self.PopupNotifyMessage(localeInfo.LOGIN_INPUT_ID, self.SetIDEditLineFocus)
+			self.__SetErrorField("id")
+			self.idEditLine.SetFocus()
 			return
 
 		if len(pwd) == 0:
-			self.PopupNotifyMessage(localeInfo.LOGIN_INPUT_PASSWORD, self.SetPasswordEditLineFocus)
+			self.__SetErrorField("pwd")
+			self.pwdEditLine.SetFocus()
 			return
 
 		if not self.__ApplyConnectInfo():
