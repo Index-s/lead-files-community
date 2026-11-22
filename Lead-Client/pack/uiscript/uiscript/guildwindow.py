@@ -120,65 +120,60 @@ window = {
 							"name" : "Tab_Button_01",
 							"type" : "radio_button",
 
-							"x" : 4,
+							"x" : 6,
 							"y" : 5,
 
-							"width" : 72,
-							"text" : uiScriptLocale.GUILD_TAB_INFO,
+							"width" : 53,
 							"height" : 27,
 						},
 						{
 							"name" : "Tab_Button_02",
 							"type" : "radio_button",
 
-							"x" : 78,
+							"x" : 61,
 							"y" : 5,
 
-							"width" : 72,
-							"text" : uiScriptLocale.GUILD_TAB_BOARD,
+							"width" : 67,
 							"height" : 27,
 						},
 						{
 							"name" : "Tab_Button_03",
 							"type" : "radio_button",
 
-							"x" : 152,
+							"x" : 130,
 							"y" : 5,
 
-							"width" : 72,
-							"text" : uiScriptLocale.GUILD_TAB_MEMBER,
+							"width" : 60,
 							"height" : 27,
 						},
 						{
 							"name" : "Tab_Button_04",
 							"type" : "radio_button",
 
-							"x" : 0,
+							"x" : 192,
 							"y" : 5,
 
-							"width" : 0,
+							"width" : 60,
 							"height" : 27,
 						},
 						{
 							"name" : "Tab_Button_05",
 							"type" : "radio_button",
 
-							"x" : 226,
+							"x" : 254,
 							"y" : 5,
 
-							"width" : 72,
-							"text" : uiScriptLocale.GUILD_TAB_SKILL,
+							"width" : 60,
 							"height" : 27,
 						},
 						{
 							"name" : "Tab_Button_06",
 							"type" : "radio_button",
 
-							"x" : 300,
+							"x" : 316,
 							"y" : 5,
 
-							"width" : 72,
-							"text" : uiScriptLocale.GUILD_TAB_GRADE,
+							"width" : 55,
 							"height" : 27,
 						},
 					),

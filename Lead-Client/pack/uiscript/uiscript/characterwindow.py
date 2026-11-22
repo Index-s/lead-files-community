@@ -157,7 +157,6 @@ window = {
 						{
 							"name" : "Tab_Button_01",
 							"type" : "radio_button",
-							"text" : uiScriptLocale.CHARACTER_TAB_STATUS,
 
 							"x" : 6,
 							"y" : 5,
@@ -168,7 +167,6 @@ window = {
 						{
 							"name" : "Tab_Button_02",
 							"type" : "radio_button",
-							"text" : uiScriptLocale.CHARACTER_TAB_SKILL,
 
 							"x" : 61,
 							"y" : 5,
@@ -179,7 +177,6 @@ window = {
 						{
 							"name" : "Tab_Button_03",
 							"type" : "radio_button",
-							"text" : uiScriptLocale.CHARACTER_TAB_EMOTION,
 
 							"x" : 130,
 							"y" : 5,
@@ -190,7 +187,6 @@ window = {
 						{
 							"name" : "Tab_Button_04",
 							"type" : "radio_button",
-							"text" : uiScriptLocale.CHARACTER_TAB_QUEST,
 
 							"x" : 192,
 							"y" : 5,
@@ -287,7 +283,6 @@ window = {
 									"children" :
 									(
 										{ "name":"Level_Header", "type":"image", "x":0, "y":0, "image":LOCALE_PATH+"label_level.sub" },
-										{ "name":"Level_Header_Text", "type":"text", "x":19, "y":3, "text":uiScriptLocale.CHARACTER_LABEL_LEVEL, "r":1.0, "g":0.35, "b":0.2, "a":1.0, "text_horizontal_align":"center" },
 										{ "name":"Level_Value", "type":"text", "x":19, "y":19, "fontsize":"LARGE", "text":"999", "r":1.0, "g":1.0, "b":1.0, "a":1.0, "text_horizontal_align":"center" },
 									),
 								},
@@ -298,7 +293,6 @@ window = {
 									"children" :
 									(
 										{ "name":"Exp_Slot", "type":"image", "x":0, "y":0, "image":LOCALE_PATH+"label_cur_exp.sub" },
-										{ "name":"Exp_Slot_Text", "type":"text", "x":46, "y":3, "text":uiScriptLocale.CHARACTER_LABEL_EXP, "r":1.0, "g":0.35, "b":0.2, "a":1.0, "text_horizontal_align":"center" },
 										{ "name":"Exp_Value", "type":"text", "x":46, "y":19, "fontsize":"LARGE", "text":"12345678901", "r":1.0, "g":1.0, "b":1.0, "a":1.0, "text_horizontal_align":"center" },									),
 								},
 
@@ -308,7 +302,6 @@ window = {
 									"children" :
 									(
 										{ "name":"RestExp_Slot", "type":"image", "x":0, "y":0, "image":LOCALE_PATH+"label_last_exp.sub" },
-										{ "name":"RestExp_Slot_Text", "type":"text", "x":46, "y":3, "text":uiScriptLocale.CHARACTER_LABEL_REST_EXP, "r":1.0, "g":0.35, "b":0.2, "a":1.0, "text_horizontal_align":"center" },
 										{ "name":"RestExp_Value", "type":"text", "x":46, "y":19, "fontsize":"LARGE", "text":"12345678901", "r":1.0, "g":1.0, "b":1.0, "a":1.0, "text_horizontal_align":"center" },
 									),
 								},
@@ -326,7 +319,7 @@ window = {
 							(
 								## Basic Stats Title
 								{ "name":"Character_Bar_01", "type":"horizontalbar", "x":12, "y":8, "width":223, },
-								{ "name":"Character_Bar_01_Text", "type":"text", "x":18, "y":9, "text":uiScriptLocale.CHARACTER_LABEL_STATUS, },
+								{ "name":"Character_Bar_01_Text", "type" : "image", "x" : 13, "y" : 9, "image" : LOCALE_PATH+"label_std.sub", },
 								
 								## Stat Training Points
 								{ 
@@ -337,20 +330,13 @@ window = {
 									
 									"children" :
 									(
-										{ "name":"Available_1_Text", "type":"text", "x":50, "y":0, "text":uiScriptLocale.CHARACTER_LABEL_AVAILABLE, "r":1.0, "g":0.6, "b":0.2, "a":1.0, "text_horizontal_align":"right" },
 										{ "name":"Status_Plus_Value", "type":"text", "x":62, "y":0, "text":"99", "r":1.0, "g":1.0, "b":1.0, "a":1.0, "text_horizontal_align":"center" },
 									),
 								},
 
 								## Basic Stats Item List
-								{ "name":"Status_Standard_ItemList1_0", "type":"text", "x":24, "y":36, "text":uiScriptLocale.CHARACTER_LABEL_CON, },
-								{ "name":"Status_Standard_ItemList1_1", "type":"text", "x":24, "y":58, "text":uiScriptLocale.CHARACTER_LABEL_INT, },
-								{ "name":"Status_Standard_ItemList1_2", "type":"text", "x":24, "y":79, "text":uiScriptLocale.CHARACTER_LABEL_STR, },
-								{ "name":"Status_Standard_ItemList1_3", "type":"text", "x":24, "y":99, "text":uiScriptLocale.CHARACTER_LABEL_DEX, },
-								{ "name":"Status_Standard_ItemList2_0", "type":"text", "x":103, "y":34, "text":uiScriptLocale.CHARACTER_LABEL_HP, "multi_line":1, "limit_width":40, },
-								{ "name":"Status_Standard_ItemList2_1", "type":"text", "x":103, "y":56, "text":uiScriptLocale.CHARACTER_LABEL_SP, "multi_line":1, "limit_width":40, },
-								{ "name":"Status_Standard_ItemList2_2", "type":"text", "x":103, "y":75, "text":uiScriptLocale.CHARACTER_LABEL_ATT, "multi_line":1, "limit_width":40, },
-								{ "name":"Status_Standard_ItemList2_3", "type":"text", "x":103, "y":100, "text":uiScriptLocale.CHARACTER_LABEL_DEF, "multi_line":1, "limit_width":40, },
+								{"name":"Status_Standard_ItemList1", "type" : "image", "x":17, "y":31, "image" : LOCALE_PATH+"label_std_item1.sub", },
+								{"name":"Status_Standard_ItemList2", "type" : "image", "x":100, "y":30, "image" : LOCALE_PATH+"label_std_item2.sub", },
 
 								## HTH
 								{
@@ -447,15 +433,11 @@ window = {
 
 								## Extra Stats Title
 								{ "name":"Status_Extent_Bar", "type":"horizontalbar", "x":12, "y":6, "width":223, },
-								{ "name":"Status_Extent_Label", "type":"text", "x":18, "y":7, "text":uiScriptLocale.CHARACTER_LABEL_ATTRIBUTES, },
+								{ "name":"Status_Extent_Label", "type" : "image", "x" : 13, "y" : 8, "image" : LOCALE_PATH+"label_ext.sub", },
 
 								## Basic Stats Item List
-								{ "name":"Status_Extent_ItemList1_0", "type":"text", "x":12, "y":31, "text":uiScriptLocale.CHARACTER_LABEL_MOVE_SPEED, "multi_line":1, "limit_width":56, },
-								{ "name":"Status_Extent_ItemList1_1", "type":"text", "x":12, "y":53, "text":uiScriptLocale.CHARACTER_LABEL_ATT_SPEED, "multi_line":1, "limit_width":56, },
-								{ "name":"Status_Extent_ItemList1_2", "type":"text", "x":12, "y":75, "text":uiScriptLocale.CHARACTER_LABEL_CAST_SPEED, "multi_line":1, "limit_width":56, },
-								{ "name":"Status_Extent_ItemList2_0", "type":"text", "x":129, "y":32, "text":uiScriptLocale.CHARACTER_LABEL_MAG_ATT, "multi_line":1, "limit_width":56, },
-								{ "name":"Status_Extent_ItemList2_1", "type":"text", "x":129, "y":54, "text":uiScriptLocale.CHARACTER_LABEL_MAG_DEF, "multi_line":1, "limit_width":56, },
-								{ "name":"Status_Extent_ItemList2_2", "type":"text", "x":129, "y":78, "text":uiScriptLocale.CHARACTER_LABEL_EVADE, "multi_line":1, "limit_width":56, },
+								{"name":"Status_Extent_ItemList1", "type" : "image", "x":11, "y":31, "image" : LOCALE_PATH+"label_ext_item1.sub", },
+								{"name":"Status_Extent_ItemList2", "type" : "image", "x":128, "y":32, "image" : LOCALE_PATH+"label_ext_item2.sub", },
 
 								## MSPD - Movement Speed
 								{
@@ -544,7 +526,6 @@ window = {
 									"name":"Active_Skill_Point_Label", "type":"image", "x":145, "y":3, "image":LOCALE_PATH+"label_uppt.sub",
 									"children" :
 									(
-										{ "name":"Available_2_Text", "type":"text", "x":50, "y":0, "text":uiScriptLocale.CHARACTER_LABEL_AVAILABLE, "r":1.0, "g":0.6, "b":0.2, "a":1.0, "text_horizontal_align":"right" },
 										{ "name":"Active_Skill_Point_Value", "type":"text", "x":62, "y":0, "text":"99", "r":1.0, "g":1.0, "b":1.0, "a":1.0, "text_horizontal_align":"center" },
 									),
 								},
@@ -618,7 +599,6 @@ window = {
 									"name":"Support_Skill_Point_Label", "type":"image", "x":145, "y":3, "image":LOCALE_PATH+"label_uppt.sub",
 									"children" :
 									(
-										{ "name":"Available_3_Text", "type":"text", "x":50, "y":0, "text":uiScriptLocale.CHARACTER_LABEL_AVAILABLE, "r":1.0, "g":0.6, "b":0.2, "a":1.0, "text_horizontal_align":"right" },
 										{ "name":"Support_Skill_Point_Value", "type":"text", "x":62, "y":0, "text":"99", "r":1.0, "g":1.0, "b":1.0, "a":1.0, "text_horizontal_align":"center" },
 									),
 								},
