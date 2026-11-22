@@ -314,7 +314,7 @@ void CPythonTextTail::ArrangeTextTail()
 				fxLeft -= iPartWidth + c_fGap;
 			}
 
-			pLanguage->SetPosition(fxLeft - pLanguage->GetWidth() - 3.0f, pTextTail->y - pLanguage->GetHeight() - 1.0f);
+			pLanguage->SetPosition(floorf(fxLeft - pLanguage->GetWidth() - 3.0f), floorf(pTextTail->y - pLanguage->GetHeight() - 3.0f));
 		}
 
 		pTextTail->pTextInstance->SetColor(pTextTail->Color.r, pTextTail->Color.g, pTextTail->Color.b);
