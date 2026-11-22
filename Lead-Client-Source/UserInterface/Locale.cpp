@@ -14,37 +14,13 @@ std::string __SECURITY_KEY_STRING__ = LSS_SECURITY_KEY;
 char	MULTI_LOCALE_PATH[256]		= "locale/de";
 char	MULTI_LOCALE_NAME[256]		= "de";
 
-struct SLanguage
-{
-	const char*	szName;
-	bool		bRTL;
-};
-
-static const SLanguage s_akLanguage[] =
-{
-	{ "ae", true },
-	{ "cz", false },
-	{ "de", false },
-	{ "dk", false },
-	{ "en", false },
-	{ "es", false },
-	{ "fr", false },
-	{ "gr", false },
-	{ "hu", false },
-	{ "it", false },
-	{ "nl", false },
-	{ "pl", false },
-	{ "pt", false },
-	{ "ro", false },
-	{ "ru", false },
-	{ "tr", false },
-};
+static const char* s_aszRTLLanguage[] = { "ae" };
 
 bool LocaleService_IsRTL()
 {
-	for (const SLanguage& rkLanguage : s_akLanguage)
-		if (!_stricmp(rkLanguage.szName, MULTI_LOCALE_NAME))
-			return rkLanguage.bRTL;
+	for (const char* c_szName : s_aszRTLLanguage)
+		if (!_stricmp(c_szName, MULTI_LOCALE_NAME))
+			return true;
 
 	return false;
 }
