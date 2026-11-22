@@ -8506,3 +8506,570 @@
 8506	Aus Sicherheitsgründen solltest du das aber[ENTER]ändern.[ENTER]Vielleicht meinst du, dass 45 Fächer zu wenig[ENTER]sind. Aber wer weiß, vielleicht gebe ich dir mehr[ENTER]Platz, wenn wir uns gut verstehen.
 8507	Na, ich zwinge niemanden. Wenn dir jetzt nicht[ENTER]danach ist, dann komm eben später wieder.
 8508	Lager öffnen
+9001	Schwertaura ist eine Fähigkeit des Sura.
+9002	Weiße Flüssigkeit gibt 1 Stunde lang 10 STR.
+9003	GES kann die Dauer von Stealth erhöhen.
+9004	Flammenschlag bezieht seine Stärke aus INT und GES.
+9005	Bei G3 dauert Ritual of Doom 68 Sekunden.
+9006	Spirit Assault ist eine Sura-Fähigkeit.
+9007	Wenn du Aal benutzt, erhältst du 10 Minuten lang 10 STR.
+9008	Taichi erhöht die RK.
+9009	Die Fähigkeit Charge kann das Ziel vergiften.
+9010	Gegrillte Schmerle kann dich für kurze Zeit unsichtbar machen.
+9011	Wenn du getötet wirst, verlierst du immer Erfahrung.
+9012	Stein der Magie+3 gibt +240 MP.
+9013	Stein der Magie+2 gibt 150 MP.
+9014	Giftwolke verursacht magischen Schaden.
+9015	Furcht betäubt den Gegner.
+9016	Tanz mit dem Wind ist eine Fähigkeit des Bogenschützen.
+9017	Flammenpfeil verbrennt das Ziel.
+9018	Magische Samen werden nur von Dryaden fallen gelassen.
+9019	Der Dunkle Geisteranführer ist ein Teufel.
+9020	Der Papagei beim Teleporter ist rot und grün.
+9021	Der Gemischtwarenhändler hat einen Pferdeschwanz.
+9022	Der Ladenbesitzer hat 3 Messer.
+9023	Yonah ist eine Köchin.
+9024	Octavio ist ein Gelehrter.
+9025	Anh-Yu hat ein Baby.
+9026	Die Geisterplattenrüstung beim Rüstungshändler kostet 10.000 Gold.
+9027	Der Eisenfächer+0 beim Waffenhändler kostet 400 Gold.
+9028	Dark Orb ist der mächtigste Zauber für einen Sura der Schwarzen Magie.
+9029	Die Schwertaura erhöht ihre Stärke mit GES.
+9030	Die alte Dame hat eine kleine rote Tasche.
+9031	In Elgoria stehen 5 Pferde im Stall.
+9032	Der Stab des Alchemisten hat einen gelben Edelstein.
+9033	Mirine hat ihre Mutter verloren.
+9034	Es gibt genau 259 Bäume auf Elgoria Karte 1.
+9035	Wenn ein Pferd 10 Mal stirbt, läuft es für immer davon.
+9036	Im Fischerladen kosten 50 Würmer 2000 Gold.
+9037	Angelmurmel ist ein Köder.
+9038	Reisbällchen und Würmer sind die einzigen Köder in Metin2.
+9039	In jeder Stadt des Spiels gibt es 20 Gildenländer.
+9040	Der Todesschnitter ist ein Halbmensch.
+9041	Himmelsgolem ist das einzige Monster, das einen Wasserkristall fallen lässt.
+9042	Zen-Bohne gibt 500 Karmapunkte, aber nur wenn du negativ bist.
+9043	Se-Rang ist ein Monster vom Wolfstyp.
+9044	Starbuck ist der Schmied für Accessoire-Design.
+9045	Cherogirayb ist der Biologe von Metin2.
+9046	Zin Himmelskommandant lässt eine Segenskugel fallen.
+9047	Stanh ist einer der 3 Gildenschmiede.
+9048	Tigris hat ein rotes Halsband.
+9049	Um das Holzarmband auf +6 zu verbessern, benötigst du 20k Gold.
+9050	Um das Holzarmband auf +7 zu verbessern, benötigst du Bear Feet und 25k Gold.
+9051	Um das Holzarmband auf +8 zu verbessern, benötigst du White Pigtail Ribbon und 45k Gold.
+9052	Um das Holzarmband auf +9 zu verbessern, benötigst du Facial Cream und 75k Gold.
+9053	Um das Kupferarmband auf +5 zu verbessern, benötigst du 15k Gold.
+9054	Um das Kupferarmband auf +7 zu verbessern, benötigst du Bear Feet und 30k Gold.
+9055	Um das Kupferarmband auf +8 zu verbessern, benötigst du White Pigtail Ribbon+ und 40k Gold.
+9056	Um das Kupferarmband auf +9 zu verbessern, benötigst du Facial Cream und 70k Gold.
+9057	Um das Silberarmband auf +8 zu verbessern, benötigst du White Pigtail Ribbon+ und 45k Gold.
+9058	Um das Goldarmband auf +6 zu verbessern, benötigst du 20k Gold.
+9059	Um das Goldarmband auf +8 zu verbessern, benötigst du White Pigtail Ribbon+ und 45k Gold.
+9060	Um das Jadearmband auf +3 zu verbessern, benötigst du 5k Gold.
+9061	Um das Jadearmband auf +6 zu verbessern, benötigst du Shiriken+ (x2) und 20k Gold.
+9062	Um das Ebenholzarmband auf +4 zu verbessern, benötigst du 8k Gold.
+9063	Um das Ebenholzarmband auf +7 zu verbessern, benötigst du Spider Web (x2), Fishbone und 50k Gold.
+9064	Um das Perlenarmband auf +5 zu verbessern, benötigst du Rusty Blade (x2) und 13k Gold.
+9065	Um das Perlenarmband auf +8 zu verbessern, benötigst du Spider's Poison Sack (x2), Clam und 70k Gold.
+9066	Um das Weißgoldarmband auf +2 zu verbessern, benötigst du 2k Gold.
+9067	Um das Weißgoldarmband auf +9 zu verbessern, benötigst du Snakeskin (x2), Clam und 100k Gold.
+9068	Um das Kristallarmband auf +6 zu verbessern, benötigst du Demon's Keepsake (x2) und 30k Gold.
+9069	Um das Kristallarmband auf +7 zu verbessern, benötigst du Demon's Gem+ (x2), White Pearl und 45k Gold.
+9070	Um das Amethystarmband auf +5 zu verbessern, benötigst du Unknown medicine+ und 20k Gold.
+9071	Um das Amethystarmband auf +9 zu verbessern, benötigst du Flaming Mane (x2), Red pearl und 120k Gold.
+9072	Um das Himmelstränenarmband auf +4 zu verbessern, benötigst du 10k Gold.
+9073	Um das Himmelstränenarmband auf +8 zu verbessern, benötigst du Yeti Fur+ (x2), Blue pearl und 90k Gold.
+9074	Um die Holzkette auf +4 zu verbessern, benötigst du 2,5k Gold.
+9075	Um die Holzkette auf +6 zu verbessern, benötigst du 20k Gold.
+9076	Um die Kupferkette auf +5 zu verbessern, benötigst du 15k Gold.
+9077	Um die Kupferkette auf +7 zu verbessern, benötigst du Wolf Fur+ (x2) und 25k Gold.
+9078	Um die Silberkette auf +8 zu verbessern, benötigst du Red Pigtail Ribbon und 50k Gold.
+9079	Um die Silberkette auf +1 zu verbessern, benötigst du 500 Gold.
+9080	Um die Goldkette auf +9 zu verbessern, benötigst du Ornamental Hairpin (x2) und 75k Gold.
+9081	Um die Goldkette auf +3 zu verbessern, benötigst du 2,5k Gold.
+9082	Um die Jadekette auf +8 zu verbessern, benötigst du Scorpion Tail+ (x2), Clam und 70k Gold.
+9083	Um die Jadekette auf +2 zu verbessern, benötigst du 2,5k Gold.
+9084	Um die Ebenholzkette auf +6 zu verbessern, benötigst du Orc Amulet+ und 20k Gold.
+9085	Um die Ebenholzkette auf +2 zu verbessern, benötigst du 2k Gold.
+9086	Um die Perlenkette auf +5 zu verbessern, benötigst du Shiriken (x2) und 13k Gold.
+9087	Um die Perlenkette auf +9 zu verbessern, benötigst du Orc Thoot+ (x2), Clam und 120k Gold.
+9088	Um die Weißgoldkette auf +4 zu verbessern, benötigst du 8k Gold.
+9089	Um die Weißgoldkette auf +7 zu verbessern, benötigst du Unknown talisman (x2), Fishbone und 40k Gold.
+9090	Um die Kristallkette auf +6 zu verbessern, benötigst du Piece of Fabric (x2) und 30k Gold.
+9091	Um die Kristallkette auf +9 zu verbessern, benötigst du Ice Marble (x2), Red Pearl und 150k Gold.
+9092	Um die Amethystkette auf +5 zu verbessern, benötigst du Unknown Medicine (x2) und 20k Gold.
+9093	Um die Amethystkette auf +7 zu verbessern, benötigst du Leaf (x2), White Pearl und 50k Gold.
+9094	Um die Himmelstränenkette auf +8 zu verbessern, benötigst du Piece of Ice+(x2), Blue Pearl und 90k Gold.
+9095	Um die Himmelstränenkette auf +1 zu verbessern, benötigst du 1,2k Gold.
+9096	Um die Holzohrringe auf +2 zu verbessern, benötigst du 1,2k Gold.
+9097	Um die Holzohrringe auf +5 zu verbessern, benötigst du 8k Gold.
+9098	Um die Kupferohrringe auf +7 zu verbessern, benötigst du Bear Gail und 30k Gold.
+9099	Um die Kupferohrringe auf +9 zu verbessern, benötigst du Worn Out Black Uniform und 70k Gold.
+9100	Um die Silberohrringe auf +8 zu verbessern, benötigst du Bear Feet+ und 45k Gold.
+9101	Um die Silberohrringe auf +6 zu verbessern, benötigst du 20k Gold.
+9102	Um die Goldohrringe auf +4 zu verbessern, benötigst du 7,5k Gold.
+9103	Um die Goldohrringe auf +3 zu verbessern, benötigst du 5k Gold.
+9104	Um die Jadeohrringe auf +3 zu verbessern, benötigst du 5k Gold.
+9105	Um die Jadeohrringe auf +7 zu verbessern, benötigst du Spider Eye, Fishbone und 40k Gold.
+9106	Um die Ebenholzohrringe auf +4 zu verbessern, benötigst du 10k Gold.
+9107	Um die Ebenholzohrringe auf +5 zu verbessern, benötigst du Piece of Gem und 13k Gold.
+9108	Um die Perlenohrringe auf +9 zu verbessern, benötigst du Orc Thoot+ (x2), Clam und 120k Gold.
+9109	Um die Perlenohrringe auf +6 zu verbessern, benötigst du Esoteric Primer (x2) und 20k Gold.
+9110	Um die Weißgoldohrringe auf +2 zu verbessern, benötigst du 2k Gold.
+9111	Um die Weißgoldohrringe auf +8 zu verbessern, benötigst du Orc Thoot, Clam und 70k Gold.
+9112	Um die Kristallohrringe auf +3 zu verbessern, benötigst du 5k Gold.
+9113	Um die Kristallohrringe auf +6 zu verbessern, benötigst du Piece of Fabric und 25k Gold.
+9114	Um die Kristallohrringe auf +9 zu verbessern, benötigst du Ice Marble (x2), Red Pearl und 150k Gold.
+9115	Um die Amethystohrringe auf +2 zu verbessern, benötigst du 2,5k Gold.
+9116	Um die Amethystohrringe auf +7 zu verbessern, benötigst du Demon's Gem (x2), White Pearl und 45k Gold.
+9117	Um die Amethystohrringe auf +1 zu verbessern, benötigst du 1,5k Gold.
+9118	Um die Himmelstränenohrringe auf +8 zu verbessern, benötigst du Demon's Keepsake+, Blue Pearl 80k Gold.
+9119	Um die Himmelstränenohrringe auf +5 zu verbessern, benötigst du Snake Tail+ (x2) und 20k Gold.
+9120	Um das Kampfschild auf +5 zu verbessern, benötigst du 20k Gold.
+9121	Um das Kampfschild auf +6 zu verbessern, benötigst du 20k Gold.
+9122	Um das Kampfschild auf +7 zu verbessern, benötigst du Bear Gail+ (x2) und 25k Gold.
+9123	Um das Kampfschild auf +8 zu verbessern, benötigst du White Tiger Hide und 45k Gold.
+9124	Um das Kampfschild auf +9 zu verbessern, benötigst du Worn Out Black Uniform (x2) und 75k Gold.
+9125	Um das Kampfschild auf +1 zu verbessern, benötigst du 1k Gold.
+9126	Um das Pentagonschild auf +5 zu verbessern, benötigst du Piece of Broken Armour (x2) und 13k Gold.
+9127	Um das Pentagonschild auf +6 zu verbessern, benötigst du Esoteric Primer+ und 20k Gold.
+9128	Um das Pentagonschild auf +7 zu verbessern, benötigst du Unknown Talisman (x2), Fishbone und 40k Gold.
+9129	Um das Pentagonschild auf +8 zu verbessern, benötigst du Scorpion Tail (x2), Clam und 70k Gold.
+9130	Um das Pentagonschild auf +9 zu verbessern, benötigst du Curse Book (x2), Clam und 120k Gold.
+9131	Um das Pentagonschild auf +2 zu verbessern, benötigst du 2k Gold.
+9132	Um das Schwarze Rundschild auf +5 zu verbessern, benötigst du Spider Legs(x2) und 20k Gold.
+9133	Um das Schwarze Rundschild auf +6 zu verbessern, benötigst du Curse Book+ (x2) und 30k Gold.
+9134	Um das Schwarze Rundschild auf +7 zu verbessern, benötigst du Piece of Fabric+ (x2), White Pearl und 50k Gold.
+9135	Um das Schwarze Rundschild auf +8 zu verbessern, benötigst du Ice Killer Whale Horn (x2), Blue Pearl und 75k Gold.
+9136	Um das Schwarze Rundschild auf +9 zu verbessern, benötigst du Fighting Tiger Fang (x2), Red Pearl und 150k Gold.
+9137	Um das Schwarze Rundschild auf +3 zu verbessern, benötigst du 5k Gold.
+9138	Um das Falkenschild auf +4 zu verbessern, benötigst du 10k Gold.
+9139	Um das Falkenschild auf +6 zu verbessern, benötigst du Esoteric Primer+ und 20k Gold.
+9140	Um das Tigermönchsschild auf +3 zu verbessern, benötigst du 10k Gold.
+9141	Um das Tigermönchsschild auf +9 zu verbessern, benötigst du Curse Book (x2), Clam und 120k Gold.
+9142	Um das Löwenklingenschild auf +7 zu verbessern, benötigst du Unknown Talisman, Fishbone und 50k Gold.
+9143	Um das Löwenklingenschild auf +1 zu verbessern, benötigst du 1,2k Gold.
+9144	Um das Drachenschuppenschild auf +2 zu verbessern, benötigst du 2,5k Gold.
+9145	Um das Drachenschuppenschild auf +5 zu verbessern, benötigst du Piece of Broken Armour und 13k Gold.
+9146	Um den Blutigen Helm auf +6 zu verbessern, benötigst du 20k Gold.
+9147	Um den Blutigen Helm auf +2 zu verbessern, benötigst du 1,5k Gold.
+9148	Um die Lederkapuze auf +4 zu verbessern, benötigst du 4k Gold.
+9149	Um die Lederkapuze auf +3 zu verbessern, benötigst du 2,5k Gold.
+9150	Um den Traditionellen Helm auf +8 zu verbessern, benötigst du White Pigtail Ribbon+ (x2) und 40k Gold.
+9151	Um den Traditionellen Helm auf +1 zu verbessern, benötigst du 600 Gold.
+9152	Um den Mönchshut auf +9 zu verbessern, benötigst du Facial Cream und 75k Gold.
+9153	Um den Mönchshut auf +7 zu verbessern, benötigst du White Pigtail Ribbon und 30k Gold.
+9154	Um den Eisenhelm auf +2 zu verbessern, benötigst du 2k Gold.
+9155	Um den Eisenhelm auf +4 zu verbessern, benötigst du 10k Gold.
+9156	Um die Kettenkapuze auf +5 zu verbessern, benötigst du Flag (x2) und 20k Gold.
+9157	Um die Kettenkapuze auf +9 zu verbessern, benötigst du Spider Egg Sack (x2), Clam und 120k Gold.
+9158	Um den Spotthelm auf +8 zu verbessern, benötigst du Spider's Poison Sack (x2), Clam und 75k Gold.
+9159	Um den Spotthelm auf +6 zu verbessern, benötigst du Scorpion Tail (x2) und 20k Gold.
+9160	Um den Phönixhut auf +7 zu verbessern, benötigst du Spider Web (x2), Fishbone und 30k Gold.
+9161	Um den Phönixhut auf +3 zu verbessern, benötigst du 4k Gold.
+9162	Um den Burghelm auf +8 zu verbessern, benötigst du Piece of Ice+, Blue Pearl und 90k Gold.
+9163	Um den Burghelm auf +7 zu verbessern, benötigst du Frog Legs (x2), Finger Bones (x3) und 45k Gold.
+9164	Um den Sonnenlichthut auf +6 zu verbessern, benötigst du Frog Tongue (x2) und 30k Gold.
+9165	Um den Sonnenlichthut auf +5 zu verbessern, benötigst du Unknown Medicine+ (x2) und 25k Gold.
+9166	Um die Stahlkapuze auf +9 zu verbessern, benötigst du Flaming Mane (x2), Finger Bones (x8) und 150k Gold.
+9167	Um die Stahlkapuze auf +1 zu verbessern, benötigst du 2k Gold.
+9168	Um den Geistermasken-Schaller auf +3 zu verbessern, benötigst du 5k Gold.
+9169	Um den Geistermasken-Schaller auf +4 zu verbessern, benötigst du 8k Gold.
+9170	Um die Bambushautschuhe auf +8 zu verbessern, benötigst du Skein (x2) und 45k Gold.
+9171	Um die Bambushautschuhe auf +5 zu verbessern, benötigst du 12k Gold.
+9172	Um die Holzschuhe auf +7 zu verbessern, benötigst du Tiger Hide (x2) und 30k Gold.
+9173	Um die Goldfadenschuhe auf +9 zu verbessern, benötigst du Worn Out Black Uniform+ und 75k Gold.
+9174	Um die Lederstiefel auf +8 zu verbessern, benötigst du Scorpion Claw (x2), Clam und 70k Gold.
+9175	Um die Lederstiefel auf +6 zu verbessern, benötigst du Scorpion Tail+ (x2) und 20k Gold.
+9176	Um die Goldenen Schuhe auf +4 zu verbessern, benötigst du 10k Gold.
+9177	Um die Goldenen Schuhe auf +7 zu verbessern, benötigst du Scorpion Needle (x2), Fishbone und 40k Gold.
+9178	Um die Bronzestiefel auf +5 zu verbessern, benötigst du Orc Amulet(x2) und 13k Gold.
+9179	Um die Jadeschuhe auf +9 zu verbessern, benötigst du Spider Egg Sack (x2), Clam und 120k Gold.
+9180	Um die Ekstatischen Schuhe auf +2 zu verbessern, benötigst du 2,5k Gold.
+9181	Um die Ekstatischen Schuhe auf +9 zu verbessern, benötigst du Fighting Tiger Fang (x2), Red Pearl und 150k Gold.
+9182	Um die Nimbusstiefel auf +7 zu verbessern, benötigst du Frog Legs (x2), White Pearl und 50k Gold.
+9183	Um die Nimbusstiefel auf +5 zu verbessern, benötigst du Spider Legs (x2) und 20k Gold.
+9184	Um die Phönixschuhe auf +6 zu verbessern, benötigst du Frog Legs (x2) und 30k Gold.
+9185	Um die Feuervogelschuhe auf +8 zu verbessern, benötigst du Yeti Fur (x2), Blue Pearl und 90k Gold.
+9186	Um die Kupferglocke auf +8 zu verbessern, benötigst du White Pigtail Ribbon (x2) und 45k Gold.
+9187	Um die Silberglocke auf +7 zu verbessern, benötigst du Bear Gail+ (x2) und 30k Gold.
+9188	Um die Goldglocke auf +9 zu verbessern, benötigst du Ornamental Hairpin (x2) und 75k Gold.
+9189	Um die Jadeglocke auf +7 zu verbessern, benötigst du Unknown Tailsman (x2), Fishbone und 40k Gold.
+9190	Um die Brunnenglocke auf +6 zu verbessern, benötigst du Orc Amulet+ (x2) und 20k Gold.
+9191	Um die Aprikosenglocke auf +8 zu verbessern, benötigst du Scorpion Tail+ (x2), Clam und 70k Gold.
+9192	Um die Aprikosenglocke auf +9 zu verbessern, benötigst du Curse Book (x2), Clam und 120k Gold.
+9193	Um die Goldkäferglocke auf +8 zu verbessern, benötigst du Leaf (x2), Blue Pearl und 90k Gold.
+9194	Um die Stahlkäferglocke auf +9 zu verbessern, benötigst du Ice Killer Whale Horn(x2), Red Pearl und 150k Gold.
+9195	Um die Donnervogelglocke auf +7 zu verbessern, benötigst du Leaf (x2), White Pearl und 45k Gold.
+9196	Um die Bambusglocke auf +5 zu verbessern, benötigst du Unknown Medicine und 20k Gold.
+9197	Um die Antike Glocke auf +8 zu verbessern, benötigst du 90k Gold.
+9198	Um die Antike Glocke auf +3 zu verbessern, benötigst du 12k Gold.
+9199	Bear Feet wird verwendet, um das Holzarmband auf +8 zu verbessern.
+9200	Bear Feet wird verwendet, um das Silberarmband auf +7 zu verbessern.
+9201	Bear Feet+ wird verwendet, um das Goldarmband auf +7 zu verbessern.
+9202	White Pigtail Ribbon+ wird verwendet, um das Silberarmband auf +7 zu verbessern.
+9203	White Pigtail Ribbon+ wird verwendet, um das Holzarmband auf +8 zu verbessern.
+9204	White Pigtail Ribbon wird verwendet, um das Holzarmband auf +8 zu verbessern.
+9205	Facial Cream wird verwendet, um das Goldarmband auf +9 zu verbessern.
+9206	Facial Cream wird verwendet, um das Silberarmband auf +8 zu verbessern.
+9207	Rusty Blade wird verwendet, um das Jadearmband auf +5 zu verbessern.
+9208	Rusty Blade wird verwendet, um das Ebenholzarmband auf +6 zu verbessern.
+9209	Shiriken+ wird verwendet, um das Ebenholzarmband auf +6 zu verbessern.
+9210	Shiriken+ wird verwendet, um das Weißgoldarmband auf +7 zu verbessern.
+9211	Shiriken wird verwendet, um das Weißgoldarmband auf +6 zu verbessern.
+9212	Spider Web wird verwendet, um das Perlenarmband auf +6 zu verbessern.
+9213	Spider Web wird verwendet, um das Jadearmband auf +7 zu verbessern.
+9214	Spider's Poison Sack wird verwendet, um das Ebenholzarmband auf +8 zu verbessern.
+9215	Spider's Poison Sack wird verwendet, um das Perlenarmband auf +9 zu verbessern.
+9216	Snakeskin wird verwendet, um das Weißgoldarmband auf +9 zu verbessern.
+9217	Snakeskin wird verwendet, um das Perlenarmband auf +8 zu verbessern.
+9218	Unknown medicine+ wird verwendet, um das Himmelstränenarmband auf +5 zu verbessern.
+9219	Unknown medicine+ wird verwendet, um das Kristallarmband auf +6 zu verbessern.
+9220	Unknown medicine wird verwendet, um das Amethystarmband auf +5 zu verbessern.
+9221	Demon's Keepsake wird verwendet, um das Himmelstränenarmband auf +6 zu verbessern.
+9222	Demon's Keepsake wird verwendet, um das Amethystarmband auf +7 zu verbessern.
+9223	Demon's Keepsake+ wird verwendet, um das Kristallarmband auf +6 zu verbessern.
+9224	Demon's Gem wird verwendet, um das Himmelstränenarmband auf +7 zu verbessern.
+9225	Demon's Gem wird verwendet, um das Kristallarmband auf +8 zu verbessern.
+9226	Demon's Gem+ wird verwendet, um das Amethystarmband auf +7 zu verbessern.
+9227	Yeti Fur+ wird verwendet, um das Kristallarmband auf +8 zu verbessern.
+9228	Yeti Fur+ wird verwendet, um das Himmelstränenarmband auf +7 zu verbessern.
+9229	Yeti Fur wird verwendet, um das Amethystarmband auf +8 zu verbessern.
+9230	Flaming Mane wird verwendet, um das Amethystarmband auf +9 zu verbessern.
+9231	Flaming Mane wird verwendet, um das Himmelstränenarmband auf +8 zu verbessern.
+9232	Wolf Fur+ wird verwendet, um die Holzkette auf +7 zu verbessern.
+9233	Wolf Fur+ wird verwendet, um die Kupferkette auf +6 zu verbessern.
+9234	Wolf Fur wird verwendet, um die Holzkette auf +7 zu verbessern.
+9235	Red Pigtail Ribbon wird verwendet, um die Kupferkette auf +7 zu verbessern.
+9236	Red Pigtail Ribbon wird verwendet, um die Holzkette auf +8 zu verbessern.
+9237	Ornamental Hairpin wird verwendet, um die Silberkette auf +9 zu verbessern.
+9238	Ornamental Hairpin wird verwendet, um die Goldkette auf +8 zu verbessern.
+9239	Shiriken wird verwendet, um die Jadekette auf +5 zu verbessern.
+9240	Shiriken wird verwendet, um die Ebenholzkette auf +6 zu verbessern.
+9241	Shiriken+ wird verwendet, um die Perlenkette auf +5 zu verbessern.
+9242	Orc Amulet+ wird verwendet, um die Weißgoldkette auf +6 zu verbessern.
+9243	Orc Amulet+ wird verwendet, um die Jadekette auf +7 zu verbessern.
+9244	Orc Amulet wird verwendet, um die Perlenkette auf +6 zu verbessern.
+9245	Unknown Talisman wird verwendet, um die Jadekette auf +7 zu verbessern.
+9246	Unknown Talisman wird verwendet, um die Weißgoldkette auf +8 zu verbessern.
+9247	Unknown Talisman+ wird verwendet, um die Perlenkette auf +7 zu verbessern.
+9248	Scorpion Tail+ wird verwendet, um die Jadekette auf +8 zu verbessern.
+9249	Scorpion Tail+ wird verwendet, um die Ebenholzkette auf +9 zu verbessern.
+9250	Scorpion Tail wird verwendet, um das Holzarmband auf +8 zu verbessern.
+9251	Orc Thoot+ wird verwendet, um die Ebenholzkette auf +9 zu verbessern.
+9252	Orc Thoot+ wird verwendet, um das Holzarmband auf +8 zu verbessern.
+9253	Orc Thoot wird verwendet, um die Jadekette auf +9 zu verbessern.
+9254	Unknown Medicine wird verwendet, um die Kristallkette auf +5 zu verbessern.
+9255	Unknown Medicine wird verwendet, um die Himmelstränenkette auf +6 zu verbessern.
+9256	Unknown Medicine+ wird verwendet, um die Amethystkette auf +5 zu verbessern.
+9257	Piece of Fabric wird verwendet, um die Kristallkette auf +6 zu verbessern.
+9258	Piece of Fabric wird verwendet, um die Himmelstränenkette auf +5 zu verbessern.
+9259	Piece of Fabric+ wird verwendet, um die Amethystkette auf +6 zu verbessern.
+9260	Leaf wird verwendet, um die Kristallkette auf +7 zu verbessern.
+9261	Leaf wird verwendet, um die Amethystkette auf +8 zu verbessern.
+9262	Piece of Ice wird verwendet, um die Himmelstränenkette auf +8 zu verbessern.
+9263	Piece of Ice wird verwendet, um die Kristallkette auf +9 zu verbessern.
+9264	Piece of Ice+ wird verwendet, um die Amethystkette auf +8 zu verbessern.
+9265	Ice Marble+ wird verwendet, um die Kristallkette auf +9 zu verbessern.
+9266	Ice Marble+ wird verwendet, um die Himmelstränenkette auf +8 zu verbessern.
+9267	Ice Marble wird verwendet, um die Amethystkette auf +9 zu verbessern.
+9268	Blauer Wolf ist Level 7.
+9269	Tiger ist Level 17.
+9270	Alpha-Grauwolf ist Level 16.
+9271	Hungriger Schwarzbär ist Level 19.
+9272	Weißer Tiger ist Level 26.
+9273	Hungriges Wildschwein ist Level 10.
+9274	Grizzlybär ist Level 13.
+9275	Weißer Eidsoldat ist Level 18.
+9276	Entmutigte Mi-jung ist Level 23.
+9277	Entmutigte Eun-jung ist Level 28.
+9278	Entmutigte Jin-Hee ist Level 29.
+9279	Weißer Eidgeneral ist Level 25.
+9280	Bär ist Level 12.
+9281	Weißer Eidbogenschütze ist Level 20.
+9282	Black Wind Gu-Ryung ist Level 32.
+9283	Bo ist Level 36.
+9284	Black Wind Bogenschütze ist Level 29.
+9285	Black Wind Wahnsinniger ist Level 28.
+9286	Black Wind Soldat ist Level 26.
+9287	Black Wind Jak-To ist Level 30.
+9288	Wilder Infanterist ist Level 29.
+9289	Böser Schwarzsturm Joh-Hwa ist Level 29.
+9290	Böser Schwarzsturm Bogenschütze ist Level 30.
+9291	Wilder Diener ist Level 31.
+9292	Verfluchter Wolf ist Level 9.
+9293	Verfluchter Alpha-Blauwolf ist Level 14.
+9294	Verfluchter Bär ist Level 18.
+9295	Verfluchter Schwarzbär ist Level 24.
+9296	Verfluchter Braunbär ist Level 26.
+9297	Verfluchtes Wildschwein ist Level 12.
+9298	Verfluchter Tiger ist Level 23.
+9299	Verfluchter Weißer Tiger ist Level 29.
+9300	Bestialischer Soldat ist Level 35.
+9301	Bestialischer Spezialist ist Level 42.
+9302	Bestialischer Wahnsinniger ist Level 38.
+9303	Bestialischer Bogenschütze ist Level 41.
+9304	Starker Wilder Bogenschütze ist Level 35.
+9305	Starker Wilder Infanterist ist Level 29.
+9306	Starker Wilder General ist Level 35.
+9307	Starker Wilder Diener ist Level 31.
+9308	Ork ist Level 26.
+9309	Ork-Späher ist Level 30.
+9310	Ork-Kämpfer ist Level 32.
+9311	Ork-Zauberer ist Level 33.
+9312	Elite-Ork ist Level 34.
+9313	Elite-Ork-Späher ist Level 36.
+9314	Elite-Ork-Kämpfer ist Level 39.
+9315	Elite-Ork-Zauberer ist Level 40.
+9316	Elite-Ork-General ist Level 45.
+9317	Schwarzer Ork ist Level 47.
+9318	Schwarzer Ork-Riese ist Level 49.
+9319	Esoterischer Fanatiker ist Level 35.
+9320	Esoterischer Arahan ist Level 39.
+9321	Esoterischer Arahan-Kämpfer ist Level 41.
+9322	Esoterischer Arahan-Anführer ist Level 43.
+9323	Esoterischer Henker ist Level 46.
+9324	Esoterischer Peiniger ist Level 47.
+9325	Esoterischer Beschwörer ist Level 51.
+9326	Stolzer Dunkler Fanatiker ist Level 50.
+9327	Stolzer Dunkler Arahan ist Level 52.
+9328	Stolzer Dunkler Kämpfer ist Level 54.
+9329	Stolzer Dunkler Oberst ist Level 54.
+9330	Stolzer Dunkler Schütze ist Level 57.
+9331	Verseuchter Hund ist Level 51.
+9332	Verseuchter Mann ist Level 54.
+9333	Verseuchter Schwertkämpfer ist Level 56.
+9334	Verseuchter Speerkämpfer ist Level 58.
+9335	Verseuchter Bogenschütze ist Level 57.
+9336	Verseuchter Anführer ist Level 59.
+9337	Dämonensoldat ist Level 57.
+9338	Dämonenbogenschütze ist Level 59.
+9339	Dämonenspeerkämpfer ist Level 58.
+9340	Dämonenschamane ist Level 60.
+9341	Übler Dämonensoldat ist Level 65.
+9342	Übler Dämonenbogenschütze ist Level 69.
+9343	Übler Dämonenspeerkämpfer ist Level 70.
+9344	Übler Dämonenschamane ist Level 69.
+9345	Geist des Grolls ist Level 72.
+9346	Geist des Chaos ist Level 72.
+9347	Übler Dämonenanführer ist Level 73.
+9348	Totenkopf-Schwertmeister ist Level 72.
+9349	Fliegender Totenkopf ist Level 69.
+9350	Unsterblicher Geist ist Level 73.
+9351	Dämonische Bestie ist Level 75.
+9352	Dämonenkönig ist Level 74.
+9353	Todesschnitter ist Level 78.
+9354	Verzaubertes Eis ist Level 62.
+9355	Eis-Killerwal ist Level 63.
+9356	Eiskäfer ist Level 65.
+9357	Eislöwe ist Level 64.
+9358	Eismann ist Level 63.
+9359	Yeti ist Level 65.
+9360	Eisgolem ist Level 66.
+9361	Himmlisches Verzaubertes Eis ist Level 82.
+9362	Himmlischer Eis-Killerwal ist Level 82.
+9363	Himmlischer Eiskäfer ist Level 82.
+9364	Himmlischer Eislöwe ist Level 83.
+9365	Himmlischer Eismann ist Level 83.
+9366	Himmlischer Yeti ist Level 83.
+9367	Himmlischer Eisgolem ist Level 86.
+9368	Laubfrosch-Soldat ist Level 57.
+9369	Laubfrosch-Anführer ist Level 60.
+9370	Leflet Schreckgespenst ist Level 59.
+9371	Gelber Tigergeist ist Level 75.
+9372	Ochsenfrosch-General ist Level 60.
+9373	Riesensoldat ist Level 66.
+9374	Riesenspäher ist Level 73.
+9375	Riese Tausendkämpfer ist Level 76.
+9376	Steinwerfer ist Level 68.
+9377	Steinschütze ist Level 72.
+9378	Riesensteinschütze ist Level 72.
+9379	Riesenarbeiter ist Level 68.
+9380	Rieseninspektor ist Level 72.
+9381	Riese Hundertkämpfer ist Level 75.
+9382	Neunschwänziger ist Level 74.
+9383	Babyspinne ist Level 43.
+9384	Tödliche Spinne ist Level 45.
+9385	Purpurspinne ist Level 47.
+9386	Klauenspinne ist Level 49.
+9387	Soldatenspinne ist Level 51.
+9388	Baby-Giftspinne ist Level 50.
+9389	Tödliche Giftspinne ist Level 52.
+9390	Rote Giftspinne ist Level 53.
+9391	Klauen-Giftspinne ist Level 5.
+9392	Soldaten-Giftspinne ist Level 58.
+9393	Spinnenkönigin ist Level 60.
+9394	Wüstenfuchs ist Level 22.
+9395	Fliegendes Wüstenauge ist Level 35.
+9396	Skorpionkönig ist Level 39.
+9397	Skorpionmann ist Level 45.
+9398	Skorpionbogenschütze ist Level 47.
+9399	Schlangenschwertkämpfer ist Level 48.
+9400	Schlangenbogenschütze ist Level 52.
+9401	Wüstenbandit ist Level 54.
+9402	Riesenschildkröte ist Level 66.
+9403	Kämpfender Tigerdiener ist Level 69.
+9404	Flammengeist ist Level 70.
+9405	Kämpfender Tiger ist Level 70.
+9406	Flammensoldat ist Level 72.
+9407	Flammenkrieger ist Level 73.
+9408	Flammenkönig ist Level 73.
+9409	Spukbaum ist Level 65.
+9410	Spukstumpf ist Level 67.
+9411	Dryade ist Level 68.
+9412	Spukweide ist Level 69.
+9413	Böser Spukbaum ist Level 72.
+9414	Roter Brutaler Baum ist Level 73.
+9415	Roter Spukstumpf ist Level 76.
+9416	Rote Dryade ist Level 77.
+9417	Rote Spukweide ist Level 79.
+9418	Roter Spukbaum ist Level 82.
+9419	Himmelssoldat ist Level 85.
+9420	Himmelsbogenschütze ist Level 88.
+9421	Himmelskleriker ist Level 87.
+9422	Himmelskommandant ist Level 88.
+9423	Zin Himmelssoldat ist Level 90.
+9424	Zin Himmelsbogenschütze ist Level 92.
+9425	Zin Himmelskleriker ist Level 93.
+9426	Zin Himmelskommandant ist Level 95.
+9427	Aqua Dragon ist Level 97.
+9428	Gnoll-Krieger ist Level 96.
+9429	Gnoll-Bogenschütze ist Level 96.
+9430	Gnoll-Verteidiger ist Level 98.
+9431	Gnoll-Magier ist Level 98.
+9432	Gnoll-General ist Level 99.
+9433	Gnoll-Lord ist Level 102.
+9434	Oberster Gnoll-Wächter ist Level 104.
+9435	Einäugiger Schläger ist Level 97.
+9436	Zyklopensoldat ist Level 99.
+9437	Zyklopenmagier ist Level 100.
+9438	Zyklopenhenker ist Level 99.
+9439	General Outis ist Level 102.
+9440	Arges ist Level 104.
+9441	Polyphemos ist Level 105.
+9442	Mantikor-Krieger ist Level 96.
+9443	Mantikor-Soldat ist Level 98.
+9444	Mantikor-Magus ist Level 99.
+9445	Mantikor-Henker ist Level 99.
+9446	General Cor ist Level 101.
+9447	Rakshasa ist Level 102.
+9448	Martyaxwar ist Level 105.
+9449	Lemuren-Krieger ist Level 98.
+9450	Lemuren-Soldat ist Level 98.
+9451	Lemuren-Magier ist Level 99.
+9452	Lemuren-Henker ist Level 101.
+9453	Lemuren-General ist Level 102.
+9454	Lemuren-Prinz ist Level 103.
+9455	Lemuren-Leibwächter ist Level 104.
+9456	Tritonische Muräne ist Level 96.
+9457	Haisoldat ist Level 98.
+9458	Tritonischer Magier ist Level 99.
+9459	Tritonischer Jäger ist Level 98.
+9460	Tritonischer Schlitzer ist Level 101.
+9461	General Kappa ist Level 103.
+9462	Triton ist Level 105.
+9463	Rote Diebin Amazone ist Level 95.
+9464	Roter Dieb Assassine ist Level 97.
+9465	Roter Dieb Magier ist Level 97.
+9466	Roter Dieb Henker ist Level 98.
+9467	Schwarzer General ist Level 98.
+9468	Knochengesicht ist Level 102.
+9469	Roter Häuptling ist Level 104.
+9470	Krabbenkrieger ist Level 96.
+9471	Skorpion-Scharfschütze ist Level 97.
+9472	Garnelensoldat ist Level 99.
+9473	Teuflischer Einsiedler ist Level 98.
+9474	Gepanzerte Krabbe ist Level 102.
+9475	General Lobster ist Level 103.
+9476	Krabbenkönig ist Level 105.
+9477	Gigantischer Beißer ist Level 100.
+9478	Gigantischer Schlächter ist Level 102.
+9479	Gigantischer Magus ist Level 103.
+9480	Twiant ist Level 104.
+9481	Captain Hooks ist Level 105.
+9482	Gargoyle ist Level 105.
+9483	König Wubba ist Level 105.
+9484	Hangork ist Level 98.
+9485	Archie Ogre ist Level 100.
+9486	Brawl Ogre ist Level 102.
+9487	Ogre Magus ist Level 101.
+9488	General Ogg ist Level 103.
+9489	Captain Shruk ist Level 105.
+9490	Der Große Oger ist Level 105.
+9491	Metin der Trauer ist Level 10.
+9492	Metin des Kampfes ist Level 10.
+9493	Metin der Schlacht ist Level 15.
+9494	Metin der Gier ist Level 20.
+9495	Metin des Schwarzen ist Level 30.
+9496	Metin der Dunkelheit ist Level 30.
+9497	Metin der Eifersucht ist Level 40.
+9498	Metin der Seele ist Level 45.
+9499	Metin des Schattens ist Level 40.
+9500	Metin der Zähigkeit ist Level 50.
+9501	Metin des Teufels ist Level 60.
+9502	Metin des Falls ist Level 55.
+9503	Metin des Todes ist Level 65.
+9504	Metin des Mordes ist Level 70.
+9505	Metin des Windteufels ist Level 80.
+9506	Metin der Teufelsaugen ist Level 80.
+9507	Metin des Kampfdrachen ist Level 85.
+9508	Metin der Blitzwolke ist Level 85.
+9509	Metin der Düsternis ist Level 100.
+9510	Metin der Glut ist Level 95.
+9511	Metin der Eitelkeit ist Level 100.
+9512	Metin des Zorns ist Level 105.
+9513	Metin des Unheils ist Level 105.
+9514	Metin der Bosheit ist Level 100.
+9515	Schwacher Affensoldat ist Level 22.
+9516	Schwacher Affenwerfer ist Level 24.
+9517	Schwacher Affenkämpfer ist Level 27.
+9518	Schwacher Affengeneral ist Level 29.
+9519	Affensoldat ist Level 36.
+9520	Affenwerfer ist Level 37.
+9521	Affenkämpfer ist Level 40.
+9522	Affengeneral ist Level 40.
+9523	Steinaffe ist Level 41.
+9524	Affenanführer ist Level 42.
+9525	Starker Affensoldat ist Level 46.
+9526	Starker Affenwerfer ist Level 48.
+9527	Starker Affenkämpfer ist Level 48.
+9528	Starker Affengeneral ist Level 52.
+9529	Starke Steinaffe ist Level 53.
+9530	Felsaffe ist Level 35.
+9531	Affenlord ist Level 55.
+9532	Teufel ist Level 80.
+9533	Teufelswolf ist Level 80.
+9534	Teufelsgespenst ist Level 81.
+9535	Teufelsschleicher ist Level 85.
+9536	Teufelsspeerkämpfer ist Level 84.
+9537	Teufelskokatrix ist Level 83.
+9538	Teufelsbeherrscher ist Level 85.
+9539	Spektraler Zerschmetterer ist Level 79.
+9540	Spektraler Bogenschütze ist Level 80.
+9541	Spektraler Stachelmann ist Level 82.
+9542	Spektraler Schamane ist Level 10.
+9543	Spektraler Axtmann ist Level 83.
+9544	Spektraler Titan ist Level 85.
+9545	Spektraler Jäger ist Level 86.
+9546	Hasserfüllter Zerschmetterer ist Level 80.
+9547	Hasserfüllter Bogenschütze ist Level 10.
+9548	Hasserfüllter Stachelmann ist Level 10.
+9549	Hasserfüllter Schamane ist Level 82.
+9550	Hasserfüllter Axtmann ist Level 84.
+9551	Hasserfüllter Titan ist Level 85.
+9552	Hasserfüllter Jäger ist Level 86.
+9553	Tartaros ist Level 89.
+9554	Erebus ist Level 90.
+9555	Charon ist Level 91.
+9556	Lord Gahnasel ist Level 92.
+9557	Cung-Mok ist Level 8.
+9558	Mu-Rang ist Level 15.
+9559	Jug-Hyul ist Level 10.
+9560	Young-Ji ist Level 21.
+9561	Li-An ist Level 24.
+9562	Lykos ist Level 30.
+9563	Scrofa ist Level 30.
+9564	Bera ist Level 32.
+9565	Tigris ist Level 35.
+9566	Se-Rang ist Level 25.
+9567	Eun-Jung ist Level 26.

@@ -8506,3 +8506,570 @@
 8506	Z powodów bezpieczeństwa, powinieneś je zmienić.[ENTER][ENTER]Możesz pomyśleć, że 15. miejsc to za mało.[ENTER]Kto wie, może gdy poznamy się lepiej dam Ci[ENTER]więcej miejsca. Hehe!
 8507	No cóż, nikogo przecież nie zmuszam. Jak nie[ENTER]teraz to przyjdź najwyżej później.
 8508	Otwórz Magazyn
+9001	Aura of Sword to umiejętność Sury.
+9002	White Liquid daje 10 STR na 1 godzinę.
+9003	DEX może zwiększyć czas trwania Stealth.
+9004	Flame Strike czerpie swoją siłę z INT i DEX.
+9005	Na G3 Ritual of Doom trwa 68 sekund.
+9006	Spirit Assault to umiejętność Sury.
+9007	Jeśli użyjesz Eel, zyskasz 10 STR na 10 minut.
+9008	Taichi zwiększa AC.
+9009	Umiejętność Charge może zatruć cel.
+9010	Grilled Loach może uczynić cię niewidzialnym na krótki czas.
+9011	Gdy zostajesz zabity, zawsze tracisz doświadczenie
+9012	Stone of Magic+3 daje +240 SP.
+9013	Stone of Magic+2 daje 150 SP.
+9014	Poison Cloud zadaje obrażenia magiczne.
+9015	Fear ogłusza przeciwnika.
+9016	Dance with Wind to umiejętność Łucznika.
+9017	Flame Arrow podpala cel.
+9018	Magic Seeds wypadają tylko z Dryad.
+9019	Dark-Ghost Leader jest diabłem.
+9020	Papuga na Teleporterze jest czerwono-zielona
+9021	Sprzedawca w General Store ma kucyk
+9022	Store Keeper ma 3 noże
+9023	Yonah jest kucharzem
+9024	Octavio jest uczonym
+9025	Anh-Yu ma dziecko
+9026	Ghost Plate Armour u sprzedawcy w Armour Shop kosztuje 10.000 złota
+9027	Iron Fan+0 u sprzedawcy w Weapon Shop kosztuje 400 złota
+9028	Dark Orb to najpotężniejsze zaklęcie Sury czarnej magii
+9029	Aura of Sword zwiększa swoją moc dzięki DEX
+9030	Old Lady ma małą czerwoną torbę
+9031	W Elgorii w stajni jest 5 koni
+9032	Różdżka z klejnotem Alchemist jest żółta
+9033	Mirine straciła matkę
+9034	Na mapie 1 w Elgorii jest dokładnie 259 drzew
+9035	Jeśli koń zginie 10 razy, ucieknie na zawsze
+9036	W sklepie Fisherman 50 robaków kosztuje 2000 złota.
+9037	Fishing Marble jest przynętą
+9038	Kulki ryżowe i robaki są jedynymi przynętami w Metin2
+9039	W każdym mieście w grze jest 20 ziem gildii
+9040	Death Reaper jest półczłowiekiem
+9041	Heavens Golem jest jedynym potworem, z którego wypada kryształ wody
+9042	Zen Bean daje 500 punktów Karmy, ale tylko jeśli masz ujemną
+9043	Se-Rang jest potworem typu wilk
+9044	Starbuck jest kowalem projektantem akcesoriów
+9045	Cherogirayb jest biologiem w Metin2
+9046	Zin Heavens Commander upuszcza blessing marble
+9047	Stanh jest jednym z 3 kowali gildii
+9048	Tigris ma czerwoną obrożę
+9049	Aby ulepszyć Wood Bracelet do +6, potrzebujesz 20k złota.
+9050	Aby ulepszyć Wood Bracelet do +7, potrzebujesz Bear Feet i 25k złota.
+9051	Aby ulepszyć Wood Bracelet do +8, potrzebujesz White Pigtail Ribbon i 45k złota.
+9052	Aby ulepszyć Wood Bracelet do +9, potrzebujesz Facial Cream i 75k złota.
+9053	Aby ulepszyć Copper Bracelet do +5, potrzebujesz 15k złota.
+9054	Aby ulepszyć Copper Bracelet do +7, potrzebujesz Bear Feet i 30k złota.
+9055	Aby ulepszyć Copper Bracelet do +8, potrzebujesz White Pigtail Ribbon+ i 40k złota.
+9056	Aby ulepszyć Copper Bracelet do +9, potrzebujesz Facial Cream i 70k złota.
+9057	Aby ulepszyć Silver Bracelet do +8, potrzebujesz White Pigtail Ribbon+ i 45k złota.
+9058	Aby ulepszyć Gold Bracelet do +6, potrzebujesz 20k złota.
+9059	Aby ulepszyć Gold Bracelet do +8, potrzebujesz White Pigtail Ribbon+ i 45k złota.
+9060	Aby ulepszyć Jade Bracelet do +3, potrzebujesz 5k złota.
+9061	Aby ulepszyć Jade Bracelet do +6, potrzebujesz Shiriken+ (x2) i 20k złota.
+9062	Aby ulepszyć Ebony Bracelet do +4, potrzebujesz 8k złota.
+9063	Aby ulepszyć Ebony Bracelet do +7, potrzebujesz Spider Web (x2), Fishbone i 50k złota.
+9064	Aby ulepszyć Pearl Bracelet do +5, potrzebujesz Rusty Blade (x2) i 13k złota.
+9065	Aby ulepszyć Pearl Bracelet do +8, potrzebujesz Spider's Poison Sack (x2) Clam i 70k złota.
+9066	Aby ulepszyć White Gold Bracelet do +2, potrzebujesz 2k złota.
+9067	Aby ulepszyć White Gold Bracelet do +9, potrzebujesz Snakeskin (x2), Clam i 100k złota.
+9068	Aby ulepszyć Crystal Bracelet do +6, potrzebujesz Demon's Keepsake (x2) i 30k złota.
+9069	Aby ulepszyć Crystal Bracelet do +7, potrzebujesz Demon's Gem+ (x2), White Pearl i 45k złota.
+9070	Aby ulepszyć Amethyst Bracelet do +5, potrzebujesz Unknown medicine+ i 20k złota.
+9071	Aby ulepszyć Amethyst Bracelet do +9, potrzebujesz Flaming Mane (x2), Red pearl i 120k złota.
+9072	Aby ulepszyć Heaven's Tear Bracelet do +4, potrzebujesz 10k złota.
+9073	Aby ulepszyć Heaven's Tear Bracelet do +8, potrzebujesz Yeti Fur+ (x2), Blue pearl i 90k złota.
+9074	Aby ulepszyć Wooden Necklace do +4, potrzebujesz 2,5k złota.
+9075	Aby ulepszyć Wooden Necklace do +6, potrzebujesz 20k złota.
+9076	Aby ulepszyć Copper Necklace do +5, potrzebujesz 15k złota.
+9077	Aby ulepszyć Copper Necklace do +7, potrzebujesz Wolf Fur+ (x2) i 25k złota.
+9078	Aby ulepszyć Silver Necklace do +8, potrzebujesz Red Pigtail Ribbon i 50k złota.
+9079	Aby ulepszyć Silver Necklace do +1, potrzebujesz 500 złota.
+9080	Aby ulepszyć Golden Necklace do +9, potrzebujesz Ornamental Hairpin (x2) i 75k złota.
+9081	Aby ulepszyć Golden Necklace do +3, potrzebujesz 2,5k złota.
+9082	Aby ulepszyć Jade Necklace do +8, potrzebujesz Scorpion Tail+ (x2), Clam i 70k złota.
+9083	Aby ulepszyć Jade Necklace do +2, potrzebujesz 2,5k złota.
+9084	Aby ulepszyć Ebony Necklace do +6, potrzebujesz Orc Amulet+ i 20k złota.
+9085	Aby ulepszyć Ebony Necklace do +2, potrzebujesz 2k złota.
+9086	Aby ulepszyć Pearl Necklace do +5, potrzebujesz Shiriken (x2) i 13k złota.
+9087	Aby ulepszyć Pearl Necklace do +9, potrzebujesz Orc Thoot+ (x2), Clam i 120k złota.
+9088	Aby ulepszyć White Gold Necklace do +4, potrzebujesz 8k złota.
+9089	Aby ulepszyć White Gold Necklace do +7, potrzebujesz Unknown talisman (x2), Fishbone i 40k złota.
+9090	Aby ulepszyć Crystal Necklace do +6, potrzebujesz Piece of Fabric (x2) i 30k złota.
+9091	Aby ulepszyć Crystal Necklace do +9, potrzebujesz Ice Marble (x2), Red Pearl i 150k złota.
+9092	Aby ulepszyć Amethyst Necklace do +5, potrzebujesz Unknown Medicine (x2) i 20k złota.
+9093	Aby ulepszyć Amethyst Necklace do +7, potrzebujesz Leaf (x2), White Pearl i 50k złota.
+9094	Aby ulepszyć Heaven's Tear Necklace do +8, potrzebujesz Piece of Ice+(x2), Blue Pearl i 90k złota.
+9095	Aby ulepszyć Heaven's Tear Necklace do +1, potrzebujesz 1,2k złota.
+9096	Aby ulepszyć Wooden Earrings do +2, potrzebujesz 1,2k złota.
+9097	Aby ulepszyć Wooden Earrings do +5, potrzebujesz 8k złota.
+9098	Aby ulepszyć Copper Earrings do +7, potrzebujesz Bear Gail i 30k złota.
+9099	Aby ulepszyć Copper Earrings do +9, potrzebujesz Worn Out Black Uniform i 70k złota.
+9100	Aby ulepszyć Silver Earrings do +8, potrzebujesz Bear Feet+ i 45k złota.
+9101	Aby ulepszyć Silver Earrings do +6, potrzebujesz 20k złota.
+9102	Aby ulepszyć Golden Earrings do +4, potrzebujesz 7,5k złota.
+9103	Aby ulepszyć Golden Earrings do +3, potrzebujesz 5k złota.
+9104	Aby ulepszyć Jade Earrings do +3, potrzebujesz 5k złota.
+9105	Aby ulepszyć Jade Earrings do +7, potrzebujesz Spider Eye, Fishbone i 40k złota.
+9106	Aby ulepszyć Ebony Earrings do +4, potrzebujesz 10k złota.
+9107	Aby ulepszyć Ebony Earrings do +5, potrzebujesz Piece of Gem i 13k złota.
+9108	Aby ulepszyć Pearl Earrings do +9, potrzebujesz Orc Thoot+ (x2), Clam i 120k złota.
+9109	Aby ulepszyć Pearl Earrings do +6, potrzebujesz Esoteric Primer (x2) i 20k złota.
+9110	Aby ulepszyć White Gold Earrings do +2, potrzebujesz 2k złota.
+9111	Aby ulepszyć White Gold Earrings do +8, potrzebujesz Orc Thoot, Clam i 70k złota.
+9112	Aby ulepszyć Crystal Earrings do +3, potrzebujesz 5k złota.
+9113	Aby ulepszyć Crystal Earrings do +6, potrzebujesz Piece of Fabric i 25k złota.
+9114	Aby ulepszyć Crystal Earrings do +9, potrzebujesz Ice Marble (x2), Red Pearl i 150k złota.
+9115	Aby ulepszyć Amethyst Earrings do +2, potrzebujesz 2,5k złota.
+9116	Aby ulepszyć Amethyst Earrings do +7, potrzebujesz Demon's Gem (x2), White Pearl i 45k złota.
+9117	Aby ulepszyć Amethyst Earrings do +1, potrzebujesz 1,5k złota.
+9118	Aby ulepszyć Heaven's Tear Earrings do +8, potrzebujesz Demon's Keepsake+, Blue Pearl 80k złota.
+9119	Aby ulepszyć Heaven's Tear Earrings do +5, potrzebujesz Snake Tail+ (x2) i 20k złota.
+9120	Aby ulepszyć Battle Shield do +5, potrzebujesz 20k złota.
+9121	Aby ulepszyć Battle Shield do +6, potrzebujesz 20k złota.
+9122	Aby ulepszyć Battle Shield do +7, potrzebujesz Bear Gail+ (x2) i 25k złota.
+9123	Aby ulepszyć Battle Shield do +8, potrzebujesz White Tiger Hide i 45k złota.
+9124	Aby ulepszyć Battle Shield do +9, potrzebujesz Worn Out Black Uniform (x2) i 75k złota.
+9125	Aby ulepszyć Battle Shield do +1, potrzebujesz 1k złota.
+9126	Aby ulepszyć Pentagon Shield do +5, potrzebujesz Piece of Broken Armour (x2) i 13k złota.
+9127	Aby ulepszyć Pentagon Shield do +6, potrzebujesz Esoteric Primer+ i 20k złota.
+9128	Aby ulepszyć Pentagon Shield do +7, potrzebujesz Unknown Talisman (x2), Fishbone i 40k złota.
+9129	Aby ulepszyć Pentagon Shield do +8, potrzebujesz Scorpion Tail (x2), Clam i 70k złota.
+9130	Aby ulepszyć Pentagon Shield do +9, potrzebujesz Curse Book (x2), Clam i 120k złota.
+9131	Aby ulepszyć Pentagon Shield do +2, potrzebujesz 2k złota.
+9132	Aby ulepszyć Black Round Shield do +5, potrzebujesz Spider Legs(x2) i 20k złota.
+9133	Aby ulepszyć Black Round Shield do +6, potrzebujesz Curse Book+ (x2) i 30k złota.
+9134	Aby ulepszyć Black Round Shield do +7, potrzebujesz Piece of Fabric+ (x2), White Pearl i 50k złota.
+9135	Aby ulepszyć Black Round Shield do +8, potrzebujesz Ice Killer Whale Horn (x2), Blue Pearl i 75k złota.
+9136	Aby ulepszyć Black Round Shield do +9, potrzebujesz Fighting Tiger Fang (x2), Red Pearl i 150k złota.
+9137	Aby ulepszyć Black Round Shield do +3, potrzebujesz 5k złota.
+9138	Aby ulepszyć Falcon Shield do +4, potrzebujesz 10k złota.
+9139	Aby ulepszyć Falcon Shield do +6, potrzebujesz Esoteric Primer+ i 20k złota.
+9140	Aby ulepszyć Tiger Monk Shield do +3, potrzebujesz 10k złota.
+9141	Aby ulepszyć Tiger Monk Shield do +9, potrzebujesz Curse Book (x2), Clam i 120k złota.
+9142	Aby ulepszyć Lion Edge Shield do +7, potrzebujesz Unknown Talisman, Fishbone i 50k złota.
+9143	Aby ulepszyć Lion Edge Shield do +1, potrzebujesz 1,2k złota.
+9144	Aby ulepszyć Dragon Scale Shield do +2, potrzebujesz 2,5k złota.
+9145	Aby ulepszyć Dragon Scale Shield do +5, potrzebujesz Piece of Broken Armour i 13k złota.
+9146	Aby ulepszyć Bloody Helm do +6, potrzebujesz 20k złota.
+9147	Aby ulepszyć Bloody Helm do +2, potrzebujesz 1,5k złota.
+9148	Aby ulepszyć Leather Hood do +4, potrzebujesz 4k złota.
+9149	Aby ulepszyć Leather Hood do +3, potrzebujesz 2,5k złota.
+9150	Aby ulepszyć Traditional Helm do +8, potrzebujesz White Pigtail Ribbon+ (x2) i 40k złota.
+9151	Aby ulepszyć Traditional Helm do +1, potrzebujesz 600 złota.
+9152	Aby ulepszyć Monk Hat do +9, potrzebujesz Facial Cream i 75k złota.
+9153	Aby ulepszyć Monk Hat do +7, potrzebujesz White Pigtail Ribbon i 30k złota.
+9154	Aby ulepszyć Iron Helm do +2, potrzebujesz 2k złota.
+9155	Aby ulepszyć Iron Helm do +4, potrzebujesz 10k złota.
+9156	Aby ulepszyć Chain Hood do +5, potrzebujesz Flag (x2) i 20k złota.
+9157	Aby ulepszyć Chain Hood do +9, potrzebujesz Spider Egg Sack (x2), Clam i 120k złota.
+9158	Aby ulepszyć Mocking Helm do +8, potrzebujesz Spider's Poison Sack (x2), Clam i 75k złota.
+9159	Aby ulepszyć Mocking Helm do +6, potrzebujesz Scorpion Tail (x2) i 20k złota.
+9160	Aby ulepszyć Phoenix Hat do +7, potrzebujesz Spider Web (x2), Fishbone i 30k złota.
+9161	Aby ulepszyć Phoenix Hat do +3, potrzebujesz 4k złota.
+9162	Aby ulepszyć Castle Helm do +8, potrzebujesz Piece of Ice+, Blue Pearl i 90k złota.
+9163	Aby ulepszyć Castle Helm do +7, potrzebujesz Frog Legs (x2), Finger Bones (x3) i 45k złota.
+9164	Aby ulepszyć Sunlight Hat do +6, potrzebujesz Frog Tongue (x2) i 30k złota.
+9165	Aby ulepszyć Sunlight Hat do +5, potrzebujesz Unknown Medicine+ (x2) i 25k złota.
+9166	Aby ulepszyć Steel Hood do +9, potrzebujesz Flaming Mane (x2), Finger Bones (x8) i 150k złota.
+9167	Aby ulepszyć Steel Hood do +1, potrzebujesz 2k złota.
+9168	Aby ulepszyć Ghost Mask Sallet do +3, potrzebujesz 5k złota.
+9169	Aby ulepszyć Ghost Mask Sallet do +4, potrzebujesz 8k złota.
+9170	Aby ulepszyć Bamboo Skin Shoes do +8, potrzebujesz Skein (x2) i 45k złota.
+9171	Aby ulepszyć Bamboo Skin Shoes do +5, potrzebujesz 12k złota.
+9172	Aby ulepszyć Wooden Shoes do +7, potrzebujesz Tiger Hide (x2) i 30k złota.
+9173	Aby ulepszyć Gold Threaded Shoes do +9, potrzebujesz Worn Out Black Uniform+ i 75k złota.
+9174	Aby ulepszyć Leather Boots do +8, potrzebujesz Scorpion Claw (x2), Clam i 70k złota.
+9175	Aby ulepszyć Leather Boots do +6, potrzebujesz Scorpion Tail+ (x2) i 20k złota.
+9176	Aby ulepszyć Golden Shoes do +4, potrzebujesz 10k złota.
+9177	Aby ulepszyć Golden Shoes do +7, potrzebujesz Scorpion Needle (x2), Fishbone i 40k złota.
+9178	Aby ulepszyć Bronze Boots do +5, potrzebujesz Orc Amulet(x2) i 13k złota.
+9179	Aby ulepszyć Jade Shoes do +9, potrzebujesz Spider Egg Sack (x2), Clam i 120k złota.
+9180	Aby ulepszyć Ecstatic Shoes do +2, potrzebujesz 2,5k złota.
+9181	Aby ulepszyć Ecstatic Shoes do +9, potrzebujesz Fighting Tiger Fang (x2), Red Pearl i 150k złota.
+9182	Aby ulepszyć Nimbus Boots do +7, potrzebujesz Frog Legs (x2), White Pearl i 50k złota.
+9183	Aby ulepszyć Nimbus Boots do +5, potrzebujesz Spider Legs (x2) i 20k złota.
+9184	Aby ulepszyć Phoenix Shoes do +6, potrzebujesz Frog Legs (x2) i 30k złota.
+9185	Aby ulepszyć Fire Bird Shoes do +8, potrzebujesz Yeti Fur (x2), Blue Pearl i 90k złota.
+9186	Aby ulepszyć Copper Bell do +8, potrzebujesz White Pigtail Ribbon (x2) i 45k złota.
+9187	Aby ulepszyć Silver Bell do +7, potrzebujesz Bear Gail+ (x2) i 30k złota.
+9188	Aby ulepszyć Golden Bell do +9, potrzebujesz Ornamental Hairpin (x2) i 75k złota.
+9189	Aby ulepszyć Jade Bell do +7, potrzebujesz Unknown Tailsman (x2), Fishbone i 40k złota.
+9190	Aby ulepszyć Fountain Bell do +6, potrzebujesz Orc Amulet+ (x2) i 20k złota.
+9191	Aby ulepszyć Apricot Bell do +8, potrzebujesz Scorpion Tail+ (x2), Clam i 70k złota.
+9192	Aby ulepszyć Apricot Bell do +9, potrzebujesz Curse Book (x2), Clam i 120k złota.
+9193	Aby ulepszyć Golden Bug Bell do +8, potrzebujesz Leaf (x2), Blue Pearl i 90k złota.
+9194	Aby ulepszyć Steel Bug Bell do +9, potrzebujesz Ice Killer Whale Horn(x2), Red Pearl i 150k złota.
+9195	Aby ulepszyć Thunder Bird Bell do +7, potrzebujesz Leaf (x2), White Pearl i 45k złota.
+9196	Aby ulepszyć Bamboo Bell do +5, potrzebujesz Unknown Medicine i 20k złota.
+9197	Aby ulepszyć Antique Bell do +8, potrzebujesz 90k złota.
+9198	Aby ulepszyć Antique Bell do +3, potrzebujesz 12k złota.
+9199	Bear Feet służy do ulepszenia Wooden Bracelet do +8
+9200	Bear Feet służy do ulepszenia Silver Bracelet Bracelet do +7
+9201	Bear Feet+ służy do ulepszenia Golden Bracelet Bracelet do +7
+9202	White Pigtail Ribbon+ służy do ulepszenia Silver Bracelet do +7
+9203	White Pigtail Ribbon+ służy do ulepszenia Wooden Bracelet do +8
+9204	White Pigtail Ribbon służy do ulepszenia Wooden Bracelet do +8
+9205	Facial Cream służy do ulepszenia Golden Bracelet do +9
+9206	Facial Cream służy do ulepszenia Silver Bracelet do +8
+9207	Rusty Blade służy do ulepszenia Jade Bracelet do +5
+9208	Rusty Blade służy do ulepszenia Ebony Bracelet do +6
+9209	Shiriken+ służy do ulepszenia Ebony Bracelet do +6
+9210	Shiriken+ służy do ulepszenia White Gold Bracelet do +7
+9211	Shiriken służy do ulepszenia White Gold Bracelet do +6
+9212	Spider Web służy do ulepszenia Pearl Bracelet do +6
+9213	Spider Web służy do ulepszenia Jade Bracelet do +7
+9214	Spider's Poison Sack służy do ulepszenia Ebony Bracelet do +8
+9215	Spider's Poison Sack służy do ulepszenia Pearl Bracelet do +9
+9216	Snakeskin służy do ulepszenia White Gold Bracelet do +9
+9217	Snakeskin służy do ulepszenia Pearl Bracelet do +8
+9218	Unknown medicine+ służy do ulepszenia Heaven's Tear Bracelet do +5
+9219	Unknown medicine+ służy do ulepszenia Crystal Bracelet do +6
+9220	Unknown medicine do ulepszenia Amethyst Bracelet do +5
+9221	Demon's Keepsake służy do ulepszenia Heaven's Tear Bracelet do +6
+9222	Demon's Keepsake służy do ulepszenia Amethyst Bracelet do +7
+9223	Demon's Keepsake+ służy do ulepszenia Crystal Bracelet do +6
+9224	Demon's Gem służy do ulepszenia Heaven's Tear Bracelet do +7
+9225	Demon's Gem służy do ulepszenia Crystal Bracelet do +8
+9226	Demon's Gem+ służy do ulepszenia Amethyst Bracelet do +7
+9227	Yeti Fur+ służy do ulepszenia Crystal Bracelet do +8
+9228	Yeti Fur+ służy do ulepszenia Heaven's Tear Bracelet do +7
+9229	Yeti Fur służy do ulepszenia Amethyst Bracelet do +8
+9230	Flaming Mane służy do ulepszenia Amethyst Bracelet do +9
+9231	Flaming Mane służy do ulepszenia Heaven's Tear Bracelet do +8
+9232	Wolf Fur+ służy do ulepszenia Wooden Necklace do +7
+9233	Wolf Fur+ służy do ulepszenia Copper Necklace do +6
+9234	Wolf Fur służy do ulepszenia Wooden Necklace do +7
+9235	Red Pigtail Ribbon służy do ulepszenia Copper Necklace do +7
+9236	Red Pigtail Ribbon służy do ulepszenia Wooden Necklace do +8
+9237	Ornamental Hairpin służy do ulepszenia Silver Necklace do +9
+9238	Ornamental Hairpin służy do ulepszenia Golden Necklace do +8
+9239	Shiriken służy do ulepszenia Jade Necklace do +5
+9240	Shiriken służy do ulepszenia Ebony Necklace do +6
+9241	Shiriken+ służy do ulepszenia Pearl Necklace do +5
+9242	Orc Amulet+ służy do ulepszenia White Gold Necklace do +6
+9243	Orc Amulet+ służy do ulepszenia Jade Necklace do +7
+9244	Orc Amulet służy do ulepszenia Pearl Necklace do +6
+9245	Unknown Talisman służy do ulepszenia Jade Necklace do +7
+9246	Unknown Talisman służy do ulepszenia White Gold Necklace do +8
+9247	Unknown Talisman+ służy do ulepszenia Pearl Necklace do +7
+9248	Scorpion Tail+ służy do ulepszenia Jade Necklace do +8
+9249	Scorpion Tail+ służy do ulepszenia Ebony Necklace do +9
+9250	Scorpion Tail służy do ulepszenia Wooden Bracelet do +8
+9251	Orc Thoot+ służy do ulepszenia Ebony Necklace do +9
+9252	Orc Thoot+ służy do ulepszenia Wooden Bracelet do +8
+9253	Orc Thoot służy do ulepszenia Jade Necklace do +9
+9254	Unknown Medicine służy do ulepszenia Crystal Necklace do +5
+9255	Unknown Medicine służy do ulepszenia Heaven's Tear Necklace do +6
+9256	Unknown Medicine+ służy do ulepszenia Amethyst Necklace do +5
+9257	Piece of Fabric służy do ulepszenia Crystal Necklace do +6
+9258	Piece of Fabric służy do ulepszenia Heaven's Tear Necklace do +5
+9259	Piece of Fabric+ służy do ulepszenia Amethyst Necklace do +6
+9260	Leaf służy do ulepszenia Crystal Necklace do +7
+9261	Leaf służy do ulepszenia Amethyst Necklace do +8
+9262	Piece of Ice służy do ulepszenia Heaven's Tear Necklace do +8
+9263	Piece of Ice służy do ulepszenia Crystal Necklace do +9
+9264	Piece of Ice+ służy do ulepszenia Amethyst Necklace do +8
+9265	Ice Marble+ służy do ulepszenia Crystal Necklace do +9
+9266	Ice Marble+ służy do ulepszenia Heaven's Tear Necklace do +8
+9267	Ice Marble służy do ulepszenia Amethyst Necklace do +9
+9268	Blue wolf ma poziom 7.
+9269	Tiger ma poziom 17.
+9270	Alpha Grey Wolf ma poziom 16.
+9271	Hungry Black Bear ma poziom 19.
+9272	White Tiger ma poziom 26.
+9273	Hungry Wild Boar ma poziom 10.
+9274	Grizzly Bear ma poziom 13.
+9275	White Oath Soldier ma poziom 18.
+9276	Dispirited Mi-jung ma poziom 23.
+9277	Dispirited Eun-jung ma poziom 28.
+9278	Dispirited Jin-Hee ma poziom 29.
+9279	White Oath General ma poziom 25.
+9280	Bear ma poziom 12.
+9281	White 0ath Archer ma poziom 20.
+9282	Black Wind Gu-Ryung ma poziom 32.
+9283	Bo ma poziom 36.
+9284	Black Wind Archer ma poziom 29.
+9285	Black Wind Maniac ma poziom 28.
+9286	Black Wind Soldier ma poziom 26.
+9287	Black Wind Jak-To ma poziom 30.
+9288	Savage Infantryman ma poziom 29.
+9289	Evil Black Storm Joh-Hwa ma poziom 29.
+9290	Evil Black Storm Archer ma poziom 30.
+9291	Savage Minion ma poziom 31.
+9292	Cursed Wolf ma poziom 9.
+9293	Cursed Alpha Blue Wolf ma poziom 14.
+9294	Cursed Bear ma poziom 18.
+9295	Cursed Black Bear ma poziom 24.
+9296	Cursed Brown Bear ma poziom 26.
+9297	Cursed Wild Boar ma poziom 12.
+9298	Cursed Tiger ma poziom 23.
+9299	Cursed White Tiger ma poziom 29.
+9300	Bestial Soldier ma poziom 35.
+9301	Bestial Specialist ma poziom 42.
+9302	Bestial Maniac ma poziom 38.
+9303	Bestial Archer ma poziom 41.
+9304	Strong Savage Archer ma poziom 35.
+9305	Strong Savage Infantry ma poziom 29.
+9306	Strong Savage General ma poziom 35.
+9307	Strong Savage Minion ma poziom 31.
+9308	Orc ma poziom 26.
+9309	Orc Scout ma poziom 30.
+9310	Orc Fighter ma poziom 32.
+9311	Orc Sorcerer ma poziom 33.
+9312	Elite Orc ma poziom 34.
+9313	Elite Orc Scout ma poziom 36.
+9314	Elite Orc Fighter ma poziom 39.
+9315	Elite Orc Sorcerer ma poziom 40.
+9316	Elite Orc General ma poziom 45.
+9317	Black Orc ma poziom 47.
+9318	Black Orc Giant ma poziom 49.
+9319	Esoteric Fanatic ma poziom 35.
+9320	Esoteric Arahan ma poziom 39.
+9321	Esoteric Arahan Fighter ma poziom 41.
+9322	Chief Esoteric Arahan ma poziom 43.
+9323	Esoteric Executioner ma poziom 46.
+9324	Esoteric Tormentor ma poziom 47.
+9325	Esoteric Summoner ma poziom 51.
+9326	Proud Dark Fanatic ma poziom 50.
+9327	Proud Dark Arahan ma poziom 52.
+9328	Proud Dark Fighter ma poziom 54.
+9329	Proud Dark Colonel ma poziom 54.
+9330	Proud Dark Rifleman ma poziom 57.
+9331	Plagued Dog ma poziom 51.
+9332	Plagued Man ma poziom 54.
+9333	Plagued Swordman ma poziom 56.
+9334	Plagued Spearman ma poziom 58.
+9335	Plagued Archer ma poziom 57.
+9336	Plagued Leader ma poziom 59.
+9337	Demon Soldier ma poziom 57.
+9338	Demon Archer ma poziom 59.
+9339	Demon Spearman ma poziom 58.
+9340	Demon Shaman ma poziom 60.
+9341	Vile Demon Soldier ma poziom 65.
+9342	Vile Demon Archer ma poziom 69.
+9343	Vile Demon Spearman ma poziom 70.
+9344	Vile Demon Shaman ma poziom 69.
+9345	Ghost Of Grudge ma poziom 72.
+9346	Ghost Of Chaos ma poziom 72.
+9347	Vile Demon Leader ma poziom 73.
+9348	Skull Sword Master ma poziom 72.
+9349	Flying Skull ma poziom 69.
+9350	Immortal Ghost ma poziom 73.
+9351	Demonic Beast ma poziom 75.
+9352	Demon King ma poziom 74.
+9353	Death Reaper ma poziom 78.
+9354	Enchanted Ice ma poziom 62.
+9355	Ice Killer Whale ma poziom 63.
+9356	Ice Bug ma poziom 65.
+9357	Ice Lion ma poziom 64.
+9358	Ice Man ma poziom 63.
+9359	Yeti ma poziom 65.
+9360	Ice Golem ma poziom 66.
+9361	Heavenly Enchanted Ice ma poziom 82.
+9362	Heavenly Ice Killer Whale ma poziom 82.
+9363	Heavenly Ice Bug ma poziom 82.
+9364	Heavenly Ice Lion ma poziom 83.
+9365	Heavenly Ice Man ma poziom 83.
+9366	Heavenly Yeti ma poziom 83.
+9367	Heavenly Ice Golem ma poziom 86.
+9368	Tree Frog Soldier ma poziom 57.
+9369	Tree Frog Leader ma poziom 60.
+9370	Leflet Bogeyman ma poziom 59.
+9371	Yellow Tiger Ghost ma poziom 75.
+9372	Bullfrog General ma poziom 60.
+9373	Giant Soldier ma poziom 66.
+9374	Giant Scout ma poziom 73.
+9375	Giant Thousand Fighter ma poziom 76.
+9376	Stone Thrower ma poziom 68.
+9377	Stone Shooter ma poziom 72.
+9378	Giant Stone Shooter ma poziom 72.
+9379	Giant Worker ma poziom 68.
+9380	Giant Inspector ma poziom 72.
+9381	Giant Hundred Combatant ma poziom 75.
+9382	Nine Tails ma poziom 74.
+9383	Baby Spider ma poziom 43.
+9384	Deadly Spider ma poziom 45.
+9385	Crimson Spider ma poziom 47.
+9386	Claw Spider ma poziom 49.
+9387	Soldier Spider ma poziom 51.
+9388	Baby Poison Spider ma poziom 50.
+9389	Deadly Poison Spider ma poziom 52.
+9390	Red Poison Spider ma poziom 53.
+9391	Claw Poison Spider ma poziom 5.
+9392	Soldier Poison Spider ma poziom 58.
+9393	Queen Spider ma poziom 60.
+9394	Desert Fox ma poziom 22.
+9395	Deserts Flying Eye ma poziom 35.
+9396	King Scorpion ma poziom 39.
+9397	Scorpion Man ma poziom 45.
+9398	Scorpion Archer ma poziom 47.
+9399	Snake Swordman ma poziom 48.
+9400	Snake Archer ma poziom 52.
+9401	Desert Outlaw ma poziom 54.
+9402	Giant Turtle ma poziom 66.
+9403	Fighting Tiger Minion ma poziom 69.
+9404	Flame Ghost ma poziom 70.
+9405	Fighting Tiger ma poziom 70.
+9406	Flame Soldier ma poziom 72.
+9407	Flame Warrior ma poziom 73.
+9408	Flame King ma poziom 73.
+9409	Haunted Tree ma poziom 65.
+9410	Haunted Stump ma poziom 67.
+9411	Dryad ma poziom 68.
+9412	Haunted Willow ma poziom 69.
+9413	Evil Haunted Tree ma poziom 72.
+9414	Red Brutal Tree ma poziom 73.
+9415	Red Haunted Stump ma poziom 76.
+9416	Red Dryad ma poziom 77.
+9417	Red Haunted Willow ma poziom 79.
+9418	Red Haunted Tree ma poziom 82.
+9419	Heaven Soldier ma poziom 85.
+9420	Heaven Archer ma poziom 88.
+9421	Heaven Cleric ma poziom 87.
+9422	Heaven Commander ma poziom 88.
+9423	Zin Heaven Soldier ma poziom 90.
+9424	Zin Heaven Archer ma poziom 92.
+9425	Zin Heaven Cleric ma poziom 93.
+9426	Zin Heaven Commander ma poziom 95.
+9427	Aqua Dragon ma poziom 97.
+9428	Gnoll Warrior ma poziom 96.
+9429	Gnoll Archer ma poziom 96.
+9430	Gnoll Defender ma poziom 98.
+9431	Gnoll Magician ma poziom 98.
+9432	Gnoll General ma poziom 99.
+9433	Gnoll Lord ma poziom 102.
+9434	Supreme Gnoll Guard ma poziom 104.
+9435	One-eyed Slugger ma poziom 97.
+9436	Cyclops Soldier ma poziom 99.
+9437	Cyclops Magician ma poziom 100.
+9438	Cyclops Executioner ma poziom 99.
+9439	General Outis ma poziom 102.
+9440	Arges ma poziom 104.
+9441	Polyphemos ma poziom 105.
+9442	Manticore Warrior ma poziom 96.
+9443	Manticore Soldier ma poziom 98.
+9444	Manticore Magus ma poziom 99.
+9445	Manticore Executioner ma poziom 99.
+9446	General Cor ma poziom 101.
+9447	Rakshasa ma poziom 102.
+9448	Martyaxwar ma poziom 105.
+9449	Lemures Warrior ma poziom 98.
+9450	Lemures Soldier ma poziom 98.
+9451	Lemures Magician ma poziom 99.
+9452	Lemures Executioner ma poziom 101.
+9453	Lemures General ma poziom 102.
+9454	Lemures Prince ma poziom 103.
+9455	Lemures Bodyguard ma poziom 104.
+9456	Tritonic Moray ma poziom 96.
+9457	Shark Soldier ma poziom 98.
+9458	Tritonic Magician ma poziom 99.
+9459	Tritonic Hunter ma poziom 98.
+9460	Tritonic Slasher ma poziom 101.
+9461	General Kappa ma poziom 103.
+9462	Triton ma poziom 105.
+9463	Red Thief Amazon ma poziom 95.
+9464	Red Thief Assassin ma poziom 97.
+9465	Red Thief Magician ma poziom 97.
+9466	Red Thief Executioner ma poziom 98.
+9467	Black General ma poziom 98.
+9468	Bone Face ma poziom 102.
+9469	Red Chief ma poziom 104.
+9470	Crab Warrior ma poziom 96.
+9471	Scorpion Marksman ma poziom 97.
+9472	Shrimp Soldier ma poziom 99.
+9473	Diabolical Hermit ma poziom 98.
+9474	Armoured Crab ma poziom 102.
+9475	General Lobster ma poziom 103
+9476	King Crab ma poziom 105.
+9477	Gigantic Biter ma poziom 100.
+9478	Gigantic Slaughterer ma poziom 102.
+9479	Gigantic Magus ma poziom 103.
+9480	Twiant ma poziom 104.
+9481	Captain Hooks ma poziom 105.
+9482	Gargoyle ma poziom 105.
+9483	King Wubba ma poziom 105.
+9484	Hangork ma poziom 98.
+9485	Archie Ogre ma poziom 100.
+9486	Brawl Ogre ma poziom 102.
+9487	Ogre Magus ma poziom 101.
+9488	General Ogg ma poziom 103.
+9489	Captain Shruk ma poziom 105.
+9490	The Great Ogre ma poziom 105.
+9491	Metin Of Sorrow ma poziom 10.
+9492	Metin Of Combat ma poziom 10.
+9493	Metin Of Battle ma poziom 15.
+9494	Metin Of Greed ma poziom 20.
+9495	Metin Of Black ma poziom 30.
+9496	Metin Of Darkness ma poziom 30.
+9497	Metin Of Jealousy ma poziom 40.
+9498	Metin Of Soul ma poziom 45.
+9499	Metin Of Shadow ma poziom 40.
+9500	Metin Of Toughness ma poziom 50.
+9501	Metin Of Devil ma poziom 60.
+9502	Metin Of Fall ma poziom 55.
+9503	Metin Of Death ma poziom 65.
+9504	Metin Of Murder ma poziom 70.
+9505	Metin of Wind Devil ma poziom 80.
+9506	Metin of Devil Eyes ma poziom 80.
+9507	Metin of Fighting Dragon ma poziom 85.
+9508	Metin of Lightning Cloud ma poziom 85.
+9509	Metin of Gloom ma poziom 100.
+9510	Metin of Ember ma poziom 95.
+9511	Metin of Vanity ma poziom 100.
+9512	Metin of Wrath ma poziom 105.
+9513	Metin of Calamity ma poziom 105.
+9514	Metin of Malice ma poziom 100.
+9515	Weak Ape Soldier ma poziom 22.
+9516	Weak Ape Thrower ma poziom 24.
+9517	Weak Ape Fighter ma poziom 27.
+9518	Weak Ape General ma poziom 29.
+9519	Ape Soldier ma poziom 36.
+9520	Ape Thrower ma poziom 37.
+9521	Ape Fighter ma poziom 40.
+9522	Ape General ma poziom 40.
+9523	Stone Ape ma poziom 41.
+9524	Ape Leader ma poziom 42.
+9525	Strong Ape Soldier ma poziom 46.
+9526	Strong Ape Thrower ma poziom 48.
+9527	Strong Ape Fighter ma poziom 48.
+9528	Strong Ape General ma poziom 52.
+9529	Strong Stone Ape ma poziom 53.
+9530	Rock Ape ma poziom 35.
+9531	Ape Lord ma poziom 55.
+9532	Devil ma poziom 80.
+9533	Devil's Wolf ma poziom 80.
+9534	Devil's Wraith ma poziom 81.
+9535	Devil's Skulker ma poziom 85.
+9536	Devil's Spearman ma poziom 84.
+9537	Devil's Cockatrice ma poziom 83.
+9538	Devil's Dominator ma poziom 85.
+9539	Spectral Crusher ma poziom 79.
+9540	Spectral Bower ma poziom 80.
+9541	Spectral Spikeman ma poziom 82.
+9542	Spectral Shaman ma poziom 10.
+9543	Spectral Axeman ma poziom 83.
+9544	Spectral Titan ma poziom 85.
+9545	Spectral Hunter ma poziom 86.
+9546	Hateful Crusher ma poziom 80.
+9547	Hateful Bower ma poziom 10.
+9548	Hateful Spikeman ma poziom 10.
+9549	Hateful Shaman ma poziom 82.
+9550	Hateful Axeman ma poziom 84.
+9551	Hateful Titan ma poziom 85.
+9552	Hateful Hunter ma poziom 86.
+9553	Tartaros ma poziom 89.
+9554	Erebus ma poziom 90.
+9555	Charon ma poziom 91.
+9556	Lord Gahnasel ma poziom 92.
+9557	Cung-Mok ma poziom 8.
+9558	Mu-Rang ma poziom 15.
+9559	Jug-Hyul ma poziom 10.
+9560	Young-Ji ma poziom 21.
+9561	Li-An ma poziom 24.
+9562	Lykos ma poziom 30.
+9563	Scrofa ma poziom 30.
+9564	Bera ma poziom 32.
+9565	Tigris ma poziom 35.
+9566	Se-Rang ma poziom 25.
+9567	Eun-Jung ma poziom 26.

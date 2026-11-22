@@ -8506,3 +8506,570 @@
 8506	لأسباب أمنية عليك تغييرها[ENTER]مع ذلك.[ENTER]ربما تظن أن 45 خانة قليلة جداً. لكن[ENTER]من يدري، قد أمنحك مساحة أكبر إن[ENTER]تفاهمنا جيداً.
 8507	حسناً، لا أجبر أحداً. إن لم تكن[ENTER]ترغب الآن، فعد لاحقاً.
 8508	فتح المخزن
+9001	Aura of Sword هي مهارة خاصة بـ Sura.
+9002	White Liquid يمنح 10 STR لمدة ساعة واحدة.
+9003	يمكن لـ DEX أن يزيد مدة Stealth.
+9004	تستمد Flame Strike قوتها من INT و DEX.
+9005	عند G3 تدوم Ritual of Doom مدة 68 ثانية.
+9006	Spirit Assault هي مهارة خاصة بـ Sura.
+9007	إذا استخدمت Eel فستحصل على 10 STR لمدة 10 دقائق.
+9008	Taichi ترفع AC.
+9009	يمكن لمهارة Charge أن تسمم الهدف.
+9010	يمكن لـ Grilled Loach أن تجعلك غير مرئي لفترة قصيرة.
+9011	عندما تُقتل فإنك تفقد الخبرة دائماً.
+9012	Stone of Magic+3 يمنح +240 SP.
+9013	Stone of Magic+2 يمنح 150 SP.
+9014	Poison Cloud تسبب ضرراً سحرياً.
+9015	Fear تصعق العدو.
+9016	Dance with Wind هي مهارة خاصة بـ Archer.
+9017	Flame Arrow تحرق الهدف.
+9018	Magic Seeds تسقط من Dryads فقط.
+9019	Dark-Ghost Leader هو شيطان.
+9020	الببغاء الموجود على Teleporter أحمر وأخضر.
+9021	المتجر العام لديه ذيل حصان.
+9022	لدى Store Keeper ثلاثة سكاكين.
+9023	Yonah طباخ.
+9024	Octavio عالم.
+9025	Anh-Yu لديها طفل.
+9026	تكلف Ghost Plate Armour لدى Armour Shop Dealer مبلغ 10.000 ذهب.
+9027	يكلف Iron Fan+0 لدى Weapon Shop Dealer مبلغ 400 ذهب.
+9028	Dark Orb هي أقوى تعويذة لـ Sura السحر الأسود.
+9029	Aura of Sword تزداد قوتها مع DEX.
+9030	لدى Old Lady حقيبة حمراء صغيرة.
+9031	في Elgoria يوجد 5 خيول داخل الإسطبل.
+9032	عصا الجواهر لدى Alchemist صفراء.
+9033	Mirine فقدت أمها.
+9034	يوجد بالضبط 259 شجرة في خريطة Elgoria 1.
+9035	إذا مات الحصان 10 مرات فإنه سيهرب إلى الأبد.
+9036	في Fisherman Store تكلف 50 دودة 2000 ذهب.
+9037	Fishing Marble هو طُعم.
+9038	Riceballs والديدان هي الطُعوم الوحيدة في Metin2.
+9039	يوجد 20 أرض نقابة في كل مدينة من اللعبة.
+9040	Death Reaper هو من فئة Demi-Human.
+9041	Heavens Golem هو الوحش الوحيد الذي يُسقط بلورة ماء.
+9042	Zen Bean يمنح 500 نقطة Karma لكن فقط إذا كنت في الحالة السلبية.
+9043	Se-Rang وحش من نوع الذئاب.
+9044	Starbuck هو الحداد مصمم الإكسسوارات.
+9045	Cherogirayb هو عالم الأحياء في Metin2.
+9046	Zin Heavens Commander يُسقط blessing marble.
+9047	Stanh هو واحد من 3 حدادين للنقابة.
+9048	Tigris لديه طوق أحمر.
+9049	لترقية Wood Bracelet إلى +6 تحتاج إلى 20 ألف ذهب.
+9050	لترقية Wood Bracelet إلى +7 تحتاج إلى Bear Feet و 25 ألف ذهب.
+9051	لترقية Wood Bracelet إلى +8 تحتاج إلى White Pigtail Ribbon و 45 ألف ذهب.
+9052	لترقية Wood Bracelet إلى +9 تحتاج إلى Facial Cream و 75 ألف ذهب.
+9053	لترقية Copper Bracelet إلى +5 تحتاج إلى 15 ألف ذهب.
+9054	لترقية Copper Bracelet إلى +7 تحتاج إلى Bear Feet و 30 ألف ذهب.
+9055	لترقية Copper Bracelet إلى +8 تحتاج إلى White Pigtail Ribbon+ و 40 ألف ذهب.
+9056	لترقية Copper Bracelet إلى +9 تحتاج إلى Facial Cream و 70 ألف ذهب.
+9057	لترقية Silver Bracelet إلى +8 تحتاج إلى White Pigtail Ribbon+ و 45 ألف ذهب.
+9058	لترقية Gold Bracelet إلى +6 تحتاج إلى 20 ألف ذهب.
+9059	لترقية Gold Bracelet إلى +8 تحتاج إلى White Pigtail Ribbon+ و 45 ألف ذهب.
+9060	لترقية Jade Bracelet إلى +3 تحتاج إلى 5 ألف ذهب.
+9061	لترقية Jade Bracelet إلى +6 تحتاج إلى Shiriken+ (x2) و 20 ألف ذهب.
+9062	لترقية Ebony Bracelet إلى +4 تحتاج إلى 8 ألف ذهب.
+9063	لترقية Ebony Bracelet إلى +7 تحتاج إلى Spider Web (x2) و Fishbone و 50 ألف ذهب.
+9064	لترقية Pearl Bracelet إلى +5 تحتاج إلى Rusty Blade (x2) و 13 ألف ذهب.
+9065	لترقية Pearl Bracelet إلى +8 تحتاج إلى Spider's Poison Sack (x2) و Clam و 70 ألف ذهب.
+9066	لترقية White Gold Bracelet إلى +2 تحتاج إلى 2 ألف ذهب.
+9067	لترقية White Gold Bracelet إلى +9 تحتاج إلى Snakeskin (x2) و Clam و 100 ألف ذهب.
+9068	لترقية Crystal Bracelet إلى +6 تحتاج إلى Demon's Keepsake (x2) و 30 ألف ذهب.
+9069	لترقية Crystal Bracelet إلى +7 تحتاج إلى Demon's Gem+ (x2) و White Pearl و 45 ألف ذهب.
+9070	لترقية Amethyst Bracelet إلى +5 تحتاج إلى Unknown medicine+ و 20 ألف ذهب.
+9071	لترقية Amethyst Bracelet إلى +9 تحتاج إلى Flaming Mane (x2) و Red pearl و 120 ألف ذهب.
+9072	لترقية Heaven's Tear Bracelet إلى +4 تحتاج إلى 10 ألف ذهب.
+9073	لترقية Heaven's Tear Bracelet إلى +8 تحتاج إلى Yeti Fur+ (x2) و Blue pearl و 90 ألف ذهب.
+9074	لترقية Wooden Necklace إلى +4 تحتاج إلى 2,5 ألف ذهب.
+9075	لترقية Wooden Necklace إلى +6 تحتاج إلى 20 ألف ذهب.
+9076	لترقية Copper Necklace إلى +5 تحتاج إلى 15 ألف ذهب.
+9077	لترقية Copper Necklace إلى +7 تحتاج إلى Wolf Fur+ (x2) و 25 ألف ذهب.
+9078	لترقية Silver Necklace إلى +8 تحتاج إلى Red Pigtail Ribbon و 50 ألف ذهب.
+9079	لترقية Silver Necklace إلى +1 تحتاج إلى 500 ذهب.
+9080	لترقية Golden Necklace إلى +9 تحتاج إلى Ornamental Hairpin (x2) و 75 ألف ذهب.
+9081	لترقية Golden Necklace إلى +3 تحتاج إلى 2,5 ألف ذهب.
+9082	لترقية Jade Necklace إلى +8 تحتاج إلى Scorpion Tail+ (x2) و Clam و 70 ألف ذهب.
+9083	لترقية Jade Necklace إلى +2 تحتاج إلى 2,5 ألف ذهب.
+9084	لترقية Ebony Necklace إلى +6 تحتاج إلى Orc Amulet+ و 20 ألف ذهب.
+9085	لترقية Ebony Necklace إلى +2 تحتاج إلى 2 ألف ذهب.
+9086	لترقية Pearl Necklace إلى +5 تحتاج إلى Shiriken (x2) و 13 ألف ذهب.
+9087	لترقية Pearl Necklace إلى +9 تحتاج إلى Orc Thoot+ (x2) و Clam و 120 ألف ذهب.
+9088	لترقية White Gold Necklace إلى +4 تحتاج إلى 8 ألف ذهب.
+9089	لترقية White Gold Necklace إلى +7 تحتاج إلى Unknown talisman (x2) و Fishbone و 40 ألف ذهب.
+9090	لترقية Crystal Necklace إلى +6 تحتاج إلى Piece of Fabric (x2) و 30 ألف ذهب.
+9091	لترقية Crystal Necklace إلى +9 تحتاج إلى Ice Marble (x2) و Red Pearl و 150 ألف ذهب.
+9092	لترقية Amethyst Necklace إلى +5 تحتاج إلى Unknown Medicine (x2) و 20 ألف ذهب.
+9093	لترقية Amethyst Necklace إلى +7 تحتاج إلى Leaf (x2) و White Pearl و 50 ألف ذهب.
+9094	لترقية Heaven's Tear Necklace إلى +8 تحتاج إلى Piece of Ice+(x2) و Blue Pearl و 90 ألف ذهب.
+9095	لترقية Heaven's Tear Necklace إلى +1 تحتاج إلى 1,2 ألف ذهب.
+9096	لترقية Wooden Earrings إلى +2 تحتاج إلى 1,2 ألف ذهب.
+9097	لترقية Wooden Earrings إلى +5 تحتاج إلى 8 ألف ذهب.
+9098	لترقية Copper Earrings إلى +7 تحتاج إلى Bear Gail و 30 ألف ذهب.
+9099	لترقية Copper Earrings إلى +9 تحتاج إلى Worn Out Black Uniform و 70 ألف ذهب.
+9100	لترقية Silver Earrings إلى +8 تحتاج إلى Bear Feet+ و 45 ألف ذهب.
+9101	لترقية Silver Earrings إلى +6 تحتاج إلى 20 ألف ذهب.
+9102	لترقية Golden Earrings إلى +4 تحتاج إلى 7,5 ألف ذهب.
+9103	لترقية Golden Earrings إلى +3 تحتاج إلى 5 ألف ذهب.
+9104	لترقية Jade Earrings إلى +3 تحتاج إلى 5 ألف ذهب.
+9105	لترقية Jade Earrings إلى +7 تحتاج إلى Spider Eye و Fishbone و 40 ألف ذهب.
+9106	لترقية Ebony Earrings إلى +4 تحتاج إلى 10 ألف ذهب.
+9107	لترقية Ebony Earrings إلى +5 تحتاج إلى Piece of Gem و 13 ألف ذهب.
+9108	لترقية Pearl Earrings إلى +9 تحتاج إلى Orc Thoot+ (x2) و Clam و 120 ألف ذهب.
+9109	لترقية Pearl Earrings إلى +6 تحتاج إلى Esoteric Primer (x2) و 20 ألف ذهب.
+9110	لترقية White Gold Earrings إلى +2 تحتاج إلى 2 ألف ذهب.
+9111	لترقية White Gold Earrings إلى +8 تحتاج إلى Orc Thoot و Clam و 70 ألف ذهب.
+9112	لترقية Crystal Earrings إلى +3 تحتاج إلى 5 ألف ذهب.
+9113	لترقية Crystal Earrings إلى +6 تحتاج إلى Piece of Fabric و 25 ألف ذهب.
+9114	لترقية Crystal Earrings إلى +9 تحتاج إلى Ice Marble (x2) و Red Pearl و 150 ألف ذهب.
+9115	لترقية Amethyst Earrings إلى +2 تحتاج إلى 2,5 ألف ذهب.
+9116	لترقية Amethyst Earrings إلى +7 تحتاج إلى Demon's Gem (x2) و White Pearl و 45 ألف ذهب.
+9117	لترقية Amethyst Earrings إلى +1 تحتاج إلى 1,5 ألف ذهب.
+9118	لترقية Heaven's Tear Earrings إلى +8 تحتاج إلى Demon's Keepsake+ و Blue Pearl و 80 ألف ذهب.
+9119	لترقية Heaven's Tear Earrings إلى +5 تحتاج إلى Snake Tail+ (x2) و 20 ألف ذهب.
+9120	لترقية Battle Shield إلى +5 تحتاج إلى 20 ألف ذهب.
+9121	لترقية Battle Shield إلى +6 تحتاج إلى 20 ألف ذهب.
+9122	لترقية Battle Shield إلى +7 تحتاج إلى Bear Gail+ (x2) و 25 ألف ذهب.
+9123	لترقية Battle Shield إلى +8 تحتاج إلى White Tiger Hide و 45 ألف ذهب.
+9124	لترقية Battle Shield إلى +9 تحتاج إلى Worn Out Black Uniform (x2) و 75 ألف ذهب.
+9125	لترقية Battle Shield إلى +1 تحتاج إلى 1 ألف ذهب.
+9126	لترقية Pentagon Shield إلى +5 تحتاج إلى Piece of Broken Armour (x2) و 13 ألف ذهب.
+9127	لترقية Pentagon Shield إلى +6 تحتاج إلى Esoteric Primer+ و 20 ألف ذهب.
+9128	لترقية Pentagon Shield إلى +7 تحتاج إلى Unknown Talisman (x2) و Fishbone و 40 ألف ذهب.
+9129	لترقية Pentagon Shield إلى +8 تحتاج إلى Scorpion Tail (x2) و Clam و 70 ألف ذهب.
+9130	لترقية Pentagon Shield إلى +9 تحتاج إلى Curse Book (x2) و Clam و 120 ألف ذهب.
+9131	لترقية Pentagon Shield إلى +2 تحتاج إلى 2 ألف ذهب.
+9132	لترقية Black Round Shield إلى +5 تحتاج إلى Spider Legs(x2) و 20 ألف ذهب.
+9133	لترقية Black Round Shield إلى +6 تحتاج إلى Curse Book+ (x2) و 30 ألف ذهب.
+9134	لترقية Black Round Shield إلى +7 تحتاج إلى Piece of Fabric+ (x2) و White Pearl و 50 ألف ذهب.
+9135	لترقية Black Round Shield إلى +8 تحتاج إلى Ice Killer Whale Horn (x2) و Blue Pearl و 75 ألف ذهب.
+9136	لترقية Black Round Shield إلى +9 تحتاج إلى Fighting Tiger Fang (x2) و Red Pearl و 150 ألف ذهب.
+9137	لترقية Black Round Shield إلى +3 تحتاج إلى 5 ألف ذهب.
+9138	لترقية Falcon Shield إلى +4 تحتاج إلى 10 ألف ذهب.
+9139	لترقية Falcon Shield إلى +6 تحتاج إلى Esoteric Primer+ و 20 ألف ذهب.
+9140	لترقية Tiger Monk Shield إلى +3 تحتاج إلى 10 ألف ذهب.
+9141	لترقية Tiger Monk Shield إلى +9 تحتاج إلى Curse Book (x2) و Clam و 120 ألف ذهب.
+9142	لترقية Lion Edge Shield إلى +7 تحتاج إلى Unknown Talisman و Fishbone و 50 ألف ذهب.
+9143	لترقية Lion Edge Shield إلى +1 تحتاج إلى 1,2 ألف ذهب.
+9144	لترقية Dragon Scale Shield إلى +2 تحتاج إلى 2,5 ألف ذهب.
+9145	لترقية Dragon Scale Shield إلى +5 تحتاج إلى Piece of Broken Armour و 13 ألف ذهب.
+9146	لترقية Bloody Helm إلى +6 تحتاج إلى 20 ألف ذهب.
+9147	لترقية Bloody Helm إلى +2 تحتاج إلى 1,5 ألف ذهب.
+9148	لترقية Leather Hood إلى +4 تحتاج إلى 4 ألف ذهب.
+9149	لترقية Leather Hood إلى +3 تحتاج إلى 2,5 ألف ذهب.
+9150	لترقية Traditional Helm إلى +8 تحتاج إلى White Pigtail Ribbon+ (x2) و 40 ألف ذهب.
+9151	لترقية Traditional Helm إلى +1 تحتاج إلى 600 ذهب.
+9152	لترقية Monk Hat إلى +9 تحتاج إلى Facial Cream و 75 ألف ذهب.
+9153	لترقية Monk Hat إلى +7 تحتاج إلى White Pigtail Ribbon و 30 ألف ذهب.
+9154	لترقية Iron Helm إلى +2 تحتاج إلى 2 ألف ذهب.
+9155	لترقية Iron Helm إلى +4 تحتاج إلى 10 ألف ذهب.
+9156	لترقية Chain Hood إلى +5 تحتاج إلى Flag (x2) و 20 ألف ذهب.
+9157	لترقية Chain Hood إلى +9 تحتاج إلى Spider Egg Sack (x2) و Clam و 120 ألف ذهب.
+9158	لترقية Mocking Helm إلى +8 تحتاج إلى Spider's Poison Sack (x2) و Clam و 75 ألف ذهب.
+9159	لترقية Mocking Helm إلى +6 تحتاج إلى Scorpion Tail (x2) و 20 ألف ذهب.
+9160	لترقية Phoenix Hat إلى +7 تحتاج إلى Spider Web (x2) و Fishbone و 30 ألف ذهب.
+9161	لترقية Phoenix Hat إلى +3 تحتاج إلى 4 ألف ذهب.
+9162	لترقية Castle Helm إلى +8 تحتاج إلى Piece of Ice+ و Blue Pearl و 90 ألف ذهب.
+9163	لترقية Castle Helm إلى +7 تحتاج إلى Frog Legs (x2) و Finger Bones (x3) و 45 ألف ذهب.
+9164	لترقية Sunlight Hat إلى +6 تحتاج إلى Frog Tongue (x2) و 30 ألف ذهب.
+9165	لترقية Sunlight Hat إلى +5 تحتاج إلى Unknown Medicine+ (x2) و 25 ألف ذهب.
+9166	لترقية Steel Hood إلى +9 تحتاج إلى Flaming Mane (x2) و Finger Bones (x8) و 150 ألف ذهب.
+9167	لترقية Steel Hood إلى +1 تحتاج إلى 2 ألف ذهب.
+9168	لترقية Ghost Mask Sallet إلى +3 تحتاج إلى 5 ألف ذهب.
+9169	لترقية Ghost Mask Sallet إلى +4 تحتاج إلى 8 ألف ذهب.
+9170	لترقية Bamboo Skin Shoes إلى +8 تحتاج إلى Skein (x2) و 45 ألف ذهب.
+9171	لترقية Bamboo Skin Shoes إلى +5 تحتاج إلى 12 ألف ذهب.
+9172	لترقية Wooden Shoes إلى +7 تحتاج إلى Tiger Hide (x2) و 30 ألف ذهب.
+9173	لترقية Gold Threaded Shoes إلى +9 تحتاج إلى Worn Out Black Uniform+ و 75 ألف ذهب.
+9174	لترقية Leather Boots إلى +8 تحتاج إلى Scorpion Claw (x2) و Clam و 70 ألف ذهب.
+9175	لترقية Leather Boots إلى +6 تحتاج إلى Scorpion Tail+ (x2) و 20 ألف ذهب.
+9176	لترقية Golden Shoes إلى +4 تحتاج إلى 10 ألف ذهب.
+9177	لترقية Golden Shoes إلى +7 تحتاج إلى Scorpion Needle (x2) و Fishbone و 40 ألف ذهب.
+9178	لترقية Bronze Boots إلى +5 تحتاج إلى Orc Amulet(x2) و 13 ألف ذهب.
+9179	لترقية Jade Shoes إلى +9 تحتاج إلى Spider Egg Sack (x2) و Clam و 120 ألف ذهب.
+9180	لترقية Ecstatic Shoes إلى +2 تحتاج إلى 2,5 ألف ذهب.
+9181	لترقية Ecstatic Shoes إلى +9 تحتاج إلى Fighting Tiger Fang (x2) و Red Pearl و 150 ألف ذهب.
+9182	لترقية Nimbus Boots إلى +7 تحتاج إلى Frog Legs (x2) و White Pearl و 50 ألف ذهب.
+9183	لترقية Nimbus Boots إلى +5 تحتاج إلى Spider Legs (x2) و 20 ألف ذهب.
+9184	لترقية Phoenix Shoes إلى +6 تحتاج إلى Frog Legs (x2) و 30 ألف ذهب.
+9185	لترقية Fire Bird Shoes إلى +8 تحتاج إلى Yeti Fur (x2) و Blue Pearl و 90 ألف ذهب.
+9186	لترقية Copper Bell إلى +8 تحتاج إلى White Pigtail Ribbon (x2) و 45 ألف ذهب.
+9187	لترقية Silver Bell إلى +7 تحتاج إلى Bear Gail+ (x2) و 30 ألف ذهب.
+9188	لترقية Golden Bell إلى +9 تحتاج إلى Ornamental Hairpin (x2) و 75 ألف ذهب.
+9189	لترقية Jade Bell إلى +7 تحتاج إلى Unknown Tailsman (x2) و Fishbone و 40 ألف ذهب.
+9190	لترقية Fountain Bell إلى +6 تحتاج إلى Orc Amulet+ (x2) و 20 ألف ذهب.
+9191	لترقية Apricot Bell إلى +8 تحتاج إلى Scorpion Tail+ (x2) و Clam و 70 ألف ذهب.
+9192	لترقية Apricot Bell إلى +9 تحتاج إلى Curse Book (x2) و Clam و 120 ألف ذهب.
+9193	لترقية Golden Bug Bell إلى +8 تحتاج إلى Leaf (x2) و Blue Pearl و 90 ألف ذهب.
+9194	لترقية Steel Bug Bell إلى +9 تحتاج إلى Ice Killer Whale Horn(x2) و Red Pearl و 150 ألف ذهب.
+9195	لترقية Thunder Bird Bell إلى +7 تحتاج إلى Leaf (x2) و White Pearl و 45 ألف ذهب.
+9196	لترقية Bamboo Bell إلى +5 تحتاج إلى Unknown Medicine و 20 ألف ذهب.
+9197	لترقية Antique Bell إلى +8 تحتاج إلى 90 ألف ذهب.
+9198	لترقية Antique Bell إلى +3 تحتاج إلى 12 ألف ذهب.
+9199	يُستخدم Bear Feet لترقية Wooden Bracelet إلى +8
+9200	يُستخدم Bear Feet لترقية Silver Bracelet Bracelet إلى +7
+9201	يُستخدم Bear Feet+ لترقية Golden Bracelet Bracelet إلى +7
+9202	يُستخدم White Pigtail Ribbon+ لترقية Silver Bracelet إلى +7
+9203	يُستخدم White Pigtail Ribbon+ لترقية Wooden Bracelet إلى +8
+9204	يُستخدم White Pigtail Ribbon لترقية Wooden Bracelet إلى +8
+9205	يُستخدم Facial Cream لترقية Golden Bracelet إلى +9
+9206	يُستخدم Facial Cream لترقية Silver Bracelet إلى +8
+9207	يُستخدم Rusty Blade لترقية Jade Bracelet إلى +5
+9208	يُستخدم Rusty Blade لترقية Ebony Bracelet إلى +6
+9209	يُستخدم Shiriken+ لترقية Ebony Bracelet إلى +6
+9210	يُستخدم Shiriken+ لترقية White Gold Bracelet إلى +7
+9211	يُستخدم Shiriken لترقية White Gold Bracelet إلى +6
+9212	يُستخدم Spider Web لترقية Pearl Bracelet إلى +6
+9213	يُستخدم Spider Web لترقية Jade Bracelet إلى +7
+9214	يُستخدم Spider's Poison Sack لترقية Ebony Bracelet إلى +8
+9215	يُستخدم Spider's Poison Sack لترقية Pearl Bracelet إلى +9
+9216	يُستخدم Snakeskin لترقية White Gold Bracelet إلى +9
+9217	يُستخدم Snakeskin لترقية Pearl Bracelet إلى +8
+9218	يُستخدم Unknown medicine+ لترقية Heaven's Tear Bracelet إلى +5
+9219	يُستخدم Unknown medicine+ لترقية Crystal Bracelet إلى +6
+9220	Unknown medicine لترقية Amethyst Bracelet إلى +5
+9221	يُستخدم Demon's Keepsake لترقية Heaven's Tear Bracelet إلى +6
+9222	يُستخدم Demon's Keepsake لترقية Amethyst Bracelet إلى +7
+9223	يُستخدم Demon's Keepsake+ لترقية Crystal Bracelet إلى +6
+9224	يُستخدم Demon's Gem لترقية Heaven's Tear Bracelet إلى +7
+9225	يُستخدم Demon's Gem لترقية Crystal Bracelet إلى +8
+9226	يُستخدم Demon's Gem+ لترقية Amethyst Bracelet إلى +7
+9227	يُستخدم Yeti Fur+ لترقية Crystal Bracelet إلى +8
+9228	يُستخدم Yeti Fur+ لترقية Heaven's Tear Bracelet إلى +7
+9229	يُستخدم Yeti Fur لترقية Amethyst Bracelet إلى +8
+9230	يُستخدم Flaming Mane لترقية Amethyst Bracelet إلى +9
+9231	يُستخدم Flaming Mane لترقية Heaven's Tear Bracelet إلى +8
+9232	يُستخدم Wolf Fur+ لترقية Wooden Necklace إلى +7
+9233	يُستخدم Wolf Fur+ لترقية Copper Necklace إلى +6
+9234	يُستخدم Wolf Fur لترقية Wooden Necklace إلى +7
+9235	يُستخدم Red Pigtail Ribbon لترقية Copper Necklace إلى +7
+9236	يُستخدم Red Pigtail Ribbon لترقية Wooden Necklace إلى +8
+9237	يُستخدم Ornamental Hairpin لترقية Silver Necklace إلى +9
+9238	يُستخدم Ornamental Hairpin لترقية Golden Necklace إلى +8
+9239	يُستخدم Shiriken لترقية Jade Necklace إلى +5
+9240	يُستخدم Shiriken لترقية Ebony Necklace إلى +6
+9241	يُستخدم Shiriken+ لترقية Pearl Necklace إلى +5
+9242	يُستخدم Orc Amulet+ لترقية White Gold Necklace إلى +6
+9243	يُستخدم Orc Amulet+ لترقية Jade Necklace إلى +7
+9244	يُستخدم Orc Amulet لترقية Pearl Necklace إلى +6
+9245	يُستخدم Unknown Talisman لترقية Jade Necklace إلى +7
+9246	يُستخدم Unknown Talisman لترقية White Gold Necklace إلى +8
+9247	يُستخدم Unknown Talisman+ لترقية Pearl Necklace إلى +7
+9248	يُستخدم Scorpion Tail+ لترقية Jade Necklace إلى +8
+9249	يُستخدم Scorpion Tail+ لترقية Ebony Necklace إلى +9
+9250	يُستخدم Scorpion Tail لترقية Wooden Bracelet إلى +8
+9251	يُستخدم Orc Thoot+ لترقية Ebony Necklace إلى +9
+9252	يُستخدم Orc Thoot+ لترقية Wooden Bracelet إلى +8
+9253	يُستخدم Orc Thoot لترقية Jade Necklace إلى +9
+9254	يُستخدم Unknown Medicine لترقية Crystal Necklace إلى +5
+9255	يُستخدم Unknown Medicine لترقية Heaven's Tear Necklace إلى +6
+9256	يُستخدم Unknown Medicine+ لترقية Amethyst Necklace إلى +5
+9257	يُستخدم Piece of Fabric لترقية Crystal Necklace إلى +6
+9258	يُستخدم Piece of Fabric لترقية Heaven's Tear Necklace إلى +5
+9259	يُستخدم Piece of Fabric+ لترقية Amethyst Necklace إلى +6
+9260	يُستخدم Leaf لترقية Crystal Necklace إلى +7
+9261	يُستخدم Leaf لترقية Amethyst Necklace إلى +8
+9262	يُستخدم Piece of Ice لترقية Heaven's Tear Necklace إلى +8
+9263	يُستخدم Piece of Ice لترقية Crystal Necklace إلى +9
+9264	يُستخدم Piece of Ice+ لترقية Amethyst Necklace إلى +8
+9265	يُستخدم Ice Marble+ لترقية Crystal Necklace إلى +9
+9266	يُستخدم Ice Marble+ لترقية Heaven's Tear Necklace إلى +8
+9267	يُستخدم Ice Marble لترقية Amethyst Necklace إلى +9
+9268	Blue wolf من المستوى 7.
+9269	Tiger من المستوى 17.
+9270	Alpha Grey Wolf من المستوى 16.
+9271	Hungry Black Bear من المستوى 19.
+9272	White Tiger من المستوى 26.
+9273	Hungry Wild Boar من المستوى 10.
+9274	Grizzly Bear من المستوى 13.
+9275	White Oath Soldier من المستوى 18.
+9276	Dispirited Mi-jung من المستوى 23.
+9277	Dispirited Eun-jung من المستوى 28.
+9278	Dispirited Jin-Hee من المستوى 29.
+9279	White Oath General من المستوى 25.
+9280	Bear من المستوى 12.
+9281	White 0ath Archer من المستوى 20.
+9282	Black Wind Gu-Ryung من المستوى 32.
+9283	Bo من المستوى 36.
+9284	Black Wind Archer من المستوى 29.
+9285	Black Wind Maniac من المستوى 28.
+9286	Black Wind Soldier من المستوى 26.
+9287	Black Wind Jak-To من المستوى 30.
+9288	Savage Infantryman من المستوى 29.
+9289	Evil Black Storm Joh-Hwa من المستوى 29.
+9290	Evil Black Storm Archer من المستوى 30.
+9291	Savage Minion من المستوى 31.
+9292	Cursed Wolf من المستوى 9.
+9293	Cursed Alpha Blue Wolf من المستوى 14.
+9294	Cursed Bear من المستوى 18.
+9295	Cursed Black Bear من المستوى 24.
+9296	Cursed Brown Bear من المستوى 26.
+9297	Cursed Wild Boar من المستوى 12.
+9298	Cursed Tiger من المستوى 23.
+9299	Cursed White Tiger من المستوى 29.
+9300	Bestial Soldier من المستوى 35.
+9301	Bestial Specialist من المستوى 42.
+9302	Bestial Maniac من المستوى 38.
+9303	Bestial Archer من المستوى 41.
+9304	Strong Savage Archer من المستوى 35.
+9305	Strong Savage Infantry من المستوى 29.
+9306	Strong Savage General من المستوى 35.
+9307	Strong Savage Minion من المستوى 31.
+9308	Orc من المستوى 26.
+9309	Orc Scout من المستوى 30.
+9310	Orc Fighter من المستوى 32.
+9311	Orc Sorcerer من المستوى 33.
+9312	Elite Orc من المستوى 34.
+9313	Elite Orc Scout من المستوى 36.
+9314	Elite Orc Fighter من المستوى 39.
+9315	Elite Orc Sorcerer من المستوى 40.
+9316	Elite Orc General من المستوى 45.
+9317	Black Orc من المستوى 47.
+9318	Black Orc Giant من المستوى 49.
+9319	Esoteric Fanatic من المستوى 35.
+9320	Esoteric Arahan من المستوى 39.
+9321	Esoteric Arahan Fighter من المستوى 41.
+9322	Chief Esoteric Arahan من المستوى 43.
+9323	Esoteric Executioner من المستوى 46.
+9324	Esoteric Tormentor من المستوى 47.
+9325	Esoteric Summoner من المستوى 51.
+9326	Proud Dark Fanatic من المستوى 50.
+9327	Proud Dark Arahan من المستوى 52.
+9328	Proud Dark Fighter من المستوى 54.
+9329	Proud Dark Colonel من المستوى 54.
+9330	Proud Dark Rifleman من المستوى 57.
+9331	Plagued Dog من المستوى 51.
+9332	Plagued Man من المستوى 54.
+9333	Plagued Swordman من المستوى 56.
+9334	Plagued Spearman من المستوى 58.
+9335	Plagued Archer من المستوى 57.
+9336	Plagued Leader من المستوى 59.
+9337	Demon Soldier من المستوى 57.
+9338	Demon Archer من المستوى 59.
+9339	Demon Spearman من المستوى 58.
+9340	Demon Shaman من المستوى 60.
+9341	Vile Demon Soldier من المستوى 65.
+9342	Vile Demon Archer من المستوى 69.
+9343	Vile Demon Spearman من المستوى 70.
+9344	Vile Demon Shaman من المستوى 69.
+9345	Ghost Of Grudge من المستوى 72.
+9346	Ghost Of Chaos من المستوى 72.
+9347	Vile Demon Leader من المستوى 73.
+9348	Skull Sword Master من المستوى 72.
+9349	Flying Skull من المستوى 69.
+9350	Immortal Ghost من المستوى 73.
+9351	Demonic Beast من المستوى 75.
+9352	Demon King من المستوى 74.
+9353	Death Reaper من المستوى 78.
+9354	Enchanted Ice من المستوى 62.
+9355	Ice Killer Whale من المستوى 63.
+9356	Ice Bug من المستوى 65.
+9357	Ice Lion من المستوى 64.
+9358	Ice Man من المستوى 63.
+9359	Yeti من المستوى 65.
+9360	Ice Golem من المستوى 66.
+9361	Heavenly Enchanted Ice من المستوى 82.
+9362	Heavenly Ice Killer Whale من المستوى 82.
+9363	Heavenly Ice Bug من المستوى 82.
+9364	Heavenly Ice Lion من المستوى 83.
+9365	Heavenly Ice Man من المستوى 83.
+9366	Heavenly Yeti من المستوى 83.
+9367	Heavenly Ice Golem من المستوى 86.
+9368	Tree Frog Soldier من المستوى 57.
+9369	Tree Frog Leader من المستوى 60.
+9370	Leflet Bogeyman من المستوى 59.
+9371	Yellow Tiger Ghost من المستوى 75.
+9372	Bullfrog General من المستوى 60.
+9373	Giant Soldier من المستوى 66.
+9374	Giant Scout من المستوى 73.
+9375	Giant Thousand Fighter من المستوى 76.
+9376	Stone Thrower من المستوى 68.
+9377	Stone Shooter من المستوى 72.
+9378	Giant Stone Shooter من المستوى 72.
+9379	Giant Worker من المستوى 68.
+9380	Giant Inspector من المستوى 72.
+9381	Giant Hundred Combatant من المستوى 75.
+9382	Nine Tails من المستوى 74.
+9383	Baby Spider من المستوى 43.
+9384	Deadly Spider من المستوى 45.
+9385	Crimson Spider من المستوى 47.
+9386	Claw Spider من المستوى 49.
+9387	Soldier Spider من المستوى 51.
+9388	Baby Poison Spider من المستوى 50.
+9389	Deadly Poison Spider من المستوى 52.
+9390	Red Poison Spider من المستوى 53.
+9391	Claw Poison Spider من المستوى 5.
+9392	Soldier Poison Spider من المستوى 58.
+9393	Queen Spider من المستوى 60.
+9394	Desert Fox من المستوى 22.
+9395	Deserts Flying Eye من المستوى 35.
+9396	King Scorpion من المستوى 39.
+9397	Scorpion Man من المستوى 45.
+9398	Scorpion Archer من المستوى 47.
+9399	Snake Swordman من المستوى 48.
+9400	Snake Archer من المستوى 52.
+9401	Desert Outlaw من المستوى 54.
+9402	Giant Turtle من المستوى 66.
+9403	Fighting Tiger Minion من المستوى 69.
+9404	Flame Ghost من المستوى 70.
+9405	Fighting Tiger من المستوى 70.
+9406	Flame Soldier من المستوى 72.
+9407	Flame Warrior من المستوى 73.
+9408	Flame King من المستوى 73.
+9409	Haunted Tree من المستوى 65.
+9410	Haunted Stump من المستوى 67.
+9411	Dryad من المستوى 68.
+9412	Haunted Willow من المستوى 69.
+9413	Evil Haunted Tree من المستوى 72.
+9414	Red Brutal Tree من المستوى 73.
+9415	Red Haunted Stump من المستوى 76.
+9416	Red Dryad من المستوى 77.
+9417	Red Haunted Willow من المستوى 79.
+9418	Red Haunted Tree من المستوى 82.
+9419	Heaven Soldier من المستوى 85.
+9420	Heaven Archer من المستوى 88.
+9421	Heaven Cleric من المستوى 87.
+9422	Heaven Commander من المستوى 88.
+9423	Zin Heaven Soldier من المستوى 90.
+9424	Zin Heaven Archer من المستوى 92.
+9425	Zin Heaven Cleric من المستوى 93.
+9426	Zin Heaven Commander من المستوى 95.
+9427	Aqua Dragon من المستوى 97.
+9428	Gnoll Warrior من المستوى 96.
+9429	Gnoll Archer من المستوى 96.
+9430	Gnoll Defender من المستوى 98.
+9431	Gnoll Magician من المستوى 98.
+9432	Gnoll General من المستوى 99.
+9433	Gnoll Lord من المستوى 102.
+9434	Supreme Gnoll Guard من المستوى 104.
+9435	One-eyed Slugger من المستوى 97.
+9436	Cyclops Soldier من المستوى 99.
+9437	Cyclops Magician من المستوى 100.
+9438	Cyclops Executioner من المستوى 99.
+9439	General Outis من المستوى 102.
+9440	Arges من المستوى 104.
+9441	Polyphemos من المستوى 105.
+9442	Manticore Warrior من المستوى 96.
+9443	Manticore Soldier من المستوى 98.
+9444	Manticore Magus من المستوى 99.
+9445	Manticore Executioner من المستوى 99.
+9446	General Cor من المستوى 101.
+9447	Rakshasa من المستوى 102.
+9448	Martyaxwar من المستوى 105.
+9449	Lemures Warrior من المستوى 98.
+9450	Lemures Soldier من المستوى 98.
+9451	Lemures Magician من المستوى 99.
+9452	Lemures Executioner من المستوى 101.
+9453	Lemures General من المستوى 102.
+9454	Lemures Prince من المستوى 103.
+9455	Lemures Bodyguard من المستوى 104.
+9456	Tritonic Moray من المستوى 96.
+9457	Shark Soldier من المستوى 98.
+9458	Tritonic Magician من المستوى 99.
+9459	Tritonic Hunter من المستوى 98.
+9460	Tritonic Slasher من المستوى 101.
+9461	General Kappa من المستوى 103.
+9462	Triton من المستوى 105.
+9463	Red Thief Amazon من المستوى 95.
+9464	Red Thief Assassin من المستوى 97.
+9465	Red Thief Magician من المستوى 97.
+9466	Red Thief Executioner من المستوى 98.
+9467	Black General من المستوى 98.
+9468	Bone Face من المستوى 102.
+9469	Red Chief من المستوى 104.
+9470	Crab Warrior من المستوى 96.
+9471	Scorpion Marksman من المستوى 97.
+9472	Shrimp Soldier من المستوى 99.
+9473	Diabolical Hermit من المستوى 98.
+9474	Armoured Crab من المستوى 102.
+9475	General Lobster من المستوى 103.
+9476	King Crab من المستوى 105.
+9477	Gigantic Biter من المستوى 100.
+9478	Gigantic Slaughterer من المستوى 102.
+9479	Gigantic Magus من المستوى 103.
+9480	Twiant من المستوى 104.
+9481	Captain Hooks من المستوى 105.
+9482	Gargoyle من المستوى 105.
+9483	King Wubba من المستوى 105.
+9484	Hangork من المستوى 98.
+9485	Archie Ogre من المستوى 100.
+9486	Brawl Ogre من المستوى 102.
+9487	Ogre Magus من المستوى 101.
+9488	General Ogg من المستوى 103.
+9489	Captain Shruk من المستوى 105.
+9490	The Great Ogre من المستوى 105.
+9491	Metin Of Sorrow من المستوى 10.
+9492	Metin Of Combat من المستوى 10.
+9493	Metin Of Battle من المستوى 15.
+9494	Metin Of Greed من المستوى 20.
+9495	Metin Of Black من المستوى 30.
+9496	Metin Of Darkness من المستوى 30.
+9497	Metin Of Jealousy من المستوى 40.
+9498	Metin Of Soul من المستوى 45.
+9499	Metin Of Shadow من المستوى 40.
+9500	Metin Of Toughness من المستوى 50.
+9501	Metin Of Devil من المستوى 60.
+9502	Metin Of Fall من المستوى 55.
+9503	Metin Of Death من المستوى 65.
+9504	Metin Of Murder من المستوى 70.
+9505	Metin of Wind Devil من المستوى 80.
+9506	Metin of Devil Eyes من المستوى 80.
+9507	Metin of Fighting Dragon من المستوى 85.
+9508	Metin of Lightning Cloud من المستوى 85.
+9509	Metin of Gloom من المستوى 100.
+9510	Metin of Ember من المستوى 95.
+9511	Metin of Vanity من المستوى 100.
+9512	Metin of Wrath من المستوى 105.
+9513	Metin of Calamity من المستوى 105.
+9514	Metin of Malice من المستوى 100.
+9515	Weak Ape Soldier من المستوى 22.
+9516	Weak Ape Thrower من المستوى 24.
+9517	Weak Ape Fighter من المستوى 27.
+9518	Weak Ape General من المستوى 29.
+9519	Ape Soldier من المستوى 36.
+9520	Ape Thrower من المستوى 37.
+9521	Ape Fighter من المستوى 40.
+9522	Ape General من المستوى 40.
+9523	Stone Ape من المستوى 41.
+9524	Ape Leader من المستوى 42.
+9525	Strong Ape Soldier من المستوى 46.
+9526	Strong Ape Thrower من المستوى 48.
+9527	Strong Ape Fighter من المستوى 48.
+9528	Strong Ape General من المستوى 52.
+9529	Strong Stone Ape من المستوى 53.
+9530	Rock Ape من المستوى 35.
+9531	Ape Lord من المستوى 55.
+9532	Devil من المستوى 80.
+9533	Devil's Wolf من المستوى 80.
+9534	Devil's Wraith من المستوى 81.
+9535	Devil's Skulker من المستوى 85.
+9536	Devil's Spearman من المستوى 84.
+9537	Devil's Cockatrice من المستوى 83.
+9538	Devil's Dominator من المستوى 85.
+9539	Spectral Crusher من المستوى 79.
+9540	Spectral Bower من المستوى 80.
+9541	Spectral Spikeman من المستوى 82.
+9542	Spectral Shaman من المستوى 10.
+9543	Spectral Axeman من المستوى 83.
+9544	Spectral Titan من المستوى 85.
+9545	Spectral Hunter من المستوى 86.
+9546	Hateful Crusher من المستوى 80.
+9547	Hateful Bower من المستوى 10.
+9548	Hateful Spikeman من المستوى 10.
+9549	Hateful Shaman من المستوى 82.
+9550	Hateful Axeman من المستوى 84.
+9551	Hateful Titan من المستوى 85.
+9552	Hateful Hunter من المستوى 86.
+9553	Tartaros من المستوى 89.
+9554	Erebus من المستوى 90.
+9555	Charon من المستوى 91.
+9556	Lord Gahnasel من المستوى 92.
+9557	Cung-Mok من المستوى 8.
+9558	Mu-Rang من المستوى 15.
+9559	Jug-Hyul من المستوى 10.
+9560	Young-Ji من المستوى 21.
+9561	Li-An من المستوى 24.
+9562	Lykos من المستوى 30.
+9563	Scrofa من المستوى 30.
+9564	Bera من المستوى 32.
+9565	Tigris من المستوى 35.
+9566	Se-Rang من المستوى 25.
+9567	Eun-Jung من المستوى 26.

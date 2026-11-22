@@ -8506,3 +8506,570 @@
 8506	Z bezpečnostních důvodů bys ho měl ale změnit.[ENTER][ENTER]Možná si myslíš, že 45 míst je málo. Ale kdo ví,[ENTER]možná ti přidělím víc místa, když si budeme dobře[ENTER]rozumět.
 8507	No, nikoho nenutím. Pokud to teď nechceš, tak[ENTER]přijď později.
 8508	Otevřít sklad
+9001	Aura of Sword je dovednost pro Sura.
+9002	White Liquid dává 10 STR na 1 hodinu.
+9003	DEX může prodloužit trvání Stealth.
+9004	Flame Strike získává sílu z INT a DEX.
+9005	Na G3 trvá Ritual of Doom 68 sekund.
+9006	Spirit Assault je dovednost Sura.
+9007	Pokud použiješ Eel, získáš 10 STR na 10 minut.
+9008	Taichi zvyšuje AC.
+9009	Dovednost Charge může otrávit cíl.
+9010	Grilled Loach tě může na krátkou dobu učinit neviditelným.
+9011	Když tě zabijí, vždy ztratíš zkušenosti.
+9012	Stone of Magic+3 dává +240 SP.
+9013	Stone of Magic+2 dává 150 SP.
+9014	Poison Cloud způsobuje magické poškození.
+9015	Fear omráčí nepřítele.
+9016	Dance with Wind je dovednost Lukostřelce.
+9017	Flame Arrow zapálí cíl.
+9018	Magic Seeds padají pouze z Dryad.
+9019	Dark-Ghost Leader je ďábel.
+9020	Papoušek u Teleportéru je červený a zelený.
+9021	Obchodník se smíšeným zbožím má culík.
+9022	Skladník má 3 nože.
+9023	Yonah je kuchařka.
+9024	Octavio je učenec.
+9025	Anh-Yu má miminko.
+9026	Ghost Plate Armour u Obchodníka se zbrojí stojí 10.000 zlata.
+9027	Iron Fan+0 u Obchodníka se zbraněmi stojí 400 zlata.
+9028	Dark Orb je nejsilnější kouzlo pro Sura černé magie.
+9029	Aura of Sword zvyšuje svou sílu pomocí DEX.
+9030	Stará paní má malou červenou tašku.
+9031	V Elgorii je ve stáji 5 koní.
+9032	Hůlka s drahokamem u Alchymisty je žlutá.
+9033	Mirine přišla o matku.
+9034	Na mapě 1 v Elgorii je přesně 259 stromů.
+9035	Pokud kůň umře 10krát, navždy uteče.
+9036	V obchodě u Rybáře stojí 50 červů 2000 zlata.
+9037	Fishing Marble je návnada.
+9038	Rýžové koule a červi jsou jediné návnady v Metin2.
+9039	V každém městě hry je 20 gildovních pozemků.
+9040	Death Reaper je poloidský tvor.
+9041	Heavens Golem je jediné monstrum, které dropuje vodní krystal.
+9042	Zen Bean dává 500 bodů karmy, ale jen pokud jsi v záporu.
+9043	Se-Rang je monstrum vlčího typu.
+9044	Starbuck je kovář, který navrhuje doplňky.
+9045	Cherogirayb je Biolog v Metin2.
+9046	Zin Heavens Commander dropuje blessing marble.
+9047	Stanh je jeden ze 3 gildovních kovářů.
+9048	Tigris má červený obojek.
+9049	K vylepšení Wood Bracelet na +6 potřebuješ 20k zlata.
+9050	K vylepšení Wood Bracelet na +7 potřebuješ Bear Feet a 25k zlata.
+9051	K vylepšení Wood Bracelet na +8 potřebuješ White Pigtail Ribbon a 45k zlata.
+9052	K vylepšení Wood Bracelet na +9 potřebuješ Facial Cream a 75k zlata.
+9053	K vylepšení Copper Bracelet na +5 potřebuješ 15k zlata.
+9054	K vylepšení Copper Bracelet na +7 potřebuješ Bear Feet a 30k zlata.
+9055	K vylepšení Copper Bracelet na +8 potřebuješ White Pigtail Ribbon+ a 40k zlata.
+9056	K vylepšení Copper Bracelet na +9 potřebuješ Facial Cream a 70k zlata.
+9057	K vylepšení Silver Bracelet na +8 potřebuješ White Pigtail Ribbon+ a 45k zlata.
+9058	K vylepšení Gold Bracelet na +6 potřebuješ 20k zlata.
+9059	K vylepšení Gold Bracelet na +8 potřebuješ White Pigtail Ribbon+ a 45k zlata.
+9060	K vylepšení Jade Bracelet na +3 potřebuješ 5k zlata.
+9061	K vylepšení Jade Bracelet na +6 potřebuješ Shiriken+ (x2) a 20k zlata.
+9062	K vylepšení Ebony Bracelet na +4 potřebuješ 8k zlata.
+9063	K vylepšení Ebony Bracelet na +7 potřebuješ Spider Web (x2), Fishbone a 50k zlata.
+9064	K vylepšení Pearl Bracelet na +5 potřebuješ Rusty Blade (x2) a 13k zlata.
+9065	K vylepšení Pearl Bracelet na +8 potřebuješ Spider's Poison Sack (x2), Clam a 70k zlata.
+9066	K vylepšení White Gold Bracelet na +2 potřebuješ 2k zlata.
+9067	K vylepšení White Gold Bracelet na +9 potřebuješ Snakeskin (x2), Clam a 100k zlata.
+9068	K vylepšení Crystal Bracelet na +6 potřebuješ Demon's Keepsake (x2) a 30k zlata.
+9069	K vylepšení Crystal Bracelet na +7 potřebuješ Demon's Gem+ (x2), White Pearl a 45k zlata.
+9070	K vylepšení Amethyst Bracelet na +5 potřebuješ Unknown medicine+ a 20k zlata.
+9071	K vylepšení Amethyst Bracelet na +9 potřebuješ Flaming Mane (x2), Red pearl a 120k zlata.
+9072	K vylepšení Heaven's Tear Bracelet na +4 potřebuješ 10k zlata.
+9073	K vylepšení Heaven's Tear Bracelet na +8 potřebuješ Yeti Fur+ (x2), Blue pearl a 90k zlata.
+9074	K vylepšení Wooden Necklace na +4 potřebuješ 2,5k zlata.
+9075	K vylepšení Wooden Necklace na +6 potřebuješ 20k zlata.
+9076	K vylepšení Copper Necklace na +5 potřebuješ 15k zlata.
+9077	K vylepšení Copper Necklace na +7 potřebuješ Wolf Fur+ (x2) a 25k zlata.
+9078	K vylepšení Silver Necklace na +8 potřebuješ Red Pigtail Ribbon a 50k zlata.
+9079	K vylepšení Silver Necklace na +1 potřebuješ 500 zlata.
+9080	K vylepšení Golden Necklace na +9 potřebuješ Ornamental Hairpin (x2) a 75k zlata.
+9081	K vylepšení Golden Necklace na +3 potřebuješ 2,5k zlata.
+9082	K vylepšení Jade Necklace na +8 potřebuješ Scorpion Tail+ (x2), Clam a 70k zlata.
+9083	K vylepšení Jade Necklace na +2 potřebuješ 2,5k zlata.
+9084	K vylepšení Ebony Necklace na +6 potřebuješ Orc Amulet+ a 20k zlata.
+9085	K vylepšení Ebony Necklace na +2 potřebuješ 2k zlata.
+9086	K vylepšení Pearl Necklace na +5 potřebuješ Shiriken (x2) a 13k zlata.
+9087	K vylepšení Pearl Necklace na +9 potřebuješ Orc Thoot+ (x2), Clam a 120k zlata.
+9088	K vylepšení White Gold Necklace na +4 potřebuješ 8k zlata.
+9089	K vylepšení White Gold Necklace na +7 potřebuješ Unknown talisman (x2), Fishbone a 40k zlata.
+9090	K vylepšení Crystal Necklace na +6 potřebuješ Piece of Fabric (x2) a 30k zlata.
+9091	K vylepšení Crystal Necklace na +9 potřebuješ Ice Marble (x2), Red Pearl a 150k zlata.
+9092	K vylepšení Amethyst Necklace na +5 potřebuješ Unknown Medicine (x2) a 20k zlata.
+9093	K vylepšení Amethyst Necklace na +7 potřebuješ Leaf (x2), White Pearl a 50k zlata.
+9094	K vylepšení Heaven's Tear Necklace na +8 potřebuješ Piece of Ice+(x2), Blue Pearl a 90k zlata.
+9095	K vylepšení Heaven's Tear Necklace na +1 potřebuješ 1,2k zlata.
+9096	K vylepšení Wooden Earrings na +2 potřebuješ 1,2k zlata.
+9097	K vylepšení Wooden Earrings na +5 potřebuješ 8k zlata.
+9098	K vylepšení Copper Earrings na +7 potřebuješ Bear Gail a 30k zlata.
+9099	K vylepšení Copper Earrings na +9 potřebuješ Worn Out Black Uniform a 70k zlata.
+9100	K vylepšení Silver Earrings na +8 potřebuješ Bear Feet+ a 45k zlata.
+9101	K vylepšení Silver Earrings na +6 potřebuješ 20k zlata.
+9102	K vylepšení Golden Earrings na +4 potřebuješ 7,5k zlata.
+9103	K vylepšení Golden Earrings na +3 potřebuješ 5k zlata.
+9104	K vylepšení Jade Earrings na +3 potřebuješ 5k zlata.
+9105	K vylepšení Jade Earrings na +7 potřebuješ Spider Eye, Fishbone a 40k zlata.
+9106	K vylepšení Ebony Earrings na +4 potřebuješ 10k zlata.
+9107	K vylepšení Ebony Earrings na +5 potřebuješ Piece of Gem a 13k zlata.
+9108	K vylepšení Pearl Earrings na +9 potřebuješ Orc Thoot+ (x2), Clam a 120k zlata.
+9109	K vylepšení Pearl Earrings na +6 potřebuješ Esoteric Primer (x2) a 20k zlata.
+9110	K vylepšení White Gold Earrings na +2 potřebuješ 2k zlata.
+9111	K vylepšení White Gold Earrings na +8 potřebuješ Orc Thoot, Clam a 70k zlata.
+9112	K vylepšení Crystal Earrings na +3 potřebuješ 5k zlata.
+9113	K vylepšení Crystal Earrings na +6 potřebuješ Piece of Fabric a 25k zlata.
+9114	K vylepšení Crystal Earrings na +9 potřebuješ Ice Marble (x2), Red Pearl a 150k zlata.
+9115	K vylepšení Amethyst Earrings na +2 potřebuješ 2,5k zlata.
+9116	K vylepšení Amethyst Earrings na +7 potřebuješ Demon's Gem (x2), White Pearl a 45k zlata.
+9117	K vylepšení Amethyst Earrings na +1 potřebuješ 1,5k zlata.
+9118	K vylepšení Heaven's Tear Earrings na +8 potřebuješ Demon's Keepsake+, Blue Pearl a 80k zlata.
+9119	K vylepšení Heaven's Tear Earrings na +5 potřebuješ Snake Tail+ (x2) a 20k zlata.
+9120	K vylepšení Battle Shield na +5 potřebuješ 20k zlata.
+9121	K vylepšení Battle Shield na +6 potřebuješ 20k zlata.
+9122	K vylepšení Battle Shield na +7 potřebuješ Bear Gail+ (x2) a 25k zlata.
+9123	K vylepšení Battle Shield na +8 potřebuješ White Tiger Hide a 45k zlata.
+9124	K vylepšení Battle Shield na +9 potřebuješ Worn Out Black Uniform (x2) a 75k zlata.
+9125	K vylepšení Battle Shield na +1 potřebuješ 1k zlata.
+9126	K vylepšení Pentagon Shield na +5 potřebuješ Piece of Broken Armour (x2) a 13k zlata.
+9127	K vylepšení Pentagon Shield na +6 potřebuješ Esoteric Primer+ a 20k zlata.
+9128	K vylepšení Pentagon Shield na +7 potřebuješ Unknown Talisman (x2), Fishbone a 40k zlata.
+9129	K vylepšení Pentagon Shield na +8 potřebuješ Scorpion Tail (x2), Clam a 70k zlata.
+9130	K vylepšení Pentagon Shield na +9 potřebuješ Curse Book (x2), Clam a 120k zlata.
+9131	K vylepšení Pentagon Shield na +2 potřebuješ 2k zlata.
+9132	K vylepšení Black Round Shield na +5 potřebuješ Spider Legs(x2) a 20k zlata.
+9133	K vylepšení Black Round Shield na +6 potřebuješ Curse Book+ (x2) a 30k zlata.
+9134	K vylepšení Black Round Shield na +7 potřebuješ Piece of Fabric+ (x2), White Pearl a 50k zlata.
+9135	K vylepšení Black Round Shield na +8 potřebuješ Ice Killer Whale Horn (x2), Blue Pearl a 75k zlata.
+9136	K vylepšení Black Round Shield na +9 potřebuješ Fighting Tiger Fang (x2), Red Pearl a 150k zlata.
+9137	K vylepšení Black Round Shield na +3 potřebuješ 5k zlata.
+9138	K vylepšení Falcon Shield na +4 potřebuješ 10k zlata.
+9139	K vylepšení Falcon Shield na +6 potřebuješ Esoteric Primer+ a 20k zlata.
+9140	K vylepšení Tiger Monk Shield na +3 potřebuješ 10k zlata.
+9141	K vylepšení Tiger Monk Shield na +9 potřebuješ Curse Book (x2), Clam a 120k zlata.
+9142	K vylepšení Lion Edge Shield na +7 potřebuješ Unknown Talisman, Fishbone a 50k zlata.
+9143	K vylepšení Lion Edge Shield na +1 potřebuješ 1,2k zlata.
+9144	K vylepšení Dragon Scale Shield na +2 potřebuješ 2,5k zlata.
+9145	K vylepšení Dragon Scale Shield na +5 potřebuješ Piece of Broken Armour a 13k zlata.
+9146	K vylepšení Bloody Helm na +6 potřebuješ 20k zlata.
+9147	K vylepšení Bloody Helm na +2 potřebuješ 1,5k zlata.
+9148	K vylepšení Leather Hood na +4 potřebuješ 4k zlata.
+9149	K vylepšení Leather Hood na +3 potřebuješ 2,5k zlata.
+9150	K vylepšení Traditional Helm na +8 potřebuješ White Pigtail Ribbon+ (x2) a 40k zlata.
+9151	K vylepšení Traditional Helm na +1 potřebuješ 600 zlata.
+9152	K vylepšení Monk Hat na +9 potřebuješ Facial Cream a 75k zlata.
+9153	K vylepšení Monk Hat na +7 potřebuješ White Pigtail Ribbon a 30k zlata.
+9154	K vylepšení Iron Helm na +2 potřebuješ 2k zlata.
+9155	K vylepšení Iron Helm na +4 potřebuješ 10k zlata.
+9156	K vylepšení Chain Hood na +5 potřebuješ Flag (x2) a 20k zlata.
+9157	K vylepšení Chain Hood na +9 potřebuješ Spider Egg Sack (x2), Clam a 120k zlata.
+9158	K vylepšení Mocking Helm na +8 potřebuješ Spider's Poison Sack (x2), Clam a 75k zlata.
+9159	K vylepšení Mocking Helm na +6 potřebuješ Scorpion Tail (x2) a 20k zlata.
+9160	K vylepšení Phoenix Hat na +7 potřebuješ Spider Web (x2), Fishbone a 30k zlata.
+9161	K vylepšení Phoenix Hat na +3 potřebuješ 4k zlata.
+9162	K vylepšení Castle Helm na +8 potřebuješ Piece of Ice+, Blue Pearl a 90k zlata.
+9163	K vylepšení Castle Helm na +7 potřebuješ Frog Legs (x2), Finger Bones (x3) a 45k zlata.
+9164	K vylepšení Sunlight Hat na +6 potřebuješ Frog Tongue (x2) a 30k zlata.
+9165	K vylepšení Sunlight Hat na +5 potřebuješ Unknown Medicine+ (x2) a 25k zlata.
+9166	K vylepšení Steel Hood na +9 potřebuješ Flaming Mane (x2), Finger Bones (x8) a 150k zlata.
+9167	K vylepšení Steel Hood na +1 potřebuješ 2k zlata.
+9168	K vylepšení Ghost Mask Sallet na +3 potřebuješ 5k zlata.
+9169	K vylepšení Ghost Mask Sallet na +4 potřebuješ 8k zlata.
+9170	K vylepšení Bamboo Skin Shoes na +8 potřebuješ Skein (x2) a 45k zlata.
+9171	K vylepšení Bamboo Skin Shoes na +5 potřebuješ 12k zlata.
+9172	K vylepšení Wooden Shoes na +7 potřebuješ Tiger Hide (x2) a 30k zlata.
+9173	K vylepšení Gold Threaded Shoes na +9 potřebuješ Worn Out Black Uniform+ a 75k zlata.
+9174	K vylepšení Leather Boots na +8 potřebuješ Scorpion Claw (x2), Clam a 70k zlata.
+9175	K vylepšení Leather Boots na +6 potřebuješ Scorpion Tail+ (x2) a 20k zlata.
+9176	K vylepšení Golden Shoes na +4 potřebuješ 10k zlata.
+9177	K vylepšení Golden Shoes na +7 potřebuješ Scorpion Needle (x2), Fishbone a 40k zlata.
+9178	K vylepšení Bronze Boots na +5 potřebuješ Orc Amulet(x2) a 13k zlata.
+9179	K vylepšení Jade Shoes na +9 potřebuješ Spider Egg Sack (x2), Clam a 120k zlata.
+9180	K vylepšení Ecstatic Shoes na +2 potřebuješ 2,5k zlata.
+9181	K vylepšení Ecstatic Shoes na +9 potřebuješ Fighting Tiger Fang (x2), Red Pearl a 150k zlata.
+9182	K vylepšení Nimbus Boots na +7 potřebuješ Frog Legs (x2), White Pearl a 50k zlata.
+9183	K vylepšení Nimbus Boots na +5 potřebuješ Spider Legs (x2) a 20k zlata.
+9184	K vylepšení Phoenix Shoes na +6 potřebuješ Frog Legs (x2) a 30k zlata.
+9185	K vylepšení Fire Bird Shoes na +8 potřebuješ Yeti Fur (x2), Blue Pearl a 90k zlata.
+9186	K vylepšení Copper Bell na +8 potřebuješ White Pigtail Ribbon (x2) a 45k zlata.
+9187	K vylepšení Silver Bell na +7 potřebuješ Bear Gail+ (x2) a 30k zlata.
+9188	K vylepšení Golden Bell na +9 potřebuješ Ornamental Hairpin (x2) a 75k zlata.
+9189	K vylepšení Jade Bell na +7 potřebuješ Unknown Tailsman (x2), Fishbone a 40k zlata.
+9190	K vylepšení Fountain Bell na +6 potřebuješ Orc Amulet+ (x2) a 20k zlata.
+9191	K vylepšení Apricot Bell na +8 potřebuješ Scorpion Tail+ (x2), Clam a 70k zlata.
+9192	K vylepšení Apricot Bell na +9 potřebuješ Curse Book (x2), Clam a 120k zlata.
+9193	K vylepšení Golden Bug Bell na +8 potřebuješ Leaf (x2), Blue Pearl a 90k zlata.
+9194	K vylepšení Steel Bug Bell na +9 potřebuješ Ice Killer Whale Horn(x2), Red Pearl a 150k zlata.
+9195	K vylepšení Thunder Bird Bell na +7 potřebuješ Leaf (x2), White Pearl a 45k zlata.
+9196	K vylepšení Bamboo Bell na +5 potřebuješ Unknown Medicine a 20k zlata.
+9197	K vylepšení Antique Bell na +8 potřebuješ 90k zlata.
+9198	K vylepšení Antique Bell na +3 potřebuješ 12k zlata.
+9199	Bear Feet se používá k vylepšení Wooden Bracelet na +8.
+9200	Bear Feet se používá k vylepšení Silver Bracelet Bracelet na +7.
+9201	Bear Feet+ se používá k vylepšení Golden Bracelet Bracelet na +7.
+9202	White Pigtail Ribbon+ se používá k vylepšení Silver Bracelet na +7.
+9203	White Pigtail Ribbon+ se používá k vylepšení Wooden Bracelet na +8.
+9204	White Pigtail Ribbon se používá k vylepšení Wooden Bracelet na +8.
+9205	Facial Cream se používá k vylepšení Golden Bracelet na +9.
+9206	Facial Cream se používá k vylepšení Silver Bracelet na +8.
+9207	Rusty Blade se používá k vylepšení Jade Bracelet na +5.
+9208	Rusty Blade se používá k vylepšení Ebony Bracelet na +6.
+9209	Shiriken+ se používá k vylepšení Ebony Bracelet na +6.
+9210	Shiriken+ se používá k vylepšení White Gold Bracelet na +7.
+9211	Shiriken se používá k vylepšení White Gold Bracelet na +6.
+9212	Spider Web se používá k vylepšení Pearl Bracelet na +6.
+9213	Spider Web se používá k vylepšení Jade Bracelet na +7.
+9214	Spider's Poison Sack se používá k vylepšení Ebony Bracelet na +8.
+9215	Spider's Poison Sack se používá k vylepšení Pearl Bracelet na +9.
+9216	Snakeskin se používá k vylepšení White Gold Bracelet na +9.
+9217	Snakeskin se používá k vylepšení Pearl Bracelet na +8.
+9218	Unknown medicine+ se používá k vylepšení Heaven's Tear Bracelet na +5.
+9219	Unknown medicine+ se používá k vylepšení Crystal Bracelet na +6.
+9220	Unknown medicine k vylepšení Amethyst Bracelet na +5.
+9221	Demon's Keepsake se používá k vylepšení Heaven's Tear Bracelet na +6.
+9222	Demon's Keepsake se používá k vylepšení Amethyst Bracelet na +7.
+9223	Demon's Keepsake+ se používá k vylepšení Crystal Bracelet na +6.
+9224	Demon's Gem se používá k vylepšení Heaven's Tear Bracelet na +7.
+9225	Demon's Gem se používá k vylepšení Crystal Bracelet na +8.
+9226	Demon's Gem+ se používá k vylepšení Amethyst Bracelet na +7.
+9227	Yeti Fur+ se používá k vylepšení Crystal Bracelet na +8.
+9228	Yeti Fur+ se používá k vylepšení Heaven's Tear Bracelet na +7.
+9229	Yeti Fur se používá k vylepšení Amethyst Bracelet na +8.
+9230	Flaming Mane se používá k vylepšení Amethyst Bracelet na +9.
+9231	Flaming Mane se používá k vylepšení Heaven's Tear Bracelet na +8.
+9232	Wolf Fur+ se používá k vylepšení Wooden Necklace na +7.
+9233	Wolf Fur+ se používá k vylepšení Copper Necklace na +6.
+9234	Wolf Fur se používá k vylepšení Wooden Necklace na +7.
+9235	Red Pigtail Ribbon se používá k vylepšení Copper Necklace na +7.
+9236	Red Pigtail Ribbon se používá k vylepšení Wooden Necklace na +8.
+9237	Ornamental Hairpin se používá k vylepšení Silver Necklace na +9.
+9238	Ornamental Hairpin se používá k vylepšení Golden Necklace na +8.
+9239	Shiriken se používá k vylepšení Jade Necklace na +5.
+9240	Shiriken se používá k vylepšení Ebony Necklace na +6.
+9241	Shiriken+ se používá k vylepšení Pearl Necklace na +5.
+9242	Orc Amulet+ se používá k vylepšení White Gold Necklace na +6.
+9243	Orc Amulet+ se používá k vylepšení Jade Necklace na +7.
+9244	Orc Amulet se používá k vylepšení Pearl Necklace na +6.
+9245	Unknown Talisman se používá k vylepšení Jade Necklace na +7.
+9246	Unknown Talisman se používá k vylepšení White Gold Necklace na +8.
+9247	Unknown Talisman+ se používá k vylepšení Pearl Necklace na +7.
+9248	Scorpion Tail+ se používá k vylepšení Jade Necklace na +8.
+9249	Scorpion Tail+ se používá k vylepšení Ebony Necklace na +9.
+9250	Scorpion Tail se používá k vylepšení Wooden Bracelet na +8.
+9251	Orc Thoot+ se používá k vylepšení Ebony Necklace na +9.
+9252	Orc Thoot+ se používá k vylepšení Wooden Bracelet na +8.
+9253	Orc Thoot se používá k vylepšení Jade Necklace na +9.
+9254	Unknown Medicine se používá k vylepšení Crystal Necklace na +5.
+9255	Unknown Medicine se používá k vylepšení Heaven's Tear Necklace na +6.
+9256	Unknown Medicine+ se používá k vylepšení Amethyst Necklace na +5.
+9257	Piece of Fabric se používá k vylepšení Crystal Necklace na +6.
+9258	Piece of Fabric se používá k vylepšení Heaven's Tear Necklace na +5.
+9259	Piece of Fabric+ se používá k vylepšení Amethyst Necklace na +6.
+9260	Leaf se používá k vylepšení Crystal Necklace na +7.
+9261	Leaf se používá k vylepšení Amethyst Necklace na +8.
+9262	Piece of Ice se používá k vylepšení Heaven's Tear Necklace na +8.
+9263	Piece of Ice se používá k vylepšení Crystal Necklace na +9.
+9264	Piece of Ice+ se používá k vylepšení Amethyst Necklace na +8.
+9265	Ice Marble+ se používá k vylepšení Crystal Necklace na +9.
+9266	Ice Marble+ se používá k vylepšení Heaven's Tear Necklace na +8.
+9267	Ice Marble se používá k vylepšení Amethyst Necklace na +9.
+9268	Blue wolf je level 7.
+9269	Tiger je level 17.
+9270	Alpha Grey Wolf je level 16.
+9271	Hungry Black Bear je level 19.
+9272	White Tiger je level 26.
+9273	Hungry Wild Boar je level 10.
+9274	Grizzly Bear je level 13.
+9275	White Oath Soldier je level 18.
+9276	Dispirited Mi-jung je level 23.
+9277	Dispirited Eun-jung je level 28.
+9278	Dispirited Jin-Hee je level 29.
+9279	White Oath General je level 25.
+9280	Bear je level 12.
+9281	White 0ath Archer je level 20.
+9282	Black Wind Gu-Ryung je level 32.
+9283	Bo je level 36.
+9284	Black Wind Archer je level 29.
+9285	Black Wind Maniac je level 28.
+9286	Black Wind Soldier je level 26.
+9287	Black Wind Jak-To je level 30.
+9288	Savage Infantryman je level 29.
+9289	Evil Black Storm Joh-Hwa je level 29.
+9290	Evil Black Storm Archer je level 30.
+9291	Savage Minion je level 31.
+9292	Cursed Wolf je level 9.
+9293	Cursed Alpha Blue Wolf je level 14.
+9294	Cursed Bear je level 18.
+9295	Cursed Black Bear je level 24.
+9296	Cursed Brown Bear je level 26.
+9297	Cursed Wild Boar je level 12.
+9298	Cursed Tiger je level 23.
+9299	Cursed White Tiger je level 29.
+9300	Bestial Soldier je level 35.
+9301	Bestial Specialist je level 42.
+9302	Bestial Maniac je level 38.
+9303	Bestial Archer je level 41.
+9304	Strong Savage Archer je level 35.
+9305	Strong Savage Infantry je level 29.
+9306	Strong Savage General je level 35.
+9307	Strong Savage Minion je level 31.
+9308	Orc je level 26.
+9309	Orc Scout je level 30.
+9310	Orc Fighter je level 32.
+9311	Orc Sorcerer je level 33.
+9312	Elite Orc je level 34.
+9313	Elite Orc Scout je level 36.
+9314	Elite Orc Fighter je level 39.
+9315	Elite Orc Sorcerer je level 40.
+9316	Elite Orc General je level 45.
+9317	Black Orc je level 47.
+9318	Black Orc Giant je level 49.
+9319	Esoteric Fanatic je level 35.
+9320	Esoteric Arahan je level 39.
+9321	Esoteric Arahan Fighter je level 41.
+9322	Chief Esoteric Arahan je level 43.
+9323	Esoteric Executioner je level 46.
+9324	Esoteric Tormentor je level 47.
+9325	Esoteric Summoner je level 51.
+9326	Proud Dark Fanatic je level 50.
+9327	Proud Dark Arahan je level 52.
+9328	Proud Dark Fighter je level 54.
+9329	Proud Dark Colonel je level 54.
+9330	Proud Dark Rifleman je level 57.
+9331	Plagued Dog je level 51.
+9332	Plagued Man je level 54.
+9333	Plagued Swordman je level 56.
+9334	Plagued Spearman je level 58.
+9335	Plagued Archer je level 57.
+9336	Plagued Leader je level 59.
+9337	Demon Soldier je level 57.
+9338	Demon Archer je level 59.
+9339	Demon Spearman je level 58.
+9340	Demon Shaman je level 60.
+9341	Vile Demon Soldier je level 65.
+9342	Vile Demon Archer je level 69.
+9343	Vile Demon Spearman je level 70.
+9344	Vile Demon Shaman je level 69.
+9345	Ghost Of Grudge je level 72.
+9346	Ghost Of Chaos je level 72.
+9347	Vile Demon Leader je level 73.
+9348	Skull Sword Master je level 72.
+9349	Flying Skull je level 69.
+9350	Immortal Ghost je level 73.
+9351	Demonic Beast je level 75.
+9352	Demon King je level 74.
+9353	Death Reaper je level 78.
+9354	Enchanted Ice je level 62.
+9355	Ice Killer Whale je level 63.
+9356	Ice Bug je level 65.
+9357	Ice Lion je level 64.
+9358	Ice Man je level 63.
+9359	Yeti je level 65.
+9360	Ice Golem je level 66.
+9361	Heavenly Enchanted Ice je level 82.
+9362	Heavenly Ice Killer Whale je level 82.
+9363	Heavenly Ice Bug je level 82.
+9364	Heavenly Ice Lion je level 83.
+9365	Heavenly Ice Man je level 83.
+9366	Heavenly Yeti je level 83.
+9367	Heavenly Ice Golem je level 86.
+9368	Tree Frog Soldier je level 57.
+9369	Tree Frog Leader je level 60.
+9370	Leflet Bogeyman je level 59.
+9371	Yellow Tiger Ghost je level 75.
+9372	Bullfrog General je level 60.
+9373	Giant Soldier je level 66.
+9374	Giant Scout je level 73.
+9375	Giant Thousand Fighter je level 76.
+9376	Stone Thrower je level 68.
+9377	Stone Shooter je level 72.
+9378	Giant Stone Shooter je level 72.
+9379	Giant Worker je level 68.
+9380	Giant Inspector je level 72.
+9381	Giant Hundred Combatant je level 75.
+9382	Nine Tails je level 74.
+9383	Baby Spider je level 43.
+9384	Deadly Spider je level 45.
+9385	Crimson Spider je level 47.
+9386	Claw Spider je level 49.
+9387	Soldier Spider je level 51.
+9388	Baby Poison Spider je level 50.
+9389	Deadly Poison Spider je level 52.
+9390	Red Poison Spider je level 53.
+9391	Claw Poison Spider je level 5.
+9392	Soldier Poison Spider je level 58.
+9393	Queen Spider je level 60.
+9394	Desert Fox je level 22.
+9395	Deserts Flying Eye je level 35.
+9396	King Scorpion je level 39.
+9397	Scorpion Man je level 45.
+9398	Scorpion Archer je level 47.
+9399	Snake Swordman je level 48.
+9400	Snake Archer je level 52.
+9401	Desert Outlaw je level 54.
+9402	Giant Turtle je level 66.
+9403	Fighting Tiger Minion je level 69.
+9404	Flame Ghost je level 70.
+9405	Fighting Tiger je level 70.
+9406	Flame Soldier je level 72.
+9407	Flame Warrior je level 73.
+9408	Flame King je level 73.
+9409	Haunted Tree je level 65.
+9410	Haunted Stump je level 67.
+9411	Dryad je level 68.
+9412	Haunted Willow je level 69.
+9413	Evil Haunted Tree je level 72.
+9414	Red Brutal Tree je level 73.
+9415	Red Haunted Stump je level 76.
+9416	Red Dryad je level 77.
+9417	Red Haunted Willow je level 79.
+9418	Red Haunted Tree je level 82.
+9419	Heaven Soldier je level 85.
+9420	Heaven Archer je level 88.
+9421	Heaven Cleric je level 87.
+9422	Heaven Commander je level 88.
+9423	Zin Heaven Soldier je level 90.
+9424	Zin Heaven Archer je level 92.
+9425	Zin Heaven Cleric je level 93.
+9426	Zin Heaven Commander je level 95.
+9427	Aqua Dragon je level 97.
+9428	Gnoll Warrior je level 96.
+9429	Gnoll Archer je level 96.
+9430	Gnoll Defender je level 98.
+9431	Gnoll Magician je level 98.
+9432	Gnoll General je level 99.
+9433	Gnoll Lord je level 102.
+9434	Supreme Gnoll Guard je level 104.
+9435	One-eyed Slugger je level 97.
+9436	Cyclops Soldier je level 99.
+9437	Cyclops Magician je level 100.
+9438	Cyclops Executioner je level 99.
+9439	General Outis je level 102.
+9440	Arges je level 104.
+9441	Polyphemos je level 105.
+9442	Manticore Warrior je level 96.
+9443	Manticore Soldier je level 98.
+9444	Manticore Magus je level 99.
+9445	Manticore Executioner je level 99.
+9446	General Cor je level 101.
+9447	Rakshasa je level 102.
+9448	Martyaxwar je level 105.
+9449	Lemures Warrior je level 98.
+9450	Lemures Soldier je level 98.
+9451	Lemures Magician je level 99.
+9452	Lemures Executioner je level 101.
+9453	Lemures General je level 102.
+9454	Lemures Prince je level 103.
+9455	Lemures Bodyguard je level 104.
+9456	Tritonic Moray je level 96.
+9457	Shark Soldier je level 98.
+9458	Tritonic Magician je level 99.
+9459	Tritonic Hunter je level 98.
+9460	Tritonic Slasher je level 101.
+9461	General Kappa je level 103.
+9462	Triton je level 105.
+9463	Red Thief Amazon je level 95.
+9464	Red Thief Assassin je level 97.
+9465	Red Thief Magician je level 97.
+9466	Red Thief Executioner je level 98.
+9467	Black General je level 98.
+9468	Bone Face je level 102.
+9469	Red Chief je level 104.
+9470	Crab Warrior je level 96.
+9471	Scorpion Marksman je level 97.
+9472	Shrimp Soldier je level 99.
+9473	Diabolical Hermit je level 98.
+9474	Armoured Crab je level 102.
+9475	General Lobster je level 103.
+9476	King Crab je level 105.
+9477	Gigantic Biter je level 100.
+9478	Gigantic Slaughterer je level 102.
+9479	Gigantic Magus je level 103.
+9480	Twiant je level 104.
+9481	Captain Hooks je level 105.
+9482	Gargoyle je level 105.
+9483	King Wubba je level 105.
+9484	Hangork je level 98.
+9485	Archie Ogre je level 100.
+9486	Brawl Ogre je level 102.
+9487	Ogre Magus je level 101.
+9488	General Ogg je level 103.
+9489	Captain Shruk je level 105.
+9490	The Great Ogre je level 105.
+9491	Metin Of Sorrow je level 10.
+9492	Metin Of Combat je level 10.
+9493	Metin Of Battle je level 15.
+9494	Metin Of Greed je level 20.
+9495	Metin Of Black je level 30.
+9496	Metin Of Darkness je level 30.
+9497	Metin Of Jealousy je level 40.
+9498	Metin Of Soul je level 45.
+9499	Metin Of Shadow je level 40.
+9500	Metin Of Toughness je level 50.
+9501	Metin Of Devil je level 60.
+9502	Metin Of Fall je level 55.
+9503	Metin Of Death je level 65.
+9504	Metin Of Murder je level 70.
+9505	Metin of Wind Devil je level 80.
+9506	Metin of Devil Eyes je level 80.
+9507	Metin of Fighting Dragon je level 85.
+9508	Metin of Lightning Cloud je level 85.
+9509	Metin of Gloom je level 100.
+9510	Metin of Ember je level 95.
+9511	Metin of Vanity je level 100.
+9512	Metin of Wrath je level 105.
+9513	Metin of Calamity je level 105.
+9514	Metin of Malice je level 100.
+9515	Weak Ape Soldier je level 22.
+9516	Weak Ape Thrower je level 24.
+9517	Weak Ape Fighter je level 27.
+9518	Weak Ape General je level 29.
+9519	Ape Soldier je level 36.
+9520	Ape Thrower je level 37.
+9521	Ape Fighter je level 40.
+9522	Ape General je level 40.
+9523	Stone Ape je level 41.
+9524	Ape Leader je level 42.
+9525	Strong Ape Soldier je level 46.
+9526	Strong Ape Thrower je level 48.
+9527	Strong Ape Fighter je level 48.
+9528	Strong Ape General je level 52.
+9529	Strong Stone Ape je level 53.
+9530	Rock Ape je level 35.
+9531	Ape Lord je level 55.
+9532	Devil je level 80.
+9533	Devil's Wolf je level 80.
+9534	Devil's Wraith je level 81.
+9535	Devil's Skulker je level 85.
+9536	Devil's Spearman je level 84.
+9537	Devil's Cockatrice je level 83.
+9538	Devil's Dominator je level 85.
+9539	Spectral Crusher je level 79.
+9540	Spectral Bower je level 80.
+9541	Spectral Spikeman je level 82.
+9542	Spectral Shaman je level 10.
+9543	Spectral Axeman je level 83.
+9544	Spectral Titan je level 85.
+9545	Spectral Hunter je level 86.
+9546	Hateful Crusher je level 80.
+9547	Hateful Bower je level 10.
+9548	Hateful Spikeman je level 10.
+9549	Hateful Shaman je level 82.
+9550	Hateful Axeman je level 84.
+9551	Hateful Titan je level 85.
+9552	Hateful Hunter je level 86.
+9553	Tartaros je level 89.
+9554	Erebus je level 90.
+9555	Charon je level 91.
+9556	Lord Gahnasel je level 92.
+9557	Cung-Mok je level 8.
+9558	Mu-Rang je level 15.
+9559	Jug-Hyul je level 10.
+9560	Young-Ji je level 21.
+9561	Li-An je level 24.
+9562	Lykos je level 30.
+9563	Scrofa je level 30.
+9564	Bera je level 32.
+9565	Tigris je level 35.
+9566	Se-Rang je level 25.
+9567	Eun-Jung je level 26.

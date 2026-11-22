@@ -8506,3 +8506,570 @@
 8506	Güvenlik sebebiyle bunu değiştirmelisin.[ENTER][ENTER]Belki 45 kutunun yetmeyeceğini düşünebilirsin.[ENTER]Ama kimbilir, eğer benimle uzun süre çalışırsan[ENTER]sana daha çok kutu ayırabilirim.[ENTER]Hehe!
 8507	Pekala, kimseyi zorlamıyorum. Fikrini[ENTER]değiştirirsen sonra tekrar uğra.
 8508	Depoyu aç
+9001	Kılıç Aurası Sura için bir beceridir.
+9002	Beyaz Sıvı 1 saat boyunca 10 STR verir.
+9003	DEX Gizlilik süresini artırabilir.
+9004	Alev Darbesi gücünü INT ve DEX ile kazanır.
+9005	G3 seviyesinde Ritual of Doom 68 saniye sürer.
+9006	Spirit Assault bir Sura becerisidir.
+9007	Eel kullanırsan 10 dakika boyunca 10 STR kazanırsın.
+9008	Taichi AC değerini artırır.
+9009	Charge becerisi hedefi zehirleyebilir.
+9010	Grilled Loach seni kısa bir süre görünmez yapabilir.
+9011	Öldürüldüğünde her zaman tecrübe kaybedersin.
+9012	Stone of Magic+3 +240 SP verir.
+9013	Stone of Magic+2 150 SP verir.
+9014	Zehir Bulutu büyülü hasar verir.
+9015	Korku düşmanı sersemletir.
+9016	Rüzgar Dansı Okçunun bir becerisidir.
+9017	Alev Oku hedefi yakar.
+9018	Magic Seeds sadece Dryad canavarlarından düşer.
+9019	Dark-Ghost Leader bir şeytandır.
+9020	Işınlayıcıdaki Papağan kırmızı ve yeşildir.
+9021	Genel Mağaza at kuyruğuna sahiptir.
+9022	Mağaza Sahibinin 3 bıçağı var.
+9023	Yonah bir aşçıdır.
+9024	Octavio bir bilgindir.
+9025	Anh-Yu'nun bir bebeği var.
+9026	Zırh Dükkanı Satıcısındaki Ghost Plate Armour 10.000 altındır.
+9027	Silah Dükkanı Satıcısındaki Iron Fan+0 400 altındır.
+9028	Dark Orb kara büyücü Sura için en güçlü büyüdür.
+9029	Kılıç Aurası gücünü DEX ile artırır.
+9030	Yaşlı Kadının küçük kırmızı bir çantası var.
+9031	Elgoria'da ahırın içinde 5 at vardır.
+9032	Simyacının mücevher çubuğu sarıdır.
+9033	Mirine annesini kaybetti.
+9034	Elgoria harita 1'de tam olarak 259 ağaç vardır.
+9035	Bir at 10 kez ölürse sonsuza kadar kaçar.
+9036	Balıkçı Dükkanında 50 solucan 2000 altındır.
+9037	Fishing Marble bir yemdir.
+9038	Pirinç topları ve solucanlar Metin2'deki tek yemlerdir.
+9039	Oyunun her kasabasında 20 lonca arazisi vardır.
+9040	Death Reaper bir Yarı-İnsandır.
+9041	Heavens Golem su kristali düşüren tek canavardır.
+9042	Zen Bean 500 Karma Puanı verir ama sadece negatifsen.
+9043	Se-Rang kurt türü bir canavardır.
+9044	Starbuck Aksesuar Tasarımcısı Demircidir.
+9045	Cherogirayb Metin2'nin Biyologudur.
+9046	Zin Heavens Commander blessing marble düşürür.
+9047	Stanh 3 Lonca Demircisinden biridir.
+9048	Tigris'in kırmızı bir tasması var.
+9049	Ahşap Bileklik +6 yükseltmesi için 20k altın gerekir.
+9050	Ahşap Bileklik +7 yükseltmesi için Bear Feet ve 25k altın gerekir.
+9051	Ahşap Bileklik +8 yükseltmesi için White Pigtail Ribbon ve 45k altın gerekir.
+9052	Ahşap Bileklik +9 yükseltmesi için Facial Cream ve 75k altın gerekir.
+9053	Bakır Bileklik +5 yükseltmesi için 15k altın gerekir.
+9054	Bakır Bileklik +7 yükseltmesi için Bear Feet ve 30k altın gerekir.
+9055	Bakır Bileklik +8 yükseltmesi için White Pigtail Ribbon+ ve 40k altın gerekir.
+9056	Bakır Bileklik +9 yükseltmesi için Facial Cream ve 70k altın gerekir.
+9057	Gümüş Bileklik +8 yükseltmesi için White Pigtail Ribbon+ ve 45k altın gerekir.
+9058	Altın Bileklik +6 yükseltmesi için 20k altın gerekir.
+9059	Altın Bileklik +8 yükseltmesi için White Pigtail Ribbon+ ve 45k altın gerekir.
+9060	Yeşim Bileklik +3 yükseltmesi için 5k altın gerekir.
+9061	Yeşim Bileklik +6 yükseltmesi için Shiriken+ (x2) ve 20k altın gerekir.
+9062	Abanoz Bileklik +4 yükseltmesi için 8k altın gerekir.
+9063	Abanoz Bileklik +7 yükseltmesi için Spider Web (x2), Fishbone ve 50k altın gerekir.
+9064	İnci Bileklik +5 yükseltmesi için Rusty Blade (x2) ve 13k altın gerekir.
+9065	İnci Bileklik +8 yükseltmesi için Spider's Poison Sack (x2) Clam ve 70k altın gerekir.
+9066	Beyaz Altın Bileklik +2 yükseltmesi için 2k altın gerekir.
+9067	Beyaz Altın Bileklik +9 yükseltmesi için Snakeskin (x2), Clam ve 100k altın gerekir.
+9068	Kristal Bileklik +6 yükseltmesi için Demon's Keepsake (x2) ve 30k altın gerekir.
+9069	Kristal Bileklik +7 yükseltmesi için Demon's Gem+ (x2), White Pearl ve 45k altın gerekir.
+9070	Ametist Bileklik +5 yükseltmesi için Unknown medicine+ ve 20k altın gerekir.
+9071	Ametist Bileklik +9 yükseltmesi için Flaming Mane (x2), Red pearl ve 120k altın gerekir.
+9072	Heaven's Tear Bileklik +4 yükseltmesi için 10k altın gerekir.
+9073	Heaven's Tear Bileklik +8 yükseltmesi için Yeti Fur+ (x2), Blue pearl ve 90k altın gerekir.
+9074	Ahşap Kolye +4 yükseltmesi için 2,5k altın gerekir.
+9075	Ahşap Kolye +6 yükseltmesi için 20k altın gerekir.
+9076	Bakır Kolye +5 yükseltmesi için 15k altın gerekir.
+9077	Bakır Kolye +7 yükseltmesi için Wolf Fur+ (x2) ve 25k altın gerekir.
+9078	Gümüş Kolye +8 yükseltmesi için Red Pigtail Ribbon ve 50k altın gerekir.
+9079	Gümüş Kolye +1 yükseltmesi için 500 altın gerekir.
+9080	Altın Kolye +9 yükseltmesi için Ornamental Hairpin (x2) ve 75k altın gerekir.
+9081	Altın Kolye +3 yükseltmesi için 2,5k altın gerekir.
+9082	Yeşim Kolye +8 yükseltmesi için Scorpion Tail+ (x2), Clam ve 70k altın gerekir.
+9083	Yeşim Kolye +2 yükseltmesi için 2,5k altın gerekir.
+9084	Abanoz Kolye +6 yükseltmesi için Orc Amulet+ ve 20k altın gerekir.
+9085	Abanoz Kolye +2 yükseltmesi için 2k altın gerekir.
+9086	İnci Kolye +5 yükseltmesi için Shiriken (x2) ve 13k altın gerekir.
+9087	İnci Kolye +9 yükseltmesi için Orc Thoot+ (x2), Clam ve 120k altın gerekir.
+9088	Beyaz Altın Kolye +4 yükseltmesi için 8k altın gerekir.
+9089	Beyaz Altın Kolye +7 yükseltmesi için Unknown talisman (x2), Fishbone ve 40k altın gerekir.
+9090	Kristal Kolye +6 yükseltmesi için Piece of Fabric (x2) ve 30k altın gerekir.
+9091	Kristal Kolye +9 yükseltmesi için Ice Marble (x2), Red Pearl ve 150k altın gerekir.
+9092	Ametist Kolye +5 yükseltmesi için Unknown Medicine (x2) ve 20k altın gerekir.
+9093	Ametist Kolye +7 yükseltmesi için Leaf (x2), White Pearl ve 50k altın gerekir.
+9094	Heaven's Tear Kolye +8 yükseltmesi için Piece of Ice+(x2), Blue Pearl ve 90k altın gerekir.
+9095	Heaven's Tear Kolye +1 yükseltmesi için 1,2k altın gerekir.
+9096	Ahşap Küpe +2 yükseltmesi için 1,2k altın gerekir.
+9097	Ahşap Küpe +5 yükseltmesi için 8k altın gerekir.
+9098	Bakır Küpe +7 yükseltmesi için Bear Gail ve 30k altın gerekir.
+9099	Bakır Küpe +9 yükseltmesi için Worn Out Black Uniform ve 70k altın gerekir.
+9100	Gümüş Küpe +8 yükseltmesi için Bear Feet+ ve 45k altın gerekir.
+9101	Gümüş Küpe +6 yükseltmesi için 20k altın gerekir.
+9102	Altın Küpe +4 yükseltmesi için 7,5k altın gerekir.
+9103	Altın Küpe +3 yükseltmesi için 5k altın gerekir.
+9104	Yeşim Küpe +3 yükseltmesi için 5k altın gerekir.
+9105	Yeşim Küpe +7 yükseltmesi için Spider Eye, Fishbone ve 40k altın gerekir.
+9106	Abanoz Küpe +4 yükseltmesi için 10k altın gerekir.
+9107	Abanoz Küpe +5 yükseltmesi için Piece of Gem ve 13k altın gerekir.
+9108	İnci Küpe +9 yükseltmesi için Orc Thoot+ (x2), Clam ve 120k altın gerekir.
+9109	İnci Küpe +6 yükseltmesi için Esoteric Primer (x2) ve 20k altın gerekir.
+9110	Beyaz Altın Küpe +2 yükseltmesi için 2k altın gerekir.
+9111	Beyaz Altın Küpe +8 yükseltmesi için Orc Thoot, Clam, ve 70k altın gerekir.
+9112	Kristal Küpe +3 yükseltmesi için 5k altın gerekir.
+9113	Kristal Küpe +6 yükseltmesi için Piece of Fabric ve 25k altın gerekir.
+9114	Kristal Küpe +9 yükseltmesi için Ice Marble (x2), Red Pearl ve 150k altın gerekir.
+9115	Ametist Küpe +2 yükseltmesi için 2,5k altın gerekir.
+9116	Ametist Küpe +7 yükseltmesi için Demon's Gem (x2), White Pearl ve 45k altın gerekir.
+9117	Ametist Küpe +1 yükseltmesi için 1,5k altın gerekir.
+9118	Heaven's Tear Küpe +8 yükseltmesi için Demon's Keepsake+, Blue Pearl 80k altın gerekir.
+9119	Heaven's Tear Küpe +5 yükseltmesi için Snake Tail+ (x2) ve 20k altın gerekir.
+9120	Battle Shield +5 yükseltmesi için 20k altın gerekir.
+9121	Battle Shield +6 yükseltmesi için 20k altın gerekir.
+9122	Battle Shield +7 yükseltmesi için Bear Gail+ (x2) ve 25k altın gerekir.
+9123	Battle Shield +8 yükseltmesi için White Tiger Hide ve 45k altın gerekir.
+9124	Battle Shield +9 yükseltmesi için Worn Out Black Uniform (x2) ve 75k altın gerekir.
+9125	Battle Shield +1 yükseltmesi için 1k altın gerekir.
+9126	Pentagon Shield +5 yükseltmesi için Piece of Broken Armour (x2) ve 13k altın gerekir.
+9127	Pentagon Shield +6 yükseltmesi için Esoteric Primer+ ve 20k altın gerekir.
+9128	Pentagon Shield +7 yükseltmesi için Unknown Talisman (x2), Fishbone ve 40k altın gerekir.
+9129	Pentagon Shield +8 yükseltmesi için Scorpion Tail (x2), Clam ve 70k altın gerekir.
+9130	Pentagon Shield +9 yükseltmesi için Curse Book (x2), Clam ve 120k altın gerekir.
+9131	Pentagon Shield +2 yükseltmesi için 2k altın gerekir.
+9132	Black Round Shield +5 yükseltmesi için Spider Legs(x2) ve 20k altın gerekir.
+9133	Black Round Shield +6 yükseltmesi için Curse Book+ (x2) ve 30k altın gerekir.
+9134	Black Round Shield +7 yükseltmesi için Piece of Fabric+ (x2), White Pearl ve 50k altın gerekir.
+9135	Black Round Shield +8 yükseltmesi için Ice Killer Whale Horn (x2), Blue Pearl ve 75k altın gerekir.
+9136	Black Round Shield +9 yükseltmesi için Fighting Tiger Fang (x2), Red Pearl ve 150k altın gerekir.
+9137	Black Round Shield +3 yükseltmesi için 5k altın gerekir.
+9138	Falcon Shield +4 yükseltmesi için 10k altın gerekir.
+9139	Falcon Shield +6 yükseltmesi için Esoteric Primer+ ve 20k altın gerekir.
+9140	Tiger Monk Shield +3 yükseltmesi için 10k altın gerekir.
+9141	Tiger Monk Shield +9 yükseltmesi için Curse Book (x2), Clam ve 120k altın gerekir.
+9142	Lion Edge Shield +7 yükseltmesi için Unknown Talisman, Fishbone ve 50k altın gerekir.
+9143	Lion Edge Shield +1 yükseltmesi için 1,2k altın gerekir.
+9144	Dragon Scale Shield +2 yükseltmesi için 2,5k altın gerekir.
+9145	Dragon Scale Shield +5 yükseltmesi için Piece of Broken Armour ve 13k altın gerekir.
+9146	Bloody Helm +6 yükseltmesi için 20k altın gerekir.
+9147	Bloody Helm +2 yükseltmesi için 1,5k altın gerekir.
+9148	Leather Hood +4 yükseltmesi için 4k altın gerekir.
+9149	Leather Hood +3 yükseltmesi için 2,5k altın gerekir.
+9150	Traditional Helm +8 yükseltmesi için White Pigtail Ribbon+ (x2) ve 40k altın gerekir.
+9151	Traditional Helm +1 yükseltmesi için 600 altın gerekir.
+9152	Monk Hat +9 yükseltmesi için Facial Cream ve 75k altın gerekir.
+9153	Monk Hat +7 yükseltmesi için White Pigtail Ribbon ve 30k altın gerekir.
+9154	Iron Helm +2 yükseltmesi için 2k altın gerekir.
+9155	Iron Helm +4 yükseltmesi için 10k altın gerekir.
+9156	Chain Hood +5 yükseltmesi için Flag (x2) ve 20k altın gerekir.
+9157	Chain Hood +9 yükseltmesi için Spider Egg Sack (x2), Clam ve 120k altın gerekir.
+9158	Mocking Helm +8 yükseltmesi için Spider's Poison Sack (x2), Clam ve 75k altın gerekir.
+9159	Mocking Helm +6 yükseltmesi için Scorpion Tail (x2) ve 20k altın gerekir.
+9160	Phoenix Hat +7 yükseltmesi için Spider Web (x2), Fishbone ve 30k altın gerekir.
+9161	Phoenix Hat +3 yükseltmesi için 4k altın gerekir.
+9162	Castle Helm +8 yükseltmesi için Piece of Ice+, Blue Pearl ve 90k altın gerekir.
+9163	Castle Helm +7 yükseltmesi için Frog Legs (x2), Finger Bones (x3) ve 45k altın gerekir.
+9164	Sunlight Hat +6 yükseltmesi için Frog Tongue (x2) ve 30k altın gerekir.
+9165	Sunlight Hat +5 yükseltmesi için Unknown Medicine+ (x2) ve 25k altın gerekir.
+9166	Steel Hood +9 yükseltmesi için Flaming Mane (x2), Finger Bones (x8) ve 150k altın gerekir.
+9167	Steel Hood +1 yükseltmesi için 2k altın gerekir.
+9168	Ghost Mask Sallet +3 yükseltmesi için 5k altın gerekir.
+9169	Ghost Mask Sallet +4 yükseltmesi için 8k altın gerekir.
+9170	Bamboo Skin Shoes +8 yükseltmesi için Skein (x2) ve 45k altın gerekir.
+9171	Bamboo Skin Shoes +5 yükseltmesi için 12k altın gerekir.
+9172	Wooden Shoes +7 yükseltmesi için Tiger Hide (x2) ve 30k altın gerekir.
+9173	Gold Threaded Shoes +9 yükseltmesi için Worn Out Black Uniform+ ve 75k altın gerekir.
+9174	Leather Boots +8 yükseltmesi için Scorpion Claw (x2), Clam ve 70k altın gerekir.
+9175	Leather Boots +6 yükseltmesi için Scorpion Tail+ (x2) ve 20k altın gerekir.
+9176	Golden Shoes +4 yükseltmesi için 10k altın gerekir.
+9177	Golden Shoes +7 yükseltmesi için Scorpion Needle (x2), Fishbone ve 40k altın gerekir.
+9178	Bronze Boots +5 yükseltmesi için Orc Amulet(x2) ve 13k altın gerekir.
+9179	Jade Shoes +9 yükseltmesi için Spider Egg Sack (x2), Clam ve 120k altın gerekir.
+9180	Ecstatic Shoes +2 yükseltmesi için 2,5k altın gerekir.
+9181	Ecstatic Shoes +9 yükseltmesi için Fighting Tiger Fang (x2), Red Pearl ve 150k altın gerekir.
+9182	Nimbus Boots +7 yükseltmesi için Frog Legs (x2), White Pearl ve 50k altın gerekir.
+9183	Nimbus Boots +5 yükseltmesi için Spider Legs (x2) ve 20k altın gerekir.
+9184	Phoenix Shoes +6 yükseltmesi için Frog Legs (x2) ve 30k altın gerekir.
+9185	Fire Bird Shoes +8 yükseltmesi için Yeti Fur (x2), Blue Pearl ve 90k altın gerekir.
+9186	Copper Bell +8 yükseltmesi için White Pigtail Ribbon (x2) ve 45k altın gerekir.
+9187	Silver Bell +7 yükseltmesi için Bear Gail+ (x2) ve 30k altın gerekir.
+9188	Golden Bell +9 yükseltmesi için Ornamental Hairpin (x2) ve 75k altın gerekir.
+9189	Jade Bell +7 yükseltmesi için Unknown Tailsman (x2), Fishbone ve 40k altın gerekir.
+9190	Fountain Bell +6 yükseltmesi için Orc Amulet+ (x2) ve 20k altın gerekir.
+9191	Apricot Bell +8 yükseltmesi için Scorpion Tail+ (x2), Clam ve 70k altın gerekir.
+9192	Apricot Bell +9 yükseltmesi için Curse Book (x2), Clam ve 120k altın gerekir.
+9193	Golden Bug Bell +8 yükseltmesi için Leaf (x2), Blue Pearl ve 90k altın gerekir.
+9194	Steel Bug Bell +9 yükseltmesi için Ice Killer Whale Horn(x2), Red Pearl ve 150k altın gerekir.
+9195	Thunder Bird Bell +7 yükseltmesi için Leaf (x2), White Pearl ve 45k altın gerekir.
+9196	Bamboo Bell +5 yükseltmesi için Unknown Medicine ve 20k altın gerekir.
+9197	Antique Bell +8 yükseltmesi için 90k altın gerekir.
+9198	Antique Bell +3 yükseltmesi için 12k altın gerekir.
+9199	Bear Feet Ahşap Bileklik +8 yükseltmesi için kullanılır.
+9200	Bear Feet Gümüş Bileklik Bileklik +7 yükseltmesi için kullanılır.
+9201	Bear Feet+ Altın Bileklik Bileklik +7 yükseltmesi için kullanılır.
+9202	White Pigtail Ribbon+ Gümüş Bileklik +7 yükseltmesi için kullanılır.
+9203	White Pigtail Ribbon+ Ahşap Bileklik +8 yükseltmesi için kullanılır.
+9204	White Pigtail Ribbon Ahşap Bileklik +8 yükseltmesi için kullanılır.
+9205	Facial Cream Altın Bileklik +9 yükseltmesi için kullanılır.
+9206	Facial Cream Gümüş Bileklik +8 yükseltmesi için kullanılır.
+9207	Rusty Blade Yeşim Bileklik +5 yükseltmesi için kullanılır.
+9208	Rusty Blade Abanoz Bileklik +6 yükseltmesi için kullanılır.
+9209	Shiriken+ Abanoz Bileklik +6 yükseltmesi için kullanılır.
+9210	Shiriken+ Beyaz Altın Bileklik +7 yükseltmesi için kullanılır.
+9211	Shiriken Beyaz Altın Bileklik +6 yükseltmesi için kullanılır.
+9212	Spider Web İnci Bileklik +6 yükseltmesi için kullanılır.
+9213	Spider Web Yeşim Bileklik +7 yükseltmesi için kullanılır.
+9214	Spider's Poison Sack Abanoz Bileklik +8 yükseltmesi için kullanılır.
+9215	Spider's Poison Sack İnci Bileklik +9 yükseltmesi için kullanılır.
+9216	Snakeskin Beyaz Altın Bileklik +9 yükseltmesi için kullanılır.
+9217	Snakeskin İnci Bileklik +8 yükseltmesi için kullanılır.
+9218	Unknown medicine+ Heaven's Tear Bileklik +5 yükseltmesi için kullanılır.
+9219	Unknown medicine+ Kristal Bileklik +6 yükseltmesi için kullanılır.
+9220	Unknown medicine Ametist Bileklik +5 yükseltmesi için.
+9221	Demon's Keepsake Heaven's Tear Bileklik +6 yükseltmesi için kullanılır.
+9222	Demon's Keepsake Ametist Bileklik +7 yükseltmesi için kullanılır.
+9223	Demon's Keepsake+ Kristal Bileklik +6 yükseltmesi için kullanılır.
+9224	Demon's Gem Heaven's Tear Bileklik +7 yükseltmesi için kullanılır.
+9225	Demon's Gem Kristal Bileklik +8 yükseltmesi için kullanılır.
+9226	Demon's Gem+ Ametist Bileklik +7 yükseltmesi için kullanılır.
+9227	Yeti Fur+ Kristal Bileklik +8 yükseltmesi için kullanılır.
+9228	Yeti Fur+ Heaven's Tear Bileklik +7 yükseltmesi için kullanılır.
+9229	Yeti Fur Ametist Bileklik +8 yükseltmesi için kullanılır.
+9230	Flaming Mane Ametist Bileklik +9 yükseltmesi için kullanılır.
+9231	Flaming Mane Heaven's Tear Bileklik +8 yükseltmesi için kullanılır.
+9232	Wolf Fur+ Ahşap Kolye +7 yükseltmesi için kullanılır.
+9233	Wolf Fur+ Bakır Kolye +6 yükseltmesi için kullanılır.
+9234	Wolf Fur Ahşap Kolye +7 yükseltmesi için kullanılır.
+9235	Red Pigtail Ribbon Bakır Kolye +7 yükseltmesi için kullanılır.
+9236	Red Pigtail Ribbon Ahşap Kolye +8 yükseltmesi için kullanılır.
+9237	Ornamental Hairpin Gümüş Kolye +9 yükseltmesi için kullanılır.
+9238	Ornamental Hairpin Altın Kolye +8 yükseltmesi için kullanılır.
+9239	Shiriken Yeşim Kolye +5 yükseltmesi için kullanılır.
+9240	Shiriken Abanoz Kolye +6 yükseltmesi için kullanılır.
+9241	Shiriken+ İnci Kolye +5 yükseltmesi için kullanılır.
+9242	Orc Amulet+ Beyaz Altın Kolye +6 yükseltmesi için kullanılır.
+9243	Orc Amulet+ Yeşim Kolye +7 yükseltmesi için kullanılır.
+9244	Orc Amulet İnci Kolye +6 yükseltmesi için kullanılır.
+9245	Unknown Talisman Yeşim Kolye +7 yükseltmesi için kullanılır.
+9246	Unknown Talisman Beyaz Altın Kolye +8 yükseltmesi için kullanılır.
+9247	Unknown Talisman+ İnci Kolye +7 yükseltmesi için kullanılır.
+9248	Scorpion Tail+ Yeşim Kolye +8 yükseltmesi için kullanılır.
+9249	Scorpion Tail+ Abanoz Kolye +9 yükseltmesi için kullanılır.
+9250	Scorpion Tail Ahşap Bileklik +8 yükseltmesi için kullanılır.
+9251	Orc Thoot+ Abanoz Kolye +9 yükseltmesi için kullanılır.
+9252	Orc Thoot+ Ahşap Bileklik +8 yükseltmesi için kullanılır.
+9253	Orc Thoot Yeşim Kolye +9 yükseltmesi için kullanılır.
+9254	Unknown Medicine Kristal Kolye +5 yükseltmesi için kullanılır.
+9255	Unknown Medicine Heaven's Tear Kolye +6 yükseltmesi için kullanılır.
+9256	Unknown Medicine+ Ametist Kolye +5 yükseltmesi için kullanılır.
+9257	Piece of Fabric Kristal Kolye +6 yükseltmesi için kullanılır.
+9258	Piece of Fabric Heaven's Tear Kolye +5 yükseltmesi için kullanılır.
+9259	Piece of Fabric+ Ametist Kolye +6 yükseltmesi için kullanılır.
+9260	Leaf Kristal Kolye +7 yükseltmesi için kullanılır.
+9261	Leaf Ametist Kolye +8 yükseltmesi için kullanılır.
+9262	Piece of Ice Heaven's Tear Kolye +8 yükseltmesi için kullanılır.
+9263	Piece of Ice Kristal Kolye +9 yükseltmesi için kullanılır.
+9264	Piece of Ice+ Ametist Kolye +8 yükseltmesi için kullanılır.
+9265	Ice Marble+ Kristal Kolye +9 yükseltmesi için kullanılır.
+9266	Ice Marble+ Heaven's Tear Kolye +8 yükseltmesi için kullanılır.
+9267	Ice Marble Ametist Kolye +9 yükseltmesi için kullanılır.
+9268	Blue wolf seviye 7.
+9269	Tiger seviye 17.
+9270	Alpha Grey Wolf seviye 16.
+9271	Hungry Black Bear seviye 19.
+9272	White Tiger seviye 26.
+9273	Hungry Wild Boar seviye 10.
+9274	Grizzly Bear seviye 13.
+9275	White Oath Soldier seviye 18.
+9276	Dispirited Mi-jung seviye 23.
+9277	Dispirited Eun-jung seviye 28.
+9278	Dispirited Jin-Hee seviye 29.
+9279	White Oath General seviye 25.
+9280	Bear seviye 12.
+9281	White 0ath Archer seviye 20.
+9282	Black Wind Gu-Ryung seviye 32.
+9283	Bo seviye 36.
+9284	Black Wind Archer seviye 29.
+9285	Black Wind Maniac seviye 28.
+9286	Black Wind Soldier seviye 26.
+9287	Black Wind Jak-To seviye 30.
+9288	Savage Infantryman seviye 29.
+9289	Evil Black Storm Joh-Hwa seviye 29.
+9290	Evil Black Storm Archer seviye 30.
+9291	Savage Minion seviye 31.
+9292	Cursed Wolf seviye 9.
+9293	Cursed Alpha Blue Wolf seviye 14.
+9294	Cursed Bear seviye 18.
+9295	Cursed Black Bear seviye 24.
+9296	Cursed Brown Bear seviye 26.
+9297	Cursed Wild Boar seviye 12.
+9298	Cursed Tiger seviye 23.
+9299	Cursed White Tiger seviye 29.
+9300	Bestial Soldier seviye 35.
+9301	Bestial Specialist seviye 42.
+9302	Bestial Maniac seviye 38.
+9303	Bestial Archer seviye 41.
+9304	Strong Savage Archer seviye 35.
+9305	Strong Savage Infantry seviye 29.
+9306	Strong Savage General seviye 35.
+9307	Strong Savage Minion seviye 31.
+9308	Orc seviye 26.
+9309	Orc Scout seviye 30.
+9310	Orc Fighter seviye 32.
+9311	Orc Sorcerer seviye 33.
+9312	Elite Orc seviye 34.
+9313	Elite Orc Scout seviye 36.
+9314	Elite Orc Fighter seviye 39.
+9315	Elite Orc Sorcerer seviye 40.
+9316	Elite Orc General seviye 45.
+9317	Black Orc seviye 47.
+9318	Black Orc Giant seviye 49.
+9319	Esoteric Fanatic seviye 35.
+9320	Esoteric Arahan seviye 39.
+9321	Esoteric Arahan Fighter seviye 41.
+9322	Chief Esoteric Arahan seviye 43.
+9323	Esoteric Executioner seviye 46.
+9324	Esoteric Tormentor seviye 47.
+9325	Esoteric Summoner seviye 51.
+9326	Proud Dark Fanatic seviye 50.
+9327	Proud Dark Arahan seviye 52.
+9328	Proud Dark Fighter seviye 54.
+9329	Proud Dark Colonel seviye 54.
+9330	Proud Dark Rifleman seviye 57.
+9331	Plagued Dog seviye 51.
+9332	Plagued Man seviye 54.
+9333	Plagued Swordman seviye 56.
+9334	Plagued Spearman seviye 58.
+9335	Plagued Archer seviye 57.
+9336	Plagued Leader seviye 59.
+9337	Demon Soldier seviye 57.
+9338	Demon Archer seviye 59.
+9339	Demon Spearman seviye 58.
+9340	Demon Shaman seviye 60.
+9341	Vile Demon Soldier seviye 65.
+9342	Vile Demon Archer seviye 69.
+9343	Vile Demon Spearman seviye 70.
+9344	Vile Demon Shaman seviye 69.
+9345	Ghost Of Grudge seviye 72.
+9346	Ghost Of Chaos seviye 72.
+9347	Vile Demon Leader seviye 73.
+9348	Skull Sword Master seviye 72.
+9349	Flying Skull seviye 69.
+9350	Immortal Ghost seviye 73.
+9351	Demonic Beast seviye 75.
+9352	Demon King seviye 74.
+9353	Death Reaper seviye 78.
+9354	Enchanted Ice seviye 62.
+9355	Ice Killer Whale seviye 63.
+9356	Ice Bug seviye 65.
+9357	Ice Lion seviye 64.
+9358	Ice Man seviye 63.
+9359	Yeti seviye 65.
+9360	Ice Golem seviye 66.
+9361	Heavenly Enchanted Ice seviye 82.
+9362	Heavenly Ice Killer Whale seviye 82.
+9363	Heavenly Ice Bug seviye 82.
+9364	Heavenly Ice Lion seviye 83.
+9365	Heavenly Ice Man seviye 83.
+9366	Heavenly Yeti seviye 83.
+9367	Heavenly Ice Golem seviye 86.
+9368	Tree Frog Soldier seviye 57.
+9369	Tree Frog Leader seviye 60.
+9370	Leflet Bogeyman seviye 59.
+9371	Yellow Tiger Ghost seviye 75.
+9372	Bullfrog General seviye 60.
+9373	Giant Soldier seviye 66.
+9374	Giant Scout seviye 73.
+9375	Giant Thousand Fighter seviye 76.
+9376	Stone Thrower seviye 68.
+9377	Stone Shooter seviye 72.
+9378	Giant Stone Shooter seviye 72.
+9379	Giant Worker seviye 68.
+9380	Giant Inspector seviye 72.
+9381	Giant Hundred Combatant seviye 75.
+9382	Nine Tails seviye 74.
+9383	Baby Spider seviye 43.
+9384	Deadly Spider seviye 45.
+9385	Crimson Spider seviye 47.
+9386	Claw Spider seviye 49.
+9387	Soldier Spider seviye 51.
+9388	Baby Poison Spider seviye 50.
+9389	Deadly Poison Spider seviye 52.
+9390	Red Poison Spider seviye 53.
+9391	Claw Poison Spider seviye 5.
+9392	Soldier Poison Spider seviye 58.
+9393	Queen Spider seviye 60.
+9394	Desert Fox seviye 22.
+9395	Deserts Flying Eye seviye 35.
+9396	King Scorpion seviye 39.
+9397	Scorpion Man seviye 45.
+9398	Scorpion Archer seviye 47.
+9399	Snake Swordman seviye 48.
+9400	Snake Archer seviye 52.
+9401	Desert Outlaw seviye 54.
+9402	Giant Turtle seviye 66.
+9403	Fighting Tiger Minion seviye 69.
+9404	Flame Ghost seviye 70.
+9405	Fighting Tiger seviye 70.
+9406	Flame Soldier seviye 72.
+9407	Flame Warrior seviye 73.
+9408	Flame King seviye 73.
+9409	Haunted Tree seviye 65.
+9410	Haunted Stump seviye 67.
+9411	Dryad seviye 68.
+9412	Haunted Willow seviye 69.
+9413	Evil Haunted Tree seviye 72.
+9414	Red Brutal Tree seviye 73.
+9415	Red Haunted Stump seviye 76.
+9416	Red Dryad seviye 77.
+9417	Red Haunted Willow seviye 79.
+9418	Red Haunted Tree seviye 82.
+9419	Heaven Soldier seviye 85.
+9420	Heaven Archer seviye 88.
+9421	Heaven Cleric seviye 87.
+9422	Heaven Commander seviye 88.
+9423	Zin Heaven Soldier seviye 90.
+9424	Zin Heaven Archer seviye 92.
+9425	Zin Heaven Cleric seviye 93.
+9426	Zin Heaven Commander seviye 95.
+9427	Aqua Dragon seviye 97.
+9428	Gnoll Warrior seviye 96.
+9429	Gnoll Archer seviye 96.
+9430	Gnoll Defender seviye 98.
+9431	Gnoll Magician seviye 98.
+9432	Gnoll General seviye 99.
+9433	Gnoll Lord seviye 102.
+9434	Supreme Gnoll Guard seviye 104.
+9435	One-eyed Slugger seviye 97.
+9436	Cyclops Soldier seviye 99.
+9437	Cyclops Magician seviye 100.
+9438	Cyclops Executioner seviye 99.
+9439	General Outis seviye 102.
+9440	Arges seviye 104.
+9441	Polyphemos seviye 105.
+9442	Manticore Warrior seviye 96.
+9443	Manticore Soldier seviye 98.
+9444	Manticore Magus seviye 99.
+9445	Manticore Executioner seviye 99.
+9446	General Cor seviye 101.
+9447	Rakshasa seviye 102.
+9448	Martyaxwar seviye 105.
+9449	Lemures Warrior seviye 98.
+9450	Lemures Soldier seviye 98.
+9451	Lemures Magician seviye 99.
+9452	Lemures Executioner seviye 101.
+9453	Lemures General seviye 102.
+9454	Lemures Prince seviye 103.
+9455	Lemures Bodyguard seviye 104.
+9456	Tritonic Moray seviye 96.
+9457	Shark Soldier seviye 98.
+9458	Tritonic Magician seviye 99.
+9459	Tritonic Hunter seviye 98.
+9460	Tritonic Slasher seviye 101.
+9461	General Kappa seviye 103.
+9462	Triton seviye 105.
+9463	Red Thief Amazon seviye 95.
+9464	Red Thief Assassin seviye 97.
+9465	Red Thief Magician seviye 97.
+9466	Red Thief Executioner seviye 98.
+9467	Black General seviye 98.
+9468	Bone Face seviye 102.
+9469	Red Chief seviye 104.
+9470	Crab Warrior seviye 96.
+9471	Scorpion Marksman seviye 97.
+9472	Shrimp Soldier seviye 99.
+9473	Diabolical Hermit seviye 98.
+9474	Armoured Crab seviye 102.
+9475	General Lobster seviye 103
+9476	King Crab seviye 105.
+9477	Gigantic Biter seviye 100.
+9478	Gigantic Slaughterer seviye 102.
+9479	Gigantic Magus seviye 103.
+9480	Twiant seviye 104.
+9481	Captain Hooks seviye 105.
+9482	Gargoyle seviye 105.
+9483	King Wubba seviye 105.
+9484	Hangork seviye 98.
+9485	Archie Ogre seviye 100.
+9486	Brawl Ogre seviye 102.
+9487	Ogre Magus seviye 101.
+9488	General Ogg seviye 103.
+9489	Captain Shruk seviye 105.
+9490	The Great Ogre seviye 105.
+9491	Metin Of Sorrow seviye 10.
+9492	Metin Of Combat seviye 10.
+9493	Metin Of Battle seviye 15.
+9494	Metin Of Greed seviye 20.
+9495	Metin Of Black seviye 30.
+9496	Metin Of Darkness seviye 30.
+9497	Metin Of Jealousy seviye 40.
+9498	Metin Of Soul seviye 45.
+9499	Metin Of Shadow seviye 40.
+9500	Metin Of Toughness seviye 50.
+9501	Metin Of Devil seviye 60.
+9502	Metin Of Fall seviye 55.
+9503	Metin Of Death seviye 65.
+9504	Metin Of Murder seviye 70.
+9505	Metin of Wind Devil seviye 80.
+9506	Metin of Devil Eyes seviye 80.
+9507	Metin of Fighting Dragon seviye 85.
+9508	Metin of Lightning Cloud seviye 85.
+9509	Metin of Gloom seviye 100.
+9510	Metin of Ember seviye 95.
+9511	Metin of Vanity seviye 100.
+9512	Metin of Wrath seviye 105.
+9513	Metin of Calamity seviye 105.
+9514	Metin of Malice seviye 100.
+9515	Weak Ape Soldier seviye 22.
+9516	Weak Ape Thrower seviye 24.
+9517	Weak Ape Fighter seviye 27.
+9518	Weak Ape General seviye 29.
+9519	Ape Soldier seviye 36.
+9520	Ape Thrower seviye 37.
+9521	Ape Fighter seviye 40.
+9522	Ape General seviye 40.
+9523	Stone Ape seviye 41.
+9524	Ape Leader seviye 42.
+9525	Strong Ape Soldier seviye 46.
+9526	Strong Ape Thrower seviye 48.
+9527	Strong Ape Fighter seviye 48.
+9528	Strong Ape General seviye 52.
+9529	Strong Stone Ape seviye 53.
+9530	Rock Ape seviye 35.
+9531	Ape Lord seviye 55.
+9532	Devil seviye 80.
+9533	Devil's Wolf seviye 80.
+9534	Devil's Wraith seviye 81.
+9535	Devil's Skulker seviye 85.
+9536	Devil's Spearman seviye 84.
+9537	Devil's Cockatrice seviye 83.
+9538	Devil's Dominator seviye 85.
+9539	Spectral Crusher seviye 79.
+9540	Spectral Bower seviye 80.
+9541	Spectral Spikeman seviye 82.
+9542	Spectral Shaman seviye 10.
+9543	Spectral Axeman seviye 83.
+9544	Spectral Titan seviye 85.
+9545	Spectral Hunter seviye 86.
+9546	Hateful Crusher seviye 80.
+9547	Hateful Bower seviye 10.
+9548	Hateful Spikeman seviye 10.
+9549	Hateful Shaman seviye 82.
+9550	Hateful Axeman seviye 84.
+9551	Hateful Titan seviye 85.
+9552	Hateful Hunter seviye 86.
+9553	Tartaros seviye 89.
+9554	Erebus seviye 90.
+9555	Charon seviye 91.
+9556	Lord Gahnasel seviye 92.
+9557	Cung-Mok seviye 8.
+9558	Mu-Rang seviye 15.
+9559	Jug-Hyul seviye 10.
+9560	Young-Ji seviye 21.
+9561	Li-An seviye 24.
+9562	Lykos seviye 30.
+9563	Scrofa seviye 30.
+9564	Bera seviye 32.
+9565	Tigris seviye 35.
+9566	Se-Rang seviye 25.
+9567	Eun-Jung seviye 26.

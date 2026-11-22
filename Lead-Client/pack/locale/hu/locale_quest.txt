@@ -8506,3 +8506,570 @@
 8506	Biztonsági okokból ezt meg kellene változtatnod.[ENTER][ENTER]Talán úgy gondolod, hogy 45 polc nem lesz elég.[ENTER]De ki tudja, talán adok neked több helyet, ha jól[ENTER]megértjük egymást.
 8507	Nos, nem kényszerítek senkit. Ha nem érzed úgy,[ENTER]akkor gyere vissza később.
 8508	Raktár nyitása
+9001	Az Aura of Sword a Sura egyik képessége.
+9002	A White Liquid 1 órára 10 STR-t ad.
+9003	A DEX növelheti a Stealth időtartamát.
+9004	A Flame Strike az erejét INT-ből és DEX-ből nyeri.
+9005	G3 szinten a Ritual of Doom 68 másodpercig tart.
+9006	A Spirit Assault egy Sura képesség.
+9007	Ha Eel-t használsz, 10 percre 10 STR-t kapsz.
+9008	A Taichi növeli az AC-t.
+9009	A Charge képesség megmérgezheti a célpontot.
+9010	A Grilled Loach rövid időre láthatatlanná tehet.
+9011	Ha megölnek, mindig veszítesz tapasztalati pontot.
+9012	A Stone of Magic+3 +240 SP-t ad.
+9013	A Stone of Magic+2 150 SP-t ad.
+9014	A Poison Cloud mágikus sebzést okoz.
+9015	A Fear megbénítja az ellenséget.
+9016	A Dance with Wind az Archer képessége.
+9017	A Flame Arrow megégeti a célpontot.
+9018	A Magic Seeds csak a Dryad-októl esik.
+9019	A Dark-Ghost Leader egy ördög.
+9020	A papagáj a Teleporteren piros és zöld.
+9021	A General Store tulajdonosának lófarka van.
+9022	A Store Keepernek 3 kése van.
+9023	Yonah szakács.
+9024	Octavio tudós.
+9025	Anh-Yu-nak van egy babája.
+9026	A Ghost Plate Armour az Armour Shop Dealernél 10.000 aranyba kerül.
+9027	Az Iron Fan+0 a Weapon Shop Dealernél 400 aranyba kerül.
+9028	A Dark Orb a legerősebb varázslat a black magic Sura számára.
+9029	Az Aura of Sword ereje a DEX-szel nő.
+9030	Az Old Lady-nek van egy kis piros táskája.
+9031	Elgoriában 5 ló van az istállóban.
+9032	Az Alchemist gem-rodja sárga.
+9033	Mirine elvesztette az édesanyját.
+9034	Elgoria 1. térképén pontosan 259 fa van.
+9035	Ha egy ló 10-szer meghal, örökre elszökik.
+9036	A Fisherman Store-nál 50 kukac 2000 aranyba kerül.
+9037	A Fishing Marble egy csali.
+9038	A Riceball és a kukac az egyetlen csali a Metin2-ben.
+9039	A játék minden városában 20 guild föld van.
+9040	A Death Reaper egy Demi-Human.
+9041	A Heavens Golem az egyetlen szörny, amely water crystalt ejt.
+9042	A Zen Bean 500 Karma pontot ad, de csak ha negatív vagy.
+9043	A Se-Rang egy farkas típusú szörny.
+9044	Starbuck az Accessory Designer Smith.
+9045	Cherogirayb a Metin2 Biologistja.
+9046	A Zin Heavens Commander blessing marble-t ejt.
+9047	Stanh a 3 Guild Smith egyike.
+9048	Tigrisnek piros nyakörve van.
+9049	A Wood Bracelet +6-ra fejlesztéséhez 20k arany szükséges.
+9050	A Wood Bracelet +7-re fejlesztéséhez Bear Feet és 25k arany szükséges.
+9051	A Wood Bracelet +8-ra fejlesztéséhez White Pigtail Ribbon és 45k arany szükséges.
+9052	A Wood Bracelet +9-re fejlesztéséhez Facial Cream és 75k arany szükséges.
+9053	A Copper Bracelet +5-re fejlesztéséhez 15k arany szükséges.
+9054	A Copper Bracelet +7-re fejlesztéséhez Bear Feet és 30k arany szükséges.
+9055	A Copper Bracelet +8-ra fejlesztéséhez White Pigtail Ribbon+ és 40k arany szükséges.
+9056	A Copper Bracelet +9-re fejlesztéséhez Facial Cream és 70k arany szükséges.
+9057	A Silver Bracelet +8-ra fejlesztéséhez White Pigtail Ribbon+ és 45k arany szükséges.
+9058	A Gold Bracelet +6-ra fejlesztéséhez 20k arany szükséges.
+9059	A Gold Bracelet +8-ra fejlesztéséhez White Pigtail Ribbon+ és 45k arany szükséges.
+9060	A Jade Bracelet +3-ra fejlesztéséhez 5k arany szükséges.
+9061	A Jade Bracelet +6-ra fejlesztéséhez Shiriken+ (x2) és 20k arany szükséges.
+9062	Az Ebony Bracelet +4-re fejlesztéséhez 8k arany szükséges.
+9063	Az Ebony Bracelet +7-re fejlesztéséhez Spider Web (x2), Fishbone és 50k arany szükséges.
+9064	A Pearl Bracelet +5-re fejlesztéséhez Rusty Blade (x2) és 13k arany szükséges.
+9065	A Pearl Bracelet +8-ra fejlesztéséhez Spider's Poison Sack (x2) Clam és 70k arany szükséges.
+9066	A White Gold Bracelet +2-re fejlesztéséhez 2k arany szükséges.
+9067	A White Gold Bracelet +9-re fejlesztéséhez Snakeskin (x2), Clam és 100k arany szükséges.
+9068	A Crystal Bracelet +6-ra fejlesztéséhez Demon's Keepsake (x2) és 30k arany szükséges.
+9069	A Crystal Bracelet +7-re fejlesztéséhez Demon's Gem+ (x2), White Pearl és 45k arany szükséges.
+9070	Az Amethyst Bracelet +5-re fejlesztéséhez Unknown medicine+ és 20k arany szükséges.
+9071	Az Amethyst Bracelet +9-re fejlesztéséhez Flaming Mane (x2), Red pearl és 120k arany szükséges.
+9072	A Heaven's Tear Bracelet +4-re fejlesztéséhez 10k arany szükséges.
+9073	A Heaven's Tear Bracelet +8-ra fejlesztéséhez Yeti Fur+ (x2), Blue pearl és 90k arany szükséges.
+9074	A Wooden Necklace +4-re fejlesztéséhez 2,5k arany szükséges.
+9075	A Wooden Necklace +6-ra fejlesztéséhez 20k arany szükséges.
+9076	A Copper Necklace +5-re fejlesztéséhez 15k arany szükséges.
+9077	A Copper Necklace +7-re fejlesztéséhez Wolf Fur+ (x2) és 25k arany szükséges.
+9078	A Silver Necklace +8-ra fejlesztéséhez Red Pigtail Ribbon és 50k arany szükséges.
+9079	A Silver Necklace +1-re fejlesztéséhez 500 arany szükséges.
+9080	A Golden Necklace +9-re fejlesztéséhez Ornamental Hairpin (x2) és 75k arany szükséges.
+9081	A Golden Necklace +3-ra fejlesztéséhez 2,5k arany szükséges.
+9082	A Jade Necklace +8-ra fejlesztéséhez Scorpion Tail+ (x2), Clam és 70k arany szükséges.
+9083	A Jade Necklace +2-re fejlesztéséhez 2,5k arany szükséges.
+9084	Az Ebony Necklace +6-ra fejlesztéséhez Orc Amulet+ és 20k arany szükséges.
+9085	Az Ebony Necklace +2-re fejlesztéséhez 2k arany szükséges.
+9086	A Pearl Necklace +5-re fejlesztéséhez Shiriken (x2) és 13k arany szükséges.
+9087	A Pearl Necklace +9-re fejlesztéséhez Orc Thoot+ (x2), Clam és 120k arany szükséges.
+9088	A White Gold Necklace +4-re fejlesztéséhez 8k arany szükséges.
+9089	A White Gold Necklace +7-re fejlesztéséhez Unknown talisman (x2), Fishbone és 40k arany szükséges.
+9090	A Crystal Necklace +6-ra fejlesztéséhez Piece of Fabric (x2) és 30k arany szükséges.
+9091	A Crystal Necklace +9-re fejlesztéséhez Ice Marble (x2), Red Pearl és 150k arany szükséges.
+9092	Az Amethyst Necklace +5-re fejlesztéséhez Unknown Medicine (x2) és 20k arany szükséges.
+9093	Az Amethyst Necklace +7-re fejlesztéséhez Leaf (x2), White Pearl és 50k arany szükséges.
+9094	A Heaven's Tear Necklace +8-ra fejlesztéséhez Piece of Ice+(x2), Blue Pearl és 90k arany szükséges.
+9095	A Heaven's Tear Necklace +1-re fejlesztéséhez 1,2k arany szükséges.
+9096	A Wooden Earrings +2-re fejlesztéséhez 1,2k arany szükséges.
+9097	A Wooden Earrings +5-re fejlesztéséhez 8k arany szükséges.
+9098	A Copper Earrings +7-re fejlesztéséhez Bear Gail és 30k arany szükséges.
+9099	A Copper Earrings +9-re fejlesztéséhez Worn Out Black Uniform és 70k arany szükséges.
+9100	A Silver Earrings +8-ra fejlesztéséhez Bear Feet+ és 45k arany szükséges.
+9101	A Silver Earrings +6-ra fejlesztéséhez 20k arany szükséges.
+9102	A Golden Earrings +4-re fejlesztéséhez 7,5k arany szükséges.
+9103	A Golden Earrings +3-ra fejlesztéséhez 5k arany szükséges.
+9104	A Jade Earrings +3-ra fejlesztéséhez 5k arany szükséges.
+9105	A Jade Earrings +7-re fejlesztéséhez Spider Eye, Fishbone és 40k arany szükséges.
+9106	Az Ebony Earrings +4-re fejlesztéséhez 10k arany szükséges.
+9107	Az Ebony Earrings +5-re fejlesztéséhez Piece of Gem és 13k arany szükséges.
+9108	A Pearl Earrings +9-re fejlesztéséhez Orc Thoot+ (x2), Clam és 120k arany szükséges.
+9109	A Pearl Earrings +6-ra fejlesztéséhez Esoteric Primer (x2) és 20k arany szükséges.
+9110	A White Gold Earrings +2-re fejlesztéséhez 2k arany szükséges.
+9111	A White Gold Earrings +8-ra fejlesztéséhez Orc Thoot, Clam és 70k arany szükséges.
+9112	A Crystal Earrings +3-ra fejlesztéséhez 5k arany szükséges.
+9113	A Crystal Earrings +6-ra fejlesztéséhez Piece of Fabric és 25k arany szükséges.
+9114	A Crystal Earrings +9-re fejlesztéséhez Ice Marble (x2), Red Pearl és 150k arany szükséges.
+9115	Az Amethyst Earrings +2-re fejlesztéséhez 2,5k arany szükséges.
+9116	Az Amethyst Earrings +7-re fejlesztéséhez Demon's Gem (x2), White Pearl és 45k arany szükséges.
+9117	Az Amethyst Earrings +1-re fejlesztéséhez 1,5k arany szükséges.
+9118	A Heaven's Tear Earrings +8-ra fejlesztéséhez Demon's Keepsake+, Blue Pearl 80k arany szükséges.
+9119	A Heaven's Tear Earrings +5-re fejlesztéséhez Snake Tail+ (x2) és 20k arany szükséges.
+9120	A Battle Shield +5-re fejlesztéséhez 20k arany szükséges.
+9121	A Battle Shield +6-ra fejlesztéséhez 20k arany szükséges.
+9122	A Battle Shield +7-re fejlesztéséhez Bear Gail+ (x2) és 25k arany szükséges.
+9123	A Battle Shield +8-ra fejlesztéséhez White Tiger Hide és 45k arany szükséges.
+9124	A Battle Shield +9-re fejlesztéséhez Worn Out Black Uniform (x2) és 75k arany szükséges.
+9125	A Battle Shield +1-re fejlesztéséhez 1k arany szükséges.
+9126	A Pentagon Shield +5-re fejlesztéséhez Piece of Broken Armour (x2) és 13k arany szükséges.
+9127	A Pentagon Shield +6-ra fejlesztéséhez Esoteric Primer+ és 20k arany szükséges.
+9128	A Pentagon Shield +7-re fejlesztéséhez Unknown Talisman (x2), Fishbone és 40k arany szükséges.
+9129	A Pentagon Shield +8-ra fejlesztéséhez Scorpion Tail (x2), Clam és 70k arany szükséges.
+9130	A Pentagon Shield +9-re fejlesztéséhez Curse Book (x2), Clam és 120k arany szükséges.
+9131	A Pentagon Shield +2-re fejlesztéséhez 2k arany szükséges.
+9132	A Black Round Shield +5-re fejlesztéséhez Spider Legs(x2) és 20k arany szükséges.
+9133	A Black Round Shield +6-ra fejlesztéséhez Curse Book+ (x2) és 30k arany szükséges.
+9134	A Black Round Shield +7-re fejlesztéséhez Piece of Fabric+ (x2), White Pearl és 50k arany szükséges.
+9135	A Black Round Shield +8-ra fejlesztéséhez Ice Killer Whale Horn (x2), Blue Pearl és 75k arany szükséges.
+9136	A Black Round Shield +9-re fejlesztéséhez Fighting Tiger Fang (x2), Red Pearl és 150k arany szükséges.
+9137	A Black Round Shield +3-ra fejlesztéséhez 5k arany szükséges.
+9138	A Falcon Shield +4-re fejlesztéséhez 10k arany szükséges.
+9139	A Falcon Shield +6-ra fejlesztéséhez Esoteric Primer+ és 20k arany szükséges.
+9140	A Tiger Monk Shield +3-ra fejlesztéséhez 10k arany szükséges.
+9141	A Tiger Monk Shield +9-re fejlesztéséhez Curse Book (x2), Clam és 120k arany szükséges.
+9142	A Lion Edge Shield +7-re fejlesztéséhez Unknown Talisman, Fishbone és 50k arany szükséges.
+9143	A Lion Edge Shield +1-re fejlesztéséhez 1,2k arany szükséges.
+9144	A Dragon Scale Shield +2-re fejlesztéséhez 2,5k arany szükséges.
+9145	A Dragon Scale Shield +5-re fejlesztéséhez Piece of Broken Armour és 13k arany szükséges.
+9146	A Bloody Helm +6-ra fejlesztéséhez 20k arany szükséges.
+9147	A Bloody Helm +2-re fejlesztéséhez 1,5k arany szükséges.
+9148	A Leather Hood +4-re fejlesztéséhez 4k arany szükséges.
+9149	A Leather Hood +3-ra fejlesztéséhez 2,5k arany szükséges.
+9150	A Traditional Helm +8-ra fejlesztéséhez White Pigtail Ribbon+ (x2) és 40k arany szükséges.
+9151	A Traditional Helm +1-re fejlesztéséhez 600 arany szükséges.
+9152	A Monk Hat +9-re fejlesztéséhez Facial Cream és 75k arany szükséges.
+9153	A Monk Hat +7-re fejlesztéséhez White Pigtail Ribbon és 30k arany szükséges.
+9154	Az Iron Helm +2-re fejlesztéséhez 2k arany szükséges.
+9155	Az Iron Helm +4-re fejlesztéséhez 10k arany szükséges.
+9156	A Chain Hood +5-re fejlesztéséhez Flag (x2) és 20k arany szükséges.
+9157	A Chain Hood +9-re fejlesztéséhez Spider Egg Sack (x2), Clam és 120k arany szükséges.
+9158	A Mocking Helm +8-ra fejlesztéséhez Spider's Poison Sack (x2), Clam és 75k arany szükséges.
+9159	A Mocking Helm +6-ra fejlesztéséhez Scorpion Tail (x2) és 20k arany szükséges.
+9160	A Phoenix Hat +7-re fejlesztéséhez Spider Web (x2), Fishbone és 30k arany szükséges.
+9161	A Phoenix Hat +3-ra fejlesztéséhez 4k arany szükséges.
+9162	A Castle Helm +8-ra fejlesztéséhez Piece of Ice+, Blue Pearl és 90k arany szükséges.
+9163	A Castle Helm +7-re fejlesztéséhez Frog Legs (x2), Finger Bones (x3) és 45k arany szükséges.
+9164	A Sunlight Hat +6-ra fejlesztéséhez Frog Tongue (x2) és 30k arany szükséges.
+9165	A Sunlight Hat +5-re fejlesztéséhez Unknown Medicine+ (x2) és 25k arany szükséges.
+9166	A Steel Hood +9-re fejlesztéséhez Flaming Mane (x2), Finger Bones (x8) és 150k arany szükséges.
+9167	A Steel Hood +1-re fejlesztéséhez 2k arany szükséges.
+9168	A Ghost Mask Sallet +3-ra fejlesztéséhez 5k arany szükséges.
+9169	A Ghost Mask Sallet +4-re fejlesztéséhez 8k arany szükséges.
+9170	A Bamboo Skin Shoes +8-ra fejlesztéséhez Skein (x2) és 45k arany szükséges.
+9171	A Bamboo Skin Shoes +5-re fejlesztéséhez 12k arany szükséges.
+9172	A Wooden Shoes +7-re fejlesztéséhez Tiger Hide (x2) és 30k arany szükséges.
+9173	A Gold Threaded Shoes +9-re fejlesztéséhez Worn Out Black Uniform+ és 75k arany szükséges.
+9174	A Leather Boots +8-ra fejlesztéséhez Scorpion Claw (x2), Clam és 70k arany szükséges.
+9175	A Leather Boots +6-ra fejlesztéséhez Scorpion Tail+ (x2) és 20k arany szükséges.
+9176	A Golden Shoes +4-re fejlesztéséhez 10k arany szükséges.
+9177	A Golden Shoes +7-re fejlesztéséhez Scorpion Needle (x2), Fishbone és 40k arany szükséges.
+9178	A Bronze Boots +5-re fejlesztéséhez Orc Amulet(x2) és 13k arany szükséges.
+9179	A Jade Shoes +9-re fejlesztéséhez Spider Egg Sack (x2), Clam és 120k arany szükséges.
+9180	Az Ecstatic Shoes +2-re fejlesztéséhez 2,5k arany szükséges.
+9181	Az Ecstatic Shoes +9-re fejlesztéséhez Fighting Tiger Fang (x2), Red Pearl és 150k arany szükséges.
+9182	A Nimbus Boots +7-re fejlesztéséhez Frog Legs (x2), White Pearl és 50k arany szükséges.
+9183	A Nimbus Boots +5-re fejlesztéséhez Spider Legs (x2) és 20k arany szükséges.
+9184	A Phoenix Shoes +6-ra fejlesztéséhez Frog Legs (x2) és 30k arany szükséges.
+9185	A Fire Bird Shoes +8-ra fejlesztéséhez Yeti Fur (x2), Blue Pearl és 90k arany szükséges.
+9186	A Copper Bell +8-ra fejlesztéséhez White Pigtail Ribbon (x2) és 45k arany szükséges.
+9187	A Silver Bell +7-re fejlesztéséhez Bear Gail+ (x2) és 30k arany szükséges.
+9188	A Golden Bell +9-re fejlesztéséhez Ornamental Hairpin (x2) és 75k arany szükséges.
+9189	A Jade Bell +7-re fejlesztéséhez Unknown Tailsman (x2), Fishbone és 40k arany szükséges.
+9190	A Fountain Bell +6-ra fejlesztéséhez Orc Amulet+ (x2) és 20k arany szükséges.
+9191	Az Apricot Bell +8-ra fejlesztéséhez Scorpion Tail+ (x2), Clam és 70k arany szükséges.
+9192	Az Apricot Bell +9-re fejlesztéséhez Curse Book (x2), Clam és 120k arany szükséges.
+9193	A Golden Bug Bell +8-ra fejlesztéséhez Leaf (x2), Blue Pearl és 90k arany szükséges.
+9194	A Steel Bug Bell +9-re fejlesztéséhez Ice Killer Whale Horn(x2), Red Pearl és 150k arany szükséges.
+9195	A Thunder Bird Bell +7-re fejlesztéséhez Leaf (x2), White Pearl és 45k arany szükséges.
+9196	A Bamboo Bell +5-re fejlesztéséhez Unknown Medicine és 20k arany szükséges.
+9197	Az Antique Bell +8-ra fejlesztéséhez 90k arany szükséges.
+9198	Az Antique Bell +3-ra fejlesztéséhez 12k arany szükséges.
+9199	A Bear Feet a Wooden Bracelet +8-ra fejlesztéséhez használatos.
+9200	A Bear Feet a Silver Bracelet Bracelet +7-re fejlesztéséhez használatos.
+9201	A Bear Feet+ a Golden Bracelet Bracelet +7-re fejlesztéséhez használatos.
+9202	A White Pigtail Ribbon+ a Silver Bracelet +7-re fejlesztéséhez használatos.
+9203	A White Pigtail Ribbon+ a Wooden Bracelet +8-ra fejlesztéséhez használatos.
+9204	A White Pigtail Ribbon a Wooden Bracelet +8-ra fejlesztéséhez használatos.
+9205	A Facial Cream a Golden Bracelet +9-re fejlesztéséhez használatos.
+9206	A Facial Cream a Silver Bracelet +8-ra fejlesztéséhez használatos.
+9207	A Rusty Blade a Jade Bracelet +5-re fejlesztéséhez használatos.
+9208	A Rusty Blade az Ebony Bracelet +6-ra fejlesztéséhez használatos.
+9209	A Shiriken+ az Ebony Bracelet +6-ra fejlesztéséhez használatos.
+9210	A Shiriken+ a White Gold Bracelet +7-re fejlesztéséhez használatos.
+9211	A Shiriken a White Gold Bracelet +6-ra fejlesztéséhez használatos.
+9212	A Spider Web a Pearl Bracelet +6-ra fejlesztéséhez használatos.
+9213	A Spider Web a Jade Bracelet +7-re fejlesztéséhez használatos.
+9214	A Spider's Poison Sack az Ebony Bracelet +8-ra fejlesztéséhez használatos.
+9215	A Spider's Poison Sack a Pearl Bracelet +9-re fejlesztéséhez használatos.
+9216	A Snakeskin a White Gold Bracelet +9-re fejlesztéséhez használatos.
+9217	A Snakeskin a Pearl Bracelet +8-ra fejlesztéséhez használatos.
+9218	Az Unknown medicine+ a Heaven's Tear Bracelet +5-re fejlesztéséhez használatos.
+9219	Az Unknown medicine+ a Crystal Bracelet +6-ra fejlesztéséhez használatos.
+9220	Az Unknown medicine az Amethyst Bracelet +5-re fejlesztéséhez.
+9221	A Demon's Keepsake a Heaven's Tear Bracelet +6-ra fejlesztéséhez használatos.
+9222	A Demon's Keepsake az Amethyst Bracelet +7-re fejlesztéséhez használatos.
+9223	A Demon's Keepsake+ a Crystal Bracelet +6-ra fejlesztéséhez használatos.
+9224	A Demon's Gem a Heaven's Tear Bracelet +7-re fejlesztéséhez használatos.
+9225	A Demon's Gem a Crystal Bracelet +8-ra fejlesztéséhez használatos.
+9226	A Demon's Gem+ az Amethyst Bracelet +7-re fejlesztéséhez használatos.
+9227	A Yeti Fur+ a Crystal Bracelet +8-ra fejlesztéséhez használatos.
+9228	A Yeti Fur+ a Heaven's Tear Bracelet +7-re fejlesztéséhez használatos.
+9229	A Yeti Fur az Amethyst Bracelet +8-ra fejlesztéséhez használatos.
+9230	A Flaming Mane az Amethyst Bracelet +9-re fejlesztéséhez használatos.
+9231	A Flaming Mane a Heaven's Tear Bracelet +8-ra fejlesztéséhez használatos.
+9232	A Wolf Fur+ a Wooden Necklace +7-re fejlesztéséhez használatos.
+9233	A Wolf Fur+ a Copper Necklace +6-ra fejlesztéséhez használatos.
+9234	A Wolf Fur a Wooden Necklace +7-re fejlesztéséhez használatos.
+9235	A Red Pigtail Ribbon a Copper Necklace +7-re fejlesztéséhez használatos.
+9236	A Red Pigtail Ribbon a Wooden Necklace +8-ra fejlesztéséhez használatos.
+9237	Az Ornamental Hairpin a Silver Necklace +9-re fejlesztéséhez használatos.
+9238	Az Ornamental Hairpin a Golden Necklace +8-ra fejlesztéséhez használatos.
+9239	A Shiriken a Jade Necklace +5-re fejlesztéséhez használatos.
+9240	A Shiriken az Ebony Necklace +6-ra fejlesztéséhez használatos.
+9241	A Shiriken+ a Pearl Necklace +5-re fejlesztéséhez használatos.
+9242	Az Orc Amulet+ a White Gold Necklace +6-ra fejlesztéséhez használatos.
+9243	Az Orc Amulet+ a Jade Necklace +7-re fejlesztéséhez használatos.
+9244	Az Orc Amulet a Pearl Necklace +6-ra fejlesztéséhez használatos.
+9245	Az Unknown Talisman a Jade Necklace +7-re fejlesztéséhez használatos.
+9246	Az Unknown Talisman a White Gold Necklace +8-ra fejlesztéséhez használatos.
+9247	Az Unknown Talisman+ a Pearl Necklace +7-re fejlesztéséhez használatos.
+9248	A Scorpion Tail+ a Jade Necklace +8-ra fejlesztéséhez használatos.
+9249	A Scorpion Tail+ az Ebony Necklace +9-re fejlesztéséhez használatos.
+9250	A Scorpion Tail a Wooden Bracelet +8-ra fejlesztéséhez használatos.
+9251	Az Orc Thoot+ az Ebony Necklace +9-re fejlesztéséhez használatos.
+9252	Az Orc Thoot+ a Wooden Bracelet +8-ra fejlesztéséhez használatos.
+9253	Az Orc Thoot a Jade Necklace +9-re fejlesztéséhez használatos.
+9254	Az Unknown Medicine a Crystal Necklace +5-re fejlesztéséhez használatos.
+9255	Az Unknown Medicine a Heaven's Tear Necklace +6-ra fejlesztéséhez használatos.
+9256	Az Unknown Medicine+ az Amethyst Necklace +5-re fejlesztéséhez használatos.
+9257	A Piece of Fabric a Crystal Necklace +6-ra fejlesztéséhez használatos.
+9258	A Piece of Fabric a Heaven's Tear Necklace +5-re fejlesztéséhez használatos.
+9259	A Piece of Fabric+ az Amethyst Necklace +6-ra fejlesztéséhez használatos.
+9260	A Leaf a Crystal Necklace +7-re fejlesztéséhez használatos.
+9261	A Leaf az Amethyst Necklace +8-ra fejlesztéséhez használatos.
+9262	A Piece of Ice a Heaven's Tear Necklace +8-ra fejlesztéséhez használatos.
+9263	A Piece of Ice a Crystal Necklace +9-re fejlesztéséhez használatos.
+9264	A Piece of Ice+ az Amethyst Necklace +8-ra fejlesztéséhez használatos.
+9265	Az Ice Marble+ a Crystal Necklace +9-re fejlesztéséhez használatos.
+9266	Az Ice Marble+ a Heaven's Tear Necklace +8-ra fejlesztéséhez használatos.
+9267	Az Ice Marble az Amethyst Necklace +9-re fejlesztéséhez használatos.
+9268	A Blue wolf szintje 7.
+9269	A Tiger szintje 17.
+9270	Az Alpha Grey Wolf szintje 16.
+9271	A Hungry Black Bear szintje 19.
+9272	A White Tiger szintje 26.
+9273	A Hungry Wild Boar szintje 10.
+9274	A Grizzly Bear szintje 13.
+9275	A White Oath Soldier szintje 18.
+9276	A Dispirited Mi-jung szintje 23.
+9277	A Dispirited Eun-jung szintje 28.
+9278	A Dispirited Jin-Hee szintje 29.
+9279	A White Oath General szintje 25.
+9280	A Bear szintje 12.
+9281	A White 0ath Archer szintje 20.
+9282	A Black Wind Gu-Ryung szintje 32.
+9283	A Bo szintje 36.
+9284	A Black Wind Archer szintje 29.
+9285	A Black Wind Maniac szintje 28.
+9286	A Black Wind Soldier szintje 26.
+9287	A Black Wind Jak-To szintje 30.
+9288	A Savage Infantryman szintje 29.
+9289	Az Evil Black Storm Joh-Hwa szintje 29.
+9290	Az Evil Black Storm Archer szintje 30.
+9291	A Savage Minion szintje 31.
+9292	A Cursed Wolf szintje 9.
+9293	A Cursed Alpha Blue Wolf szintje 14.
+9294	A Cursed Bear szintje 18.
+9295	A Cursed Black Bear szintje 24.
+9296	A Cursed Brown Bear szintje 26.
+9297	A Cursed Wild Boar szintje 12.
+9298	A Cursed Tiger szintje 23.
+9299	A Cursed White Tiger szintje 29.
+9300	A Bestial Soldier szintje 35.
+9301	A Bestial Specialist szintje 42.
+9302	A Bestial Maniac szintje 38.
+9303	A Bestial Archer szintje 41.
+9304	A Strong Savage Archer szintje 35.
+9305	A Strong Savage Infantry szintje 29.
+9306	A Strong Savage General szintje 35.
+9307	A Strong Savage Minion szintje 31.
+9308	Az Orc szintje 26.
+9309	Az Orc Scout szintje 30.
+9310	Az Orc Fighter szintje 32.
+9311	Az Orc Sorcerer szintje 33.
+9312	Az Elite Orc szintje 34.
+9313	Az Elite Orc Scout szintje 36.
+9314	Az Elite Orc Fighter szintje 39.
+9315	Az Elite Orc Sorcerer szintje 40.
+9316	Az Elite Orc General szintje 45.
+9317	A Black Orc szintje 47.
+9318	A Black Orc Giant szintje 49.
+9319	Az Esoteric Fanatic szintje 35.
+9320	Az Esoteric Arahan szintje 39.
+9321	Az Esoteric Arahan Fighter szintje 41.
+9322	A Chief Esoteric Arahan szintje 43.
+9323	Az Esoteric Executioner szintje 46.
+9324	Az Esoteric Tormentor szintje 47.
+9325	Az Esoteric Summoner szintje 51.
+9326	A Proud Dark Fanatic szintje 50.
+9327	A Proud Dark Arahan szintje 52.
+9328	A Proud Dark Fighter szintje 54.
+9329	A Proud Dark Colonel szintje 54.
+9330	A Proud Dark Rifleman szintje 57.
+9331	A Plagued Dog szintje 51.
+9332	A Plagued Man szintje 54.
+9333	A Plagued Swordman szintje 56.
+9334	A Plagued Spearman szintje 58.
+9335	A Plagued Archer szintje 57.
+9336	A Plagued Leader szintje 59.
+9337	A Demon Soldier szintje 57.
+9338	A Demon Archer szintje 59.
+9339	A Demon Spearman szintje 58.
+9340	A Demon Shaman szintje 60.
+9341	A Vile Demon Soldier szintje 65.
+9342	A Vile Demon Archer szintje 69.
+9343	A Vile Demon Spearman szintje 70.
+9344	A Vile Demon Shaman szintje 69.
+9345	A Ghost Of Grudge szintje 72.
+9346	A Ghost Of Chaos szintje 72.
+9347	A Vile Demon Leader szintje 73.
+9348	A Skull Sword Master szintje 72.
+9349	A Flying Skull szintje 69.
+9350	Az Immortal Ghost szintje 73.
+9351	A Demonic Beast szintje 75.
+9352	A Demon King szintje 74.
+9353	A Death Reaper szintje 78.
+9354	Az Enchanted Ice szintje 62.
+9355	Az Ice Killer Whale szintje 63.
+9356	Az Ice Bug szintje 65.
+9357	Az Ice Lion szintje 64.
+9358	Az Ice Man szintje 63.
+9359	A Yeti szintje 65.
+9360	Az Ice Golem szintje 66.
+9361	A Heavenly Enchanted Ice szintje 82.
+9362	A Heavenly Ice Killer Whale szintje 82.
+9363	A Heavenly Ice Bug szintje 82.
+9364	A Heavenly Ice Lion szintje 83.
+9365	A Heavenly Ice Man szintje 83.
+9366	A Heavenly Yeti szintje 83.
+9367	A Heavenly Ice Golem szintje 86.
+9368	A Tree Frog Soldier szintje 57.
+9369	A Tree Frog Leader szintje 60.
+9370	A Leflet Bogeyman szintje 59.
+9371	A Yellow Tiger Ghost szintje 75.
+9372	A Bullfrog General szintje 60.
+9373	A Giant Soldier szintje 66.
+9374	A Giant Scout szintje 73.
+9375	A Giant Thousand Fighter szintje 76.
+9376	A Stone Thrower szintje 68.
+9377	A Stone Shooter szintje 72.
+9378	A Giant Stone Shooter szintje 72.
+9379	A Giant Worker szintje 68.
+9380	A Giant Inspector szintje 72.
+9381	A Giant Hundred Combatant szintje 75.
+9382	A Nine Tails szintje 74.
+9383	A Baby Spider szintje 43.
+9384	A Deadly Spider szintje 45.
+9385	A Crimson Spider szintje 47.
+9386	A Claw Spider szintje 49.
+9387	A Soldier Spider szintje 51.
+9388	A Baby Poison Spider szintje 50.
+9389	A Deadly Poison Spider szintje 52.
+9390	A Red Poison Spider szintje 53.
+9391	A Claw Poison Spider szintje 5.
+9392	A Soldier Poison Spider szintje 58.
+9393	A Queen Spider szintje 60.
+9394	A Desert Fox szintje 22.
+9395	A Deserts Flying Eye szintje 35.
+9396	A King Scorpion szintje 39.
+9397	A Scorpion Man szintje 45.
+9398	A Scorpion Archer szintje 47.
+9399	A Snake Swordman szintje 48.
+9400	A Snake Archer szintje 52.
+9401	A Desert Outlaw szintje 54.
+9402	A Giant Turtle szintje 66.
+9403	A Fighting Tiger Minion szintje 69.
+9404	A Flame Ghost szintje 70.
+9405	A Fighting Tiger szintje 70.
+9406	A Flame Soldier szintje 72.
+9407	A Flame Warrior szintje 73.
+9408	A Flame King szintje 73.
+9409	A Haunted Tree szintje 65.
+9410	A Haunted Stump szintje 67.
+9411	A Dryad szintje 68.
+9412	A Haunted Willow szintje 69.
+9413	Az Evil Haunted Tree szintje 72.
+9414	A Red Brutal Tree szintje 73.
+9415	A Red Haunted Stump szintje 76.
+9416	A Red Dryad szintje 77.
+9417	A Red Haunted Willow szintje 79.
+9418	A Red Haunted Tree szintje 82.
+9419	A Heaven Soldier szintje 85.
+9420	A Heaven Archer szintje 88.
+9421	A Heaven Cleric szintje 87.
+9422	A Heaven Commander szintje 88.
+9423	A Zin Heaven Soldier szintje 90.
+9424	A Zin Heaven Archer szintje 92.
+9425	A Zin Heaven Cleric szintje 93.
+9426	A Zin Heaven Commander szintje 95.
+9427	Az Aqua Dragon szintje 97.
+9428	A Gnoll Warrior szintje 96.
+9429	A Gnoll Archer szintje 96.
+9430	A Gnoll Defender szintje 98.
+9431	A Gnoll Magician szintje 98.
+9432	A Gnoll General szintje 99.
+9433	A Gnoll Lord szintje 102.
+9434	A Supreme Gnoll Guard szintje 104.
+9435	A One-eyed Slugger szintje 97.
+9436	A Cyclops Soldier szintje 99.
+9437	A Cyclops Magician szintje 100.
+9438	A Cyclops Executioner szintje 99.
+9439	A General Outis szintje 102.
+9440	Az Arges szintje 104.
+9441	A Polyphemos szintje 105.
+9442	A Manticore Warrior szintje 96.
+9443	A Manticore Soldier szintje 98.
+9444	A Manticore Magus szintje 99.
+9445	A Manticore Executioner szintje 99.
+9446	A General Cor szintje 101.
+9447	A Rakshasa szintje 102.
+9448	A Martyaxwar szintje 105.
+9449	A Lemures Warrior szintje 98.
+9450	A Lemures Soldier szintje 98.
+9451	A Lemures Magician szintje 99.
+9452	A Lemures Executioner szintje 101.
+9453	A Lemures General szintje 102.
+9454	A Lemures Prince szintje 103.
+9455	A Lemures Bodyguard szintje 104.
+9456	A Tritonic Moray szintje 96.
+9457	A Shark Soldier szintje 98.
+9458	A Tritonic Magician szintje 99.
+9459	A Tritonic Hunter szintje 98.
+9460	A Tritonic Slasher szintje 101.
+9461	A General Kappa szintje 103.
+9462	A Triton szintje 105.
+9463	A Red Thief Amazon szintje 95.
+9464	A Red Thief Assassin szintje 97.
+9465	A Red Thief Magician szintje 97.
+9466	A Red Thief Executioner szintje 98.
+9467	A Black General szintje 98.
+9468	A Bone Face szintje 102.
+9469	A Red Chief szintje 104.
+9470	A Crab Warrior szintje 96.
+9471	A Scorpion Marksman szintje 97.
+9472	A Shrimp Soldier szintje 99.
+9473	A Diabolical Hermit szintje 98.
+9474	Az Armoured Crab szintje 102.
+9475	A General Lobster szintje 103.
+9476	A King Crab szintje 105.
+9477	A Gigantic Biter szintje 100.
+9478	A Gigantic Slaughterer szintje 102.
+9479	A Gigantic Magus szintje 103.
+9480	A Twiant szintje 104.
+9481	A Captain Hooks szintje 105.
+9482	A Gargoyle szintje 105.
+9483	A King Wubba szintje 105.
+9484	A Hangork szintje 98.
+9485	Az Archie Ogre szintje 100.
+9486	A Brawl Ogre szintje 102.
+9487	Az Ogre Magus szintje 101.
+9488	A General Ogg szintje 103.
+9489	A Captain Shruk szintje 105.
+9490	A The Great Ogre szintje 105.
+9491	A Metin Of Sorrow szintje 10.
+9492	A Metin Of Combat szintje 10.
+9493	A Metin Of Battle szintje 15.
+9494	A Metin Of Greed szintje 20.
+9495	A Metin Of Black szintje 30.
+9496	A Metin Of Darkness szintje 30.
+9497	A Metin Of Jealousy szintje 40.
+9498	A Metin Of Soul szintje 45.
+9499	A Metin Of Shadow szintje 40.
+9500	A Metin Of Toughness szintje 50.
+9501	A Metin Of Devil szintje 60.
+9502	A Metin Of Fall szintje 55.
+9503	A Metin Of Death szintje 65.
+9504	A Metin Of Murder szintje 70.
+9505	A Metin of Wind Devil szintje 80.
+9506	A Metin of Devil Eyes szintje 80.
+9507	A Metin of Fighting Dragon szintje 85.
+9508	A Metin of Lightning Cloud szintje 85.
+9509	A Metin of Gloom szintje 100.
+9510	A Metin of Ember szintje 95.
+9511	A Metin of Vanity szintje 100.
+9512	A Metin of Wrath szintje 105.
+9513	A Metin of Calamity szintje 105.
+9514	A Metin of Malice szintje 100.
+9515	A Weak Ape Soldier szintje 22.
+9516	A Weak Ape Thrower szintje 24.
+9517	A Weak Ape Fighter szintje 27.
+9518	A Weak Ape General szintje 29.
+9519	Az Ape Soldier szintje 36.
+9520	Az Ape Thrower szintje 37.
+9521	Az Ape Fighter szintje 40.
+9522	Az Ape General szintje 40.
+9523	A Stone Ape szintje 41.
+9524	Az Ape Leader szintje 42.
+9525	A Strong Ape Soldier szintje 46.
+9526	A Strong Ape Thrower szintje 48.
+9527	A Strong Ape Fighter szintje 48.
+9528	A Strong Ape General szintje 52.
+9529	A Strong Stone Ape szintje 53.
+9530	A Rock Ape szintje 35.
+9531	Az Ape Lord szintje 55.
+9532	A Devil szintje 80.
+9533	A Devil's Wolf szintje 80.
+9534	A Devil's Wraith szintje 81.
+9535	A Devil's Skulker szintje 85.
+9536	A Devil's Spearman szintje 84.
+9537	A Devil's Cockatrice szintje 83.
+9538	A Devil's Dominator szintje 85.
+9539	A Spectral Crusher szintje 79.
+9540	A Spectral Bower szintje 80.
+9541	A Spectral Spikeman szintje 82.
+9542	A Spectral Shaman szintje 10.
+9543	A Spectral Axeman szintje 83.
+9544	A Spectral Titan szintje 85.
+9545	A Spectral Hunter szintje 86.
+9546	A Hateful Crusher szintje 80.
+9547	A Hateful Bower szintje 10.
+9548	A Hateful Spikeman szintje 10.
+9549	A Hateful Shaman szintje 82.
+9550	A Hateful Axeman szintje 84.
+9551	A Hateful Titan szintje 85.
+9552	A Hateful Hunter szintje 86.
+9553	A Tartaros szintje 89.
+9554	Az Erebus szintje 90.
+9555	A Charon szintje 91.
+9556	A Lord Gahnasel szintje 92.
+9557	A Cung-Mok szintje 8.
+9558	A Mu-Rang szintje 15.
+9559	A Jug-Hyul szintje 10.
+9560	A Young-Ji szintje 21.
+9561	A Li-An szintje 24.
+9562	A Lykos szintje 30.
+9563	A Scrofa szintje 30.
+9564	A Bera szintje 32.
+9565	A Tigris szintje 35.
+9566	A Se-Rang szintje 25.
+9567	Az Eun-Jung szintje 26.

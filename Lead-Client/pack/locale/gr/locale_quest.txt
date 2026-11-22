@@ -8506,3 +8506,570 @@
 8506	Θα πρέπει να το αλλάξεις για λόγους ασφαλείας.[ENTER]Μπορεί να νομίζεις ότι 45 θέσεις είναι λίγες.[ENTER]Αλλά ποιος ξέρει, μπορεί να σου δώσω περισότερο[ENTER]χώρο αν τα πάμε καλά..
 8507	Δεν θα αναγκάσω κανέναν. Αν δεν έχεις όρεξη, έλα[ENTER]πάλι αργότερα.
 8508	Ανοιχτή Αποθήκη
+9001	Το Aura of Sword είναι ικανότητα της Sura.
+9002	Το White Liquid δίνει 10 STR για 1 ώρα.
+9003	Το DEX μπορεί να αυξήσει τη διάρκεια του Stealth.
+9004	Το Flame Strike αντλεί τη δύναμή του από INT και DEX.
+9005	Στο G3 το Ritual of Doom διαρκεί 68 δευτερόλεπτα.
+9006	Το Spirit Assault είναι ικανότητα της Sura.
+9007	Αν χρησιμοποιήσεις Eel παίρνεις 10 STR για 10 λεπτά.
+9008	Το Taichi αυξάνει το AC.
+9009	Η ικανότητα Charge μπορεί να δηλητηριάσει τον στόχο.
+9010	Το Grilled Loach μπορεί να σε κάνει αόρατο για σύντομο χρονικό διάστημα.
+9011	Όταν σκοτώνεσαι πάντα χάνεις εμπειρία
+9012	Το Stone of Magic+3 δίνει +240 SP.
+9013	Το Stone of Magic+2 δίνει 150 SP.
+9014	Το Poison Cloud προκαλεί μαγική ζημιά.
+9015	Το Fear ζαλίζει τον εχθρό.
+9016	Το Dance with Wind είναι ικανότητα του Archer.
+9017	Το Flame Arrow καίει τον στόχο.
+9018	Τα Magic Seeds πέφτουν μόνο από τις Dryads.
+9019	Ο Dark-Ghost Leader είναι δαίμονας.
+9020	Ο παπαγάλος πάνω στον Teleporter είναι κόκκινος και πράσινος
+9021	Ο General Store έχει αλογοουρά
+9022	Ο Store Keeper έχει 3 μαχαίρια
+9023	Η Yonah είναι μάγειρας
+9024	Ο Octavio είναι λόγιος
+9025	Ο Anh-Yu έχει μωρό
+9026	Η Ghost Plate Armour στον Armour Shop Dealer κοστίζει 10.000 χρυσά
+9027	Το Iron Fan+0 στον Weapon Shop Dealer κοστίζει 400 χρυσά
+9028	Το Dark Orb είναι το πιο ισχυρό ξόρκι για έναν Sura μαύρης μαγείας
+9029	Το Aura of Sword αυξάνει τη δύναμή του με DEX
+9030	Η Old Lady έχει μια μικρή κόκκινη τσάντα
+9031	Στο Elgoria υπάρχουν 5 άλογα μέσα στον στάβλο
+9032	Η ράβδος πολύτιμων λίθων του Alchemist είναι κίτρινη
+9033	Η Mirine έχασε τη μητέρα της
+9034	Υπάρχουν ακριβώς 259 δέντρα στον χάρτη 1 του Elgoria
+9035	Αν ένα άλογο πεθάνει 10 φορές, θα φύγει για πάντα
+9036	Στο Fisherman Store, 50 σκουλήκια κοστίζουν 2000 χρυσά.
+9037	Το Fishing Marble είναι δόλωμα
+9038	Τα Riceballs και τα σκουλήκια είναι τα μόνα δολώματα στο Metin2
+9039	Υπάρχουν 20 guild lands σε κάθε πόλη του παιχνιδιού
+9040	Ο Death Reaper είναι Demi-Human
+9041	Ο Heavens Golem είναι το μόνο τέρας που ρίχνει water crystal
+9042	Το Zen Bean δίνει 500 Karma Points αλλά μόνο αν είσαι αρνητικός
+9043	Ο Se-Rang είναι τέρας τύπου λύκου
+9044	Ο Starbuck είναι ο Accessory Designer Smith
+9045	Ο Cherogirayb είναι ο Biologist του Metin2
+9046	Ο Zin Heavens Commander ρίχνει blessing marble
+9047	Ο Stanh είναι ένας από τους 3 Guild Smiths
+9048	Ο Tigris έχει κόκκινο κολάρο
+9049	Για αναβάθμιση του Wood Bracelet σε +6 χρειάζεσαι 20k χρυσά.
+9050	Για αναβάθμιση του Wood Bracelet σε +7 χρειάζεσαι Bear Feet και 25k χρυσά.
+9051	Για αναβάθμιση του Wood Bracelet σε +8 χρειάζεσαι White Pigtail Ribbon και 45k χρυσά.
+9052	Για αναβάθμιση του Wood Bracelet σε +9 χρειάζεσαι Facial Cream και 75k χρυσά.
+9053	Για αναβάθμιση του Copper Bracelet σε +5 χρειάζεσαι 15k χρυσά.
+9054	Για αναβάθμιση του Copper Bracelet σε +7 χρειάζεσαι Bear Feet και 30k χρυσά.
+9055	Για αναβάθμιση του Copper Bracelet σε +8 χρειάζεσαι White Pigtail Ribbon+ και 40k χρυσά.
+9056	Για αναβάθμιση του Copper Bracelet σε +9 χρειάζεσαι Facial Cream και 70k χρυσά.
+9057	Για αναβάθμιση του Silver Bracelet σε +8 χρειάζεσαι White Pigtail Ribbon+ και 45k χρυσά.
+9058	Για αναβάθμιση του Gold Bracelet σε +6 χρειάζεσαι 20k χρυσά.
+9059	Για αναβάθμιση του Gold Bracelet σε +8 χρειάζεσαι White Pigtail Ribbon+ και 45k χρυσά.
+9060	Για αναβάθμιση του Jade Bracelet σε +3 χρειάζεσαι 5k χρυσά.
+9061	Για αναβάθμιση του Jade Bracelet σε +6 χρειάζεσαι Shiriken+ (x2) και 20k χρυσά.
+9062	Για αναβάθμιση του Ebony Bracelet σε +4 χρειάζεσαι 8k χρυσά.
+9063	Για αναβάθμιση του Ebony Bracelet σε +7 χρειάζεσαι Spider Web (x2), Fishbone και 50k χρυσά.
+9064	Για αναβάθμιση του Pearl Bracelet σε +5 χρειάζεσαι Rusty Blade (x2) και 13k χρυσά.
+9065	Για αναβάθμιση του Pearl Bracelet σε +8 χρειάζεσαι Spider's Poison Sack (x2) Clam και 70k χρυσά.
+9066	Για αναβάθμιση του White Gold Bracelet σε +2 χρειάζεσαι 2k χρυσά.
+9067	Για αναβάθμιση του White Gold Bracelet σε +9 χρειάζεσαι Snakeskin (x2), Clam και 100k χρυσά.
+9068	Για αναβάθμιση του Crystal Bracelet σε +6 χρειάζεσαι Demon's Keepsake (x2) και 30k χρυσά.
+9069	Για αναβάθμιση του Crystal Bracelet σε +7 χρειάζεσαι Demon's Gem+ (x2), White Pearl και 45k χρυσά.
+9070	Για αναβάθμιση του Amethyst Bracelet σε +5 χρειάζεσαι Unknown medicine+ και 20k χρυσά.
+9071	Για αναβάθμιση του Amethyst Bracelet σε +9 χρειάζεσαι Flaming Mane (x2), Red pearl και 120k χρυσά.
+9072	Για αναβάθμιση του Heaven's Tear Bracelet σε +4 χρειάζεσαι 10k χρυσά.
+9073	Για αναβάθμιση του Heaven's Tear Bracelet σε +8 χρειάζεσαι Yeti Fur+ (x2), Blue pearl και 90k χρυσά.
+9074	Για αναβάθμιση του Wooden Necklace σε +4 χρειάζεσαι 2,5k χρυσά.
+9075	Για αναβάθμιση του Wooden Necklace σε +6 χρειάζεσαι 20k χρυσά.
+9076	Για αναβάθμιση του Copper Necklace σε +5 χρειάζεσαι 15k χρυσά.
+9077	Για αναβάθμιση του Copper Necklace σε +7 χρειάζεσαι Wolf Fur+ (x2) και 25k χρυσά.
+9078	Για αναβάθμιση του Silver Necklace σε +8 χρειάζεσαι Red Pigtail Ribbon και 50k χρυσά.
+9079	Για αναβάθμιση του Silver Necklace σε +1 χρειάζεσαι 500 χρυσά.
+9080	Για αναβάθμιση του Golden Necklace σε +9 χρειάζεσαι Ornamental Hairpin (x2) και 75k χρυσά.
+9081	Για αναβάθμιση του Golden Necklace σε +3 χρειάζεσαι 2,5k χρυσά.
+9082	Για αναβάθμιση του Jade Necklace σε +8 χρειάζεσαι Scorpion Tail+ (x2), Clam και 70k χρυσά.
+9083	Για αναβάθμιση του Jade Necklace σε +2 χρειάζεσαι 2,5k χρυσά.
+9084	Για αναβάθμιση του Ebony Necklace σε +6 χρειάζεσαι Orc Amulet+ και 20k χρυσά.
+9085	Για αναβάθμιση του Ebony Necklace σε +2 χρειάζεσαι 2k χρυσά.
+9086	Για αναβάθμιση του Pearl Necklace σε +5 χρειάζεσαι Shiriken (x2) και 13k χρυσά.
+9087	Για αναβάθμιση του Pearl Necklace σε +9 χρειάζεσαι Orc Thoot+ (x2), Clam και 120k χρυσά.
+9088	Για αναβάθμιση του White Gold Necklace σε +4 χρειάζεσαι 8k χρυσά.
+9089	Για αναβάθμιση του White Gold Necklace σε +7 χρειάζεσαι Unknown talisman (x2), Fishbone και 40k χρυσά.
+9090	Για αναβάθμιση του Crystal Necklace σε +6 χρειάζεσαι Piece of Fabric (x2) και 30k χρυσά.
+9091	Για αναβάθμιση του Crystal Necklace σε +9 χρειάζεσαι Ice Marble (x2), Red Pearl και 150k χρυσά.
+9092	Για αναβάθμιση του Amethyst Necklace σε +5 χρειάζεσαι Unknown Medicine (x2) και 20k χρυσά.
+9093	Για αναβάθμιση του Amethyst Necklace σε +7 χρειάζεσαι Leaf (x2), White Pearl και 50k χρυσά.
+9094	Για αναβάθμιση του Heaven's Tear Necklace σε +8 χρειάζεσαι Piece of Ice+(x2), Blue Pearl και 90k χρυσά.
+9095	Για αναβάθμιση του Heaven's Tear Necklace σε +1 χρειάζεσαι 1,2k χρυσά.
+9096	Για αναβάθμιση του Wooden Earrings σε +2 χρειάζεσαι 1,2k χρυσά.
+9097	Για αναβάθμιση του Wooden Earrings σε +5 χρειάζεσαι 8k χρυσά.
+9098	Για αναβάθμιση του Copper Earrings σε +7 χρειάζεσαι Bear Gail και 30k χρυσά.
+9099	Για αναβάθμιση του Copper Earrings σε +9 χρειάζεσαι Worn Out Black Uniform και 70k χρυσά.
+9100	Για αναβάθμιση του Silver Earrings σε +8 χρειάζεσαι Bear Feet+ και 45k χρυσά.
+9101	Για αναβάθμιση του Silver Earrings σε +6 χρειάζεσαι 20k χρυσά.
+9102	Για αναβάθμιση του Golden Earrings σε +4 χρειάζεσαι 7,5k χρυσά.
+9103	Για αναβάθμιση του Golden Earrings σε +3 χρειάζεσαι 5k χρυσά.
+9104	Για αναβάθμιση του Jade Earrings σε +3 χρειάζεσαι 5k χρυσά.
+9105	Για αναβάθμιση του Jade Earrings σε +7 χρειάζεσαι Spider Eye, Fishbone και 40k χρυσά.
+9106	Για αναβάθμιση του Ebony Earrings σε +4 χρειάζεσαι 10k χρυσά.
+9107	Για αναβάθμιση του Ebony Earrings σε +5 χρειάζεσαι Piece of Gem και 13k χρυσά.
+9108	Για αναβάθμιση του Pearl Earrings σε +9 χρειάζεσαι Orc Thoot+ (x2), Clam και 120k χρυσά.
+9109	Για αναβάθμιση του Pearl Earrings σε +6 χρειάζεσαι Esoteric Primer (x2) και 20k χρυσά.
+9110	Για αναβάθμιση του White Gold Earrings σε +2 χρειάζεσαι 2k χρυσά.
+9111	Για αναβάθμιση του White Gold Earrings σε +8 χρειάζεσαι Orc Thoot, Clam, και 70k χρυσά.
+9112	Για αναβάθμιση του Crystal Earrings σε +3 χρειάζεσαι 5k χρυσά.
+9113	Για αναβάθμιση του Crystal Earrings σε +6 χρειάζεσαι Piece of Fabric και 25k χρυσά.
+9114	Για αναβάθμιση του Crystal Earrings σε +9 χρειάζεσαι Ice Marble (x2), Red Pearl και 150k χρυσά.
+9115	Για αναβάθμιση του Amethyst Earrings σε +2 χρειάζεσαι 2,5k χρυσά.
+9116	Για αναβάθμιση του Amethyst Earrings σε +7 χρειάζεσαι Demon's Gem (x2), White Pearl και 45k χρυσά.
+9117	Για αναβάθμιση του Amethyst Earrings σε +1 χρειάζεσαι 1,5k χρυσά.
+9118	Για αναβάθμιση του Heaven's Tear Earrings σε +8 χρειάζεσαι Demon's Keepsake+, Blue Pearl 80k χρυσά.
+9119	Για αναβάθμιση του Heaven's Tear Earrings σε +5 χρειάζεσαι Snake Tail+ (x2) και 20k χρυσά.
+9120	Για αναβάθμιση του Battle Shield σε +5 χρειάζεσαι 20k χρυσά.
+9121	Για αναβάθμιση του Battle Shield σε +6 χρειάζεσαι 20k χρυσά.
+9122	Για αναβάθμιση του Battle Shield σε +7 χρειάζεσαι Bear Gail+ (x2) και 25k χρυσά.
+9123	Για αναβάθμιση του Battle Shield σε +8 χρειάζεσαι White Tiger Hide και 45k χρυσά.
+9124	Για αναβάθμιση του Battle Shield σε +9 χρειάζεσαι Worn Out Black Uniform (x2) και 75k χρυσά.
+9125	Για αναβάθμιση του Battle Shield σε +1 χρειάζεσαι 1k χρυσά.
+9126	Για αναβάθμιση του Pentagon Shield σε +5 χρειάζεσαι Piece of Broken Armour (x2) και 13k χρυσά.
+9127	Για αναβάθμιση του Pentagon Shield σε +6 χρειάζεσαι Esoteric Primer+ και 20k χρυσά.
+9128	Για αναβάθμιση του Pentagon Shield σε +7 χρειάζεσαι Unknown Talisman (x2), Fishbone και 40k χρυσά.
+9129	Για αναβάθμιση του Pentagon Shield σε +8 χρειάζεσαι Scorpion Tail (x2), Clam και 70k χρυσά.
+9130	Για αναβάθμιση του Pentagon Shield σε +9 χρειάζεσαι Curse Book (x2), Clam και 120k χρυσά.
+9131	Για αναβάθμιση του Pentagon Shield σε +2 χρειάζεσαι 2k χρυσά.
+9132	Για αναβάθμιση του Black Round Shield σε +5 χρειάζεσαι Spider Legs(x2) και 20k χρυσά.
+9133	Για αναβάθμιση του Black Round Shield σε +6 χρειάζεσαι Curse Book+ (x2) και 30k χρυσά.
+9134	Για αναβάθμιση του Black Round Shield σε +7 χρειάζεσαι Piece of Fabric+ (x2), White Pearl και 50k χρυσά.
+9135	Για αναβάθμιση του Black Round Shield σε +8 χρειάζεσαι Ice Killer Whale Horn (x2), Blue Pearl και 75k χρυσά.
+9136	Για αναβάθμιση του Black Round Shield σε +9 χρειάζεσαι Fighting Tiger Fang (x2), Red Pearl και 150k χρυσά.
+9137	Για αναβάθμιση του Black Round Shield σε +3 χρειάζεσαι 5k χρυσά.
+9138	Για αναβάθμιση του Falcon Shield σε +4 χρειάζεσαι 10k χρυσά.
+9139	Για αναβάθμιση του Falcon Shield σε +6 χρειάζεσαι Esoteric Primer+ και 20k χρυσά.
+9140	Για αναβάθμιση του Tiger Monk Shield σε +3 χρειάζεσαι 10k χρυσά.
+9141	Για αναβάθμιση του Tiger Monk Shield σε +9 χρειάζεσαι Curse Book (x2), Clam και 120k χρυσά.
+9142	Για αναβάθμιση του Lion Edge Shield σε +7 χρειάζεσαι Unknown Talisman, Fishbone και 50k χρυσά.
+9143	Για αναβάθμιση του Lion Edge Shield σε +1 χρειάζεσαι 1,2k χρυσά.
+9144	Για αναβάθμιση του Dragon Scale Shield σε +2 χρειάζεσαι 2,5k χρυσά.
+9145	Για αναβάθμιση του Dragon Scale Shield σε +5 χρειάζεσαι Piece of Broken Armour και 13k χρυσά.
+9146	Για αναβάθμιση του Bloody Helm σε +6 χρειάζεσαι 20k χρυσά.
+9147	Για αναβάθμιση του Bloody Helm σε +2 χρειάζεσαι 1,5k χρυσά.
+9148	Για αναβάθμιση του Leather Hood σε +4 χρειάζεσαι 4k χρυσά.
+9149	Για αναβάθμιση του Leather Hood σε +3 χρειάζεσαι 2,5k χρυσά.
+9150	Για αναβάθμιση του Traditional Helm σε +8 χρειάζεσαι White Pigtail Ribbon+ (x2) και 40k χρυσά.
+9151	Για αναβάθμιση του Traditional Helm σε +1 χρειάζεσαι 600 χρυσά.
+9152	Για αναβάθμιση του Monk Hat σε +9 χρειάζεσαι Facial Cream και 75k χρυσά.
+9153	Για αναβάθμιση του Monk Hat σε +7 χρειάζεσαι White Pigtail Ribbon και 30k χρυσά.
+9154	Για αναβάθμιση του Iron Helm σε +2 χρειάζεσαι 2k χρυσά.
+9155	Για αναβάθμιση του Iron Helm σε +4 χρειάζεσαι 10k χρυσά.
+9156	Για αναβάθμιση του Chain Hood σε +5 χρειάζεσαι Flag (x2) και 20k χρυσά.
+9157	Για αναβάθμιση του Chain Hood σε +9 χρειάζεσαι Spider Egg Sack (x2), Clam και 120k χρυσά.
+9158	Για αναβάθμιση του Mocking Helm σε +8 χρειάζεσαι Spider's Poison Sack (x2), Clam και 75k χρυσά.
+9159	Για αναβάθμιση του Mocking Helm σε +6 χρειάζεσαι Scorpion Tail (x2) και 20k χρυσά.
+9160	Για αναβάθμιση του Phoenix Hat σε +7 χρειάζεσαι Spider Web (x2), Fishbone και 30k χρυσά.
+9161	Για αναβάθμιση του Phoenix Hat σε +3 χρειάζεσαι 4k χρυσά.
+9162	Για αναβάθμιση του Castle Helm σε +8 χρειάζεσαι Piece of Ice+, Blue Pearl και 90k χρυσά.
+9163	Για αναβάθμιση του Castle Helm σε +7 χρειάζεσαι Frog Legs (x2), Finger Bones (x3) και 45k χρυσά.
+9164	Για αναβάθμιση του Sunlight Hat σε +6 χρειάζεσαι Frog Tongue (x2) και 30k χρυσά.
+9165	Για αναβάθμιση του Sunlight Hat σε +5 χρειάζεσαι Unknown Medicine+ (x2) και 25k χρυσά.
+9166	Για αναβάθμιση του Steel Hood σε +9 χρειάζεσαι Flaming Mane (x2), Finger Bones (x8) και 150k χρυσά.
+9167	Για αναβάθμιση του Steel Hood σε +1 χρειάζεσαι 2k χρυσά.
+9168	Για αναβάθμιση του Ghost Mask Sallet σε +3 χρειάζεσαι 5k χρυσά.
+9169	Για αναβάθμιση του Ghost Mask Sallet σε +4 χρειάζεσαι 8k χρυσά.
+9170	Για αναβάθμιση του Bamboo Skin Shoes σε +8 χρειάζεσαι Skein (x2) και 45k χρυσά.
+9171	Για αναβάθμιση του Bamboo Skin Shoes σε +5 χρειάζεσαι 12k χρυσά.
+9172	Για αναβάθμιση του Wooden Shoes σε +7 χρειάζεσαι Tiger Hide (x2) και 30k χρυσά.
+9173	Για αναβάθμιση του Gold Threaded Shoes σε +9 χρειάζεσαι Worn Out Black Uniform+ και 75k χρυσά.
+9174	Για αναβάθμιση του Leather Boots σε +8 χρειάζεσαι Scorpion Claw (x2), Clam και 70k χρυσά.
+9175	Για αναβάθμιση του Leather Boots σε +6 χρειάζεσαι Scorpion Tail+ (x2) και 20k χρυσά.
+9176	Για αναβάθμιση του Golden Shoes σε +4 χρειάζεσαι 10k χρυσά.
+9177	Για αναβάθμιση του Golden Shoes σε +7 χρειάζεσαι Scorpion Needle (x2), Fishbone και 40k χρυσά.
+9178	Για αναβάθμιση του Bronze Boots σε +5 χρειάζεσαι Orc Amulet(x2) και 13k χρυσά.
+9179	Για αναβάθμιση του Jade Shoes σε +9 χρειάζεσαι Spider Egg Sack (x2), Clam και 120k χρυσά.
+9180	Για αναβάθμιση του Ecstatic Shoes σε +2 χρειάζεσαι 2,5k χρυσά.
+9181	Για αναβάθμιση του Ecstatic Shoes σε +9 χρειάζεσαι Fighting Tiger Fang (x2), Red Pearl και 150k χρυσά.
+9182	Για αναβάθμιση του Nimbus Boots σε +7 χρειάζεσαι Frog Legs (x2), White Pearl και 50k χρυσά.
+9183	Για αναβάθμιση του Nimbus Boots σε +5 χρειάζεσαι Spider Legs (x2) και 20k χρυσά.
+9184	Για αναβάθμιση του Phoenix Shoes σε +6 χρειάζεσαι Frog Legs (x2) και 30k χρυσά.
+9185	Για αναβάθμιση του Fire Bird Shoes σε +8 χρειάζεσαι Yeti Fur (x2), Blue Pearl και 90k χρυσά.
+9186	Για αναβάθμιση του Copper Bell σε +8 χρειάζεσαι White Pigtail Ribbon (x2) και 45k χρυσά.
+9187	Για αναβάθμιση του Silver Bell σε +7 χρειάζεσαι Bear Gail+ (x2) και 30k χρυσά.
+9188	Για αναβάθμιση του Golden Bell σε +9 χρειάζεσαι Ornamental Hairpin (x2) και 75k χρυσά.
+9189	Για αναβάθμιση του Jade Bell σε +7 χρειάζεσαι Unknown Tailsman (x2), Fishbone και 40k χρυσά.
+9190	Για αναβάθμιση του Fountain Bell σε +6 χρειάζεσαι Orc Amulet+ (x2) και 20k χρυσά.
+9191	Για αναβάθμιση του Apricot Bell σε +8 χρειάζεσαι Scorpion Tail+ (x2), Clam και 70k χρυσά.
+9192	Για αναβάθμιση του Apricot Bell σε +9 χρειάζεσαι Curse Book (x2), Clam και 120k χρυσά.
+9193	Για αναβάθμιση του Golden Bug Bell σε +8 χρειάζεσαι Leaf (x2), Blue Pearl και 90k χρυσά.
+9194	Για αναβάθμιση του Steel Bug Bell σε +9 χρειάζεσαι Ice Killer Whale Horn(x2), Red Pearl και 150k χρυσά.
+9195	Για αναβάθμιση του Thunder Bird Bell σε +7 χρειάζεσαι Leaf (x2), White Pearl και 45k χρυσά.
+9196	Για αναβάθμιση του Bamboo Bell σε +5 χρειάζεσαι Unknown Medicine και 20k χρυσά.
+9197	Για αναβάθμιση του Antique Bell σε +8 χρειάζεσαι 90k χρυσά.
+9198	Για αναβάθμιση του Antique Bell σε +3 χρειάζεσαι 12k χρυσά.
+9199	Το Bear Feet χρησιμοποιείται για την αναβάθμιση του Wooden Bracelet σε +8
+9200	Το Bear Feet χρησιμοποιείται για την αναβάθμιση του Silver Bracelet Bracelet σε +7
+9201	Το Bear Feet+ χρησιμοποιείται για την αναβάθμιση του Golden Bracelet Bracelet σε +7
+9202	Το White Pigtail Ribbon+ χρησιμοποιείται για την αναβάθμιση του Silver Bracelet σε +7
+9203	Το White Pigtail Ribbon+ χρησιμοποιείται για την αναβάθμιση του Wooden Bracelet σε +8
+9204	Το White Pigtail Ribbon χρησιμοποιείται για την αναβάθμιση του Wooden Bracelet σε +8
+9205	Το Facial Cream χρησιμοποιείται για την αναβάθμιση του Golden Bracelet σε +9
+9206	Το Facial Cream χρησιμοποιείται για την αναβάθμιση του Silver Bracelet σε +8
+9207	Το Rusty Blade χρησιμοποιείται για την αναβάθμιση του Jade Bracelet σε +5
+9208	Το Rusty Blade χρησιμοποιείται για την αναβάθμιση του Ebony Bracelet σε +6
+9209	Το Shiriken+ χρησιμοποιείται για την αναβάθμιση του Ebony Bracelet σε +6
+9210	Το Shiriken+ χρησιμοποιείται για την αναβάθμιση του White Gold Bracelet σε +7
+9211	Το Shiriken χρησιμοποιείται για την αναβάθμιση του White Gold Bracelet σε +6
+9212	Το Spider Web χρησιμοποιείται για την αναβάθμιση του Pearl Bracelet σε +6
+9213	Το Spider Web χρησιμοποιείται για την αναβάθμιση του Jade Bracelet σε +7
+9214	Το Spider's Poison Sack χρησιμοποιείται για την αναβάθμιση του Ebony Bracelet σε +8
+9215	Το Spider's Poison Sack χρησιμοποιείται για την αναβάθμιση του Pearl Bracelet σε +9
+9216	Το Snakeskin χρησιμοποιείται για την αναβάθμιση του White Gold Bracelet σε +9
+9217	Το Snakeskin χρησιμοποιείται για την αναβάθμιση του Pearl Bracelet σε +8
+9218	Το Unknown medicine+ χρησιμοποιείται για την αναβάθμιση του Heaven's Tear Bracelet σε +5
+9219	Το Unknown medicine+ χρησιμοποιείται για την αναβάθμιση του Crystal Bracelet σε +6
+9220	Το Unknown medicine για την αναβάθμιση του Amethyst Bracelet σε +5
+9221	Το Demon's Keepsake χρησιμοποιείται για την αναβάθμιση του Heaven's Tear Bracelet σε +6
+9222	Το Demon's Keepsake χρησιμοποιείται για την αναβάθμιση του Amethyst Bracelet σε +7
+9223	Το Demon's Keepsake+ χρησιμοποιείται για την αναβάθμιση του Crystal Bracelet σε +6
+9224	Το Demon's Gem χρησιμοποιείται για την αναβάθμιση του Heaven's Tear Bracelet σε +7
+9225	Το Demon's Gem χρησιμοποιείται για την αναβάθμιση του Crystal Bracelet σε +8
+9226	Το Demon's Gem+ χρησιμοποιείται για την αναβάθμιση του Amethyst Bracelet σε +7
+9227	Το Yeti Fur+ χρησιμοποιείται για την αναβάθμιση του Crystal Bracelet σε +8
+9228	Το Yeti Fur+ χρησιμοποιείται για την αναβάθμιση του Heaven's Tear Bracelet σε +7
+9229	Το Yeti Fur χρησιμοποιείται για την αναβάθμιση του Amethyst Bracelet σε +8
+9230	Το Flaming Mane χρησιμοποιείται για την αναβάθμιση του Amethyst Bracelet σε +9
+9231	Το Flaming Mane χρησιμοποιείται για την αναβάθμιση του Heaven's Tear Bracelet σε +8
+9232	Το Wolf Fur+ χρησιμοποιείται για την αναβάθμιση του Wooden Necklace σε +7
+9233	Το Wolf Fur+ χρησιμοποιείται για την αναβάθμιση του Copper Necklace σε +6
+9234	Το Wolf Fur χρησιμοποιείται για την αναβάθμιση του Wooden Necklace σε +7
+9235	Το Red Pigtail Ribbon χρησιμοποιείται για την αναβάθμιση του Copper Necklace σε +7
+9236	Το Red Pigtail Ribbon χρησιμοποιείται για την αναβάθμιση του Wooden Necklace σε +8
+9237	Το Ornamental Hairpin χρησιμοποιείται για την αναβάθμιση του Silver Necklace σε +9
+9238	Το Ornamental Hairpin χρησιμοποιείται για την αναβάθμιση του Golden Necklace σε +8
+9239	Το Shiriken χρησιμοποιείται για την αναβάθμιση του Jade Necklace σε +5
+9240	Το Shiriken χρησιμοποιείται για την αναβάθμιση του Ebony Necklace σε +6
+9241	Το Shiriken+ χρησιμοποιείται για την αναβάθμιση του Pearl Necklace σε +5
+9242	Το Orc Amulet+ χρησιμοποιείται για την αναβάθμιση του White Gold Necklace σε +6
+9243	Το Orc Amulet+ χρησιμοποιείται για την αναβάθμιση του Jade Necklace σε +7
+9244	Το Orc Amulet χρησιμοποιείται για την αναβάθμιση του Pearl Necklace σε +6
+9245	Το Unknown Talisman χρησιμοποιείται για την αναβάθμιση του Jade Necklace σε +7
+9246	Το Unknown Talisman χρησιμοποιείται για την αναβάθμιση του White Gold Necklace σε +8
+9247	Το Unknown Talisman+ χρησιμοποιείται για την αναβάθμιση του Pearl Necklace σε +7
+9248	Το Scorpion Tail+ χρησιμοποιείται για την αναβάθμιση του Jade Necklace σε +8
+9249	Το Scorpion Tail+ χρησιμοποιείται για την αναβάθμιση του Ebony Necklace σε +9
+9250	Το Scorpion Tail χρησιμοποιείται για την αναβάθμιση του Wooden Bracelet σε +8
+9251	Το Orc Thoot+ χρησιμοποιείται για την αναβάθμιση του Ebony Necklace σε +9
+9252	Το Orc Thoot+ χρησιμοποιείται για την αναβάθμιση του Wooden Bracelet σε +8
+9253	Το Orc Thoot χρησιμοποιείται για την αναβάθμιση του Jade Necklace σε +9
+9254	Το Unknown Medicine χρησιμοποιείται για την αναβάθμιση του Crystal Necklace σε +5
+9255	Το Unknown Medicine χρησιμοποιείται για την αναβάθμιση του Heaven's Tear Necklace σε +6
+9256	Το Unknown Medicine+ χρησιμοποιείται για την αναβάθμιση του Amethyst Necklace σε +5
+9257	Το Piece of Fabric χρησιμοποιείται για την αναβάθμιση του Crystal Necklace σε +6
+9258	Το Piece of Fabric χρησιμοποιείται για την αναβάθμιση του Heaven's Tear Necklace σε +5
+9259	Το Piece of Fabric+ χρησιμοποιείται για την αναβάθμιση του Amethyst Necklace σε +6
+9260	Το Leaf χρησιμοποιείται για την αναβάθμιση του Crystal Necklace σε +7
+9261	Το Leaf χρησιμοποιείται για την αναβάθμιση του Amethyst Necklace σε +8
+9262	Το Piece of Ice χρησιμοποιείται για την αναβάθμιση του Heaven's Tear Necklace σε +8
+9263	Το Piece of Ice χρησιμοποιείται για την αναβάθμιση του Crystal Necklace σε +9
+9264	Το Piece of Ice+ χρησιμοποιείται για την αναβάθμιση του Amethyst Necklace σε +8
+9265	Το Ice Marble+ χρησιμοποιείται για την αναβάθμιση του Crystal Necklace σε +9
+9266	Το Ice Marble+ χρησιμοποιείται για την αναβάθμιση του Heaven's Tear Necklace σε +8
+9267	Το Ice Marble χρησιμοποιείται για την αναβάθμιση του Amethyst Necklace σε +9
+9268	Το Blue wolf είναι επιπέδου 7.
+9269	Το Tiger είναι επιπέδου 17.
+9270	Το Alpha Grey Wolf είναι επιπέδου 16.
+9271	Το Hungry Black Bear είναι επιπέδου 19.
+9272	Το White Tiger είναι επιπέδου 26.
+9273	Το Hungry Wild Boar είναι επιπέδου 10.
+9274	Το Grizzly Bear είναι επιπέδου 13.
+9275	Το White Oath Soldier είναι επιπέδου 18.
+9276	Το Dispirited Mi-jung είναι επιπέδου 23.
+9277	Το Dispirited Eun-jung είναι επιπέδου 28.
+9278	Το Dispirited Jin-Hee είναι επιπέδου 29.
+9279	Το White Oath General είναι επιπέδου 25.
+9280	Το Bear είναι επιπέδου 12.
+9281	Το White 0ath Archer είναι επιπέδου 20.
+9282	Το Black Wind Gu-Ryung είναι επιπέδου 32.
+9283	Το Bo είναι επιπέδου 36.
+9284	Το Black Wind Archer είναι επιπέδου 29.
+9285	Το Black Wind Maniac είναι επιπέδου 28.
+9286	Το Black Wind Soldier είναι επιπέδου 26.
+9287	Το Black Wind Jak-To είναι επιπέδου 30.
+9288	Το Savage Infantryman είναι επιπέδου 29.
+9289	Το Evil Black Storm Joh-Hwa είναι επιπέδου 29.
+9290	Το Evil Black Storm Archer είναι επιπέδου 30.
+9291	Το Savage Minion είναι επιπέδου 31.
+9292	Το Cursed Wolf είναι επιπέδου 9.
+9293	Το Cursed Alpha Blue Wolf είναι επιπέδου 14.
+9294	Το Cursed Bear είναι επιπέδου 18.
+9295	Το Cursed Black Bear είναι επιπέδου 24.
+9296	Το Cursed Brown Bear είναι επιπέδου 26.
+9297	Το Cursed Wild Boar είναι επιπέδου 12.
+9298	Το Cursed Tiger είναι επιπέδου 23.
+9299	Το Cursed White Tiger είναι επιπέδου 29.
+9300	Το Bestial Soldier είναι επιπέδου 35.
+9301	Το Bestial Specialist είναι επιπέδου 42.
+9302	Το Bestial Maniac είναι επιπέδου 38.
+9303	Το Bestial Archer είναι επιπέδου 41.
+9304	Το Strong Savage Archer είναι επιπέδου 35.
+9305	Το Strong Savage Infantry είναι επιπέδου 29.
+9306	Το Strong Savage General είναι επιπέδου 35.
+9307	Το Strong Savage Minion είναι επιπέδου 31.
+9308	Το Orc είναι επιπέδου 26.
+9309	Το Orc Scout είναι επιπέδου 30.
+9310	Το Orc Fighter είναι επιπέδου 32.
+9311	Το Orc Sorcerer είναι επιπέδου 33.
+9312	Το Elite Orc είναι επιπέδου 34.
+9313	Το Elite Orc Scout είναι επιπέδου 36.
+9314	Το Elite Orc Fighter είναι επιπέδου 39.
+9315	Το Elite Orc Sorcerer είναι επιπέδου 40.
+9316	Το Elite Orc General είναι επιπέδου 45.
+9317	Το Black Orc είναι επιπέδου 47.
+9318	Το Black Orc Giant είναι επιπέδου 49.
+9319	Το Esoteric Fanatic είναι επιπέδου 35.
+9320	Το Esoteric Arahan είναι επιπέδου 39.
+9321	Το Esoteric Arahan Fighter είναι επιπέδου 41.
+9322	Το Chief Esoteric Arahan είναι επιπέδου 43.
+9323	Το Esoteric Executioner είναι επιπέδου 46.
+9324	Το Esoteric Tormentor είναι επιπέδου 47.
+9325	Το Esoteric Summoner είναι επιπέδου 51.
+9326	Το Proud Dark Fanatic είναι επιπέδου 50.
+9327	Το Proud Dark Arahan είναι επιπέδου 52.
+9328	Το Proud Dark Fighter είναι επιπέδου 54.
+9329	Το Proud Dark Colonel είναι επιπέδου 54.
+9330	Το Proud Dark Rifleman είναι επιπέδου 57.
+9331	Το Plagued Dog είναι επιπέδου 51.
+9332	Το Plagued Man είναι επιπέδου 54.
+9333	Το Plagued Swordman είναι επιπέδου 56.
+9334	Το Plagued Spearman είναι επιπέδου 58.
+9335	Το Plagued Archer είναι επιπέδου 57.
+9336	Το Plagued Leader είναι επιπέδου 59.
+9337	Το Demon Soldier είναι επιπέδου 57.
+9338	Το Demon Archer είναι επιπέδου 59.
+9339	Το Demon Spearman είναι επιπέδου 58.
+9340	Το Demon Shaman είναι επιπέδου 60.
+9341	Το Vile Demon Soldier είναι επιπέδου 65.
+9342	Το Vile Demon Archer είναι επιπέδου 69.
+9343	Το Vile Demon Spearman είναι επιπέδου 70.
+9344	Το Vile Demon Shaman είναι επιπέδου 69.
+9345	Το Ghost Of Grudge είναι επιπέδου 72.
+9346	Το Ghost Of Chaos είναι επιπέδου 72.
+9347	Το Vile Demon Leader είναι επιπέδου 73.
+9348	Το Skull Sword Master είναι επιπέδου 72.
+9349	Το Flying Skull είναι επιπέδου 69.
+9350	Το Immortal Ghost είναι επιπέδου 73.
+9351	Το Demonic Beast είναι επιπέδου 75.
+9352	Το Demon King είναι επιπέδου 74.
+9353	Το Death Reaper είναι επιπέδου 78.
+9354	Το Enchanted Ice είναι επιπέδου 62.
+9355	Το Ice Killer Whale είναι επιπέδου 63.
+9356	Το Ice Bug είναι επιπέδου 65.
+9357	Το Ice Lion είναι επιπέδου 64.
+9358	Το Ice Man είναι επιπέδου 63.
+9359	Το Yeti είναι επιπέδου 65.
+9360	Το Ice Golem είναι επιπέδου 66.
+9361	Το Heavenly Enchanted Ice είναι επιπέδου 82.
+9362	Το Heavenly Ice Killer Whale είναι επιπέδου 82.
+9363	Το Heavenly Ice Bug είναι επιπέδου 82.
+9364	Το Heavenly Ice Lion είναι επιπέδου 83.
+9365	Το Heavenly Ice Man είναι επιπέδου 83.
+9366	Το Heavenly Yeti είναι επιπέδου 83.
+9367	Το Heavenly Ice Golem είναι επιπέδου 86.
+9368	Το Tree Frog Soldier είναι επιπέδου 57.
+9369	Το Tree Frog Leader είναι επιπέδου 60.
+9370	Το Leflet Bogeyman είναι επιπέδου 59.
+9371	Το Yellow Tiger Ghost είναι επιπέδου 75.
+9372	Το Bullfrog General είναι επιπέδου 60.
+9373	Το Giant Soldier είναι επιπέδου 66.
+9374	Το Giant Scout είναι επιπέδου 73.
+9375	Το Giant Thousand Fighter είναι επιπέδου 76.
+9376	Το Stone Thrower είναι επιπέδου 68.
+9377	Το Stone Shooter είναι επιπέδου 72.
+9378	Το Giant Stone Shooter είναι επιπέδου 72.
+9379	Το Giant Worker είναι επιπέδου 68.
+9380	Το Giant Inspector είναι επιπέδου 72.
+9381	Το Giant Hundred Combatant είναι επιπέδου 75.
+9382	Το Nine Tails είναι επιπέδου 74.
+9383	Το Baby Spider είναι επιπέδου 43.
+9384	Το Deadly Spider είναι επιπέδου 45.
+9385	Το Crimson Spider είναι επιπέδου 47.
+9386	Το Claw Spider είναι επιπέδου 49.
+9387	Το Soldier Spider είναι επιπέδου 51.
+9388	Το Baby Poison Spider είναι επιπέδου 50.
+9389	Το Deadly Poison Spider είναι επιπέδου 52.
+9390	Το Red Poison Spider είναι επιπέδου 53.
+9391	Το Claw Poison Spider είναι επιπέδου 5.
+9392	Το Soldier Poison Spider είναι επιπέδου 58.
+9393	Το Queen Spider είναι επιπέδου 60.
+9394	Το Desert Fox είναι επιπέδου 22.
+9395	Το Deserts Flying Eye είναι επιπέδου 35.
+9396	Το King Scorpion είναι επιπέδου 39.
+9397	Το Scorpion Man είναι επιπέδου 45.
+9398	Το Scorpion Archer είναι επιπέδου 47.
+9399	Το Snake Swordman είναι επιπέδου 48.
+9400	Το Snake Archer είναι επιπέδου 52.
+9401	Το Desert Outlaw είναι επιπέδου 54.
+9402	Το Giant Turtle είναι επιπέδου 66.
+9403	Το Fighting Tiger Minion είναι επιπέδου 69.
+9404	Το Flame Ghost είναι επιπέδου 70.
+9405	Το Fighting Tiger είναι επιπέδου 70.
+9406	Το Flame Soldier είναι επιπέδου 72.
+9407	Το Flame Warrior είναι επιπέδου 73.
+9408	Το Flame King είναι επιπέδου 73.
+9409	Το Haunted Tree είναι επιπέδου 65.
+9410	Το Haunted Stump είναι επιπέδου 67.
+9411	Το Dryad είναι επιπέδου 68.
+9412	Το Haunted Willow είναι επιπέδου 69.
+9413	Το Evil Haunted Tree είναι επιπέδου 72.
+9414	Το Red Brutal Tree είναι επιπέδου 73.
+9415	Το Red Haunted Stump είναι επιπέδου 76.
+9416	Το Red Dryad είναι επιπέδου 77.
+9417	Το Red Haunted Willow είναι επιπέδου 79.
+9418	Το Red Haunted Tree είναι επιπέδου 82.
+9419	Το Heaven Soldier είναι επιπέδου 85.
+9420	Το Heaven Archer είναι επιπέδου 88.
+9421	Το Heaven Cleric είναι επιπέδου 87.
+9422	Το Heaven Commander είναι επιπέδου 88.
+9423	Το Zin Heaven Soldier είναι επιπέδου 90.
+9424	Το Zin Heaven Archer είναι επιπέδου 92.
+9425	Το Zin Heaven Cleric είναι επιπέδου 93.
+9426	Το Zin Heaven Commander είναι επιπέδου 95.
+9427	Το Aqua Dragon είναι επιπέδου 97.
+9428	Το Gnoll Warrior είναι επιπέδου 96.
+9429	Το Gnoll Archer είναι επιπέδου 96.
+9430	Το Gnoll Defender είναι επιπέδου 98.
+9431	Το Gnoll Magician είναι επιπέδου 98.
+9432	Το Gnoll General είναι επιπέδου 99.
+9433	Το Gnoll Lord είναι επιπέδου 102.
+9434	Το Supreme Gnoll Guard είναι επιπέδου 104.
+9435	Το One-eyed Slugger είναι επιπέδου 97.
+9436	Το Cyclops Soldier είναι επιπέδου 99.
+9437	Το Cyclops Magician είναι επιπέδου 100.
+9438	Το Cyclops Executioner είναι επιπέδου 99.
+9439	Το General Outis είναι επιπέδου 102.
+9440	Το Arges είναι επιπέδου 104.
+9441	Το Polyphemos είναι επιπέδου 105.
+9442	Το Manticore Warrior είναι επιπέδου 96.
+9443	Το Manticore Soldier είναι επιπέδου 98.
+9444	Το Manticore Magus είναι επιπέδου 99.
+9445	Το Manticore Executioner είναι επιπέδου 99.
+9446	Το General Cor είναι επιπέδου 101.
+9447	Το Rakshasa είναι επιπέδου 102.
+9448	Το Martyaxwar είναι επιπέδου 105.
+9449	Το Lemures Warrior είναι επιπέδου 98.
+9450	Το Lemures Soldier είναι επιπέδου 98.
+9451	Το Lemures Magician είναι επιπέδου 99.
+9452	Το Lemures Executioner είναι επιπέδου 101.
+9453	Το Lemures General είναι επιπέδου 102.
+9454	Το Lemures Prince είναι επιπέδου 103.
+9455	Το Lemures Bodyguard είναι επιπέδου 104.
+9456	Το Tritonic Moray είναι επιπέδου 96.
+9457	Το Shark Soldier είναι επιπέδου 98.
+9458	Το Tritonic Magician είναι επιπέδου 99.
+9459	Το Tritonic Hunter είναι επιπέδου 98.
+9460	Το Tritonic Slasher είναι επιπέδου 101.
+9461	Το General Kappa είναι επιπέδου 103.
+9462	Το Triton είναι επιπέδου 105.
+9463	Το Red Thief Amazon είναι επιπέδου 95.
+9464	Το Red Thief Assassin είναι επιπέδου 97.
+9465	Το Red Thief Magician είναι επιπέδου 97.
+9466	Το Red Thief Executioner είναι επιπέδου 98.
+9467	Το Black General είναι επιπέδου 98.
+9468	Το Bone Face είναι επιπέδου 102.
+9469	Το Red Chief είναι επιπέδου 104.
+9470	Το Crab Warrior είναι επιπέδου 96.
+9471	Το Scorpion Marksman είναι επιπέδου 97.
+9472	Το Shrimp Soldier είναι επιπέδου 99.
+9473	Το Diabolical Hermit είναι επιπέδου 98.
+9474	Το Armoured Crab είναι επιπέδου 102.
+9475	Το General Lobster είναι επιπέδου 103
+9476	Το King Crab είναι επιπέδου 105.
+9477	Το Gigantic Biter είναι επιπέδου 100.
+9478	Το Gigantic Slaughterer είναι επιπέδου 102.
+9479	Το Gigantic Magus είναι επιπέδου 103.
+9480	Το Twiant είναι επιπέδου 104.
+9481	Το Captain Hooks είναι επιπέδου 105.
+9482	Το Gargoyle είναι επιπέδου 105.
+9483	Το King Wubba είναι επιπέδου 105.
+9484	Το Hangork είναι επιπέδου 98.
+9485	Το Archie Ogre είναι επιπέδου 100.
+9486	Το Brawl Ogre είναι επιπέδου 102.
+9487	Το Ogre Magus είναι επιπέδου 101.
+9488	Το General Ogg είναι επιπέδου 103.
+9489	Το Captain Shruk είναι επιπέδου 105.
+9490	Το The Great Ogre είναι επιπέδου 105.
+9491	Το Metin Of Sorrow είναι επιπέδου 10.
+9492	Το Metin Of Combat είναι επιπέδου 10.
+9493	Το Metin Of Battle είναι επιπέδου 15.
+9494	Το Metin Of Greed είναι επιπέδου 20.
+9495	Το Metin Of Black είναι επιπέδου 30.
+9496	Το Metin Of Darkness είναι επιπέδου 30.
+9497	Το Metin Of Jealousy είναι επιπέδου 40.
+9498	Το Metin Of Soul είναι επιπέδου 45.
+9499	Το Metin Of Shadow είναι επιπέδου 40.
+9500	Το Metin Of Toughness είναι επιπέδου 50.
+9501	Το Metin Of Devil είναι επιπέδου 60.
+9502	Το Metin Of Fall είναι επιπέδου 55.
+9503	Το Metin Of Death είναι επιπέδου 65.
+9504	Το Metin Of Murder είναι επιπέδου 70.
+9505	Το Metin of Wind Devil είναι επιπέδου 80.
+9506	Το Metin of Devil Eyes είναι επιπέδου 80.
+9507	Το Metin of Fighting Dragon είναι επιπέδου 85.
+9508	Το Metin of Lightning Cloud είναι επιπέδου 85.
+9509	Το Metin of Gloom είναι επιπέδου 100.
+9510	Το Metin of Ember είναι επιπέδου 95.
+9511	Το Metin of Vanity είναι επιπέδου 100.
+9512	Το Metin of Wrath είναι επιπέδου 105.
+9513	Το Metin of Calamity είναι επιπέδου 105.
+9514	Το Metin of Malice είναι επιπέδου 100.
+9515	Το Weak Ape Soldier είναι επιπέδου 22.
+9516	Το Weak Ape Thrower είναι επιπέδου 24.
+9517	Το Weak Ape Fighter είναι επιπέδου 27.
+9518	Το Weak Ape General είναι επιπέδου 29.
+9519	Το Ape Soldier είναι επιπέδου 36.
+9520	Το Ape Thrower είναι επιπέδου 37.
+9521	Το Ape Fighter είναι επιπέδου 40.
+9522	Το Ape General είναι επιπέδου 40.
+9523	Το Stone Ape είναι επιπέδου 41.
+9524	Το Ape Leader είναι επιπέδου 42.
+9525	Το Strong Ape Soldier είναι επιπέδου 46.
+9526	Το Strong Ape Thrower είναι επιπέδου 48.
+9527	Το Strong Ape Fighter είναι επιπέδου 48.
+9528	Το Strong Ape General είναι επιπέδου 52.
+9529	Το Strong Stone Ape είναι επιπέδου 53.
+9530	Το Rock Ape είναι επιπέδου 35.
+9531	Το Ape Lord είναι επιπέδου 55.
+9532	Το Devil είναι επιπέδου 80.
+9533	Το Devil's Wolf είναι επιπέδου 80.
+9534	Το Devil's Wraith είναι επιπέδου 81.
+9535	Το Devil's Skulker είναι επιπέδου 85.
+9536	Το Devil's Spearman είναι επιπέδου 84.
+9537	Το Devil's Cockatrice είναι επιπέδου 83.
+9538	Το Devil's Dominator είναι επιπέδου 85.
+9539	Το Spectral Crusher είναι επιπέδου 79.
+9540	Το Spectral Bower είναι επιπέδου 80.
+9541	Το Spectral Spikeman είναι επιπέδου 82.
+9542	Το Spectral Shaman είναι επιπέδου 10.
+9543	Το Spectral Axeman είναι επιπέδου 83.
+9544	Το Spectral Titan είναι επιπέδου 85.
+9545	Το Spectral Hunter είναι επιπέδου 86.
+9546	Το Hateful Crusher είναι επιπέδου 80.
+9547	Το Hateful Bower είναι επιπέδου 10.
+9548	Το Hateful Spikeman είναι επιπέδου 10.
+9549	Το Hateful Shaman είναι επιπέδου 82.
+9550	Το Hateful Axeman είναι επιπέδου 84.
+9551	Το Hateful Titan είναι επιπέδου 85.
+9552	Το Hateful Hunter είναι επιπέδου 86.
+9553	Το Tartaros είναι επιπέδου 89.
+9554	Το Erebus είναι επιπέδου 90.
+9555	Το Charon είναι επιπέδου 91.
+9556	Το Lord Gahnasel είναι επιπέδου 92.
+9557	Το Cung-Mok είναι επιπέδου 8.
+9558	Το Mu-Rang είναι επιπέδου 15.
+9559	Το Jug-Hyul είναι επιπέδου 10.
+9560	Το Young-Ji είναι επιπέδου 21.
+9561	Το Li-An είναι επιπέδου 24.
+9562	Το Lykos είναι επιπέδου 30.
+9563	Το Scrofa είναι επιπέδου 30.
+9564	Το Bera είναι επιπέδου 32.
+9565	Το Tigris είναι επιπέδου 35.
+9566	Το Se-Rang είναι επιπέδου 25.
+9567	Το Eun-Jung είναι επιπέδου 26.

@@ -8506,3 +8506,570 @@
 8506	Deberías cambiarla por razones de seguridad.[ENTER][ENTER]A lo mejor piensas que 45 espacios no son[ENTER]suficientes. Pero, quién sabe, quizá te de más[ENTER]espacio si nos llevamos bien.
 8507	Bien, yo no quiero obligar a nadie. Si ahora no[ENTER]te apetece, vuelve más tarde.
 8508	Abrir Almacén
+9001	Aura of Sword es una habilidad de Sura.
+9002	White Liquid da 10 STR durante 1 hora.
+9003	DEX puede aumentar la duración de Stealth.
+9004	Flame Strike obtiene su poder de INT y DEX.
+9005	En G3 Ritual of Doom dura 68 segundos.
+9006	Spirit Assault es una habilidad de Sura.
+9007	Si usas Eel obtienes 10 STR durante 10 minutos.
+9008	Taichi aumenta la AC.
+9009	La habilidad Charge puede envenenar al objetivo.
+9010	Grilled Loach puede hacerte invisible durante un breve período de tiempo.
+9011	Cuando te matan siempre pierdes experiencia
+9012	Stone of Magic+3 da +240 SP.
+9013	Stone of Magic+2 da 150 SP.
+9014	Poison Cloud causa daño mágico.
+9015	Fear aturde al enemigo.
+9016	Dance with Wind es una habilidad del Arquero.
+9017	Flame Arrow quema al objetivo.
+9018	Magic Seeds solo las sueltan las Dryads.
+9019	El Dark-Ghost Leader es un demonio.
+9020	El loro del Teleporter es rojo y verde
+9021	El General Store tiene una coleta
+9022	El Store Keeper tiene 3 cuchillos
+9023	Yonah es cocinera
+9024	Octavio es un erudito
+9025	Anh-Yu tiene un bebé
+9026	La Ghost Plate Armour del vendedor de la tienda de armaduras cuesta 10.000 de oro
+9027	La Iron Fan+0 del vendedor de la tienda de armas cuesta 400 de oro
+9028	Dark Orb es el hechizo más poderoso para un Sura de magia negra
+9029	Aura of Sword aumenta su poder con DEX
+9030	La anciana tiene un bolso rojo pequeño
+9031	En Elgoria hay 5 caballos dentro del establo
+9032	La vara de gemas del Alchemist es amarilla
+9033	Mirine perdió a su madre
+9034	Hay exactamente 259 árboles en el mapa 1 de Elgoria
+9035	Si un caballo muere 10 veces, se escapará para siempre
+9036	En la tienda del Pescador, 50 gusanos cuestan 2000 de oro.
+9037	Fishing Marble es un cebo
+9038	Las bolas de arroz y los gusanos son los únicos cebos en Metin2
+9039	Hay 20 terrenos de gremio en cada ciudad del juego
+9040	El Death Reaper es un Semihumano
+9041	Heavens Golem es el único monstruo que suelta un cristal de agua
+9042	Zen Bean da 500 Puntos de Karma pero solo si eres negativo
+9043	Se-Rang es un monstruo de tipo lobo
+9044	Starbuck es el herrero diseñador de accesorios
+9045	Cherogirayb es el Biólogo de Metin2
+9046	Zin Heavens Commander suelta blessing marble
+9047	Stanh es uno de los 3 herreros del gremio
+9048	Tigris tiene un collar rojo
+9049	Para mejorar Wood Bracelet a +6 necesitas 20k de oro.
+9050	Para mejorar Wood Bracelet a +7 necesitas Bear Feet y 25k de oro.
+9051	Para mejorar Wood Bracelet a +8 necesitas White Pigtail Ribbon y 45k de oro.
+9052	Para mejorar Wood Bracelet a +9 necesitas Facial Cream y 75k de oro.
+9053	Para mejorar Copper Bracelet a +5 necesitas 15k de oro.
+9054	Para mejorar Copper Bracelet a +7 necesitas Bear Feet y 30k de oro.
+9055	Para mejorar Copper Bracelet a +8 necesitas White Pigtail Ribbon+ y 40k de oro.
+9056	Para mejorar Copper Bracelet a +9 necesitas Facial Cream y 70k de oro.
+9057	Para mejorar Silver Bracelet a +8 necesitas White Pigtail Ribbon+ y 45k de oro.
+9058	Para mejorar Gold Bracelet a +6 necesitas 20k de oro.
+9059	Para mejorar Gold Bracelet a +8 necesitas White Pigtail Ribbon+ y 45k de oro.
+9060	Para mejorar Jade Bracelet a +3 necesitas 5k de oro.
+9061	Para mejorar Jade Bracelet a +6 necesitas Shiriken+ (x2) y 20k de oro.
+9062	Para mejorar Ebony Bracelet a +4 necesitas 8k de oro.
+9063	Para mejorar Ebony Bracelet a +7 necesitas Spider Web (x2), Fishbone y 50k de oro.
+9064	Para mejorar Pearl Bracelet a +5 necesitas Rusty Blade (x2) y 13k de oro.
+9065	Para mejorar Pearl Bracelet a +8 necesitas Spider's Poison Sack (x2) Clam y 70k de oro.
+9066	Para mejorar White Gold Bracelet a +2 necesitas 2k de oro.
+9067	Para mejorar White Gold Bracelet a +9 necesitas Snakeskin (x2), Clam y 100k de oro.
+9068	Para mejorar Crystal Bracelet a +6 necesitas Demon's Keepsake (x2) y 30k de oro.
+9069	Para mejorar Crystal Bracelet a +7 necesitas Demon's Gem+ (x2), White Pearl y 45k de oro.
+9070	Para mejorar Amethyst Bracelet a +5 necesitas Unknown medicine+ y 20k de oro.
+9071	Para mejorar Amethyst Bracelet a +9 necesitas Flaming Mane (x2), Red pearl y 120k de oro.
+9072	Para mejorar Heaven's Tear Bracelet a +4 necesitas 10k de oro.
+9073	Para mejorar Heaven's Tear Bracelet a +8 necesitas Yeti Fur+ (x2), Blue pearl y 90k de oro.
+9074	Para mejorar Wooden Necklace a +4 necesitas 2,5k de oro.
+9075	Para mejorar Wooden Necklace a +6 necesitas 20k de oro.
+9076	Para mejorar Copper Necklace a +5 necesitas 15k de oro.
+9077	Para mejorar Copper Necklace a +7 necesitas Wolf Fur+ (x2) y 25k de oro.
+9078	Para mejorar Silver Necklace a +8 necesitas Red Pigtail Ribbon y 50k de oro.
+9079	Para mejorar Silver Necklace a +1 necesitas 500 de oro.
+9080	Para mejorar Golden Necklace a +9 necesitas Ornamental Hairpin (x2) y 75k de oro.
+9081	Para mejorar Golden Necklace a +3 necesitas 2,5k de oro.
+9082	Para mejorar Jade Necklace a +8 necesitas Scorpion Tail+ (x2), Clam y 70k de oro.
+9083	Para mejorar Jade Necklace a +2 necesitas 2,5k de oro.
+9084	Para mejorar Ebony Necklace a +6 necesitas Orc Amulet+ y 20k de oro.
+9085	Para mejorar Ebony Necklace a +2 necesitas 2k de oro.
+9086	Para mejorar Pearl Necklace a +5 necesitas Shiriken (x2) y 13k de oro.
+9087	Para mejorar Pearl Necklace a +9 necesitas Orc Thoot+ (x2), Clam y 120k de oro.
+9088	Para mejorar White Gold Necklace a +4 necesitas 8k de oro.
+9089	Para mejorar White Gold Necklace a +7 necesitas Unknown talisman (x2), Fishbone y 40k de oro.
+9090	Para mejorar Crystal Necklace a +6 necesitas Piece of Fabric (x2) y 30k de oro.
+9091	Para mejorar Crystal Necklace a +9 necesitas Ice Marble (x2), Red Pearl y 150k de oro.
+9092	Para mejorar Amethyst Necklace a +5 necesitas Unknown Medicine (x2) y 20k de oro.
+9093	Para mejorar Amethyst Necklace a +7 necesitas Leaf (x2), White Pearl y 50k de oro.
+9094	Para mejorar Heaven's Tear Necklace a +8 necesitas Piece of Ice+(x2), Blue Pearl y 90k de oro.
+9095	Para mejorar Heaven's Tear Necklace a +1 necesitas 1,2k de oro.
+9096	Para mejorar Wooden Earrings a +2 necesitas 1,2k de oro.
+9097	Para mejorar Wooden Earrings a +5 necesitas 8k de oro.
+9098	Para mejorar Copper Earrings a +7 necesitas Bear Gail y 30k de oro.
+9099	Para mejorar Copper Earrings a +9 necesitas Worn Out Black Uniform y 70k de oro.
+9100	Para mejorar Silver Earrings a +8 necesitas Bear Feet+ y 45k de oro.
+9101	Para mejorar Silver Earrings a +6 necesitas 20k de oro.
+9102	Para mejorar Golden Earrings a +4 necesitas 7,5k de oro.
+9103	Para mejorar Golden Earrings a +3 necesitas 5k de oro.
+9104	Para mejorar Jade Earrings a +3 necesitas 5k de oro.
+9105	Para mejorar Jade Earrings a +7 necesitas Spider Eye, Fishbone y 40k de oro.
+9106	Para mejorar Ebony Earrings a +4 necesitas 10k de oro.
+9107	Para mejorar Ebony Earrings a +5 necesitas Piece of Gem y 13k de oro.
+9108	Para mejorar Pearl Earrings a +9 necesitas Orc Thoot+ (x2), Clam y 120k de oro.
+9109	Para mejorar Pearl Earrings a +6 necesitas Esoteric Primer (x2) y 20k de oro.
+9110	Para mejorar White Gold Earrings a +2 necesitas 2k de oro.
+9111	Para mejorar White Gold Earrings a +8 necesitas Orc Thoot, Clam, y 70k de oro.
+9112	Para mejorar Crystal Earrings a +3 necesitas 5k de oro.
+9113	Para mejorar Crystal Earrings a +6 necesitas Piece of Fabric y 25k de oro.
+9114	Para mejorar Crystal Earrings a +9 necesitas Ice Marble (x2), Red Pearl y 150k de oro.
+9115	Para mejorar Amethyst Earrings a +2 necesitas 2,5k de oro.
+9116	Para mejorar Amethyst Earrings a +7 necesitas Demon's Gem (x2), White Pearl y 45k de oro.
+9117	Para mejorar Amethyst Earrings a +1 necesitas 1,5k de oro.
+9118	Para mejorar Heaven's Tear Earrings a +8 necesitas Demon's Keepsake+, Blue Pearl 80k de oro.
+9119	Para mejorar Heaven's Tear Earrings a +5 necesitas Snake Tail+ (x2) y 20k de oro.
+9120	Para mejorar Battle Shield a +5 necesitas 20k de oro.
+9121	Para mejorar Battle Shield a +6 necesitas 20k de oro.
+9122	Para mejorar Battle Shield a +7 necesitas Bear Gail+ (x2) y 25k de oro.
+9123	Para mejorar Battle Shield a +8 necesitas White Tiger Hide y 45k de oro.
+9124	Para mejorar Battle Shield a +9 necesitas Worn Out Black Uniform (x2) y 75k de oro.
+9125	Para mejorar Battle Shield a +1 necesitas 1k de oro.
+9126	Para mejorar Pentagon Shield a +5 necesitas Piece of Broken Armour (x2) y 13k de oro.
+9127	Para mejorar Pentagon Shield a +6 necesitas Esoteric Primer+ y 20k de oro.
+9128	Para mejorar Pentagon Shield a +7 necesitas Unknown Talisman (x2), Fishbone y 40k de oro.
+9129	Para mejorar Pentagon Shield a +8 necesitas Scorpion Tail (x2), Clam y 70k de oro.
+9130	Para mejorar Pentagon Shield a +9 necesitas Curse Book (x2), Clam y 120k de oro.
+9131	Para mejorar Pentagon Shield a +2 necesitas 2k de oro.
+9132	Para mejorar Black Round Shield a +5 necesitas Spider Legs(x2) y 20k de oro.
+9133	Para mejorar Black Round Shield a +6 necesitas Curse Book+ (x2) y 30k de oro.
+9134	Para mejorar Black Round Shield a +7 necesitas Piece of Fabric+ (x2), White Pearl y 50k de oro.
+9135	Para mejorar Black Round Shield a +8 necesitas Ice Killer Whale Horn (x2), Blue Pearl y 75k de oro.
+9136	Para mejorar Black Round Shield a +9 necesitas Fighting Tiger Fang (x2), Red Pearl y 150k de oro.
+9137	Para mejorar Black Round Shield a +3 necesitas 5k de oro.
+9138	Para mejorar Falcon Shield a +4 necesitas 10k de oro.
+9139	Para mejorar Falcon Shield a +6 necesitas Esoteric Primer+ y 20k de oro.
+9140	Para mejorar Tiger Monk Shield a +3 necesitas 10k de oro.
+9141	Para mejorar Tiger Monk Shield a +9 necesitas Curse Book (x2), Clam y 120k de oro.
+9142	Para mejorar Lion Edge Shield a +7 necesitas Unknown Talisman, Fishbone y 50k de oro.
+9143	Para mejorar Lion Edge Shield a +1 necesitas 1,2k de oro.
+9144	Para mejorar Dragon Scale Shield a +2 necesitas 2,5k de oro.
+9145	Para mejorar Dragon Scale Shield a +5 necesitas Piece of Broken Armour y 13k de oro.
+9146	Para mejorar Bloody Helm a +6 necesitas 20k de oro.
+9147	Para mejorar Bloody Helm a +2 necesitas 1,5k de oro.
+9148	Para mejorar Leather Hood a +4 necesitas 4k de oro.
+9149	Para mejorar Leather Hood a +3 necesitas 2,5k de oro.
+9150	Para mejorar Traditional Helm a +8 necesitas White Pigtail Ribbon+ (x2) y 40k de oro.
+9151	Para mejorar Traditional Helm a +1 necesitas 600 de oro.
+9152	Para mejorar Monk Hat a +9 necesitas Facial Cream y 75k de oro.
+9153	Para mejorar Monk Hat a +7 necesitas White Pigtail Ribbon y 30k de oro.
+9154	Para mejorar Iron Helm a +2 necesitas 2k de oro.
+9155	Para mejorar Iron Helm a +4 necesitas 10k de oro.
+9156	Para mejorar Chain Hood a +5 necesitas Flag (x2) y 20k de oro.
+9157	Para mejorar Chain Hood a +9 necesitas Spider Egg Sack (x2), Clam y 120k de oro.
+9158	Para mejorar Mocking Helm a +8 necesitas Spider's Poison Sack (x2), Clam y 75k de oro.
+9159	Para mejorar Mocking Helm a +6 necesitas Scorpion Tail (x2) y 20k de oro.
+9160	Para mejorar Phoenix Hat a +7 necesitas Spider Web (x2), Fishbone y 30k de oro.
+9161	Para mejorar Phoenix Hat a +3 necesitas 4k de oro.
+9162	Para mejorar Castle Helm a +8 necesitas Piece of Ice+, Blue Pearl y 90k de oro.
+9163	Para mejorar Castle Helm a +7 necesitas Frog Legs (x2), Finger Bones (x3) y 45k de oro.
+9164	Para mejorar Sunlight Hat a +6 necesitas Frog Tongue (x2) y 30k de oro.
+9165	Para mejorar Sunlight Hat a +5 necesitas Unknown Medicine+ (x2) y 25k de oro.
+9166	Para mejorar Steel Hood a +9 necesitas Flaming Mane (x2), Finger Bones (x8) y 150k de oro.
+9167	Para mejorar Steel Hood a +1 necesitas 2k de oro.
+9168	Para mejorar Ghost Mask Sallet a +3 necesitas 5k de oro.
+9169	Para mejorar Ghost Mask Sallet a +4 necesitas 8k de oro.
+9170	Para mejorar Bamboo Skin Shoes a +8 necesitas Skein (x2) y 45k de oro.
+9171	Para mejorar Bamboo Skin Shoes a +5 necesitas 12k de oro.
+9172	Para mejorar Wooden Shoes a +7 necesitas Tiger Hide (x2) y 30k de oro.
+9173	Para mejorar Gold Threaded Shoes a +9 necesitas Worn Out Black Uniform+ y 75k de oro.
+9174	Para mejorar Leather Boots a +8 necesitas Scorpion Claw (x2), Clam y 70k de oro.
+9175	Para mejorar Leather Boots a +6 necesitas Scorpion Tail+ (x2) y 20k de oro.
+9176	Para mejorar Golden Shoes a +4 necesitas 10k de oro.
+9177	Para mejorar Golden Shoes a +7 necesitas Scorpion Needle (x2), Fishbone y 40k de oro.
+9178	Para mejorar Bronze Boots a +5 necesitas Orc Amulet(x2) y 13k de oro.
+9179	Para mejorar Jade Shoes a +9 necesitas Spider Egg Sack (x2), Clam y 120k de oro.
+9180	Para mejorar Ecstatic Shoes a +2 necesitas 2,5k de oro.
+9181	Para mejorar Ecstatic Shoes a +9 necesitas Fighting Tiger Fang (x2), Red Pearl y 150k de oro.
+9182	Para mejorar Nimbus Boots a +7 necesitas Frog Legs (x2), White Pearl y 50k de oro.
+9183	Para mejorar Nimbus Boots a +5 necesitas Spider Legs (x2) y 20k de oro.
+9184	Para mejorar Phoenix Shoes a +6 necesitas Frog Legs (x2) y 30k de oro.
+9185	Para mejorar Fire Bird Shoes a +8 necesitas Yeti Fur (x2), Blue Pearl y 90k de oro.
+9186	Para mejorar Copper Bell a +8 necesitas White Pigtail Ribbon (x2) y 45k de oro.
+9187	Para mejorar Silver Bell a +7 necesitas Bear Gail+ (x2) y 30k de oro.
+9188	Para mejorar Golden Bell a +9 necesitas Ornamental Hairpin (x2) y 75k de oro.
+9189	Para mejorar Jade Bell a +7 necesitas Unknown Tailsman (x2), Fishbone y 40k de oro.
+9190	Para mejorar Fountain Bell a +6 necesitas Orc Amulet+ (x2) y 20k de oro.
+9191	Para mejorar Apricot Bell a +8 necesitas Scorpion Tail+ (x2), Clam y 70k de oro.
+9192	Para mejorar Apricot Bell a +9 necesitas Curse Book (x2), Clam y 120k de oro.
+9193	Para mejorar Golden Bug Bell a +8 necesitas Leaf (x2), Blue Pearl y 90k de oro.
+9194	Para mejorar Steel Bug Bell a +9 necesitas Ice Killer Whale Horn(x2), Red Pearl y 150k de oro.
+9195	Para mejorar Thunder Bird Bell a +7 necesitas Leaf (x2), White Pearl y 45k de oro.
+9196	Para mejorar Bamboo Bell a +5 necesitas Unknown Medicine y 20k de oro.
+9197	Para mejorar Antique Bell a +8 necesitas 90k de oro.
+9198	Para mejorar Antique Bell a +3 necesitas 12k de oro.
+9199	Bear Feet se usa para mejorar Wooden Bracelet a +8
+9200	Bear Feet se usa para mejorar Silver Bracelet Bracelet a +7
+9201	Bear Feet+ se usa para mejorar Golden Bracelet Bracelet a +7
+9202	White Pigtail Ribbon+ se usa para mejorar Silver Bracelet a +7
+9203	White Pigtail Ribbon+ se usa para mejorar Wooden Bracelet a +8
+9204	White Pigtail Ribbon se usa para mejorar Wooden Bracelet a +8
+9205	Facial Cream se usa para mejorar Golden Bracelet a +9
+9206	Facial Cream se usa para mejorar Silver Bracelet a +8
+9207	Rusty Blade se usa para mejorar Jade Bracelet a +5
+9208	Rusty Blade se usa para mejorar Ebony Bracelet a +6
+9209	Shiriken+ se usa para mejorar Ebony Bracelet a +6
+9210	Shiriken+ se usa para mejorar White Gold Bracelet a +7
+9211	Shiriken se usa para mejorar White Gold Bracelet a +6
+9212	Spider Web se usa para mejorar Pearl Bracelet a +6
+9213	Spider Web se usa para mejorar Jade Bracelet a +7
+9214	Spider's Poison Sack se usa para mejorar Ebony Bracelet a +8
+9215	Spider's Poison Sack se usa para mejorar Pearl Bracelet a +9
+9216	Snakeskin se usa para mejorar White Gold Bracelet a +9
+9217	Snakeskin se usa para mejorar Pearl Bracelet a +8
+9218	Unknown medicine+ se usa para mejorar Heaven's Tear Bracelet a +5
+9219	Unknown medicine+ se usa para mejorar Crystal Bracelet a +6
+9220	Unknown medicine para mejorar Amethyst Bracelet a +5
+9221	Demon's Keepsake se usa para mejorar Heaven's Tear Bracelet a +6
+9222	Demon's Keepsake se usa para mejorar Amethyst Bracelet a +7
+9223	Demon's Keepsake+ se usa para mejorar Crystal Bracelet a +6
+9224	Demon's Gem se usa para mejorar Heaven's Tear Bracelet a +7
+9225	Demon's Gem se usa para mejorar Crystal Bracelet a +8
+9226	Demon's Gem+ se usa para mejorar Amethyst Bracelet a +7
+9227	Yeti Fur+ se usa para mejorar Crystal Bracelet a +8
+9228	Yeti Fur+ se usa para mejorar Heaven's Tear Bracelet a +7
+9229	Yeti Fur se usa para mejorar Amethyst Bracelet a +8
+9230	Flaming Mane se usa para mejorar Amethyst Bracelet a +9
+9231	Flaming Mane se usa para mejorar Heaven's Tear Bracelet a +8
+9232	Wolf Fur+ se usa para mejorar Wooden Necklace a +7
+9233	Wolf Fur+ se usa para mejorar Copper Necklace a +6
+9234	Wolf Fur se usa para mejorar Wooden Necklace a +7
+9235	Red Pigtail Ribbon se usa para mejorar Copper Necklace a +7
+9236	Red Pigtail Ribbon se usa para mejorar Wooden Necklace a +8
+9237	Ornamental Hairpin se usa para mejorar Silver Necklace a +9
+9238	Ornamental Hairpin se usa para mejorar Golden Necklace a +8
+9239	Shiriken se usa para mejorar Jade Necklace a +5
+9240	Shiriken se usa para mejorar Ebony Necklace a +6
+9241	Shiriken+ se usa para mejorar Pearl Necklace a +5
+9242	Orc Amulet+ se usa para mejorar White Gold Necklace a +6
+9243	Orc Amulet+ se usa para mejorar Jade Necklace a +7
+9244	Orc Amulet se usa para mejorar Pearl Necklace a +6
+9245	Unknown Talisman se usa para mejorar Jade Necklace a +7
+9246	Unknown Talisman se usa para mejorar White Gold Necklace a +8
+9247	Unknown Talisman+ se usa para mejorar Pearl Necklace a +7
+9248	Scorpion Tail+ se usa para mejorar Jade Necklace a +8
+9249	Scorpion Tail+ se usa para mejorar Ebony Necklace a +9
+9250	Scorpion Tail se usa para mejorar Wooden Bracelet a +8
+9251	Orc Thoot+ se usa para mejorar Ebony Necklace a +9
+9252	Orc Thoot+ se usa para mejorar Wooden Bracelet a +8
+9253	Orc Thoot se usa para mejorar Jade Necklace a +9
+9254	Unknown Medicine se usa para mejorar Crystal Necklace a +5
+9255	Unknown Medicine se usa para mejorar Heaven's Tear Necklace a +6
+9256	Unknown Medicine+ se usa para mejorar Amethyst Necklace a +5
+9257	Piece of Fabric se usa para mejorar Crystal Necklace a +6
+9258	Piece of Fabric se usa para mejorar Heaven's Tear Necklace a +5
+9259	Piece of Fabric+ se usa para mejorar Amethyst Necklace a +6
+9260	Leaf se usa para mejorar Crystal Necklace a +7
+9261	Leaf se usa para mejorar Amethyst Necklace a +8
+9262	Piece of Ice se usa para mejorar Heaven's Tear Necklace a +8
+9263	Piece of Ice se usa para mejorar Crystal Necklace a +9
+9264	Piece of Ice+ se usa para mejorar Amethyst Necklace a +8
+9265	Ice Marble+ se usa para mejorar Crystal Necklace a +9
+9266	Ice Marble+ se usa para mejorar Heaven's Tear Necklace a +8
+9267	Ice Marble se usa para mejorar Amethyst Necklace a +9
+9268	Blue wolf es de nivel 7.
+9269	Tiger es de nivel 17.
+9270	Alpha Grey Wolf es de nivel 16.
+9271	Hungry Black Bear es de nivel 19.
+9272	White Tiger es de nivel 26.
+9273	Hungry Wild Boar es de nivel 10.
+9274	Grizzly Bear es de nivel 13.
+9275	White Oath Soldier es de nivel 18.
+9276	Dispirited Mi-jung es de nivel 23.
+9277	Dispirited Eun-jung es de nivel 28.
+9278	Dispirited Jin-Hee es de nivel 29.
+9279	White Oath General es de nivel 25.
+9280	Bear es de nivel 12.
+9281	White 0ath Archer es de nivel 20.
+9282	Black Wind Gu-Ryung es de nivel 32.
+9283	Bo es de nivel 36.
+9284	Black Wind Archer es de nivel 29.
+9285	Black Wind Maniac es de nivel 28.
+9286	Black Wind Soldier es de nivel 26.
+9287	Black Wind Jak-To es de nivel 30.
+9288	Savage Infantryman es de nivel 29.
+9289	Evil Black Storm Joh-Hwa es de nivel 29.
+9290	Evil Black Storm Archer es de nivel 30.
+9291	Savage Minion es de nivel 31.
+9292	Cursed Wolf es de nivel 9.
+9293	Cursed Alpha Blue Wolf es de nivel 14.
+9294	Cursed Bear es de nivel 18.
+9295	Cursed Black Bear es de nivel 24.
+9296	Cursed Brown Bear es de nivel 26.
+9297	Cursed Wild Boar es de nivel 12.
+9298	Cursed Tiger es de nivel 23.
+9299	Cursed White Tiger es de nivel 29.
+9300	Bestial Soldier es de nivel 35.
+9301	Bestial Specialist es de nivel 42.
+9302	Bestial Maniac es de nivel 38.
+9303	Bestial Archer es de nivel 41.
+9304	Strong Savage Archer es de nivel 35.
+9305	Strong Savage Infantry es de nivel 29.
+9306	Strong Savage General es de nivel 35.
+9307	Strong Savage Minion es de nivel 31.
+9308	Orc es de nivel 26.
+9309	Orc Scout es de nivel 30.
+9310	Orc Fighter es de nivel 32.
+9311	Orc Sorcerer es de nivel 33.
+9312	Elite Orc es de nivel 34.
+9313	Elite Orc Scout es de nivel 36.
+9314	Elite Orc Fighter es de nivel 39.
+9315	Elite Orc Sorcerer es de nivel 40.
+9316	Elite Orc General es de nivel 45.
+9317	Black Orc es de nivel 47.
+9318	Black Orc Giant es de nivel 49.
+9319	Esoteric Fanatic es de nivel 35.
+9320	Esoteric Arahan es de nivel 39.
+9321	Esoteric Arahan Fighter es de nivel 41.
+9322	Chief Esoteric Arahan es de nivel 43.
+9323	Esoteric Executioner es de nivel 46.
+9324	Esoteric Tormentor es de nivel 47.
+9325	Esoteric Summoner es de nivel 51.
+9326	Proud Dark Fanatic es de nivel 50.
+9327	Proud Dark Arahan es de nivel 52.
+9328	Proud Dark Fighter es de nivel 54.
+9329	Proud Dark Colonel es de nivel 54.
+9330	Proud Dark Rifleman es de nivel 57.
+9331	Plagued Dog es de nivel 51.
+9332	Plagued Man es de nivel 54.
+9333	Plagued Swordman es de nivel 56.
+9334	Plagued Spearman es de nivel 58.
+9335	Plagued Archer es de nivel 57.
+9336	Plagued Leader es de nivel 59.
+9337	Demon Soldier es de nivel 57.
+9338	Demon Archer es de nivel 59.
+9339	Demon Spearman es de nivel 58.
+9340	Demon Shaman es de nivel 60.
+9341	Vile Demon Soldier es de nivel 65.
+9342	Vile Demon Archer es de nivel 69.
+9343	Vile Demon Spearman es de nivel 70.
+9344	Vile Demon Shaman es de nivel 69.
+9345	Ghost Of Grudge es de nivel 72.
+9346	Ghost Of Chaos es de nivel 72.
+9347	Vile Demon Leader es de nivel 73.
+9348	Skull Sword Master es de nivel 72.
+9349	Flying Skull es de nivel 69.
+9350	Immortal Ghost es de nivel 73.
+9351	Demonic Beast es de nivel 75.
+9352	Demon King es de nivel 74.
+9353	Death Reaper es de nivel 78.
+9354	Enchanted Ice es de nivel 62.
+9355	Ice Killer Whale es de nivel 63.
+9356	Ice Bug es de nivel 65.
+9357	Ice Lion es de nivel 64.
+9358	Ice Man es de nivel 63.
+9359	Yeti es de nivel 65.
+9360	Ice Golem es de nivel 66.
+9361	Heavenly Enchanted Ice es de nivel 82.
+9362	Heavenly Ice Killer Whale es de nivel 82.
+9363	Heavenly Ice Bug es de nivel 82.
+9364	Heavenly Ice Lion es de nivel 83.
+9365	Heavenly Ice Man es de nivel 83.
+9366	Heavenly Yeti es de nivel 83.
+9367	Heavenly Ice Golem es de nivel 86.
+9368	Tree Frog Soldier es de nivel 57.
+9369	Tree Frog Leader es de nivel 60.
+9370	Leflet Bogeyman es de nivel 59.
+9371	Yellow Tiger Ghost es de nivel 75.
+9372	Bullfrog General es de nivel 60.
+9373	Giant Soldier es de nivel 66.
+9374	Giant Scout es de nivel 73.
+9375	Giant Thousand Fighter es de nivel 76.
+9376	Stone Thrower es de nivel 68.
+9377	Stone Shooter es de nivel 72.
+9378	Giant Stone Shooter es de nivel 72.
+9379	Giant Worker es de nivel 68.
+9380	Giant Inspector es de nivel 72.
+9381	Giant Hundred Combatant es de nivel 75.
+9382	Nine Tails es de nivel 74.
+9383	Baby Spider es de nivel 43.
+9384	Deadly Spider es de nivel 45.
+9385	Crimson Spider es de nivel 47.
+9386	Claw Spider es de nivel 49.
+9387	Soldier Spider es de nivel 51.
+9388	Baby Poison Spider es de nivel 50.
+9389	Deadly Poison Spider es de nivel 52.
+9390	Red Poison Spider es de nivel 53.
+9391	Claw Poison Spider es de nivel 5.
+9392	Soldier Poison Spider es de nivel 58.
+9393	Queen Spider es de nivel 60.
+9394	Desert Fox es de nivel 22.
+9395	Deserts Flying Eye es de nivel 35.
+9396	King Scorpion es de nivel 39.
+9397	Scorpion Man es de nivel 45.
+9398	Scorpion Archer es de nivel 47.
+9399	Snake Swordman es de nivel 48.
+9400	Snake Archer es de nivel 52.
+9401	Desert Outlaw es de nivel 54.
+9402	Giant Turtle es de nivel 66.
+9403	Fighting Tiger Minion es de nivel 69.
+9404	Flame Ghost es de nivel 70.
+9405	Fighting Tiger es de nivel 70.
+9406	Flame Soldier es de nivel 72.
+9407	Flame Warrior es de nivel 73.
+9408	Flame King es de nivel 73.
+9409	Haunted Tree es de nivel 65.
+9410	Haunted Stump es de nivel 67.
+9411	Dryad es de nivel 68.
+9412	Haunted Willow es de nivel 69.
+9413	Evil Haunted Tree es de nivel 72.
+9414	Red Brutal Tree es de nivel 73.
+9415	Red Haunted Stump es de nivel 76.
+9416	Red Dryad es de nivel 77.
+9417	Red Haunted Willow es de nivel 79.
+9418	Red Haunted Tree es de nivel 82.
+9419	Heaven Soldier es de nivel 85.
+9420	Heaven Archer es de nivel 88.
+9421	Heaven Cleric es de nivel 87.
+9422	Heaven Commander es de nivel 88.
+9423	Zin Heaven Soldier es de nivel 90.
+9424	Zin Heaven Archer es de nivel 92.
+9425	Zin Heaven Cleric es de nivel 93.
+9426	Zin Heaven Commander es de nivel 95.
+9427	Aqua Dragon es de nivel 97.
+9428	Gnoll Warrior es de nivel 96.
+9429	Gnoll Archer es de nivel 96.
+9430	Gnoll Defender es de nivel 98.
+9431	Gnoll Magician es de nivel 98.
+9432	Gnoll General es de nivel 99.
+9433	Gnoll Lord es de nivel 102.
+9434	Supreme Gnoll Guard es de nivel 104.
+9435	One-eyed Slugger es de nivel 97.
+9436	Cyclops Soldier es de nivel 99.
+9437	Cyclops Magician es de nivel 100.
+9438	Cyclops Executioner es de nivel 99.
+9439	General Outis es de nivel 102.
+9440	Arges es de nivel 104.
+9441	Polyphemos es de nivel 105.
+9442	Manticore Warrior es de nivel 96.
+9443	Manticore Soldier es de nivel 98.
+9444	Manticore Magus es de nivel 99.
+9445	Manticore Executioner es de nivel 99.
+9446	General Cor es de nivel 101.
+9447	Rakshasa es de nivel 102.
+9448	Martyaxwar es de nivel 105.
+9449	Lemures Warrior es de nivel 98.
+9450	Lemures Soldier es de nivel 98.
+9451	Lemures Magician es de nivel 99.
+9452	Lemures Executioner es de nivel 101.
+9453	Lemures General es de nivel 102.
+9454	Lemures Prince es de nivel 103.
+9455	Lemures Bodyguard es de nivel 104.
+9456	Tritonic Moray es de nivel 96.
+9457	Shark Soldier es de nivel 98.
+9458	Tritonic Magician es de nivel 99.
+9459	Tritonic Hunter es de nivel 98.
+9460	Tritonic Slasher es de nivel 101.
+9461	General Kappa es de nivel 103.
+9462	Triton es de nivel 105.
+9463	Red Thief Amazon es de nivel 95.
+9464	Red Thief Assassin es de nivel 97.
+9465	Red Thief Magician es de nivel 97.
+9466	Red Thief Executioner es de nivel 98.
+9467	Black General es de nivel 98.
+9468	Bone Face es de nivel 102.
+9469	Red Chief es de nivel 104.
+9470	Crab Warrior es de nivel 96.
+9471	Scorpion Marksman es de nivel 97.
+9472	Shrimp Soldier es de nivel 99.
+9473	Diabolical Hermit es de nivel 98.
+9474	Armoured Crab es de nivel 102.
+9475	General Lobster es de nivel 103
+9476	King Crab es de nivel 105.
+9477	Gigantic Biter es de nivel 100.
+9478	Gigantic Slaughterer es de nivel 102.
+9479	Gigantic Magus es de nivel 103.
+9480	Twiant es de nivel 104.
+9481	Captain Hooks es de nivel 105.
+9482	Gargoyle es de nivel 105.
+9483	King Wubba es de nivel 105.
+9484	Hangork es de nivel 98.
+9485	Archie Ogre es de nivel 100.
+9486	Brawl Ogre es de nivel 102.
+9487	Ogre Magus es de nivel 101.
+9488	General Ogg es de nivel 103.
+9489	Captain Shruk es de nivel 105.
+9490	The Great Ogre es de nivel 105.
+9491	Metin Of Sorrow es de nivel 10.
+9492	Metin Of Combat es de nivel 10.
+9493	Metin Of Battle es de nivel 15.
+9494	Metin Of Greed es de nivel 20.
+9495	Metin Of Black es de nivel 30.
+9496	Metin Of Darkness es de nivel 30.
+9497	Metin Of Jealousy es de nivel 40.
+9498	Metin Of Soul es de nivel 45.
+9499	Metin Of Shadow es de nivel 40.
+9500	Metin Of Toughness es de nivel 50.
+9501	Metin Of Devil es de nivel 60.
+9502	Metin Of Fall es de nivel 55.
+9503	Metin Of Death es de nivel 65.
+9504	Metin Of Murder es de nivel 70.
+9505	Metin of Wind Devil es de nivel 80.
+9506	Metin of Devil Eyes es de nivel 80.
+9507	Metin of Fighting Dragon es de nivel 85.
+9508	Metin of Lightning Cloud es de nivel 85.
+9509	Metin of Gloom es de nivel 100.
+9510	Metin of Ember es de nivel 95.
+9511	Metin of Vanity es de nivel 100.
+9512	Metin of Wrath es de nivel 105.
+9513	Metin of Calamity es de nivel 105.
+9514	Metin of Malice es de nivel 100.
+9515	Weak Ape Soldier es de nivel 22.
+9516	Weak Ape Thrower es de nivel 24.
+9517	Weak Ape Fighter es de nivel 27.
+9518	Weak Ape General es de nivel 29.
+9519	Ape Soldier es de nivel 36.
+9520	Ape Thrower es de nivel 37.
+9521	Ape Fighter es de nivel 40.
+9522	Ape General es de nivel 40.
+9523	Stone Ape es de nivel 41.
+9524	Ape Leader es de nivel 42.
+9525	Strong Ape Soldier es de nivel 46.
+9526	Strong Ape Thrower es de nivel 48.
+9527	Strong Ape Fighter es de nivel 48.
+9528	Strong Ape General es de nivel 52.
+9529	Strong Stone Ape es de nivel 53.
+9530	Rock Ape es de nivel 35.
+9531	Ape Lord es de nivel 55.
+9532	Devil es de nivel 80.
+9533	Devil's Wolf es de nivel 80.
+9534	Devil's Wraith es de nivel 81.
+9535	Devil's Skulker es de nivel 85.
+9536	Devil's Spearman es de nivel 84.
+9537	Devil's Cockatrice es de nivel 83.
+9538	Devil's Dominator es de nivel 85.
+9539	Spectral Crusher es de nivel 79.
+9540	Spectral Bower es de nivel 80.
+9541	Spectral Spikeman es de nivel 82.
+9542	Spectral Shaman es de nivel 10.
+9543	Spectral Axeman es de nivel 83.
+9544	Spectral Titan es de nivel 85.
+9545	Spectral Hunter es de nivel 86.
+9546	Hateful Crusher es de nivel 80.
+9547	Hateful Bower es de nivel 10.
+9548	Hateful Spikeman es de nivel 10.
+9549	Hateful Shaman es de nivel 82.
+9550	Hateful Axeman es de nivel 84.
+9551	Hateful Titan es de nivel 85.
+9552	Hateful Hunter es de nivel 86.
+9553	Tartaros es de nivel 89.
+9554	Erebus es de nivel 90.
+9555	Charon es de nivel 91.
+9556	Lord Gahnasel es de nivel 92.
+9557	Cung-Mok es de nivel 8.
+9558	Mu-Rang es de nivel 15.
+9559	Jug-Hyul es de nivel 10.
+9560	Young-Ji es de nivel 21.
+9561	Li-An es de nivel 24.
+9562	Lykos es de nivel 30.
+9563	Scrofa es de nivel 30.
+9564	Bera es de nivel 32.
+9565	Tigris es de nivel 35.
+9566	Se-Rang es de nivel 25.
+9567	Eun-Jung es de nivel 26.
