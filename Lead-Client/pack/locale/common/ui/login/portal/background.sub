@@ -3,5 +3,5 @@ version 2.0
 image "background.jpg"
 left 0
 top 0
-right 1024
-bottom 768
+right 2048
+bottom 1536
