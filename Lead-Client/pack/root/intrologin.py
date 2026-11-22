@@ -887,7 +887,7 @@ class LoginWindow(ui.ScriptWindow):
 		lineList = []
 		line = ""
 		for word in msg.replace("\\n", " ").replace("[ENTER]", " ").split():
-			if line and len((line + " " + word).decode("utf-8", "ignore")) > 36:
+			if line and len([c for c in line + " " + word if (ord(c) & 0xC0) != 0x80]) > 36:
 				lineList.append(line)
 				line = word
 			else:
