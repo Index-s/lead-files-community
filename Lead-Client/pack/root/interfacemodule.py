@@ -1632,8 +1632,8 @@ class Interface(object):
 		self.HideAllWindows()
 		self.Close()
 		self.__init__()
-		self.MakeInterface()
 		miniMap.LoadAtlas()
+		self.MakeInterface()
 		self.ShowDefaultWindows()
 
 		questButtonList.reverse()
