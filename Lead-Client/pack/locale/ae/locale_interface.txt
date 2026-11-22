@@ -306,3 +306,5 @@ WHISPER_REPORT
 WHISPER_SEND	إرسال
 YES	نعم
 ZONE_MAP	الخريطة الكبيرة
+NO	لا
+OK	موافق

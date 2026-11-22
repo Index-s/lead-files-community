@@ -306,3 +306,5 @@ WHISPER_REPORT
 WHISPER_SEND	Αποστολή
 YES	Ναι
 ZONE_MAP	Μεγάλος Χάρτης
+NO	Όχι
+OK	OK

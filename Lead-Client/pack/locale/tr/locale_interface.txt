@@ -306,3 +306,5 @@ WHISPER_REPORT
 WHISPER_SEND	Gönder
 YES	Evet
 ZONE_MAP	Genel Görünüm Haritası
+NO	Hayır
+OK	Tamam

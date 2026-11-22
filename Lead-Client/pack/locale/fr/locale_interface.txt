@@ -306,3 +306,5 @@ WHISPER_REPORT
 WHISPER_SEND	Envoyer
 YES	Oui
 ZONE_MAP	Carte d'aperçu
+NO	Non
+OK	OK
