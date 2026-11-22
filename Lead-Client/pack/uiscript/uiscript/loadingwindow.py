@@ -48,7 +48,7 @@ window = {
 					"x" : 40,
 					"y" : 25,
 
-					"image" : uiScriptLocale.LOCALE_UISCRIPT_PATH + "loading/gauge_empty.dds",
+					"image" : "locale/common/ui/loading/gauge_empty.dds",
 				},
 				{
 					"name" : "FullGage",
@@ -57,7 +57,7 @@ window = {
 					"x" : 40,
 					"y" : 25,
 
-					"image" : uiScriptLocale.LOCALE_UISCRIPT_PATH + "loading/gauge_full.dds",
+					"image" : "locale/common/ui/loading/gauge_full.dds",
 				},
 			),
 		},
