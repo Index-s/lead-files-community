@@ -953,5 +953,8 @@ TARGET_INFO_RACE_UNDEAD	Udøde
 TARGET_INFO_RACE_WIND	Vindmodstand
 TARGET_INFO_STONE_NAME	Spøgelsessten
 TARGET_INFO_SUBRACE	Underrace: %s
-
-
+MAP_CATACOMB	Djævlens katakomber
+MAP_MONKEY1	Hasun Dong
+MAP_MONKEY2	Jungsun Dong
+MAP_MONKEY3	Sangsun Dong
+MAP_SKIPIA	Eksilgrotten

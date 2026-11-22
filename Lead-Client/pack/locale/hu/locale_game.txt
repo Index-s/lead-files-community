@@ -835,3 +835,8 @@ TARGET_INFO_RACE_UNDEAD	Élohalottak
 TARGET_INFO_RACE_WIND	Szél ellenállás
 TARGET_INFO_STONE_NAME	Szellemko
 TARGET_INFO_SUBRACE	Alfaj: %s
+MAP_CATACOMB	Ördög katakombái
+MAP_MONKEY1	Hasun Dong
+MAP_MONKEY2	Jungsun Dong
+MAP_MONKEY3	Sangsun Dong
+MAP_SKIPIA	Száműzöttek barlangja
