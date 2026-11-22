@@ -954,8 +954,4 @@ TARGET_INFO_RACE_UNDEAD	No muertos
 TARGET_INFO_RACE_WIND	Resistencia al viento
 TARGET_INFO_STONE_NAME	Piedra fantasma
 TARGET_INFO_SUBRACE	Subraza: %s
-MAP_CATACOMB	Catacumba del Diablo
-MAP_MONKEY1	Hasun Dong
-MAP_MONKEY2	Jungsun Dong
-MAP_MONKEY3	Sangsun Dong
-MAP_SKIPIA	Gruta del Exilio
+

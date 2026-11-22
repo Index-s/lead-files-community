@@ -954,8 +954,3 @@ TARGET_INFO_RACE_UNDEAD	Necro?i
 TARGET_INFO_RACE_WIND	Rezisten?a la vânt
 TARGET_INFO_STONE_NAME	Piatra fantoma
 TARGET_INFO_SUBRACE	Subrasa: %s
-MAP_CATACOMB	Catacomba Diavolului
-MAP_MONKEY1	Hasun Dong
-MAP_MONKEY2	Jungsun Dong
-MAP_MONKEY3	Sangsun Dong
-MAP_SKIPIA	Grota Exilului

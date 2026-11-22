@@ -325,7 +325,7 @@ MINIMAP_ZONE_NAME_DICT = {
 	"metin2_map_guild_02" : MAP_BG,
 	"metin2_map_guild_03" : MAP_CG,
 	"metin2_map_trent" : MAP_TREE,
-	"metin2_map_trent02" : MAP_TRENT02,
+	"metin2_map_trent02" : MAP_TREE2,
 	"season1/metin2_map_WL_01" : MAP_WL,
 	"season1/metin2_map_nusluck01" : MAP_NUSLUCK,
     "Metin2_map_CapeDragonHead" : MAP_CAPE,
@@ -333,18 +333,6 @@ MINIMAP_ZONE_NAME_DICT = {
     "metin2_map_dawnmistwood" : MAP_DAWN,
     "metin2_map_BayBlackSand" : MAP_BAY,
 }
-
-MAP_NAME_DICT = dict(MINIMAP_ZONE_NAME_DICT)
-MAP_NAME_DICT.update({
-	"metin2_map_spiderdungeon_02" : MAP_SPIDER,
-	"metin2_map_spiderdungeon_03" : MAP_SPIDER,
-	"metin2_map_devilsCatacomb" : MAP_CATACOMB,
-	"metin2_map_monkeydungeon" : MAP_MONKEY1,
-	"metin2_map_monkeydungeon_02" : MAP_MONKEY2,
-	"metin2_map_monkeydungeon_03" : MAP_MONKEY3,
-	"season2/metin2_map_skipia_dungeon_01" : MAP_SKIPIA,
-	"season2/metin2_map_skipia_dungeon_02" : MAP_SKIPIA,
-})
 
 
 

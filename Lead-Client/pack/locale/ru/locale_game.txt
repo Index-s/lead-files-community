@@ -954,8 +954,3 @@ TARGET_INFO_RACE_UNDEAD	Нежить
 TARGET_INFO_RACE_WIND	Сопротивление ветру
 TARGET_INFO_STONE_NAME	Камень призраков
 TARGET_INFO_SUBRACE	Подвид: %s
-MAP_CATACOMB	Катакомбы дьявола
-MAP_MONKEY1	Хасун Дон
-MAP_MONKEY2	Чжунсун Дон
-MAP_MONKEY3	Сансун Дон
-MAP_SKIPIA	Грот изгнания

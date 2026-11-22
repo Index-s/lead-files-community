@@ -954,8 +954,3 @@ TARGET_INFO_RACE_UNDEAD	Nemrtví
 TARGET_INFO_RACE_WIND	Odolnost proti vetru
 TARGET_INFO_STONE_NAME	Kámen duchu
 TARGET_INFO_SUBRACE	Podrasa: %s
-MAP_CATACOMB	Ďáblovy katakomby
-MAP_MONKEY1	Hasun Dong
-MAP_MONKEY2	Jungsun Dong
-MAP_MONKEY3	Sangsun Dong
-MAP_SKIPIA	Jeskyně vyhnanců

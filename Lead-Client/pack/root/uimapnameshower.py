@@ -1,12 +1,11 @@
 import app
-import grp
 import ui
+import uiScriptLocale
 import localeInfo
 
-class MapNameShower(ui.Window):
+class MapNameShower(ui.ExpandedImageBox):
 
-	FONT_SIZE = 30
-	TEXT_COLOR = (1.0, 0.95, 0.8)
+	MAP_NAME_IMAGE =	{}
 
 	STATE_HIDE = 0
 	STATE_FADE_IN = 1
@@ -14,35 +13,109 @@ class MapNameShower(ui.Window):
 	STATE_FADE_OUT = 3
 
 	def __init__(self):
-		ui.Window.__init__(self, "TOP_MOST")
+		if localeInfo.IsRTL():
+			self.MAP_NAME_IMAGE =	{
+							"metin2_map_a1"  : uiScriptLocale.MAPNAME_PATH+"a1.tga",
+							"map_a2"         : uiScriptLocale.MAPNAME_PATH+"a2.tga",
+							"season2/metin2_map_a2_1": uiScriptLocale.MAPNAME_PATH+"a2_2.tga",
+							"metin2_map_a3"  : uiScriptLocale.MAPNAME_PATH+"a3.tga",
+							"metin2_map_b1"  : uiScriptLocale.MAPNAME_PATH+"b1.tga",
+							"map_b2"         : uiScriptLocale.MAPNAME_PATH+"b2.tga",
+							"metin2_map_b3"  : uiScriptLocale.MAPNAME_PATH+"b3.tga",
+							"metin2_map_c1"  : uiScriptLocale.MAPNAME_PATH+"c1.tga",
+							"map_c2"         : uiScriptLocale.MAPNAME_PATH+"c2.tga",
+							"metin2_map_c3"  : uiScriptLocale.MAPNAME_PATH+"c3.tga",
+							"metin2_map_deviltower1" : uiScriptLocale.MAPNAME_PATH+"devil1_title.tga",
+							"metin2_map_n_desert_01" : uiScriptLocale.MAPNAME_PATH+"desert1.tga",
+							"season2/metin2_map_n_desert_02": uiScriptLocale.MAPNAME_PATH+"desert2.tga",
+							"metin2_map_n_flame_01" : uiScriptLocale.MAPNAME_PATH+"frame1.tga",
+							"season2/metin2_map_n_flame_02": uiScriptLocale.MAPNAME_PATH+"frame2.tga",
+							"metin2_map_milgyo" : uiScriptLocale.MAPNAME_PATH+"milgyo.tga",
+							"season2/metin2_map_milgyo_a": uiScriptLocale.MAPNAME_PATH+"milgyo2.TGA",
+							"metin2_map_monkeydungeon" : uiScriptLocale.MAPNAME_PATH+"monkey1.tga",
+							"metin2_map_monkeydungeon_02" : uiScriptLocale.MAPNAME_PATH+"monkey2.tga",
+							"metin2_map_monkeydungeon_03" : uiScriptLocale.MAPNAME_PATH+"monkey3.tga",
+							"metin2_map_guild_01" : uiScriptLocale.MAPNAME_PATH+"guild1.tga",
+							"metin2_map_guild_02" : uiScriptLocale.MAPNAME_PATH+"guild2.tga",
+							"metin2_map_guild_03" : uiScriptLocale.MAPNAME_PATH+"guild3.tga",
+							"season2/metin2_map_skipia_dungeon_01": uiScriptLocale.MAPNAME_PATH+"skipia.tga",
+							"season2/metin2_map_skipia_dungeon_02": uiScriptLocale.MAPNAME_PATH+"skipia.tga",
+							"map_n_snowm_01" : uiScriptLocale.MAPNAME_PATH+"snow1.tga",
+							"season2/map_n_snowm_02": uiScriptLocale.MAPNAME_PATH+"snow2.tga",
+							"metin2_map_spiderdungeon" : uiScriptLocale.MAPNAME_PATH+"spider1.tga",
+							"metin2_map_trent" : uiScriptLocale.MAPNAME_PATH+"trent.tga",
+							"metin2_map_trent02" : uiScriptLocale.MAPNAME_PATH+"trent02.tga",
+							"season2/metin2_map_trent_a": uiScriptLocale.MAPNAME_PATH+"trent_a.tga",
+							"season2/metin2_map_trent02_a": uiScriptLocale.MAPNAME_PATH+"trent02_a.tga",
+							"metin2_map_dd"	:	uiScriptLocale.MAPNAME_PATH+"devil_basement.tga",
+							"metin2_map_devilsCatacomb"	:	uiScriptLocale.MAPNAME_PATH+"devil_basement.tga",
+							"metin2_map_dd"	:	uiScriptLocale.MAPNAME_PATH+"devil_basement.tga",
+							"season1/metin2_map_WL_01" :	uiScriptLocale.MAPNAME_PATH+"wl.tga",
+							"season1/metin2_map_nusluck01":	uiScriptLocale.MAPNAME_PATH+"nusluck.tga",	
+						}
+		else:
+			self.MAP_NAME_IMAGE =	{
+							"metin2_map_a1"  : uiScriptLocale.MAPNAME_PATH+"a1.tga",
+							"map_a2"         : uiScriptLocale.MAPNAME_PATH+"a2.tga",
+							"metin2_map_a3"  : uiScriptLocale.MAPNAME_PATH+"a3.tga",
+							"metin2_map_b1"  : uiScriptLocale.MAPNAME_PATH+"b1.tga",
+							"map_b2"         : uiScriptLocale.MAPNAME_PATH+"b2.tga",
+							"metin2_map_b3"  : uiScriptLocale.MAPNAME_PATH+"b3.tga",
+							"metin2_map_c1"  : uiScriptLocale.MAPNAME_PATH+"c1.tga",
+							"map_c2"         : uiScriptLocale.MAPNAME_PATH+"c2.tga",
+							"metin2_map_c3"  : uiScriptLocale.MAPNAME_PATH+"c3.tga",
+							"map_n_snowm_01" : uiScriptLocale.MAPNAME_PATH+"snow1.tga",
+							"metin2_map_deviltower1" : uiScriptLocale.MAPNAME_PATH+"devil1_title.tga",
+							"metin2_map_n_flame_01" : uiScriptLocale.MAPNAME_PATH+"frame1.tga",
+							"metin2_map_n_desert_01" : uiScriptLocale.MAPNAME_PATH+"desert1.tga",
+							"metin2_map_milgyo" : uiScriptLocale.MAPNAME_PATH+"milgyo.tga",
+							"metin2_map_monkeydungeon" : uiScriptLocale.MAPNAME_PATH+"monkey1.tga",
+							"metin2_map_monkeydungeon_02" : uiScriptLocale.MAPNAME_PATH+"monkey2.tga",
+							"metin2_map_monkeydungeon_03" : uiScriptLocale.MAPNAME_PATH+"monkey3.tga",
+							"metin2_map_guild_01" : uiScriptLocale.MAPNAME_PATH+"guild1.tga",
+							"metin2_map_guild_02" : uiScriptLocale.MAPNAME_PATH+"guild2.tga",
+							"metin2_map_guild_03" : uiScriptLocale.MAPNAME_PATH+"guild3.tga",
+							"metin2_map_trent" : uiScriptLocale.MAPNAME_PATH+"trent.tga",
+							"metin2_map_trent02" : uiScriptLocale.MAPNAME_PATH+"trent02.tga",
+							"season2/map_n_snowm_02": uiScriptLocale.MAPNAME_PATH+"snow2.tga",
+							"season2/metin2_map_a2_1": uiScriptLocale.MAPNAME_PATH+"a2_2.tga",
+							"season2/metin2_map_n_desert_02": uiScriptLocale.MAPNAME_PATH+"desert2.tga",
+							"season2/metin2_map_n_flame_02": uiScriptLocale.MAPNAME_PATH+"frame2.tga",
+							"season2/metin2_map_milgyo_a": uiScriptLocale.MAPNAME_PATH+"milgyo2.TGA",
+							"season2/metin2_map_trent_a": uiScriptLocale.MAPNAME_PATH+"trent_a.tga",
+							"season2/metin2_map_trent02_a": uiScriptLocale.MAPNAME_PATH+"trent02_a.tga",
+							"season2/metin2_map_skipia_dungeon_01": uiScriptLocale.MAPNAME_PATH+"skipia.tga",
+							"season2/metin2_map_skipia_dungeon_02": uiScriptLocale.MAPNAME_PATH+"skipia.tga",
+							"metin2_map_devilsCatacomb"	:	uiScriptLocale.MAPNAME_PATH+"devil_basement.tga",
+							"metin2_guild_village_01"	:	uiScriptLocale.MAPNAME_PATH+"a4.tga",
+							"metin2_guild_village_02"	:	uiScriptLocale.MAPNAME_PATH+"b4.tga",
+							"metin2_guild_village_03"	:	uiScriptLocale.MAPNAME_PATH+"c4.tga",
+							"metin2_map_BayBlackSand"	:	uiScriptLocale.MAPNAME_PATH+"bay.tga",
+							"metin2_map_Mt_Thunder"		:	uiScriptLocale.MAPNAME_PATH+"thunder.tga",
+							"metin2_map_dawnmistwood"	:	uiScriptLocale.MAPNAME_PATH+"dawn.tga",
+							"Metin2_map_CapeDragonHead"	:	uiScriptLocale.MAPNAME_PATH+"cape.tga",
+							"metin2_map_spiderdungeon"	:	uiScriptLocale.MAPNAME_PATH+"spider1.tga",
+							"metin2_map_spiderdungeon_02"	:	uiScriptLocale.MAPNAME_PATH+"spider1.tga",
+							"metin2_map_spiderdungeon_03"		:	uiScriptLocale.MAPNAME_PATH+"spider1.tga",
+						}
+
+		ui.ExpandedImageBox.__init__(self, "TOP_MOST")
 		self.AddFlag("not_pick")
-
-		self.textLine = ui.TextLine()
-		self.textLine.SetParent(self)
-		self.textLine.AddFlag("not_pick")
-		self.textLine.SetFontName("%s:%d" % (localeInfo.UI_DEF_FONT.split(":")[0], self.FONT_SIZE))
-		self.textLine.SetHorizontalAlignCenter()
-		self.textLine.SetOutline()
-		self.textLine.Show()
-
 		self.__Initialize()
 
 	def __del__(self):
-		ui.Window.__del__(self)
+		ui.ExpandedImageBox.__del__(self)
 
 	def __Initialize(self):
+		self.floorImage = None
+		self.objectiveImage = None
 		self.fadeStartTime = 0
 		self.state = self.STATE_HIDE
 		self.curAlpha = 0.0
-		self.SetSize(0, 0)
+		self.SetAlpha(0.0)
 		self.SetWindowHorizontalAlignCenter()
-		self.SetPosition(0, 110)
-		self.__SetAlpha(0.0)
+		self.SetPosition(0, 80)
 		self.Hide()
-
-	def __SetAlpha(self, alpha):
-		red, green, blue = self.TEXT_COLOR
-		self.textLine.SetPackedFontColor(grp.GenerateColor(red, green, blue, max(0.0, min(1.0, alpha))))
 
 	def __GetDevilTowerFloor(self, x, y):
 		if x > 10000 and y > 58000 and x < 25000 and y < 72000:
@@ -62,9 +135,8 @@ class MapNameShower(ui.Window):
 		elif x > 56000 and y > 38000 and x < 68000 and y < 49000:
 			return 8
 		elif x > 56000 and y > 13000 and x < 68000 and y < 23000:
-			return 9
+			return 9	 
 		return 0
-
 	def __GetDevilBase(self, x, y):
 		if x > 3000 and y > 4500 and x < 45000 and y < 45000:
 			return 1
@@ -80,31 +152,70 @@ class MapNameShower(ui.Window):
 			return 6
 		elif x > 5000 and y > 104900 and x < 15000 and y < 122000:
 			return 7
-		return 0
-
+		return	0
 	def ShowMapName(self, mapName, x, y):
-		name = localeInfo.MAP_NAME_DICT.get(mapName)
-		if not name:
+		if not self.MAP_NAME_IMAGE.has_key(mapName):
+			print " [ERROR] - There is no map name image", mapName
 			return
 
-		floor = 0
-		if mapName == "metin2_map_deviltower1":
-			floor = self.__GetDevilTowerFloor(x, y)
-		elif mapName == "metin2_map_devilsCatacomb":
-			floor = self.__GetDevilBase(x, y)
-
-		if floor:
-			name = "%s  %d" % (name, floor)
+		try:
+			self.LoadImage(self.MAP_NAME_IMAGE[mapName])
+		except RuntimeError:
+			return
 
 		self.__Initialize()
-		self.textLine.SetText(name)
+
+		if mapName == "metin2_map_deviltower1":
+			self.SetPosition(-60, 80)
+
+			self.floorImage = ui.ExpandedImageBox()
+			self.floorImage.AddFlag("not_pick")
+			self.floorImage.SetWindowHorizontalAlignCenter()
+			self.floorImage.SetPosition(100, 80)
+			self.floorImage.SetAlpha(0.0)
+			self.floorImage.Show()
+			# Map name (ex: Agui Cave) image loading & display			
+			try:
+				floor = self.__GetDevilTowerFloor(x, y)
+				print x, y, floor
+				self.floorImage.LoadImage(uiScriptLocale.MAPNAME_PATH+"devil1_%df.tga" % floor)
+			except RuntimeError:
+				self.SetPosition(0, 80)
+				self.floorImage.Hide()
+				self.floorImage = None
+
+		if mapName == "metin2_map_devilsCatacomb":
+			self.SetPosition(-75, 80)
+
+			self.floorImage = ui.ExpandedImageBox()
+			self.floorImage.AddFlag("not_pick")
+			self.floorImage.SetWindowHorizontalAlignCenter()
+			self.floorImage.SetPosition(100, 80)
+			self.floorImage.SetAlpha(0.0)
+			self.floorImage.Show()
+
+			# Map name (ex: Agui Cave) image loading & display
+			try:
+				floor = self.__GetDevilBase(x, y)
+				print x, y, floor
+				self.floorImage.LoadImage(uiScriptLocale.MAPNAME_PATH+"devil1_%df.tga" % floor)
+			except RuntimeError:
+				self.SetPosition(0, 80)
+				self.floorImage.Hide()
+				self.floorImage = None
 
 		self.state = self.STATE_FADE_IN
 		self.fadeStartTime = app.GetTime() + 1.0
 		self.Show()
 
 	def Update(self):
-		self.__SetAlpha(self.curAlpha)
+
+		self.SetAlpha(self.curAlpha)
+		if self.floorImage:
+			self.floorImage.SetAlpha(self.curAlpha)
+
+		if self.objectiveImage:
+			self.objectiveImage.SetAlpha(self.curAlpha)
 
 		if self.STATE_FADE_IN == self.state:
 			if app.GetTime() > self.fadeStartTime:
@@ -123,3 +234,11 @@ class MapNameShower(ui.Window):
 
 			if self.curAlpha < 0.0001:
 				self.Hide()
+				if self.floorImage:
+					self.floorImage.Hide()
+					self.floorImage = None
+					
+				if self.objectiveImage:
+					self.objectiveImage.Hide()
+					self.objectiveImage = None					
+				return

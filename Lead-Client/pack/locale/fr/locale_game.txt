@@ -835,8 +835,4 @@ TARGET_INFO_RACE_UNDEAD	Morts-vivants
 TARGET_INFO_RACE_WIND	Résistance au vent
 TARGET_INFO_STONE_NAME	Pierre fantôme
 TARGET_INFO_SUBRACE	Sous-race : %s
-MAP_CATACOMB	Catacombes du Diable
-MAP_MONKEY1	Hasun Dong
-MAP_MONKEY2	Jungsun Dong
-MAP_MONKEY3	Sangsun Dong
-MAP_SKIPIA	Grotte de l'Exil
+

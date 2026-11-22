@@ -954,8 +954,3 @@ TARGET_INFO_RACE_UNDEAD	Mortos-vivos
 TARGET_INFO_RACE_WIND	Resistência ao vento
 TARGET_INFO_STONE_NAME	Pedra Fantasma
 TARGET_INFO_SUBRACE	Subraça: %s
-MAP_CATACOMB	Catacumba do Diabo
-MAP_MONKEY1	Hasun Dong
-MAP_MONKEY2	Jungsun Dong
-MAP_MONKEY3	Sangsun Dong
-MAP_SKIPIA	Gruta do Exílio

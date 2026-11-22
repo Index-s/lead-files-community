@@ -986,8 +986,3 @@ TARGET_INFO_RACE_UNDEAD	Νεκροζώντανος
 TARGET_INFO_RACE_WIND	Αντοχή στον άνεμο
 TARGET_INFO_STONE_NAME	Πέτρα φάντασμα
 TARGET_INFO_SUBRACE	Υποφυλή: %s
-MAP_CATACOMB	Κατακόμβες Διαβόλου
-MAP_MONKEY1	Χασούν Ντονγκ
-MAP_MONKEY2	Τζουνγκσούν Ντονγκ
-MAP_MONKEY3	Σανγκσούν Ντονγκ
-MAP_SKIPIA	Σπήλαιο Εξορίας

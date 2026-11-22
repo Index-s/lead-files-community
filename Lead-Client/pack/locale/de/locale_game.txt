@@ -844,8 +844,3 @@ SWITCHBOT_SAVE_BUTTON	Gespeicherte Einstellungen öffnen
 SWITCHBOT_SAVE	Speichern
 SWITCHBOT_LOAD_CONFIGURATION	Auswählen
 SWITCHBOT_CLEAR_CONFIGURATION	Löschen
-MAP_CATACOMB	Teufelskatakomben
-MAP_MONKEY1	Hasun Dong
-MAP_MONKEY2	Jungsun Dong
-MAP_MONKEY3	Sangsun Dong
-MAP_SKIPIA	Verbannungsgrotte

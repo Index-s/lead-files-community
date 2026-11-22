@@ -954,8 +954,3 @@ TARGET_INFO_RACE_UNDEAD	Ondoden
 TARGET_INFO_RACE_WIND	Windweerstand
 TARGET_INFO_STONE_NAME	Spooksteen
 TARGET_INFO_SUBRACE	Subras: %s
-MAP_CATACOMB	Duivelscatacomben
-MAP_MONKEY1	Hasun Dong
-MAP_MONKEY2	Jungsun Dong
-MAP_MONKEY3	Sangsun Dong
-MAP_SKIPIA	Verbanningsgrot

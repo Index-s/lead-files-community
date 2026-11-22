@@ -954,8 +954,3 @@ TARGET_INFO_RACE_UNDEAD	Ölümsüzler
 TARGET_INFO_RACE_WIND	Rüzgar Direnci
 TARGET_INFO_STONE_NAME	Hayalet Tasi
 TARGET_INFO_SUBRACE	Alt Irk: %s
-MAP_CATACOMB	Şeytan Katakomu
-MAP_MONKEY1	Hasun Dong
-MAP_MONKEY2	Jungsun Dong
-MAP_MONKEY3	Sangsun Dong
-MAP_SKIPIA	Sürgün Mağarası

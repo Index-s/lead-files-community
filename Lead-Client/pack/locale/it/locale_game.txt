@@ -954,8 +954,3 @@ TARGET_INFO_RACE_UNDEAD	Non morti
 TARGET_INFO_RACE_WIND	Resistenza al vento
 TARGET_INFO_STONE_NAME	Pietra fantasma
 TARGET_INFO_SUBRACE	Sottorazza: %s
-MAP_CATACOMB	Catacomba del Diavolo
-MAP_MONKEY1	Hasun Dong
-MAP_MONKEY2	Jungsun Dong
-MAP_MONKEY3	Sangsun Dong
-MAP_SKIPIA	Grotta dell'Esilio
