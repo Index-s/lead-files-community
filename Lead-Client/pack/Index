@@ -197,7 +197,7 @@ d:/ymir work/special/
 ETC
 d:/ymir work/environment/
 ETC
-locale/
+locale/*
 locale
 uiscript/
 uiscript
