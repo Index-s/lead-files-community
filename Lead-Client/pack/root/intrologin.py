@@ -530,7 +530,8 @@ class LoginWindow(ui.ScriptWindow):
 			item.Show()
 
 			item.dot = self.__MakeImage("dot_none.tga", posDX + 8, -84)
-			item.textLine = self.__MakeText(item, int(24 * self.unit), int(4 * self.unit), channelDict[channelID].get("name", str(channelID)), 0xffc3ccd6, 11)
+			item.textLine = self.__MakeText(item, int(40 * self.unit), int(4 * self.unit), channelDict[channelID].get("name", str(channelID)), 0xffc3ccd6, 11)
+			item.textLine.SetHorizontalAlignCenter()
 			item.posDX = posDX
 			self.channelItemDict[channelID] = item
 
