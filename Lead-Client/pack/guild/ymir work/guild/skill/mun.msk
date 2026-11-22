@@ -2,8 +2,8 @@ ScriptType		SkillDataScript
 
 Type			GUILD
 
-Name			"°ø°£ÀÇ ¹®"
-Description		"1ºĞ°£ °ø°£À» ÀÌµ¿ÇÒ ¼ö ÀÖ´Â ¹®À» ¿¬´Ù"
+Name			"ê³µê°„ì˜ ë¬¸"
+Description		"1ë¶„ê°„ ê³µê°„ì„ ì´ë™í•  ìˆ˜ ìˆëŠ” ë¬¸ì„ ì—°ë‹¤"
 IconFileName		"skill/guild/mun.sub"
 
 NeedSPFormula		"50"

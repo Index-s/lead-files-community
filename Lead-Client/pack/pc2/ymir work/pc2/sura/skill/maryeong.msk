@@ -12,25 +12,25 @@ IconFileName		"skill/sura/maryeong.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"¸¶·É"
-949Description	"¾îµÒÀÇ ÈûÀ» ´øÁ® Àû¿¡°Ô »óÃ³¸¦ ÀÔÈù´Ù"
+949Name			"ë§ˆë ¹"
+949Description	"ì–´ë‘ ì˜ í˜ì„ ë˜ì ¸ ì ì—ê²Œ ìƒì²˜ë¥¼ ì…íŒë‹¤"
 List 949ConditionData
 {
-	"Àå°Å¸® °ø°İ"
-	"´ë»ó ÁÖº¯ °ø°İ"
+	"ì¥ê±°ë¦¬ ê³µê²©"
+	"ëŒ€ìƒ ì£¼ë³€ ê³µê²©"
 }
 List 949AffectData
 {
-	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "40 +5*lv + 2*iq + (20*iq + 7*minmtk + 50 )*ar*k" "40 +5*lv + 2*iq + (20*iq + 7*maxmtk + 100 )*ar*k"
+	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "40 +5*lv + 2*iq + (20*iq + 7*minmtk + 50 )*ar*k" "40 +5*lv + 2*iq + (20*iq + 7*maxmtk + 100 )*ar*k"
 }
 
-936Name			"Ä§Áé"
-936Description	"Å×³öºÚ°µÁ¦Á¿¸ø¶Ô·½Ôì³ÉÉËº¦"
+936Name			"é­”çµ"
+936Description	"æŠ›å‡ºé»‘æš—åŠ›é‡ç»™å¯¹æ–¹é€ æˆä¼¤å®³"
 List 936ConditionData
 {
-	"Àå°Å¸® °ø°İ"
+	"ì¥ê±°ë¦¬ ê³µê²©"
 }
 List 936AffectData
 {
-	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "60+5*LV+(8*INT+5*MinMWEP+400)*SkillPoint*HR/100" "60+5*LV+(8*INT+5*MaxMWEP+400)*SkillPoint*HR/100"
+	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "60+5*LV+(8*INT+5*MinMWEP+400)*SkillPoint*HR/100" "60+5*LV+(8*INT+5*MaxMWEP+400)*SkillPoint*HR/100"
 }

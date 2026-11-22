@@ -12,26 +12,26 @@ IconFileName		"skill/warrior/geomgyeong.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"°Ë°æ"
-949Description		"°ø°İ·ÂÀ» ÀÏÁ¤½Ã°£ µ¿¾È Áõ°¡½ÃÅ²´Ù"
+949Name			"ê²€ê²½"
+949Description		"ê³µê²©ë ¥ì„ ì¼ì •ì‹œê°„ ë™ì•ˆ ì¦ê°€ì‹œí‚¨ë‹¤"
 
 List 949ConditionData
 {
-	"±âº» °ø°İ·Â »ó½Â"
+	"ê¸°ë³¸ ê³µê²©ë ¥ ìƒìŠ¹"
 }
 List 949AffectData
 {
-	"°ø°İ·Â +%.0f" "(100 + STR) * SkillPoint" ""
+	"ê³µê²©ë ¥ +%.0f" "(100 + STR) * SkillPoint" ""
 }
 
-936Name			"½£Æø"
-936Description	"¹¥»÷Á¦ºÍ¹¥»÷·¶Î§ÔÚÒ»¶¨Ê±¼äÄÚÔö¼Ó"
+936Name			"å‰‘æ°”"
+936Description	"æ”»å‡»åŠ›å’Œæ”»å‡»èŒƒå›´åœ¨ä¸€å®šæ—¶é—´å†…å¢åŠ "
 List 936ConditionData
 {
-	"±âº» °ø°İ¸¸ Àû¿ë"
+	"ê¸°ë³¸ ê³µê²©ë§Œ ì ìš©"
 }
 List 936AffectData
 {
-	"°ø°İ·Â +%.0f" "100 * SkillPoint" ""
-	"Áö¼Ó½Ã°£ : %.0fÃÊ" "60 + (90 * SkillPoint)" ""
+	"ê³µê²©ë ¥ +%.0f" "100 * SkillPoint" ""
+	"ì§€ì†ì‹œê°„ : %.0fì´ˆ" "60 + (90 * SkillPoint)" ""
 }

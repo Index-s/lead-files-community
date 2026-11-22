@@ -14,12 +14,12 @@ CoolTimeFormula		"8"
 NeedSPFormula		"100"
 MaxLevel			"30"
 
-949Name			"±âÇ÷Ãë¸í"
-949Description		"°­·ÂÇÑ º£±â·Î Àû¿¡°Ô Ä¡¸íÅ¸¸¦ ÀÔÈù´Ù"
-949Requirement		"°İ»êÅ¸¿ì" 10
+949Name			"ê¸°í˜ˆì·¨ëª…"
+949Description		"ê°•ë ¥í•œ ë² ê¸°ë¡œ ì ì—ê²Œ ì¹˜ëª…íƒ€ë¥¼ ì…íŒë‹¤"
+949Requirement		"ê²©ì‚°íƒ€ìš°" 10
 List 949AffectData
 {
-	"ÆÄ±«·Â : %.1f ¹è"	"(SkillPoint * 20 + 100) / 100" ""
+	"íŒŒê´´ë ¥ : %.1f ë°°"	"(SkillPoint * 20 + 100) / 100" ""
 }
 
 List RequireStatData
@@ -27,11 +27,11 @@ List RequireStatData
 	"Level" "21"
 }
 
-936Name			"¿ñÉ±"
-936Description		"Ç¿ÓĞÁ¦µÄ¿ñ¿³£¬¸øµĞÈËÖÂÃü´ò»÷"
-936Requirement		"Å­»÷" 10
+936Name			"ç‹‚æ€"
+936Description		"å¼ºæœ‰åŠ›çš„ç‹‚ç ï¼Œç»™æ•Œäººè‡´å‘½æ‰“å‡»"
+936Requirement		"æ€’å‡»" 10
 List 936AffectData
 {
-	"ÆÆ»µÁ¦ : %.1f ±¶"	"(SkillPoint * 20 + 100) / 100" ""
+	"íŒë»ì œ : %.1f êµ¡"	"(SkillPoint * 20 + 100) / 100" ""
 }
 

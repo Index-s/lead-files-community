@@ -12,28 +12,28 @@ IconFileName		"skill/assassin/charyun.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"Â÷·û»ì"
-949Description	"ºü¸£°Ô È¸ÀüÇÏ¸ç Àü¹æÀÇ ÀûÀ» º¥´Ù"
+949Name			"ì°¨ë¥œì‚´"
+949Description	"ë¹ ë¥´ê²Œ íšŒì „í•˜ë©° ì „ë°©ì˜ ì ì„ ë²¤ë‹¤"
 List 949ConditionData
 {
-	"Å»Ãâ ¹üÀ§ °ø°İ"
-	"Áö¼Ó µ¶ °ø°İ"
+	"íƒˆì¶œ ë²”ìœ„ ê³µê²©"
+	"ì§€ì† ë… ê³µê²©"
 }
 List 949AffectData
 {
-	"°ø°İ·Â %.0f-%.0f" "2*minatk + (0.5*minatk + dex*9 + str*7)*k" "2*maxatk + (0.5*maxatk + dex*9 + str*7)*k"
-	"Áßµ¶ È®·ü %.0f%%" "1 + 4*k" ""
+	"ê³µê²©ë ¥ %.0f-%.0f" "2*minatk + (0.5*minatk + dex*9 + str*7)*k" "2*maxatk + (0.5*maxatk + dex*9 + str*7)*k"
+	"ì¤‘ë… í™•ë¥  %.0f%%" "1 + 4*k" ""
 }
 
-936Name			"Ç¬À¤Ğı"
-936Description	"Ç¬À¤µ¹ÖÃ£¬ÉíĞÎÄæ×ª£¬²úÉú¾Ş´óµÄÉËº¦Á¦"
+936Name			"ä¹¾å¤æ—‹"
+936Description	"ä¹¾å¤å€’ç½®ï¼Œèº«å½¢é€†è½¬ï¼Œäº§ç”Ÿå·¨å¤§çš„ä¼¤å®³åŠ›"
 List 936ConditionData
 {
-	"Å»Ãâ ¹üÀ§ °ø°İ"
-	"ÀÏÁ¤ È®·ü·Î Áßµ¶"
+	"íƒˆì¶œ ë²”ìœ„ ê³µê²©"
+	"ì¼ì • í™•ë¥ ë¡œ ì¤‘ë…"
 }
 List 936AffectData
 {
-	"Å¸°İÄ¡ %.0f-%.0f" "MinATK + (0.3*MinATK + 300)*SkillPoint" "MaxATK + (0.3*MaxATK + 300)*SkillPoint"
-	"Áßµ¶·ü %.0f%%" "1 + 4*SkillPoint" ""
+	"íƒ€ê²©ì¹˜ %.0f-%.0f" "MinATK + (0.3*MinATK + 300)*SkillPoint" "MaxATK + (0.3*MaxATK + 300)*SkillPoint"
+	"ì¤‘ë…ë¥  %.0f%%" "1 + 4*SkillPoint" ""
 }

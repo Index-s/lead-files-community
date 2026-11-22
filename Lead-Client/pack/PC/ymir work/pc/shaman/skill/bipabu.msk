@@ -12,25 +12,25 @@ IconFileName		"skill/shaman/bipabu.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"ºñÆÄºÎ"
-949Description	"Àû¿¡°Ô ºÎÀûÀ» ´øÁ® »óÃ³ ÀÔÈù´Ù"
+949Name			"ë¹„íŒŒë¶€"
+949Description	"ì ì—ê²Œ ë¶€ì ì„ ë˜ì ¸ ìƒì²˜ ì…íŒë‹¤"
 List 949ConditionData
 {
-	"Àå°Å¸® °ø°İ"
-	"´ë»ó ÁÖº¯ ¹üÀ§ °ø°İ"
+	"ì¥ê±°ë¦¬ ê³µê²©"
+	"ëŒ€ìƒ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
 }
 List 949AffectData
 {
-	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "70 + 4*lv + (20*iq+5*minmtk+50)*ar*k" "70 + 4*lv + (20*iq+5*maxmtk+50)*ar*k"
+	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "70 + 4*lv + (20*iq+5*minmtk+50)*ar*k" "70 + 4*lv + (20*iq+5*maxmtk+50)*ar*k"
 }
 
-936Name			"Áé¹â"
-936Description	"Ê¹ÓÃÌìµØºÏÆøÖÆÔìµÄÄ§·¨¹¥»÷µĞÈË"
+936Name			"çµå…‰"
+936Description	"ä½¿ç”¨å¤©åœ°åˆæ°”åˆ¶é€ çš„é­”æ³•æ”»å‡»æ•Œäºº"
 List 936ConditionData
 {
-	"Àå°Å¸® °ø°İ" 
+	"ì¥ê±°ë¦¬ ê³µê²©" 
 }
 List 936AffectData
 {
-	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "70+6*LV+(8*INT+5*MinMWEP+700)*SkillPoint*HR/100" "70+6*LV+(8*INT+5*MaxMWEP+700)*SkillPoint*HR/100"
+	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "70+6*LV+(8*INT+5*MinMWEP+700)*SkillPoint*HR/100" "70+6*LV+(8*INT+5*MaxMWEP+700)*SkillPoint*HR/100"
 }

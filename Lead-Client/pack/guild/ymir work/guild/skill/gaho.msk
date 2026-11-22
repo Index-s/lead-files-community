@@ -2,13 +2,13 @@ ScriptType		SkillDataScript
 
 Type			PASSIVE
 
-Name			"¿ë½ÅÀÇ °¡È£"
-Description		"±æµå¿ø Àü¿øÀÇ ¹æ¾î µî±ŞÀ» Çâ»ó ½ÃÅ²´Ù"
+Name			"ìš©ì‹ ì˜ ê°€í˜¸"
+Description		"ê¸¸ë“œì› ì „ì›ì˜ ë°©ì–´ ë“±ê¸‰ì„ í–¥ìƒ ì‹œí‚¨ë‹¤"
 IconFileName		"skill/guild/gaho.sub"
 
 List AffectData
 {
-	"¹æ¾î µî±Ş +%.0f"	"SkillLevel"	""
+	"ë°©ì–´ ë“±ê¸‰ +%.0f"	"SkillLevel"	""
 }
 
 MaxLevel			5

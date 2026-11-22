@@ -13,18 +13,18 @@ IconFileName		"skill/shaman/boho.sub"
 Type				MIDDLE
 MaxLevel			"30"
 
-949Name			"º¸È£"
-949Description		"µ½°íÀÚ ÇÏ´Â ÀÚÀÇ ³»¼º¿¡ ´ëÇÑ ÀúÇ×·ÂÀ» °­È­ÇÑ´Ù"
+949Name			"ë³´í˜¸"
+949Description		"ë•ê³ ì í•˜ëŠ” ìì˜ ë‚´ì„±ì— ëŒ€í•œ ì €í•­ë ¥ì„ ê°•í™”í•œë‹¤"
 
 List 949AffectData
 {
-	"¸¶¹ı ¹æ¾î·Â »ó½Â : +%.0f" "(3 + SkillPoint / 3) * (100 + INT) / 100" ""
+	"ë§ˆë²• ë°©ì–´ë ¥ ìƒìŠ¹ : +%.0f" "(3 + SkillPoint / 3) * (100 + INT) / 100" ""
 }
 
-936Name				"ĞÇÔÆÕó"
-936Description		"¼ÓÇ¿Í¬°éµÄµÖ¿¹Á¦"
+936Name				"æ˜Ÿäº‘é˜µ"
+936Description		"åŠ å¼ºåŒä¼´çš„æŠµæŠ—åŠ›"
 List 936AffectData
 {
-	"Ä§·¨µÖ¿¹ : +%.0f" "(3 + SkillPoint / 3) * (100 + INT) / 100" ""
-	"³ÖĞøÊ±¼ä : %.0fÃë" "5 * 60 * (5 + JeungJi) / 5" ""
+	"ì¹¨ë¬ë‘¬ì˜ˆ : +%.0f" "(3 + SkillPoint / 3) * (100 + INT) / 100" ""
+	"ë„£å´ç‚ì‡Œ : %.0fì·¨" "5 * 60 * (5 + JeungJi) / 5" ""
 }

@@ -3,16 +3,16 @@ ScriptType		SkillDataScript
 Type			HIGH
 Attribute		"STANDING_SKILL" "TOGGLE"
 
-949Name			"¹«»çÈ¥"
-949Description	"ÀÏ½ÃÀûÀ¸·Î Ã¼·ÂÀÌ ´Ã¾î³­´Ù"
-949Requirement	"ÁıÁß¹æ¾î" 2
+949Name			"ë¬´ì‚¬í˜¼"
+949Description	"ì¼ì‹œì ìœ¼ë¡œ ì²´ë ¥ì´ ëŠ˜ì–´ë‚œë‹¤"
+949Requirement	"ì§‘ì¤‘ë°©ì–´" 2
 
 IconFileName	"skill/warrior/musa.sub"
 MotionIndex		15
 
 List 949AffectData
 {
-	"ÃÖ´ë Ã¼·Â : +%.0f" "SkillPoint * 70" ""
+	"ìµœëŒ€ ì²´ë ¥ : +%.0f" "SkillPoint * 70" ""
 }
 
 List RequireStatData
@@ -24,10 +24,10 @@ NeedSPFormula			"150"
 ContinuationSPFormula	"10"
 MaxLevel				"15"
 
-936Name				"Îä»ê"
-936Description		"Ë²¼äÔö¼ÓÌåÁ¦"
-936Requirement		"¼¯ÖĞ·ÀÓù" 2
+936Name				"æ­¦é­‚"
+936Description		"ç¬é—´å¢åŠ ä½“åŠ›"
+936Requirement		"é›†ä¸­é˜²å¾¡" 2
 List 936AffectData
 {
-	"×î´óÌåÁ¦ : +%.0f" "SkillPoint * 70" ""
+	"é›¢ëŒ•ç«Ÿì œ : +%.0f" "SkillPoint * 70" ""
 }

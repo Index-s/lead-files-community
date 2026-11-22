@@ -3,9 +3,9 @@ ScriptType			SkillDataScript
 Type				MIDDLE
 Attribute			"STANDING_SKILL"
 
-949Name				"ÃÊÀüºÎ"
-949Description			"±ÍÈ¯ºÎ¸¦ »ç¿ëÇØ ±â¾ïÇÏ°í ÀÖ´Â ±×°÷À¸·Î ÀÌµ¿ÇÑ´Ù"
-949Requirement			"±ÍÈ¯" 3
+949Name				"ì´ˆì „ë¶€"
+949Description			"ê·€í™˜ë¶€ë¥¼ ì‚¬ìš©í•´ ê¸°ì–µí•˜ê³  ìˆëŠ” ê·¸ê³³ìœ¼ë¡œ ì´ë™í•œë‹¤"
+949Requirement			"ê·€í™˜" 3
 
 IconFileName		"skill/shaman/chojeon.sub"
 MotionIndex			16
@@ -14,7 +14,7 @@ NeedSPFormula		"300"
 MaxLevel			5
 LevelUpPoint		5
 
-936Name				"¼ÇÒä"
-936Description			"ÀûÓÃ¼ÇÒä´«ËÍ»Øµ½µ½±£´æµÄÎ»ÖÃ"
+936Name				"è®°å¿†"
+936Description			"åˆ©ç”¨è®°å¿†ä¼ é€å›åˆ°åˆ°ä¿å­˜çš„ä½ç½®"
 
-936Requirement			"´«ËÍ" 3
+936Requirement			"ä¼ é€" 3

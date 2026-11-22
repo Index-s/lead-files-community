@@ -4,8 +4,8 @@ Type				LOW
 Attribute			"NEED_TARGET" "ONLY_FOR_ALLIANCE" "CAN_USE_FOR_ME"
 Range				800
 
-949Name				"ÁõÃ¼½Å¹ı"
-949Description			"ºûÀÇ ±â¿îÀ¸·Î Àá½Ãµ¿¾È Ã¼·ÂÀ» Áõ°­ ½ÃÅ²´Ù"
+949Name				"ì¦ì²´ì‹ ë²•"
+949Description			"ë¹›ì˜ ê¸°ìš´ìœ¼ë¡œ ì ì‹œë™ì•ˆ ì²´ë ¥ì„ ì¦ê°• ì‹œí‚¨ë‹¤"
 
 IconFileName		"skill/shaman/jeungche.sub"
 MotionIndex         25
@@ -13,8 +13,8 @@ MotionIndexForMe    24
 
 List 949AffectData
 {
-	"ÃÖ´ë Ã¼·Â : +%.0f" "(SkillPoint * 60) * (25 + INT) / 25" ""
-	"Áö¼Ó ½Ã°£ : %.0fÃÊ" "5 * 60 * (5 + JeungJi) / 5" ""
+	"ìµœëŒ€ ì²´ë ¥ : +%.0f" "(SkillPoint * 60) * (25 + INT) / 25" ""
+	"ì§€ì† ì‹œê°„ : %.0fì´ˆ" "5 * 60 * (5 + JeungJi) / 5" ""
 }
 
 List RequireStatData
@@ -25,12 +25,12 @@ List RequireStatData
 MaxLevel			"8"
 NeedSPFormula		"100"
 
-936Name				"ÉñÔ¡"
-936Description			"ÈöÏÂÌ«ÑôµÄ¹âÃ¢³åÏ´ÎÛ»à£¬ÔİÊ±ÔöÇ¿ÌåÁ¦"
+936Name				"ç¥æµ´"
+936Description			"æ’’ä¸‹å¤ªé˜³çš„å…‰èŠ’å†²æ´—æ±¡ç§½ï¼Œæš‚æ—¶å¢å¼ºä½“åŠ›"
 List 936AffectData
 {
-	"×î´óÌåÁ¦ : +%.0f" "(SkillPoint * 60) * (25 + INT) / 25" ""
-	"³ÖĞøÊ±¼ä : %.0fÃë" "5 * 60 * (5 + JeungJi) / 5" ""
+	"é›¢ëŒ•ç«Ÿì œ : +%.0f" "(SkillPoint * 60) * (25 + INT) / 25" ""
+	"ë„£å´ç‚ì‡Œ : %.0fì·¨" "5 * 60 * (5 + JeungJi) / 5" ""
 }
 
 

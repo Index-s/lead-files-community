@@ -13,29 +13,29 @@ IconFileName		"skill/sura/muyeong.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"¹«¿µÁø"
-949Description	"ÁÖÀÎÀ» ÁöÅ°´Â Æø¹ßÃ¼¸¦ ¸¸µç´Ù"
+949Name			"ë¬´ì˜ì§„"
+949Description	"ì£¼ì¸ì„ ì§€í‚¤ëŠ” í­ë°œì²´ë¥¼ ë§Œë“ ë‹¤"
 List 949ConditionData
 {
-	"Àå°Å¸® °ø°İ"
-	"´ë»ó ÀÓÀÇ ¼±ÅÃ"
-	"´ë»ó ÁÖº¯ ¹üÀ§ °ø°İ"
+	"ì¥ê±°ë¦¬ ê³µê²©"
+	"ëŒ€ìƒ ì„ì˜ ì„ íƒ"
+	"ëŒ€ìƒ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
 }
 List 949AffectData
 {
-	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "30+ 2*lv + 2*iq + (18*iq + 6*minmtk + 200)*ar*k" "30+ 2*lv + 2*iq + (18*iq + 6*maxmtk + 500)*ar*k"
+	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "30+ 2*lv + 2*iq + (18*iq + 6*minmtk + 200)*ar*k" "30+ 2*lv + 2*iq + (18*iq + 6*maxmtk + 500)*ar*k"
 }
 
-936Name			"Î×ÁéÕó"
-936Description	"ÊØ»¤Ö÷ÈËµÄÇ¿´óÍöÁéÕó·¨"
+936Name			"å·«çµé˜µ"
+936Description	"å®ˆæŠ¤ä¸»äººçš„å¼ºå¤§äº¡çµé˜µæ³•"
 List 936ConditionData
 {
-	"Àå°Å¸® °ø°İ"
-	"Ä¡¸íÅ¸ È®·ü"
-	"´ë»ó ÀÓÀÇ ¼±ÅÃ"
+	"ì¥ê±°ë¦¬ ê³µê²©"
+	"ì¹˜ëª…íƒ€ í™•ë¥ "
+	"ëŒ€ìƒ ì„ì˜ ì„ íƒ"
 }
 List 936AffectData
 {
-	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "30+3*LV+(4*INT+4*MinMWEP+300)*SkillPoint*HR/100" "30+3*LV+(4*INT+4*MaxMWEP+700)*SkillPoint*HR/100"
-	"Áö¼Ó½Ã°£ : %.0fÃÊ" "90 + (200 * SkillPoint)" ""
+	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "30+3*LV+(4*INT+4*MinMWEP+300)*SkillPoint*HR/100" "30+3*LV+(4*INT+4*MaxMWEP+700)*SkillPoint*HR/100"
+	"ì§€ì†ì‹œê°„ : %.0fì´ˆ" "90 + (200 * SkillPoint)" ""
 }

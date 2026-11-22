@@ -12,28 +12,28 @@ IconFileName		"skill/sura/yonggwon.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"¿ë±ÇÆÄ"
-949Description	"¸ğµç °ÍÀ» º£¾î¹ö¸®´Â °­·ÂÇÑ È¸¿À¸® ¹Ù¶÷À» ÀÏÀ¸ÄÑ ÁÖº¯ÀÇ ÀûÀ» ¼¶¸êÇÑ´Ù"
+949Name			"ìš©ê¶ŒíŒŒ"
+949Description	"ëª¨ë“  ê²ƒì„ ë² ì–´ë²„ë¦¬ëŠ” ê°•ë ¥í•œ íšŒì˜¤ë¦¬ ë°”ëŒì„ ì¼ìœ¼ì¼œ ì£¼ë³€ì˜ ì ì„ ì„¬ë©¸í•œë‹¤"
 List 949ConditionData
 {
-	"Á¦ÀÚ¸® ÁÖº¯ ¹üÀ§ °ø°İ"
-	"»ó´ë È¸ÇÇ ¹«½Ã È¿°ú"
-	"Áö´É º¸³Ê½º"
+	"ì œìë¦¬ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
+	"ìƒëŒ€ íšŒí”¼ ë¬´ì‹œ íš¨ê³¼"
+	"ì§€ëŠ¥ ë³´ë„ˆìŠ¤"
 }
 List 949AffectData
 {
-	"°ø°İ·Â %.0f-%.0f" "1.1 * minatk + 2*lv + 2*iq + (1.5*minatk + str + iq*12) * k" "1.1 * maxatk + 2*lv + 2*iq + (1.5*maxatk + str + iq*12) * k"
-	"»ó´ë È¸ÇÇ ¹«½Ã È®·ü %.0f%%" "1 + 9*SkillPoint" ""
+	"ê³µê²©ë ¥ %.0f-%.0f" "1.1 * minatk + 2*lv + 2*iq + (1.5*minatk + str + iq*12) * k" "1.1 * maxatk + 2*lv + 2*iq + (1.5*maxatk + str + iq*12) * k"
+	"ìƒëŒ€ íšŒí”¼ ë¬´ì‹œ í™•ë¥  %.0f%%" "1 + 9*SkillPoint" ""
 }
 
-936Name			"Áú¾í²¨"
-936Description	"ÕÙ»½Ç¿ÁÒµÄÁú¾í·çÀ´ÏûÃğÖÜÎ§µÄµĞÈË"
+936Name			"é¾™å·æ³¢"
+936Description	"å¬å”¤å¼ºçƒˆçš„é¾™å·é£æ¥æ¶ˆç­å‘¨å›´çš„æ•Œäºº"
 List 936ConditionData
 {
-	"Á¦ÀÚ¸® ÁÖº¯ ¹üÀ§ °ø°İ"
+	"ì œìë¦¬ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
 }
 List 936AffectData
 {
-	"°ø°İ·Â %.0f" "MinATK + (0.3*MinATK + 400)*SkillPoint" "MaxATK + (0.3*MaxATK + 400)*SkillPoint"
-	"»ó´ë È¸ÇÇ ¹«½Ã È®·ü %.0f%%" "1 + 4*SkillPoint" ""
+	"ê³µê²©ë ¥ %.0f" "MinATK + (0.3*MinATK + 400)*SkillPoint" "MaxATK + (0.3*MaxATK + 400)*SkillPoint"
+	"ìƒëŒ€ íšŒí”¼ ë¬´ì‹œ í™•ë¥  %.0f%%" "1 + 4*SkillPoint" ""
 }

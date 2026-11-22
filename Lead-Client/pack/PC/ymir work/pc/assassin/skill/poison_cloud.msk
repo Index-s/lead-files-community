@@ -4,16 +4,16 @@ Type			HIGH
 Attribute		"ATTACK_SKILL" "NEED_TARGET"
 Range			350
 
-949Name			"µ¶±¸¸§"
-949Description	"ÁÖÀ§¿¡ µ¶À¸·Î ±¸¸§À» ¸¸µé¾î ÀûÀ» Áßµ¶ ½ÃÅ²´Ù"
-949Requirement	"µ¶¹Ù¸£±â" 5
+949Name			"ë…êµ¬ë¦„"
+949Description	"ì£¼ìœ„ì— ë…ìœ¼ë¡œ êµ¬ë¦„ì„ ë§Œë“¤ì–´ ì ì„ ì¤‘ë… ì‹œí‚¨ë‹¤"
+949Requirement	"ë…ë°”ë¥´ê¸°" 5
 
 IconFileName	"skill/assassin/poison_cloud.sub"
 MotionIndex		13
 
 List 949AffectData
 {
-	"%.1f ¹èÀÇ Å¸°İ"	"1 + SkillPoint / 4"	""
+	"%.1f ë°°ì˜ íƒ€ê²©"	"1 + SkillPoint / 4"	""
 }
 
 List RequireStatData
@@ -26,10 +26,10 @@ LevelUpPoint		"5"
 CoolTimeFormula		"40 - SkillPoint"
 NeedSPFormula		"50"
 
-936Name			"¶¾ÔÆ"
-936Description	"Ê¹ÓÃ¶¾Ò©ÔÚµĞÈËµÄÖÜÎ§ĞÎ³É¶¾ÔÆ£¬Ôì³ÉµĞÈËÉËº¦"
-936Requirement	"¶¾ÈĞ" 5
+936Name			"æ¯’äº‘"
+936Description	"ä½¿ç”¨æ¯’è¯åœ¨æ•Œäººçš„å‘¨å›´å½¢æˆæ¯’äº‘ï¼Œé€ æˆæ•Œäººä¼¤å®³"
+936Requirement	"æ¯’åˆƒ" 5
 List 936AffectData
 {
-	"%.1f ±¶µÄ´ò»÷"	"1 + SkillPoint / 4"	""
+	"%.1f êµ¡ë¨ëŒ”ìƒŒ"	"1 + SkillPoint / 4"	""
 }

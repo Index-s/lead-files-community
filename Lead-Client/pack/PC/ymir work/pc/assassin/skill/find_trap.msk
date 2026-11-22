@@ -1,8 +1,8 @@
 ScriptType		SkillDataScript
 
 Type			MIDDLE
-949Name			"гта╓ цё╠Б"
-949Description		"аж╨╞юг гта╓ю╩ цё╢б╢ы"
+949Name			"М∙╗Л═∙ Л╟╬Й╦╟"
+949Description		"Лё╪КЁ─Л²≤ М∙╗Л═∙Л²└ Л╟╬К┼■К▀╓"
 
 IconFileName	"skill/assassin/find_trap.sub"
 MotionIndex		0
@@ -12,5 +12,5 @@ LevelUpPoint			3
 NeedSPFormula			"60"
 ContinuationSPFormula 	"3" 
 
-936Name			"я╟урощзЕ"
-936Description		"я╟уржэ╠ъ╣дощзЕ"
+936Name			"Е╞╩Ф┴╬И≥╥И≤╠"
+936Description		"Е╞╩Ф┴╬Е▒╗Х╬╧Г └И≥╥И≤╠"

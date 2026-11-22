@@ -2,8 +2,8 @@ ScriptType		SkillDataScript
 
 Type			LOW
 Attribute		"NEED_TARGET"
-949Name			"ÀúÁÖ"
-949Description	"»ó´ëÀÇ °ø°İ·ÂÀ» ¶³¾î¶ß¸°´Ù"
+949Name			"ì €ì£¼"
+949Description	"ìƒëŒ€ì˜ ê³µê²©ë ¥ì„ ë–¨ì–´ëœ¨ë¦°ë‹¤"
 Range			"2500"
 
 IconFileName	"skill/sura/jeoju.sub"
@@ -11,8 +11,8 @@ MotionIndex		4
 
 List 949AffectData
 {
-	"°ø°İ·Â : -%.0f" "SkillPoint / 2" ""
-	"Áö¼Ó½Ã°£ 15ÃÊ" "" ""
+	"ê³µê²©ë ¥ : -%.0f" "SkillPoint / 2" ""
+	"ì§€ì†ì‹œê°„ 15ì´ˆ" "" ""
 }
 
 List RequireStatData
@@ -25,10 +25,10 @@ LevelUpPoint		"2"
 CoolTimeFormula		"5"
 NeedSPFormula 		"80"
 
-936Name			"ÃÎ÷Ê"
-936Description	"½µµÍ¶Ô·½µÄ¹¥»÷Á¦"
+936Name			"æ¢¦é­‡"
+936Description	"é™ä½å¯¹æ–¹çš„æ”»å‡»åŠ›"
 List 936AffectData
 {
-	"¹¥»÷Á¦ : -%.0f" "SkillPoint / 2" ""
-	"³ÖĞøÊ±¼ä15Ãë" "" ""
+	"ë¬‘ìƒŒì œ : -%.0f" "SkillPoint / 2" ""
+	"ë„£å´ç‚ì‡Œ15ì·¨" "" ""
 }

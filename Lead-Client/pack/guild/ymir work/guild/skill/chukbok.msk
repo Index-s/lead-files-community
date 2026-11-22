@@ -2,13 +2,13 @@ ScriptType		SkillDataScript
 
 Type			GUILD
 
-Name			"¿ë½ÅÀÇ Ãàº¹"
-Description		"ÀÚ½ÅÀÇ ÃÖ´ë Á¤½Å·ÂÀ» Àá½Ãµ¿¾È ³ôÀÎ´Ù"
+Name			"ìš©ì‹ ì˜ ì¶•ë³µ"
+Description		"ìì‹ ì˜ ìµœëŒ€ ì •ì‹ ë ¥ì„ ì ì‹œë™ì•ˆ ë†’ì¸ë‹¤"
 IconFileName		"skill/guild/chukbok.sub"
 
 List AffectData
 {
-	"10ºĞ°£ ÃÖ´ë Á¤½Å·Â +%.0f"	"SkillLevel * 100"	""
+	"10ë¶„ê°„ ìµœëŒ€ ì •ì‹ ë ¥ +%.0f"	"SkillLevel * 100"	""
 }
 
 NeedSPFormula		"120 - (SkillLevel * 20)"

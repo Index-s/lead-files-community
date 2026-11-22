@@ -2,13 +2,13 @@ ScriptType		SkillDataScript
 
 Type			PASSIVE
 
-Name			"¿ë½ÅÀÇ Èû"
-Description		"±æµå¿ø Àü¿øÀÇ °ø°İ µî±ŞÀ» Çâ»ó ½ÃÅ²´Ù"
+Name			"ìš©ì‹ ì˜ í˜"
+Description		"ê¸¸ë“œì› ì „ì›ì˜ ê³µê²© ë“±ê¸‰ì„ í–¥ìƒ ì‹œí‚¨ë‹¤"
 IconFileName		"skill/guild/him.sub"
 
 List AffectData
 {
-	"°ø°İ µî±Ş +%.0f"	"SkillLevel"	""
+	"ê³µê²© ë“±ê¸‰ +%.0f"	"SkillLevel"	""
 }
 
 MaxLevel			5

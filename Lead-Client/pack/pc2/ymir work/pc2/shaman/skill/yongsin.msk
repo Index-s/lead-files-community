@@ -3,17 +3,17 @@ ScriptType			SkillDataScript
 Type				HIGH
 Attribute			"STANDING_SKILL" "TOGGLE"
 
-949Name				"¿ë½ÅÅõÈ£"
-949Description		"°­·ÂÇÑ ¿ë½ÅÀÇ Åõ±â·Î ¸öÀ» °¨½Î Á÷Á¢ÀûÀÎ °ø°İÀ» ¸·¾Æ³½´Ù"
-949Requirement		"¼öÈ£Àü·É" 8
+949Name				"ìš©ì‹ íˆ¬í˜¸"
+949Description		"ê°•ë ¥í•œ ìš©ì‹ ì˜ íˆ¬ê¸°ë¡œ ëª¸ì„ ê°ì‹¸ ì§ì ‘ì ì¸ ê³µê²©ì„ ë§‰ì•„ë‚¸ë‹¤"
+949Requirement		"ìˆ˜í˜¸ì „ë ¹" 8
 
 IconFileName		"skill/shaman/yongsin.sub"
 MotionIndex			21
 
 List 949AffectData
 {
-	"±ÙÁ¢ °ø°İ ÀúÇ×·Â : +%.0f" "SkillPoint * 2" ""
-	"Áö¼Ó ½Ã°£ : %.0fÃÊ" "60 * (5 + JeungJi) / 5" ""
+	"ê·¼ì ‘ ê³µê²© ì €í•­ë ¥ : +%.0f" "SkillPoint * 2" ""
+	"ì§€ì† ì‹œê°„ : %.0fì´ˆ" "60 * (5 + JeungJi) / 5" ""
 }
 
 MaxLevel			"15"
@@ -21,11 +21,11 @@ LevelUpPoint		"5"
 NeedSPFormula		"500"
 CoolTimeFormula		"30"
 
-936Name				"ÁúÉñ¶Ü"
-936Description		"ÉñÁúÇ¿ÁÒµÄ¶·Æø£¬²úÉúµÄÇ¿´ó¶ÜÅÆ£¬±£»¤×Ô¼º"
-936Requirement		"ÉñÓÓ" 8
+936Name				"é¾™ç¥ç›¾"
+936Description		"ç¥é¾™å¼ºçƒˆçš„æ–—æ°”ï¼Œäº§ç”Ÿçš„å¼ºå¤§ç›¾ç‰Œï¼Œä¿æŠ¤è‡ªå·±"
+936Requirement		"ç¥ä½‘" 8
 List 936AffectData
 {
-	"½üÉí·ÀÓù : +%.0f" "SkillPoint * 2" ""
-	"³ÖĞøÊ±¼ä : %.0fÃë" "60 * (5 + JeungJi) / 5" ""
+	"è¿‘èº«é˜²å¾¡ : +%.0f" "SkillPoint * 2" ""
+	"ë„£å´ç‚ì‡Œ : %.0fì·¨" "60 * (5 + JeungJi) / 5" ""
 }

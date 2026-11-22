@@ -4,12 +4,12 @@ Type				LOW
 Attribute			"NEED_TARGET" "ONLY_FOR_ALLIANCE" "CAN_USE_FOR_ME"
 Range				800
 
-949Name				"´ëÁ¤¾÷ÀÎ"
-949Description		"´õ¿í °­ÇÑ ºûÀÇ ±â¿îÀ¸·Î Ä¿´Ù¶õ »óÃ³±îÁö Ä¡À¯ÇÑ´Ù"
-949Requirement		"Á¤¾÷ÀÎ" 10
+949Name				"ëŒ€ì •ì—…ì¸"
+949Description		"ë”ìš± ê°•í•œ ë¹›ì˜ ê¸°ìš´ìœ¼ë¡œ ì»¤ë‹¤ë€ ìƒì²˜ê¹Œì§€ ì¹˜ìœ í•œë‹¤"
+949Requirement		"ì •ì—…ì¸" 10
 List 949AffectData
 {
-	"Ã¼·Â %.0f È¸º¹" "(10 + SkillPoint * 2) * (30 + INT) / 30 * 10" ""
+	"ì²´ë ¥ %.0f íšŒë³µ" "(10 + SkillPoint * 2) * (30 + INT) / 30 * 10" ""
 }
 
 IconFileName		"skill/shaman/daejeongeop.sub"
@@ -24,10 +24,10 @@ List RequireStatData
 NeedSPFormula		"SkillPoint * 5 * 5"
 CoolTimeFormula		"5"
 
-936Name				"¹âÉñÆÕÕÕ"
-936Description		"ÀûÓÃ¹âÉñµÄÁ¦Á¿¸üºÃµÄÖÎÓú×Ô¼º»òËûÈË"
-936Requirement		"¹âÉñ" 10
+936Name				"å…‰ç¥æ™®ç…§"
+936Description		"åˆ©ç”¨å…‰ç¥çš„åŠ›é‡æ›´å¥½çš„æ²»æ„ˆè‡ªå·±æˆ–ä»–äºº"
+936Requirement		"å…‰ç¥" 10
 List 936AffectData
 {
-	"ÌåÁ¦»Ö¸´ %.0f " "(10 + SkillPoint * 2) * (30 + INT) / 30 * 10" ""
+	"ç«Ÿì œë¿Ÿë¦¿ %.0f " "(10 + SkillPoint * 2) * (30 + INT) / 30 * 10" ""
 }

@@ -2,8 +2,8 @@ ScriptType		SkillDataScript
 
 Type			GUILD
 
-Name			"°ø°£ ÀÌµ¿"
-Description		"°ø°£ÀÇ ¹®À¸·Î ÀÌµ¿À» ÇÕ´Ï´Ù"
+Name			"ê³µê°„ ì´ë™"
+Description		"ê³µê°„ì˜ ë¬¸ìœ¼ë¡œ ì´ë™ì„ í•©ë‹ˆë‹¤"
 IconFileName		"skill/guild/gongganidong.sub"
 
 NeedSPFormula		"20"

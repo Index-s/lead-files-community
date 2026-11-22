@@ -5,22 +5,22 @@ Attribute		"ATTACK_SKILL" "WEAPON_LIMITATION" "NEED_TARGET"
 NeedWeapon		"SWORD" "DAGGER" "DOUBLE_SWORD"
 Range			800
 
-949Name			"¼¶Àü°Ë"
-949Description	"Àû¿¡°Ô ¶Ù¾îµé¾î ±Ş¼Ò¿¡ Ä®À» ²È´Â´Ù"
-949Requirement	"Ãµ·æÃßÅ¸" 7
+949Name			"ì„¬ì „ê²€"
+949Description	"ì ì—ê²Œ ë›°ì–´ë“¤ì–´ ê¸‰ì†Œì— ì¹¼ì„ ê½‚ëŠ”ë‹¤"
+949Requirement	"ì²œë£¡ì¶”íƒ€" 7
 
 IconFileName	"skill/assassin/seomjeon.sub"
 MotionIndex		9
 
 List 949ConditionData
 {
-	"´Ü°ËÀÏ¶§ ÆÄ±«·Â 50% Áõ°¡"
-	"3ÃÊ°£ ¸ÂÀ»¶§ µ¥¹ÌÁö 2¹è"
+	"ë‹¨ê²€ì¼ë•Œ íŒŒê´´ë ¥ 50% ì¦ê°€"
+	"3ì´ˆê°„ ë§ì„ë•Œ ë°ë¯¸ì§€ 2ë°°"
 }
 
 List 949AffectData
 {
-	"ÆÄ±«·Â : %.1f ¹è" "(200 + SkillPoint * 35) / 100" ""
+	"íŒŒê´´ë ¥ : %.1f ë°°" "(200 + SkillPoint * 35) / 100" ""
 }
 
 List RequireStatData
@@ -32,16 +32,16 @@ MaxLevel			"30"
 CoolTimeFormula		"20"
 NeedSPFormula		"100"
 
-936Name			"ÎŞÓ°½£"
-936Description	"ÈçÓ°Ò»°ã¿ìËÙ¹¥»÷£¬ÎŞÈËÄÜ¹»»Ø±Ü"
-936Requirement	"Ó°»÷" 7
+936Name			"æ— å½±å‰‘"
+936Description	"å¦‚å½±ä¸€èˆ¬å¿«é€Ÿæ”»å‡»ï¼Œæ— äººèƒ½å¤Ÿå›é¿"
+936Requirement	"å½±å‡»" 7
 List 936ConditionData
 {
-	"ÓÃ¶Ì½£Ê±Ôö¼Ó50%ÆÆ»µÁ¦"
-	"Á¬Ğø¹¥»÷3Ãë£¬Ôì³É2±¶µÄÉËº¦"
+	"ç—°ë˜¬ìˆ²ç‚è—¤ì†50%íŒë»ì œ"
+	"è¿ç»­æ”»å‡»3ç§’ï¼Œé€ æˆ2å€çš„ä¼¤å®³"
 }
 
 List 936AffectData
 {
-	"ÆÆ»µÁ¦: %.1f ±¶" "(200 + SkillPoint * 35) / 100" ""
+	"íŒë»ì œ: %.1f êµ¡" "(200 + SkillPoint * 35) / 100" ""
 }

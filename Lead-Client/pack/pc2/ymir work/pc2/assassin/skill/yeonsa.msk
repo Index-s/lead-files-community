@@ -14,28 +14,28 @@ IconFileName		"skill/assassin/yeonsa.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"¿¬»ç"
-949Description	"ÇÑ¸íÀÇ Àû¿¡°Ô ¿©·¯¹ßÀÇ È­»ìÀ» ½ğ´Ù"
+949Name			"ì—°ì‚¬"
+949Description	"í•œëª…ì˜ ì ì—ê²Œ ì—¬ëŸ¬ë°œì˜ í™”ì‚´ì„ ìœë‹¤"
 List 949ConditionData
 {
-	"Àå°Å¸® °ø°İ"
-	"¿©·¯¹ø °ø°İ"
+	"ì¥ê±°ë¦¬ ê³µê²©"
+	"ì—¬ëŸ¬ë²ˆ ê³µê²©"
 }
 List 949AffectData
 {
-	"ÃÑ °ø°İ·Â %.0f-%.0f" "minatk + 0.2*minatk*floor(2+k*6)+ (0.8*minatk+dex*8*ar) *k" "maxatk + 0.2*maxatk*floor(2+k*6)+ (0.8*maxatk+dex*8*ar) *k"
-	"%.0f¹ßÀÇ È­»ìÀ» ½ğ´Ù" "2 + floor(6 * SkillPoint)" ""
+	"ì´ ê³µê²©ë ¥ %.0f-%.0f" "minatk + 0.2*minatk*floor(2+k*6)+ (0.8*minatk+dex*8*ar) *k" "maxatk + 0.2*maxatk*floor(2+k*6)+ (0.8*maxatk+dex*8*ar) *k"
+	"%.0fë°œì˜ í™”ì‚´ì„ ìœë‹¤" "2 + floor(6 * SkillPoint)" ""
 }
 
-936Name			"¿¬»ç"
-936Description	"ÇÑ¸íÀÇ Àû¿¡°Ô ¿©·¯¹ßÀÇ È­»ìÀ» ½ğ´Ù"
+936Name			"æ¥·è¤"
+936Description	"èŒ„ç–™ç‹¼ åˆ©ä¿Šéœ¸ å’¯çŸ¾æƒ¯ç‹¼ æ‹³æ··é˜‘ é‡‘ä¿ƒ"
 List 936ConditionData
 {
-	"Àå°Å¸® °ø°İ"
-	"¿©·¯¹ø °ø°İ"
+	"ì¥ê±°ë¦¬ ê³µê²©"
+	"ì—¬ëŸ¬ë²ˆ ê³µê²©"
 }
 List 936AffectData
 {
-	"ÃÑ °ø°İ·Â %.0f-%.0f" "MinATK + (2*MinATK + 400*(HR/100))*SkillPoint + 30*(2+6*SkillPoint)" "MaxATK + (2*MaxATK + 400*(HR/100))*SkillPoint + 30*(2+6*SkillPoint)"
-	"%.0f¹ßÀÇ È­»ìÀ» ½ğ´Ù" "2 + floor(6 * SkillPoint)" ""
+	"ì´ ê³µê²©ë ¥ %.0f-%.0f" "MinATK + (2*MinATK + 400*(HR/100))*SkillPoint + 30*(2+6*SkillPoint)" "MaxATK + (2*MaxATK + 400*(HR/100))*SkillPoint + 30*(2+6*SkillPoint)"
+	"%.0fë°œì˜ í™”ì‚´ì„ ìœë‹¤" "2 + floor(6 * SkillPoint)" ""
 }

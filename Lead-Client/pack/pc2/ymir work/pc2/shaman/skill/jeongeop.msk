@@ -12,27 +12,27 @@ IconFileName		"skill/shaman/jeongeop.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name		"Á¤¾÷ÀÎ"
-949Description	"ºûÀÇ ±â¿îÀ¸·Î »óÃ³¸¦ Ä¡À¯ÇÑ´Ù"
+949Name		"ì •ì—…ì¸"
+949Description	"ë¹›ì˜ ê¸°ìš´ìœ¼ë¡œ ìƒì²˜ë¥¼ ì¹˜ìœ í•œë‹¤"
 List 949ConditionData
 {
-	"»ı¸í·Â È¸º¹"
-	"»óÅÂÀÌ»ó È¸º¹"
-	"µ¿·á¿¡°Ô »ç¿ë °¡´É"
+	"ìƒëª…ë ¥ íšŒë³µ"
+	"ìƒíƒœì´ìƒ íšŒë³µ"
+	"ë™ë£Œì—ê²Œ ì‚¬ìš© ê°€ëŠ¥"
 }
 List 949AffectData
 {
-	"»ı¸í·Â È¸º¹ %.0f-%.0f" "200+4*lv+(10*iq+6*minmtk+600)*k" "200+4*lv+(10*iq+6*maxmtk+800)*k"
-	"»óÅÂÀÌ»ó È¸º¹ È®·ü %.0f%%" "20+80*k" "" 
+	"ìƒëª…ë ¥ íšŒë³µ %.0f-%.0f" "200+4*lv+(10*iq+6*minmtk+600)*k" "200+4*lv+(10*iq+6*maxmtk+800)*k"
+	"ìƒíƒœì´ìƒ íšŒë³µ í™•ë¥  %.0f%%" "20+80*k" "" 
 }
 
-936Name			"¹âÉñ"
-936Description	"¹âÉñÈöÏÂ»Ö¸´Ö®¹â£¬ÉÙÁ¿»Ø¸´ÌåÁ¦"
+936Name			"å…‰ç¥"
+936Description	"å…‰ç¥æ’’ä¸‹æ¢å¤ä¹‹å…‰ï¼Œå°‘é‡å›å¤ä½“åŠ›"
 List 936ConditionData
 {
-	"µ¿·á¿¡°Ô »ç¿ë °¡´É"
+	"ë™ë£Œì—ê²Œ ì‚¬ìš© ê°€ëŠ¥"
 }
 List 936AffectData
 {
-	"»ı¸í·Â È¸º¹ : %.0f-%.0f" "200+LV+(INT+MinMWEP+1)*SkillPoint" "200+LV+(INT+MaxMWEP+1)*SkillPoint"
+	"ìƒëª…ë ¥ íšŒë³µ : %.0f-%.0f" "200+LV+(INT+MinMWEP+1)*SkillPoint" "200+LV+(INT+MaxMWEP+1)*SkillPoint"
 }

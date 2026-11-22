@@ -13,33 +13,33 @@ IconFileName		"skill/assassin/gigung.sub"
 Type			ACTIVE
 MaxLevel		"20"
 
-949Name			"µ¶±â±Ã"
-949Description	"È­»ì¿¡ °­·ÂÇÑ µ¶À» ¸ğ¾Æ ½ğ´Ù"
+949Name			"ë…ê¸°ê¶"
+949Description	"í™”ì‚´ì— ê°•ë ¥í•œ ë…ì„ ëª¨ì•„ ìœë‹¤"
 
 List 949ConditionData
 {
-	"Àå°Å¸® °ø°İ"
-	"´ë»ó ÁÖº¯ °ø°İ"
-	"´ë»ó ³¯¸®±â"
-	"Áö¼Ó µ¶ °ø°İ"
+	"ì¥ê±°ë¦¬ ê³µê²©"
+	"ëŒ€ìƒ ì£¼ë³€ ê³µê²©"
+	"ëŒ€ìƒ ë‚ ë¦¬ê¸°"
+	"ì§€ì† ë… ê³µê²©"
 }
 
 List 949AffectData
 {
-	"°ø°İ·Â %.0f-%.0f" "minatk + (1.2*minatk + 100 + dex*6 + str*2)*k" "maxatk + (1.2*maxatk + 200 + dex*6 + str*2)*k"
-	"Áßµ¶ È®·ü %.0f%%" "80*k"
-	"Áßµ¶ ½Ã°£ %.0fÃÊ" "15+30*k"
+	"ê³µê²©ë ¥ %.0f-%.0f" "minatk + (1.2*minatk + 100 + dex*6 + str*2)*k" "maxatk + (1.2*maxatk + 200 + dex*6 + str*2)*k"
+	"ì¤‘ë… í™•ë¥  %.0f%%" "80*k"
+	"ì¤‘ë… ì‹œê°„ %.0fì´ˆ" "15+30*k"
 }
 
-936Name			"Á¦¼ı"
-936Description		"¹á´©ÁËÇ¿´óÁ¦Á¿µÄ¼ı"
+936Name			"åŠ›ç®­"
+936Description		"è´¯ç©¿äº†å¼ºå¤§åŠ›é‡çš„ç®­"
 
 List 936ConditionData
 {
-	"¸öÌå¹¥»÷"
+	"ëª¸ç«Ÿë¬‘ìƒŒ"
 }
 
 List 936AffectData
 {
-	"ÆÆ»µÁ¦£©: %.2f±¶"	"(SkillPoint * 5 + 100) / 100" ""
+	"íŒë»ì œï¼‰: %.2fêµ¡"	"(SkillPoint * 5 + 100) / 100" ""
 }

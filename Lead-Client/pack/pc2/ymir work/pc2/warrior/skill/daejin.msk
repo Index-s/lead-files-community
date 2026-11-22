@@ -11,28 +11,28 @@ IconFileName		"skill/warrior/daejin.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"´ëÁø°¢"
-949Description	"ÁÖÀ§ÀÇ ÀûÀ» »ç¹æÀ¸·Î ³¯·Áº¸³½´Ù"
+949Name			"ëŒ€ì§„ê°"
+949Description	"ì£¼ìœ„ì˜ ì ì„ ì‚¬ë°©ìœ¼ë¡œ ë‚ ë ¤ë³´ë‚¸ë‹¤"
 List 949ConditionData
 {
-	"Á¦ÀÚ¸® ÁÖº¯ ¹üÀ§ °ø°İ"
-	"ÀÏÁ¤ È®·ü·Î ±âÀı È¿°ú"
+	"ì œìë¦¬ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
+	"ì¼ì • í™•ë¥ ë¡œ ê¸°ì ˆ íš¨ê³¼"
 }
 List 949AffectData
 {
-	"°ø°İ·Â %.0f-%.0f" "2*MinATK + (2*MinATK + 2*DEX + 2*CON + 4*STR)*SkillPoint" "2*MaxATK + (2*MaxATK + 2*DEX + 2*CON + 4*STR)*SkillPoint"
-	"±âÀı È®·ü %.0f%%" "(100 + 1000*SkillPoint/6)/10" ""
+	"ê³µê²©ë ¥ %.0f-%.0f" "2*MinATK + (2*MinATK + 2*DEX + 2*CON + 4*STR)*SkillPoint" "2*MaxATK + (2*MaxATK + 2*DEX + 2*CON + 4*STR)*SkillPoint"
+	"ê¸°ì ˆ í™•ë¥  %.0f%%" "(100 + 1000*SkillPoint/6)/10" ""
 }
 
-936Name			"Õğº³"
-936Description	"Ê¹ÓÃÆø¹¦£¬½«ÖÜÎ§µÄµĞÈËÕğ·É"
+936Name			"éœ‡æ’¼"
+936Description	"ä½¿ç”¨æ°”åŠŸï¼Œå°†å‘¨å›´çš„æ•Œäººéœ‡é£"
 List 936ConditionData
 {
-	"Á¦ÀÚ¸® ÁÖº¯ ¹üÀ§ °ø°İ"
-	"°´Ò»¶¨µÄ¸ÅÂÊÓĞ»÷ÔÎµÄĞ§¹û"
+	"ì œìë¦¬ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
+	"ê°å¯§ë•ë¨ë§¤ìª½å”ìƒŒä»ë¨æ§»ë²"
 }
 List 936AffectData
 {
-	"°ø°İ·Â %.0f-%.0f" "50 + 2*MinATK + (0.7*MinATK + 350)*SkillPoint" "50 + 2*MaxATK + (0.7*MaxATK + 350)*SkillPoint"
-	"±âÀı È®·ü %.0f%%" "1 + 4*SkillPoint" ""
+	"ê³µê²©ë ¥ %.0f-%.0f" "50 + 2*MinATK + (0.7*MinATK + 350)*SkillPoint" "50 + 2*MaxATK + (0.7*MaxATK + 350)*SkillPoint"
+	"ê¸°ì ˆ í™•ë¥  %.0f%%" "1 + 4*SkillPoint" ""
 }

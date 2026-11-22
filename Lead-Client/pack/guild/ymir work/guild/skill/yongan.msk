@@ -2,13 +2,13 @@ ScriptType		SkillDataScript
 
 Type			GUILD
 
-Name			"¿ë¾È"
-Description		"±æµå¿ø Àü¿øÀÌ ÀÏ½ÃÀûÀ¸·Î º¸ÀÌÁö ¾Ê´Â ¹«¾ğ°¡¸¦ º¼ ¼ö ÀÖ´Ù"
+Name			"ìš©ì•ˆ"
+Description		"ê¸¸ë“œì› ì „ì›ì´ ì¼ì‹œì ìœ¼ë¡œ ë³´ì´ì§€ ì•ŠëŠ” ë¬´ì–¸ê°€ë¥¼ ë³¼ ìˆ˜ ìˆë‹¤"
 IconFileName		"skill/guild/yongan.sub"
 
 List AffectData
 {
-	"%.0f ÃÊ°£ À¯Áö"	"SkillLevel * 5"	""
+	"%.0f ì´ˆê°„ ìœ ì§€"	"SkillLevel * 5"	""
 }
 
 NeedSPFormula		"40 - (SkillLevel * 10)"

@@ -3,15 +3,15 @@ ScriptType		SkillDataScript
 Type			LOW
 Attribute		"TOGGLE" "STANDING_SKILL"
 
-949Name			"Ç÷¸¶°¢¼º"
-949Description	"ÀÚ½ÅÀÇ ÇÇ¸¦ ºÒÅÂ¿ö ¸¶·ÂÀ» °­È­ ÇÑ´Ù"
+949Name			"í˜ˆë§ˆê°ì„±"
+949Description	"ìì‹ ì˜ í”¼ë¥¼ ë¶ˆíƒœì›Œ ë§ˆë ¥ì„ ê°•í™” í•œë‹¤"
 
 IconFileName	"skill/sura/hyeolma.sub"
 MotionIndex		2
 
 List 949AffectData
 {
-	"¸¶¹ı °ø°İ·Â : +%.0f"	"3 + (SkillPoint / 4)"	""
+	"ë§ˆë²• ê³µê²©ë ¥ : +%.0f"	"3 + (SkillPoint / 4)"	""
 }
 
 MaxLevel				"20"
@@ -19,9 +19,9 @@ LevelUpPoint			"4"
 NeedSPFormula			"50"
 ContinuationSPFormula	"3"
 
-936Name			"Ñª¼À"
-936Description	"È¼ÉÕ×Ô¼ºµÄÑªÒº¼À³öÄ§ÉñµÄÁ¦Á¿,ÔöÇ¿Ä§·¨¹¥»÷"
+936Name			"è¡€ç¥­"
+936Description	"ç‡ƒçƒ§è‡ªå·±çš„è¡€æ¶²ç¥­å‡ºé­”ç¥çš„åŠ›é‡,å¢å¼ºé­”æ³•æ”»å‡»"
 List 936AffectData
 {
-	"Ä§·¨¹¥»÷Á¦: +%.0f"	"3 + (SkillPoint / 4)"	""
+	"ì¹¨ë¬ë¬‘ìƒŒì œ: +%.0f"	"3 + (SkillPoint / 4)"	""
 }

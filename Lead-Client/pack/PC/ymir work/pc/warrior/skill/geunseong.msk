@@ -3,18 +3,18 @@ ScriptType		SkillDataScript
 Type			PASSIVE
 IconFileName	"skill/warrior/geunseong.sub"
 
-949Name			"±Ù¼º"
-949Description	"»ı¸í·Â È¸º¹ ¼Óµµ Áõ°¡"
+949Name			"ê·¼ì„±"
+949Description	"ìƒëª…ë ¥ íšŒë³µ ì†ë„ ì¦ê°€"
 MaxLevel		"40"
 
 List 949AffectData
 {
-	"»ı¸í·Â È¸º¹·® +%.0f%%"	"SkillPoint * 5"	""
+	"ìƒëª…ë ¥ íšŒë³µëŸ‰ +%.0f%%"	"SkillPoint * 5"	""
 }
 
-936Name			"ËÉ³Ú"
-936Description		"Ôö¼ÓÉúÃüÖµ»Ö¸´ËÙ¶È"
+936Name			"æ¾å¼›"
+936Description		"å¢åŠ ç”Ÿå‘½å€¼æ¢å¤é€Ÿåº¦"
 List 936AffectData
 {
-	"ÉúÃüÖµ»Ö¸´Á¿ +%.0f%%"	"SkillPoint * 5"	""
+	"ç”Ÿå‘½å€¼æ¢å¤é‡ +%.0f%%"	"SkillPoint * 5"	""
 }

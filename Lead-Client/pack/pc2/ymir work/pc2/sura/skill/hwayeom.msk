@@ -12,25 +12,25 @@ IconFileName		"skill/sura/hwayeom.sub"
 Type			ACTIVE
 MaxLevel 		"30"
 
-949Name			"È­¿°Æø"
-949Description	"Æø¹ßÀ» ÀÏÀ¸ÄÑ ÁÖº¯ÀÇ ÀûÀ» ºÒÅÂ¿î´Ù"
+949Name			"í™”ì—¼í­"
+949Description	"í­ë°œì„ ì¼ìœ¼ì¼œ ì£¼ë³€ì˜ ì ì„ ë¶ˆíƒœìš´ë‹¤"
 List 949ConditionData
 {
-	"Á¦ÀÚ¸® ÁÖº¯ ¹üÀ§ °ø°İ"
-	"È­¿° °ø°İ"
+	"ì œìë¦¬ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
+	"í™”ì—¼ ê³µê²©"
 }
 List 949AffectData
 {
-	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "5*lv + 2*iq + (20*iq + 8*mtk + str*4 + con*2 + 180 )*k" "5*lv + 2*iq + (20*iq + 8*mtk + str*4 + con*2 + 200 )*k"
+	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "5*lv + 2*iq + (20*iq + 8*mtk + str*4 + con*2 + 180 )*k" "5*lv + 2*iq + (20*iq + 8*mtk + str*4 + con*2 + 200 )*k"
 }
 
-936Name			"ºÚÁúÆÆ"
-936Description	"ºÚÁú±¬·¢³öÌåÄÚµÄ»ğÑæ£¬È¼ÉÕÖÜÎ§µÄµĞÈË"
+936Name			"é»‘é¾™ç ´"
+936Description	"é»‘é¾™çˆ†å‘å‡ºä½“å†…çš„ç«ç„°ï¼Œç‡ƒçƒ§å‘¨å›´çš„æ•Œäºº"
 List 936ConditionData
 {
-	"Á¦ÀÚ¸® ÁÖº¯ ¹üÀ§ °ø°İ"
+	"ì œìë¦¬ ì£¼ë³€ ë²”ìœ„ ê³µê²©"
 }
 List 936AffectData
 {
-	"¸¶¹ı°ø°İ·Â : %.0f-%.0f" "70+5*LV+(7*INT+6*MinMWEP+500)*SkillPoint*HR/100" "70+5*LV+(7*INT+6*MaxMWEP+500)*SkillPoint*HR/100"
+	"ë§ˆë²•ê³µê²©ë ¥ : %.0f-%.0f" "70+5*LV+(7*INT+6*MinMWEP+500)*SkillPoint*HR/100" "70+5*LV+(7*INT+6*MaxMWEP+500)*SkillPoint*HR/100"
 }

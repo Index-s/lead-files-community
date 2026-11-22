@@ -1,21 +1,21 @@
 ScriptType		SkillDataScript
 
 Type			HIGH
-949Name			"Èæ¸¶°ø"
-949Description	"¾îµÒÀÇ ÈûÀ» ÀÏ½Ã¿¡ ÆøÆÄ ½ÃÄÑ ÁÖº¯ÀÇ ÀûÀ» ¼¶¸êÇÑ´Ù"
-949Requirement	"È­¿°Æø" 10
+949Name			"í‘ë§ˆê³µ"
+949Description	"ì–´ë‘ ì˜ í˜ì„ ì¼ì‹œì— í­íŒŒ ì‹œì¼œ ì£¼ë³€ì˜ ì ì„ ì„¬ë©¸í•œë‹¤"
+949Requirement	"í™”ì—¼í­" 10
 
 IconFileName	"skill/sura/heukma.sub"
 MotionIndex		13
 
 List 949ConditionData
 {
-	"Áö´É »ó½Â½Ã µ¥¹ÌÁö »ó½Â"
+	"ì§€ëŠ¥ ìƒìŠ¹ì‹œ ë°ë¯¸ì§€ ìƒìŠ¹"
 }
 
 List 949AffectData
 {
-	"ÆÄ±«·Â : %.0f"	"(INT * 3) * (10 + SkillPoint) / 10" ""
+	"íŒŒê´´ë ¥ : %.0f"	"(INT * 3) * (10 + SkillPoint) / 10" ""
 }
 
 List RequireStatData
@@ -28,14 +28,14 @@ LevelUpPoint	"5"
 CoolTimeFormula	"16"
 NeedSPFormula 	"150"
 
-936Name			"ºÚÄ§Öä"
-936Description	"Ë²¼ä±¬·¢ºÚ°µÁ¦Á¿£¬ÏûÃğÖÜÎ§µÄµĞÈË"
-936Requirement	"ºÚÁúÆÆ" 10
+936Name			"é»‘é­”å’’"
+936Description	"ç¬é—´çˆ†å‘é»‘æš—åŠ›é‡ï¼Œæ¶ˆç­å‘¨å›´çš„æ•Œäºº"
+936Requirement	"é»‘é¾™ç ´" 10
 List 936ConditionData
 {
-	"ËæÖÇÁ¦ÌáÉı£¬Ôì³ÉµÄÉËº¦Ò²½«¼ÓÇ¿"
+	"éšæ™ºåŠ›æå‡ï¼Œé€ æˆçš„ä¼¤å®³ä¹Ÿå°†åŠ å¼º"
 }
 List 936AffectData
 {
-	"ÆÆ»µÁ¦: %.0f"	"(INT * 3 + 10) * (10 + SkillPoint) / 10" ""
+	"íŒë»ì œ: %.0f"	"(INT * 3 + 10) * (10 + SkillPoint) / 10" ""
 }

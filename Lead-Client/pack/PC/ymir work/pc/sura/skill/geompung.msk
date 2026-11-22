@@ -5,16 +5,16 @@ Attribute		"ATTACK_SKILL" "WEAPON_LIMITATION" "NEED_TARGET"
 NeedWeapon		"SWORD"
 Range			1000
 
-949Name			"°ËÇ³"
-949Description	"¸Ö¸® ÀÖ´Â Àû±îÁö º£¾î¹ö¸± ¼ö ÀÖ´Â °­·ÂÇÑ °Ë±â¸¦ ÀÏÀ¸Å²´Ù"
-949Requirement	"¿ë±ÇÆÄ" 10
+949Name			"ê²€í’"
+949Description	"ë©€ë¦¬ ìˆëŠ” ì ê¹Œì§€ ë² ì–´ë²„ë¦´ ìˆ˜ ìˆëŠ” ê°•ë ¥í•œ ê²€ê¸°ë¥¼ ì¼ìœ¼í‚¨ë‹¤"
+949Requirement	"ìš©ê¶ŒíŒŒ" 10
 
 IconFileName	"skill/sura/geompung.sub"
 MotionIndex		18
 
 List 949AffectData
 {
-	"ÆÄ±«·Â : %.1f¹è" "(100 + SkillPoint * 20) / 100" ""
+	"íŒŒê´´ë ¥ : %.1fë°°" "(100 + SkillPoint * 20) / 100" ""
 }
 
 List RequireStatData
@@ -26,10 +26,10 @@ MaxLevel			"30"
 CoolTimeFormula		"20"
 NeedSPFormula		"200"
 
-936Name			"Éñ·ç½£"
-936Description	"½£ÆøÈçÉñ±ø½µÁÙ£¬ºáÉ¨´óµØ"
-936Requirement	"Áú¾í²¨" 10
+936Name			"ç¥é£å‰‘"
+936Description	"å‰‘æ°”å¦‚ç¥å…µé™ä¸´ï¼Œæ¨ªæ‰«å¤§åœ°"
+936Requirement	"é¾™å·æ³¢" 10
 List 936AffectData
 {
-	"ÆÆ»µÁ¦ : %.1f ±¶" "(100 + SkillPoint * 20) / 100" ""
+	"íŒë»ì œ : %.1f êµ¡" "(100 + SkillPoint * 20) / 100" ""
 }

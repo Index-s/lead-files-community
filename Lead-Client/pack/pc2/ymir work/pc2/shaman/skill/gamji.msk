@@ -3,8 +3,8 @@ ScriptType			SkillDataScript
 Type				SUPPORT
 Attribute			"NEED_TARGET" "ONLY_FOR_ALLIANCE" "CAN_USE_FOR_ME"
 
-949Name				"°¨Áö"
-949Description		"Àá½Ãµ¿¾È º¸ÀÌÁö ¾Ê´Â °ÍÀ» º¼ ¼ö ÀÖ´Â ´É·ÂÀ» ºÎ¿©ÇÑ´Ù"
+949Name				"ê°ì§€"
+949Description		"ì ì‹œë™ì•ˆ ë³´ì´ì§€ ì•ŠëŠ” ê²ƒì„ ë³¼ ìˆ˜ ìˆëŠ” ëŠ¥ë ¥ì„ ë¶€ì—¬í•œë‹¤"
 
 IconFileName		"skill/shaman/gamji.sub"
 MotionIndex			6
@@ -12,7 +12,7 @@ MotionIndexForMe	5
 
 List 949AffectData
 {
-	"Áö¼Ó ½Ã°£ : 3ºĞ" "" ""
+	"ì§€ì† ì‹œê°„ : 3ë¶„" "" ""
 }
 
 List RequireStatData
@@ -24,9 +24,9 @@ NeedSPFormula		"60"
 MaxLevel			"5"
 LevelUpPoint		"5"
 
-936Name				"³àÄ¿"
-936Description		"¸³Óè¿´¼ûÒş²ØÊÂÎïÄÜÁ¦"
+936Name				"èµ¤ç›®"
+936Description		"èµ‹äºˆçœ‹è§éšè—äº‹ç‰©èƒ½åŠ›"
 List 936AffectData
 {
-	"³ÖĞøÊ±¼ä: 3·ÖÖÓ" "" ""
+	"ë„£å´ç‚ì‡Œ: 3ë¡¸çˆ" "" ""
 }

@@ -13,24 +13,24 @@ MaxLevel		"30"
 
 IconFileName		"skill/warrior/gigongcham.sub"
 
-949Name			"±â°øÂü"
-949Description	"Àü¹æÀÇ ÀûÀ» °ø°İÇÑ´Ù"
+949Name			"ê¸°ê³µì°¸"
+949Description	"ì „ë°©ì˜ ì ì„ ê³µê²©í•œë‹¤"
 List 949ConditionData
 {
-	"Àü¹æ ¹üÀ§ °ø°İ"
+	"ì „ë°© ë²”ìœ„ ê³µê²©"
 }
 List 949AffectData
 {
-	"°ø°İ·Â %.0f-%.0f" "2.3*MinATK + (MinATK*4 + 4*STR + CON)*SkillPoint" "2.3*MaxATK + (MaxATK*4 + 4*STR + CON)*SkillPoint"
+	"ê³µê²©ë ¥ %.0f-%.0f" "2.3*MinATK + (MinATK*4 + 4*STR + CON)*SkillPoint" "2.3*MaxATK + (MaxATK*4 + 4*STR + CON)*SkillPoint"
 }
 
-936Name			"Ğı·çÕ¶"
-936Description	"¹¥»÷Ç°·½µÄµĞÈË"
+936Name			"æ—‹é£æ–©"
+936Description	"æ”»å‡»å‰æ–¹çš„æ•Œäºº"
 List 936ConditionData
 {
-	"Àü¹æ ¹üÀ§ °ø°İ"
+	"ì „ë°© ë²”ìœ„ ê³µê²©"
 }
 List 936AffectData
 {
-	"°ø°İ·Â %.0f-%.0f" "100 + 3*MinATK + (MinATK + 400)*SkillPoint" "100 + 3*MaxATK + (MaxATK + 400)*SkillPoint"
+	"ê³µê²©ë ¥ %.0f-%.0f" "100 + 3*MinATK + (MinATK + 400)*SkillPoint" "100 + 3*MaxATK + (MaxATK + 400)*SkillPoint"
 }

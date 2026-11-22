@@ -9,11 +9,11 @@ MotionIndex		13
 NeedSPFormula			"150"
 ContinuationSPFormula	"8"
 
-949Name			"Äè°Ë¼ú"
-949Description	"ÀÏ½ÃÀûÀ¸·Î °ø°İ¼Óµµ°¡ Áõ°¡ÇÑ´Ù"
+949Name			"ì¾Œê²€ìˆ "
+949Description	"ì¼ì‹œì ìœ¼ë¡œ ê³µê²©ì†ë„ê°€ ì¦ê°€í•œë‹¤"
 List 949AffectData
 {
-	"°ø°İ ¼Óµµ : +%.0f" "SkillPoint" ""
+	"ê³µê²© ì†ë„ : +%.0f" "SkillPoint" ""
 }
 
 List RequireStatData
@@ -21,10 +21,10 @@ List RequireStatData
 	"Level" "21"
 }
 
-936Name			"¿ì½£"
-936Description		"Ë²¼äÌá¸ß¹¥»÷ËÙ¶È"
+936Name			"å¿«å‰‘"
+936Description		"ç¬é—´æé«˜æ”»å‡»é€Ÿåº¦"
 List 936AffectData
 {
-	"¹¥»÷ËÙ¶È : +%.0f" "SkillPoint" ""
+	"ë¬‘ìƒŒé†µë˜‘ : +%.0f" "SkillPoint" ""
 }
 

@@ -5,22 +5,22 @@ Attribute		"ATTACK_SKILL" "WEAPON_LIMITATION" "NEED_TARGET"
 NeedWeapon		"SWORD" "DAGGER" "DOUBLE_SWORD"
 Range			800
 
-949Name			"Ãµ·æÃßÅ¸"
-949Description	"¼ø°£ÀûÀ¸·Î Àû¿¡°Ô Á¢±ÙÇØ ÀÏ°İÀ» °¡ÇÑ´Ù"
-949Requirement	"±Ã½ÅÅº¿µ" 7
+949Name			"ì²œë£¡ì¶”íƒ€"
+949Description	"ìˆœê°„ì ìœ¼ë¡œ ì ì—ê²Œ ì ‘ê·¼í•´ ì¼ê²©ì„ ê°€í•œë‹¤"
+949Requirement	"ê¶ì‹ íƒ„ì˜" 7
 
 IconFileName	"skill/assassin/cheonryong.sub"
 MotionIndex		4
 
 List 949ConditionData
 {
-	"ÁÖº¯ÀÇ Àûµé¿¡°Ô 1/2 µ¥¹ÌÁö"
-	"´Ü°ËÀÏ¶§ ÆÄ±«·Â 50% Áõ°¡"
+	"ì£¼ë³€ì˜ ì ë“¤ì—ê²Œ 1/2 ë°ë¯¸ì§€"
+	"ë‹¨ê²€ì¼ë•Œ íŒŒê´´ë ¥ 50% ì¦ê°€"
 }
 
 List 949AffectData
 {
-	"ÆÄ±«·Â : %.1f¹è"	"(SkillPoint * 35 + 200) / 100" ""
+	"íŒŒê´´ë ¥ : %.1fë°°"	"(SkillPoint * 35 + 200) / 100" ""
 }
 
 List RequireStatData
@@ -32,16 +32,16 @@ MaxLevel			"25"
 NeedSPFormula		"100"
 CoolTimeFormula		"12"
 
-936Name			"Ó°»÷"
-936Description		"ÈçÓ°×Ó°ã£¬Ë²¼ä½Ó½üµĞÈË¸øÓèÖÂÃüÒ»»÷"
-936Requirement	"÷ÈÓ°" 7
+936Name			"å½±å‡»"
+936Description		"å¦‚å½±å­èˆ¬ï¼Œç¬é—´æ¥è¿‘æ•Œäººç»™äºˆè‡´å‘½ä¸€å‡»"
+936Requirement	"é­…å½±" 7
 List 936ConditionData
 {
-	"¶ÔÖÜÎ§µĞÈË²úÉúÒ»¶¨ÉËº¦"
-	"¶Ì½£Ê±Ôö¼Ó50%ÆÆ»µÁ¦"
+	"å¯¹å‘¨å›´æ•Œäººäº§ç”Ÿä¸€å®šä¼¤å®³"
+	"ë˜¬ìˆ²ç‚è—¤ì†50%íŒë»ì œ"
 }
 
 List 936AffectData
 {
-	"ÆÆ»µÁ¦: %.1f±¶"	"(SkillPoint * 35 + 200) / 100" ""
+	"íŒë»ì œ: %.1fêµ¡"	"(SkillPoint * 35 + 200) / 100" ""
 }

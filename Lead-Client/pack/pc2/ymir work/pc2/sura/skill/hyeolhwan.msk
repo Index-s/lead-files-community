@@ -2,15 +2,15 @@ ScriptType		SkillDataScript
 
 Type			SUPPORT
 Attribute		"CAN_USE_IF_NOT_ENOUGH"
-949Name			"Ç÷È¯Á¤¹ı"
-949Description	"Á¤½Å·Â¸¦ ÀÌ¿ëÇÏ¿© »ı¸í·ÂÀ» È¸º¹½ÃÅ²´Ù"
+949Name			"í˜ˆí™˜ì •ë²•"
+949Description	"ì •ì‹ ë ¥ë¥¼ ì´ìš©í•˜ì—¬ ìƒëª…ë ¥ì„ íšŒë³µì‹œí‚¨ë‹¤"
 
 IconFileName	"skill/sura/hyeolhwan.sub"
 MotionIndex		14
 
 List 949AffectData
 {
-	"ÃÖ´ë »ı¸í·ÂÀÇ %.0f%% È¸º¹" "SkillPoint * 10" ""
+	"ìµœëŒ€ ìƒëª…ë ¥ì˜ %.0f%% íšŒë³µ" "SkillPoint * 10" ""
 }
 
 List RequireStatData
@@ -23,9 +23,9 @@ LevelUpPoint		"5"
 CoolTimeFormula		"8"
 NeedSPFormula		"MaxHP"
 
-936Name			"ÌìÄ§Ìå"
-936Description		"ÓëÄ§Éñ½¨Á¢ÆõÔ¼£¬ÎşÉüÁé»ê»»È¡ÈâÌåµÄ»Ö¸´"
+936Name			"å¤©é­”ä½“"
+936Description		"ä¸é­”ç¥å»ºç«‹å¥‘çº¦ï¼Œç‰ºç‰²çµé­‚æ¢å–è‚‰ä½“çš„æ¢å¤"
 List 936AffectData
 {
-	"»Ö¸´×î´óÉúÃüÖµµÄ %.0f%% " "SkillPoint * 10" ""
+	"æ¢å¤æœ€å¤§ç”Ÿå‘½å€¼çš„ %.0f%% " "SkillPoint * 10" ""
 }

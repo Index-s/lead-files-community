@@ -4,8 +4,8 @@ Type				LOW
 Attribute			"NEED_TARGET" "ONLY_FOR_ALLIANCE" "CAN_USE_FOR_ME"
 Range				800
 
-949Name				"Áö°¨´ë¹ı"
-949Description		"µ½°íÀÚ ÇÏ´Â ÀÚ°¡ ´õ¿í »¡¸® ÀüÅõ¿¡ ÀÓÇÒ ¼ö ÀÖµµ·Ï ÇÑ´Ù"
+949Name				"ì§€ê°ëŒ€ë²•"
+949Description		"ë•ê³ ì í•˜ëŠ” ìê°€ ë”ìš± ë¹¨ë¦¬ ì „íˆ¬ì— ì„í•  ìˆ˜ ìˆë„ë¡ í•œë‹¤"
 
 IconFileName		"skill/shaman/jigam.sub"
 MotionIndex         33
@@ -13,18 +13,18 @@ MotionIndexForMe    32
 
 List 949AffectData
 {
-	"ÄğÅ¸ÀÓ : -%.0f%%" "100 - 100 / ((100 + SkillPoint * 2.5) / 100)" ""
-	"Áö¼Ó ½Ã°£ : %.0fÃÊ" "5 * 60 * (5 + JeungJi) / 5" ""
+	"ì¿¨íƒ€ì„ : -%.0f%%" "100 - 100 / ((100 + SkillPoint * 2.5) / 100)" ""
+	"ì§€ì† ì‹œê°„ : %.0fì´ˆ" "5 * 60 * (5 + JeungJi) / 5" ""
 }
 
 MaxLevel			"10"
 NeedSPFormula		"250"
 
-936Name			"Éñ·¨"
-936Description		"¼õÉÙ¼¼ÄÜ¼ä¸ôÊ±¼ä"
+936Name			"ç¥æ³•"
+936Description		"å‡å°‘æŠ€èƒ½é—´éš”æ—¶é—´"
 List 936AffectData
 {
-	"¼ä¸ôÊ±¼ä : -%.0f%%" "100 - 100 / ((100 + SkillPoint * 2.5) / 100)" ""
-	"³ÖĞøÊ±¼ä : %.0fÃÊ" "5 * 60 * (5 + JeungJi) / 5" ""
+	"ì‡Œëª°ç‚ì‡Œ : -%.0f%%" "100 - 100 / ((100 + SkillPoint * 2.5) / 100)" ""
+	"ë„£å´ç‚ì‡Œ : %.0fì´ˆ" "5 * 60 * (5 + JeungJi) / 5" ""
 }
 

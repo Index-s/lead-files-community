@@ -13,28 +13,28 @@ IconFileName		"skill/assassin/gwangyeok.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"°ü°İ¼ú"
-949Description	"ÇÑ¹ø¿¡ ¿©·¯¸íÀÇ Àû¿¡°Ô È­»ìÀ» ½ğ´Ù"
+949Name			"ê´€ê²©ìˆ "
+949Description	"í•œë²ˆì— ì—¬ëŸ¬ëª…ì˜ ì ì—ê²Œ í™”ì‚´ì„ ìœë‹¤"
 List 949ConditionData
 {
-	"Àå°Å¸® °ø°İ"
-	"µ¿½Ã¿¡ ¿©·¯ ´ë»ó °ø°İ"
+	"ì¥ê±°ë¦¬ ê³µê²©"
+	"ë™ì‹œì— ì—¬ëŸ¬ ëŒ€ìƒ ê³µê²©"
 }
 List 949AffectData
 {
-	"°ø°İ·Â %.0f-%0.f" "minatk + (1.7*minatk + 100 + dex*2 + str*2)*k" "maxatk + (1.7*maxatk + 300 + dex*2 + str*2)*k"
-	"ÃÖ´ë %.0f ¸í±îÁö °ø°İ" "2 + floor(6 * SkillPoint)" ""
+	"ê³µê²©ë ¥ %.0f-%0.f" "minatk + (1.7*minatk + 100 + dex*2 + str*2)*k" "maxatk + (1.7*maxatk + 300 + dex*2 + str*2)*k"
+	"ìµœëŒ€ %.0f ëª…ê¹Œì§€ ê³µê²©" "2 + floor(6 * SkillPoint)" ""
 }
 
-936Name			"ÂÒ¼ı"
-936Description	"Ò»´ÎÉä³ö¶àÖ»¼ı£¬Ôì³ÉµĞÈËÉËº¦"
+936Name			"ä¹±ç®­"
+936Description	"ä¸€æ¬¡å°„å‡ºå¤šåªç®­ï¼Œé€ æˆæ•Œäººä¼¤å®³"
 List 936ConditionData
 {
-	"Àå°Å¸® °ø°İ"
-	"µ¿½Ã¿¡ ¿©·¯ ´ë»ó °ø°İ"
+	"ì¥ê±°ë¦¬ ê³µê²©"
+	"ë™ì‹œì— ì—¬ëŸ¬ ëŒ€ìƒ ê³µê²©"
 }
 List 936AffectData
 {
-	"°ø°İ·Â %.0f-%0.f" "20 + 1.1*MinATK + (1.5*MinATK + 300)*SkillPoint" "20 + 1.1*MaxATK + (1.5*MaxATK + 300)*SkillPoint"
-	"ÃÖ´ë %.0f ¸í±îÁö °ø°İ" "2 + floor(6 * SkillPoint)" ""
+	"ê³µê²©ë ¥ %.0f-%0.f" "20 + 1.1*MinATK + (1.5*MinATK + 300)*SkillPoint" "20 + 1.1*MaxATK + (1.5*MaxATK + 300)*SkillPoint"
+	"ìµœëŒ€ %.0f ëª…ê¹Œì§€ ê³µê²©" "2 + floor(6 * SkillPoint)" ""
 }

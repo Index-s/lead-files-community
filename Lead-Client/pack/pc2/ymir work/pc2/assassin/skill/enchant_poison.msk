@@ -2,21 +2,21 @@ ScriptType		SkillDataScript
 
 Type			MIDDLE
 Attribute		"NEED_TARGET" "ONLY_FOR_ALLIANCE" "CAN_USE_FOR_ME"
-949Name			"µ¶¹Ù¸£±â"
-949Description	"¹«±â¿¡ µ¶À» ¹Ù¸¥´Ù"
-949Requirement	"µ¶º´ Á¦ÀÛ" 2
+949Name			"ë…ë°”ë¥´ê¸°"
+949Description	"ë¬´ê¸°ì— ë…ì„ ë°”ë¥¸ë‹¤"
+949Requirement	"ë…ë³‘ ì œì‘" 2
 
 IconFileName	"skill/assassin/enchant_poison.sub"
 
 List 949ConditionData
 {
-	"µ¶º´ 1°³ ÇÊ¿ä"
+	"ë…ë³‘ 1ê°œ í•„ìš”"
 }
 
 List 949AffectData
 {
-	"Å¸°İ´ç %.0f%% È®·ü·Î Áßµ¶" "SkillPoint * 3" ""
-	"300ÃÊ°£ Áö¼Ó" "" ""
+	"íƒ€ê²©ë‹¹ %.0f%% í™•ë¥ ë¡œ ì¤‘ë…" "SkillPoint * 3" ""
+	"300ì´ˆê°„ ì§€ì†" "" ""
 }
 
 List RequireStatData
@@ -27,16 +27,16 @@ List RequireStatData
 MaxLevel			"10"
 NeedSPFormula		"150"
 
-936Name			"¶¾ÈĞ"
-936Description	"ÔÚÎäÆ÷ÉÏÊ©¶¾£¬Ôì³ÉµĞÈËÖĞ¶¾"
-936Requirement	"Á¶¶¾" 2
+936Name			"æ¯’åˆƒ"
+936Description	"åœ¨æ­¦å™¨ä¸Šæ–½æ¯’ï¼Œé€ æˆæ•Œäººä¸­æ¯’"
+936Requirement	"ç‚¼æ¯’" 2
 List 936ConditionData
 {
-	"ĞèÒª¶¾Æ¿Ò»¸ö"
+	"çŸœï¤«ë—€í‹¸å¯§ëª¸"
 }
 
 List 936AffectData
 {
-	"Ã¿¹¥»÷Ò»´Î %.0f%% µÄ¸ÅÂÊÖĞ¶¾" "SkillPoint * 3" ""
-	"³ÖĞø300Ãë" "" ""
+	"ì²¼ë¬‘ìƒŒå¯§ëŠ´ %.0f%% ë¨ë§¤ìª½æ«“ë—€" "SkillPoint * 3" ""
+	"ë„£å´300ì·¨" "" ""
 }

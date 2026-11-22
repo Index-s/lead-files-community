@@ -11,24 +11,24 @@ IconFileName		"skill/warrior/gyeoksan.sub"
 Type			ACTIVE
 MaxLevel		"30"
 
-949Name			"°İ»êÅ¸¿ì"
-949Description	"Àü¹æÀÇ ÀûÀ» °ø°İÇÑ´Ù"
+949Name			"ê²©ì‚°íƒ€ìš°"
+949Description	"ì „ë°©ì˜ ì ì„ ê³µê²©í•œë‹¤"
 List 949ConditionData
 {
-	"Á÷¼± ¹üÀ§ °ø°İ"
+	"ì§ì„  ë²”ìœ„ ê³µê²©"
 }
 List 949AffectData
 {
-	"°ø°İ·Â %.0f-%.0f" "2.3*MinATK + (3*MinATK + 4*STR + 3*CON)*SkillPoint" "2.3*MaxATK + (3*MaxATK + 4*STR + 3*CON)*SkillPoint"
+	"ê³µê²©ë ¥ %.0f-%.0f" "2.3*MinATK + (3*MinATK + 4*STR + 3*CON)*SkillPoint" "2.3*MaxATK + (3*MaxATK + 4*STR + 3*CON)*SkillPoint"
 }
 
-936Name			"Å­»÷"
-936Description	"¹¥»÷Ç°·½µÄµĞÈË£¬ÉËº¦¾Ş´ó"
+936Name			"æ€’å‡»"
+936Description	"æ”»å‡»å‰æ–¹çš„æ•Œäººï¼Œä¼¤å®³å·¨å¤§"
 List 936ConditionData
 {
-	"Á÷¼± ¹üÀ§ °ø°İ"
+	"ì§ì„  ë²”ìœ„ ê³µê²©"
 }
 List 936AffectData
 {
-	"°ø°İ·Â %.0f-%.0f" "15 + 1.5*MinATK + (0.6*MinATK + 400)*SkillPoint" "15 + 1.5*MaxATK + (0.6*MaxATK + 400)*SkillPoint"
+	"ê³µê²©ë ¥ %.0f-%.0f" "15 + 1.5*MinATK + (0.6*MinATK + 400)*SkillPoint" "15 + 1.5*MaxATK + (0.6*MaxATK + 400)*SkillPoint"
 }
