@@ -48,7 +48,7 @@
 184	Tigru Flămând
 185	Tigru Flămând Alb
 191	Lykos
-192	Scroafă
+192	Scrofa
 193	Bera
 194	Tigris
 301	Amazoană Soldat
