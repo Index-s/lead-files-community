@@ -83,7 +83,7 @@ window = {
 					"x" : 110,
 					"y" : 238,
 
-					"text" : uiScriptLocale.OPTION_VIEW_CHAT_ON,
+					"text" : uiScriptLocale.OPTION_LANGUAGE_FLAG_ON,
 
 					"default_image" : ROOT_PATH + "Middle_Button_01.sub",
 					"over_image" : ROOT_PATH + "Middle_Button_02.sub",
@@ -97,7 +97,7 @@ window = {
 					"x" : 110+70,
 					"y" : 238,
 
-					"text" : uiScriptLocale.OPTION_VIEW_CHAT_OFF,
+					"text" : uiScriptLocale.OPTION_LANGUAGE_FLAG_OFF,
 
 					"default_image" : ROOT_PATH + "Middle_Button_01.sub",
 					"over_image" : ROOT_PATH + "Middle_Button_02.sub",
