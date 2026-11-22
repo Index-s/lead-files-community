@@ -155,7 +155,7 @@ static bool ExpandTag(const std::string& c_rstTag, std::string& rstResult)
 	if (kTokenVector.size() < 2)
 		return false;
 
-	const std::string& c_rstType = kTokenVector[0];
+	const std::string c_rstType = kTokenVector[0];
 	const bool c_bString = "LS" == c_rstType;
 	const bool c_bQuest = "LC" == c_rstType;
 	if (!c_bString && !c_bQuest && "IN" != c_rstType && "MN" != c_rstType && "SN" != c_rstType)
