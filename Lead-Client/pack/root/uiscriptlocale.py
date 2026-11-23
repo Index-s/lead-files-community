@@ -27,7 +27,6 @@ def LoadLocaleFile(srcFileName, localeDict):
 name = app.GetLocalePath()
 
 LOCALE_UISCRIPT_PATH = "uiscript/"
-LOGIN_PATH = "locale/common/ui/login/"
 EMPIRE_PATH = "locale/common/ui/empire/"
 GUILD_PATH = "locale/common/ui/guild/"
 SELECT_PATH = "locale/common/ui/select/"
