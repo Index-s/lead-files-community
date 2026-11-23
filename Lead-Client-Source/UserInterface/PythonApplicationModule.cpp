@@ -265,7 +265,7 @@ PyObject* appSetLanguage(PyObject* poSelf, PyObject* poArgs)
 static bool GetAccountFilePath(std::wstring& rstPath)
 {
 	wchar_t szFolder[MAX_PATH];
-	if (FAILED(SHGetFolderPathW(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szFolder)))
+	if (FAILED(SHGetFolderPathW(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szFolder)))
 		return false;
 
 	rstPath = szFolder;
