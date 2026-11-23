@@ -604,36 +604,16 @@ class LoginWindow(ui.ScriptWindow):
 		self.slotList[slot].textLine.SetText("F%d" % (slot + 1))
 		self.languageName.SetText("")
 
-	def __ScrambleKey(self):
-		return [ord(c) for c in "Lead:portal:slot"]
-
-	def __Scramble(self, text):
-		key = self.__ScrambleKey()
-		return "".join(["%02x" % (ord(c) ^ key[i % len(key)]) for i, c in enumerate(text)])
-
-	def __Unscramble(self, text):
-		key = self.__ScrambleKey()
-		return "".join([chr(int(text[i * 2:i * 2 + 2], 16) ^ key[i % len(key)]) for i in xrange(len(text) / 2)])
-
 	def __LoadAccounts(self):
 		accountDict = {}
-		try:
-			for line in open("accounts.inf").readlines():
-				tokens = line.strip().split("\t")
-				if len(tokens) == 3:
-					accountDict[int(tokens[0])] = (tokens[1], self.__Unscramble(tokens[2]))
-		except:
-			pass
+		for line in app.LoadAccounts().split("\n"):
+			tokens = line.split("\t")
+			if len(tokens) == 3:
+				accountDict[int(tokens[0])] = (tokens[1], tokens[2])
 		return accountDict
 
 	def __SaveAccounts(self):
-		try:
-			file = open("accounts.inf", "w")
-			for slot, (id, pwd) in self.accountDict.items():
-				file.write("%d\t%s\t%s\n" % (slot, id, self.__Scramble(pwd)))
-			file.close()
-		except:
-			pass
+		app.SaveAccounts("".join(["%d\t%s\t%s\n" % (slot, id, pwd) for slot, (id, pwd) in self.accountDict.items()]))
 
 	def __StoreAccountSlot(self, slot):
 		id = self.idEditLine.GetText()

@@ -2,6 +2,10 @@
 #include "Resource.h"
 #include "PythonApplication.h"
 #include "../EterLib/Camera.h"
+#include <shlobj.h>
+#include <wincrypt.h>
+
+#pragma comment(lib, "crypt32.lib")
 
 extern D3DXCOLOR g_fSpecularColor;
 extern BOOL bVisibleNotice = true;
@@ -256,6 +260,80 @@ PyObject* appSetLanguage(PyObject* poSelf, PyObject* poArgs)
 		return Py_BuildValue("i", 0);
 
 	return Py_BuildValue("i", LoadLocaleTexts(LocaleService_GetLocalePath()));
+}
+
+static bool GetAccountFilePath(std::wstring& rstPath)
+{
+	wchar_t szFolder[MAX_PATH];
+	if (FAILED(SHGetFolderPathW(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, szFolder)))
+		return false;
+
+	rstPath = szFolder;
+	rstPath += L"\\Lead";
+	CreateDirectoryW(rstPath.c_str(), NULL);
+	rstPath += L"\\accounts.dat";
+	return true;
+}
+
+PyObject* appSaveAccounts(PyObject* poSelf, PyObject* poArgs)
+{
+	char* szText;
+	if (!PyTuple_GetString(poArgs, 0, &szText))
+		return Py_BuildException();
+
+	std::wstring stPath;
+	if (!GetAccountFilePath(stPath))
+		return Py_BuildValue("i", 0);
+
+	DATA_BLOB kPlain;
+	kPlain.pbData = (BYTE*)szText;
+	kPlain.cbData = (DWORD)strlen(szText);
+
+	DATA_BLOB kProtected;
+	if (!CryptProtectData(&kPlain, NULL, NULL, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &kProtected))
+		return Py_BuildValue("i", 0);
+
+	BOOL bWritten = FALSE;
+	HANDLE hFile = CreateFileW(stPath.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile != INVALID_HANDLE_VALUE)
+	{
+		DWORD dwWritten = 0;
+		bWritten = WriteFile(hFile, kProtected.pbData, kProtected.cbData, &dwWritten, NULL) && dwWritten == kProtected.cbData;
+		CloseHandle(hFile);
+	}
+
+	LocalFree(kProtected.pbData);
+	return Py_BuildValue("i", bWritten ? 1 : 0);
+}
+
+PyObject* appLoadAccounts(PyObject* poSelf, PyObject* poArgs)
+{
+	std::wstring stPath;
+	if (!GetAccountFilePath(stPath))
+		return Py_BuildValue("s", "");
+
+	HANDLE hFile = CreateFileW(stPath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile == INVALID_HANDLE_VALUE)
+		return Py_BuildValue("s", "");
+
+	std::vector<BYTE> kBuffer(GetFileSize(hFile, NULL));
+	DWORD dwRead = 0;
+	BOOL bRead = !kBuffer.empty() && ReadFile(hFile, &kBuffer[0], (DWORD)kBuffer.size(), &dwRead, NULL);
+	CloseHandle(hFile);
+	if (!bRead || dwRead != kBuffer.size())
+		return Py_BuildValue("s", "");
+
+	DATA_BLOB kProtected;
+	kProtected.pbData = &kBuffer[0];
+	kProtected.cbData = (DWORD)kBuffer.size();
+
+	DATA_BLOB kPlain;
+	if (!CryptUnprotectData(&kProtected, NULL, NULL, NULL, NULL, CRYPTPROTECT_UI_FORBIDDEN, &kPlain))
+		return Py_BuildValue("s", "");
+
+	PyObject* poText = PyString_FromStringAndSize((const char*)kPlain.pbData, kPlain.cbData);
+	LocalFree(kPlain.pbData);
+	return poText;
 }
 
 PyObject* appGetLocaleName(PyObject* poSelf, PyObject* poArgs)
@@ -1244,6 +1322,8 @@ void initapp()
 		{ "LoadLocaleAddr",				appLoadLocaleAddr,				METH_VARARGS },
 		{ "LoadLocaleData",				appLoadLocaleData,				METH_VARARGS },
 		{ "SetLanguage",				appSetLanguage,					METH_VARARGS },
+		{ "SaveAccounts",				appSaveAccounts,				METH_VARARGS },
+		{ "LoadAccounts",				appLoadAccounts,				METH_VARARGS },
 		
 		{ "SetControlFP",				appSetControlFP,				METH_VARARGS },
 		{ "SetSpecularSpeed",			appSetSpecularSpeed,			METH_VARARGS },
